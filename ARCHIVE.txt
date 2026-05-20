@@ -1,0 +1,6 @@
+aidc 静态站点归档
+版本：v2026.05.07
+日期：2026-05-07
+
+包含：index.html、404.html、capacity.html、docs.html、preview-8011.sh
+说明：与本目录源码一致；解压即用或与服务器 wwwroot 同步。

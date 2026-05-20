@@ -1,0 +1,3306 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强化学习训练流程 Demo - v17 优化版</title>
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 1920px;
+            height: 1080px;
+            margin: 0 auto;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(0,0,0,0.04);
+        }
+
+        /* ========== 首页 ========== */
+        #home-page {
+            display: block;
+            height: 100%;
+            padding: 60px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 40px;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: #9ca3af;
+            margin-bottom: 60px;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 60px;
+            padding: 30px;
+        }
+
+        .flow-node {
+            width: 150px;
+            height: 90px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .flow-node:hover {
+            transform: translateY(-6px);
+            border-color: #818cf8;
+            box-shadow: 0 16px 48px rgba(129, 140, 248, 0.12);
+        }
+
+        .flow-node.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 16px 48px rgba(102, 126, 234, 0.28);
+        }
+
+        .flow-node.completed {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        .flow-node-number {
+            font-size: 28px;
+            font-weight: 300;
+            opacity: 0.12;
+            position: absolute;
+            top: 8px;
+            right: 12px;
+        }
+
+        .flow-node-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .flow-node-desc {
+            font-size: 11px;
+            opacity: 0.55;
+        }
+
+        .flow-arrow {
+            font-size: 18px;
+            color: #d1d5db;
+            transition: color 0.3s ease;
+        }
+
+        .start-btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .btn-primary {
+            padding: 16px 48px;
+            font-size: 15px;
+            font-weight: 500;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+            letter-spacing: 0.02em;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.32);
+        }
+
+        .btn-secondary {
+            padding: 14px 36px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #667eea;
+            background: transparent;
+            border: 1.5px solid #d1d5db;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        /* ========== 子页面通用 ========== */
+        .sub-page {
+            display: none;
+            height: 100%;
+            padding: 50px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            overflow-y: auto;
+        }
+
+        .sub-page.active { display: block; }
+
+        .sub-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .sub-page-title {
+            font-size: 26px;
+            color: #1a1a2e;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .back-btn {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #f3f4f6;
+            color: #374151;
+            border-color: #d1d5db;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .content-card {
+            background: #ffffff;
+            padding: 28px;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f3f4f6;
+        }
+
+        .card-title {
+            font-size: 17px;
+            color: #1a1a2e;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #4b5563;
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+            background: #ffffff;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
+            background: #ffffff;
+        }
+
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: #f3f4f6;
+            color: #6b7280;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: help;
+            margin-left: 8px;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
+
+        .tooltip-icon:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 140%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #f9fafb;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: normal;
+            min-width: 220px;
+            max-width: 320px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 10000;
+            text-align: left;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            pointer-events: none;
+        }
+
+        .tooltip::before {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a2e;
+        }
+
+        .tooltip-container:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .info-box {
+            background: #fafafa;
+            padding: 18px 20px;
+            border-radius: 14px;
+            margin-bottom: 14px;
+            border-left: 3px solid #818cf8;
+        }
+
+        .info-box-title {
+            font-size: 15px;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* ========== 数据集卡片 ========== */
+        .dataset-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .dataset-card {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .dataset-card:hover {
+            border-color: #818cf8;
+            box-shadow: 0 8px 30px rgba(129, 140, 248, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .dataset-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f0ff 100%);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
+        }
+
+        .dataset-card .ds-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .dataset-card .ds-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .dataset-card .ds-desc {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .dataset-card .ds-count {
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .view-data-btn {
+            margin-top: 12px;
+            padding: 8px 20px;
+            border: 1px solid #e5e7eb;
+            background: transparent;
+            color: #6b7280;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-data-btn:hover {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            width: 900px;
+            max-height: 80vh;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            padding: 20px 28px;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .modal-body {
+            padding: 20px 28px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+        .data-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .data-item:last-child { border: none; }
+
+        .data-item .q-line {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .data-item .a-line {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.7;
+            padding-left: 20px;
+        }
+
+        .data-item .idx {
+            color: #d1d5db;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .npu-recommend {
+            margin-top: 12px;
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f0ff 100%);
+            border: 1px solid #e0e7ff;
+            border-radius: 14px;
+            font-size: 14px;
+            color: #4338ca;
+        }
+
+        .config-preview {
+            background: #fafafa;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .config-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+
+        .config-row:last-child { border: none; }
+        .config-row .ck { color: #6b7280; }
+        .config-row .cv { color: #1a1a2e; font-weight: 500; }
+
+        .progress-container {
+            background: #ffffff;
+            padding: 28px;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f3f4f6;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            text-align: center;
+        }
+
+        .progress-stat {
+            padding: 20px 16px;
+            background: #fafafa;
+            border-radius: 16px;
+        }
+
+        .progress-stat-value {
+            font-size: 28px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .progress-stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .sub-progress {
+            margin-top: 20px;
+        }
+
+        .sub-progress-row {
+            margin-bottom: 14px;
+        }
+
+        .sub-progress-name {
+            font-size: 13px;
+            color: #4b5563;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .sub-progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .sub-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 4px;
+        }
+
+        /* ========== 日志 ========== */
+        .log-container {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f3f4f6;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .log-title {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .log-entry {
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: #fafafa;
+            color: #374151;
+        }
+
+        .log-info { background: #f0f9ff; color: #0369a1; }
+        .log-success { background: #f0fdf4; color: #15803d; }
+        .log-warning { background: #fffbeb; color: #b45309; }
+        .log-error { background: #fef2f2; color: #b91c1c; }
+        .log-data { background: #faf5ff; color: #7e22ce; }
+
+        .stats-summary { display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f3f4f6;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .stat-change.positive { color: #059669; }
+        .stat-change.negative { color: #dc2626; }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f3f4f6;
+        }
+
+        .chart-card h3 {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-card canvas {
+            width: 100% !important;
+            height: 280px !important;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+
+        .experience-wrapper {
+            height: 100%;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .question-section {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f3f4f6;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .question-title-bar {
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .api-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            padding: 16px;
+        }
+
+        .qa-card {
+            background: #fafafa;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .qa-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            border-color: #d1d5db;
+        }
+
+        .qa-card.active {
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f0ff 100%);
+            border-color: #667eea;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .qa-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .qa-icon {
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .qa-icon.q {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .qa-icon.a {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: white;
+        }
+
+        .qa-text {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .qa-answer-text {
+            font-size: 13px;
+            color: #6b7280;
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .chat-comparison {
+            display: flex;
+            gap: 24px;
+        }
+
+        .chat-panel {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            border: 1px solid #f3f4f6;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header-bar {
+            padding: 16px 20px;
+            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header-bar.base {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .chat-header-bar.enhanced {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: white;
+        }
+
+        .status-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 400px;
+            max-height: 460px;
+            background: #fafafa;
+        }
+
+        .chat-body::-webkit-scrollbar { width: 6px; }
+        .chat-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-message.user-side { align-items: flex-end; }
+        .chat-message.model-side { align-items: flex-start; }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.7;
+            word-break: break-word;
+        }
+
+        .chat-bubble.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .chat-bubble.model {
+            background: #ffffff;
+            color: #374151;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .chat-bubble.model .md-content { line-height: 1.8; }
+
+        .chat-bubble.model .md-content h1,
+        .chat-bubble.model .md-content h2,
+        .chat-bubble.model .md-content h3,
+        .chat-bubble.model .md-content h4 {
+            margin: 0 0 0.5em 0;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .chat-bubble.model .md-content h1 { font-size: 1.3em; }
+        .chat-bubble.model .md-content h2 { font-size: 1.2em; }
+        .chat-bubble.model .md-content h3 { font-size: 1.1em; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.3em; }
+        .chat-bubble.model .md-content h4 { font-size: 1em; }
+        .chat-bubble.model .md-content p { margin: 0.5em 0; text-align: justify; }
+        .chat-bubble.model .md-content ul, .chat-bubble.model .md-content ol { margin: 0.5em 0; padding-left: 1.5em; }
+        .chat-bubble.model .md-content li { margin: 0.3em 0; }
+        .chat-bubble.model .md-content code { background: #f3f4f6; padding: 0.2em 0.4em; border-radius: 6px; font-family: monospace; font-size: 0.9em; }
+        .chat-bubble.model .md-content pre { background: #1f2937; color: #f9fafb; padding: 1em; border-radius: 12px; overflow-x: auto; margin: 0.8em 0; }
+        .chat-bubble.model .md-content pre code { background: transparent; padding: 0; color: inherit; }
+        .chat-bubble.model .md-content blockquote { border-left: 3px solid #667eea; padding-left: 1em; margin: 0.5em 0; color: #6b7280; background: #f9fafb; border-radius: 0 8px 8px 0; }
+        .chat-bubble.model .md-content strong { font-weight: 600; color: #1a1a2e; }
+        .chat-bubble.model .md-content em { font-style: italic; }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: #667eea;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .chat-thinking {
+            text-align: center;
+            padding: 12px;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .chat-thinking .dots::after {
+            content: '';
+            animation: thinkDots 1.5s infinite;
+        }
+
+        @keyframes thinkDots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+
+        .chat-error {
+            color: #ef4444;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1920px) {
+            .container { width: 100%; height: auto; min-height: 100vh; }
+            .flow-container { flex-wrap: wrap; }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+    
+
+    
+/* ========== 图表容器样式 ========== */
+.chart-container {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.chart-title {
+    font-size: 24px;
+    color: #2c3e50;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.chart {
+    width: 100%;
+    height: 300px;
+}
+
+/* ========== 对比容器样式 - 左右对比 ========== */
+.comparison-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.model-panel {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.model-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #667eea;
+}
+
+.model-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.model-icon.base {
+    background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+}
+
+.model-icon.enhanced {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.model-info h3 {
+    font-size: 20px;
+    color: #2c3e50;
+    margin-bottom: 2px;
+}
+
+.model-info p {
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.chat-box {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    min-height: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+/* ========== 问题选择器样式 - 浅色背景 ========== */
+.question-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.question-item { background: #fafafa; border: none; border-radius: 12px; padding: 15px 20px; cursor: pointer; transition: all 0.3s ease; text-align: left; }
+
+.question-item:hover { background: #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transform: translateY(-1px); }
+
+.question-item.active {
+    background: linear-gradient(135deg, #f0f4ff 0%, #e6eaf5 100%);
+    border-color: #667eea;
+}
+
+/* ========== 聊天消息样式 ========== */
+.chat-message {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.chat-message.user {
+    justify-content: flex-end;
+}
+
+.chat-message.assistant {
+    justify-content: flex-start;
+}
+
+.message-content {
+    max-width: 80%;
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.chat-message.user .message-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 6px;
+}
+
+.chat-message.assistant .message-content {
+    background: #e9ecef;
+    color: #2c3e50;
+    border-bottom-left-radius: 6px;
+}
+
+/* ========== 打字指示器样式 ========== */
+.typing-indicator {
+    display: flex;
+    gap: 6px;
+    padding: 12px 18px;
+    background: #e9ecef;
+    border-radius: 18px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #9ca3af;
+    border-radius: 50%;
+    animation: typing-bounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-bounce {
+    0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========== 模态框居中样式修复 ========== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid #e5e7eb;
+    width: 60%;
+    max-width: 900px;
+    border-radius: 20px;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.15);
+    position: relative;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close {
+    color: #9ca3af;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #374151;
+}
+
+/* ========== 数据集表格样式 ========== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+    font-weight: 600;
+    color: #374151;
+}
+
+.data-table tbody tr:hover {
+    background: #f9fafb;
+}
+    
+/* ========== 结果网格布局 - 与 stats-summary 对齐 ========== */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 首页 -->
+        <div id="home-page">
+            <h1 class="page-title">强化学习训练流程演示</h1>
+            <p class="subtitle">Reinforcement Learning Training Demo</p>
+
+            <!-- 流程图 -->
+            <div class="flow-container">
+                <div class="flow-node" id="node-data" onclick="goToPage('data')">
+                    <span class="flow-node-number">1</span>
+                    <span class="flow-node-title">数据制作</span>
+                    <span class="flow-node-desc">Data Preparation</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" id="node-model" onclick="goToPage('model')">
+                    <span class="flow-node-number">2</span>
+                    <span class="flow-node-title">模型准备</span>
+                    <span class="flow-node-desc">Model Setup</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" id="node-config" onclick="goToPage('config')">
+                    <span class="flow-node-number">3</span>
+                    <span class="flow-node-title">参数配置</span>
+                    <span class="flow-node-desc">Configuration</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" id="node-training" onclick="goToPage('training')">
+                    <span class="flow-node-number">4</span>
+                    <span class="flow-node-title">训练过程</span>
+                    <span class="flow-node-desc">Training</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" id="node-results" onclick="goToPage('results')">
+                    <span class="flow-node-number">5</span>
+                    <span class="flow-node-title">训练结果</span>
+                    <span class="flow-node-desc">Results</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" id="node-experience" onclick="goToPage('experience')">
+                    <span class="flow-node-number">6</span>
+                    <span class="flow-node-title">效果体验</span>
+                    <span class="flow-node-desc">Experience</span>
+                </div>
+            </div>
+
+            <!-- 开始按钮 -->
+            <div class="start-btn-container">
+                <button class="btn-primary" id="start-btn" onclick="startTraining()">开始训练</button>
+                <button class="btn-secondary" onclick="resetDemo()">重置演示</button>
+            </div>
+        </div>
+
+        <!-- 数据制作页面 -->
+        <div id="data-page" class="sub-page">
+            <div class="sub-page-header">
+                <h2 class="sub-page-title">📊 数据制作</h2>
+                <button class="back-btn" onclick="goHome()">返回首页</button>
+            </div>
+
+            <div class="content-grid">
+                <div class="content-card">
+                    <h3 class="card-title">数据集配置</h3>
+
+                    <!-- 优化点1：替换为用例集选择 -->
+                    <div class="form-group">
+                        <label class="form-label">用例集选择
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">选择特定行业的训练数据集，用于微调模型以适应特定领域的问答和任务。</span>
+                            </span>
+                        </label>
+                        <select class="form-select" id="dataset-select">
+                            <option value="insurance">保险行业数据集 (.Parquet格式, 300条训练集，50条测试集)</option>
+                            <option value="education">教育培训数据集 (.Parquet格式, 400条训练集，80条测试集)</option>
+                            <option value="securities">证券行业数据集 (.Parquet格式, 300条训练集，50条测试集)</option>
+                        </select>
+                    </div>
+
+                    <!-- 优化点2：查看详情按钮 -->
+                    <div class="form-group">
+                        <button class="btn-secondary" style="width: 100%; font-size: 16px; padding: 10px;" onclick="viewDatasetDetails()">查看数据集详情 (前10条)</button>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h3 class="card-title">数据集准备流程</h3>
+                    <div class="info-box">
+                        <div class="info-box-title">Step 1. 数据清洗</div>
+                        <div class="info-box-content">过滤低质量样本：移除过短/过长文本、重复内容去重、特殊字符及有毒内容检测，确保训练数据纯净度与安全性</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-box-title">Step 2. 指令生成</div>
+                        <div class="info-box-content">基于Self-Instruct范式，用种子指令引导LLM批量生成多样化任务指令，覆盖分类/生成/推理等类型，低成本扩充高质量SFT数据</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-box-title">Step 3. 偏好标注</div>
+                        <div class="info-box-content">人工或AI对同一prompt的多个回复进行排序/二选一，构建(chosen, rejected)偏好对，为Reward Model训练提供监督信号，是RLHF核心数据来源</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-box-title">Step 4. 质量评估</div>
+                        <div class="info-box-content">通过自动指标（长度分布、毒性分数、任务多样性）与人工抽查结合，量化数据集质量，防止模型学习噪声或虚假相关性（如“长回复=优质”）</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-box-title">Step 5. 数据合成</div>
+                        <div class="info-box-content">利用强模型（如Deepseek）自动生成指令-回复对或偏好对，结合规则过滤构建百万级数据集，解决人工标注成本高、规模受限问题。</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-secondary" onclick="goHome()">返回首页</button>
+                <button class="btn-primary" onclick="goToPage('model')">下一步</button>
+            </div>
+        </div>
+
+        <!-- 模型准备页面 -->
+        <div id="model-page" class="sub-page">
+            <div class="sub-page-header">
+                <h2 class="sub-page-title">🧠 模型准备</h2>
+                <button class="back-btn" onclick="goHome()">返回首页</button>
+            </div>
+
+            <div class="content-grid">
+                <div class="content-card">
+                    <h3 class="card-title">模型选择</h3>
+                    <div class="form-group">
+                        <label class="form-label">基础模型
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">选择预训练大语言模型：8B适合快速实验，14B平衡性能与成本，32B提供最强性能</span>
+                            </span>
+                        </label>
+                        <select class="form-select" id="base-model">
+                            <option value="qwen3-8b">Qwen3-8B (约8亿参数)</option>
+                            <option value="qwen3-14b">Qwen3-14B (约14亿参数)</option>
+                            <option value="qwen3-32b">Qwen3-32B (约32亿参数)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">NPU卡数量
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">NPU卡数量决定可用显存，当前使用64GB显存版本：8B建议8卡，14B建议16卡，32B建议32卡</span>
+                            </span>
+                        </label>
+                        <select class="form-select" id="npu-count">
+                            <option value="8">8 *910B（64G）</option>
+                            <option value="16">16 *910B（64G）</option>
+                            <option value="32">32 *910B（64G）</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">硬件型号
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">训练硬件款型</span>
+                            </span>
+                        </label>
+                        <select class="form-select" id="hardware-model">
+                            <option value="A2">Atlas 800I A2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-secondary" onclick="goToPage('data')">上一步</button>
+                <button class="btn-primary" onclick="goToPage('config')">下一步</button>
+            </div>
+        </div>
+
+        <!-- 参数配置页面 -->
+        <div id="config-page" class="sub-page">
+            <div class="sub-page-header">
+                <h2 class="sub-page-title">⚙️ 参数配置</h2>
+                <button class="back-btn" onclick="goHome()">返回首页</button>
+            </div>
+
+            <div class="content-grid">
+                <div class="content-card">
+                	
+                    <h3 class="card-title">算法选择</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">训练框架
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">verl 是一个灵活、高效且可用于生产环境的强化学习（RL）训练框架，专为大型语言模型（LLMs）的后训练设计</span>
+                            </span>
+                        </label>
+                        <select class="form-select" id="algorithm">
+                            <option value="verl">verl(Volcano Engine Reinforcement Learning for LLMs)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">RL训练算法
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">选择强化学习算法：PPO稳定高效，GPRO结合策略梯度和进化算法</span>
+                            </span>
+                        </label>
+                        <select class="form-select" id="algorithm">
+                            <option value="ppo">PPO (Proximal Policy Optimization)</option>
+                            <option value="GPRO">GPRO (Gradient-based Policy Optimization)</option>
+                        </select>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-title">PPO算法</div>
+                        <div class="info-box-content">近端策略优化算法 PPO（Proximal Policy Optimization Algorithms）：包括4个模型，Reward Model 提供奖励型号，Value Model  提供价值评估，通过 Reference Model 提供参考输出，叠加KL散度惩罚机制，限制策略更新幅度，确保训练稳定性和效率。该算法需要同时训练2个模型，方案实施比较复杂。</div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-title">GRPO算法</div>
+                        <div class="info-box-content">组相对策略优化 GRPO（Group Relative Policy Optimization）：使用3个模型，针对每个 Prompt 生成一组 Response，通过 Reference Model 提供参考输出，叠加KL散度惩罚机制，使用组内相对值奖励来估计优势函数。该方法不需要训练 Value Model，降低方案复杂度，提高了训练效率。</div>
+                    </div>
+                </div>  
+                                 
+                <div class="content-card">
+                    <h3 class="card-title">训练参数</h3>                                        
+                    <div class="form-group">
+                        <label class="form-label">学习率(actor_rollout_ref.actor.optim.lr)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">典型 RLHF lr: 1e-6 ~ 5e-6，过低导致学习缓慢, 过大导致震荡</span>
+                            </span>
+                        </label>
+                        <input type="number" class="form-input" id="learning-rate" value="1e-6" step="0.0001">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">单次训练Batch size(data.train_batch_size)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">每次训练使用的样本数量：32-128常用，大批次训练稳定，小批次更新频繁</span>
+                            </span>
+                        </label>
+                        <input type="number" class="form-input" id="batch-size" value="32">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">训练总轮数(trainer.total_epochs)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">总训练轮数</span>
+                            </span>
+                        </label>
+                        <input type="number" class="form-input" id="total-episodes" value="20">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">模型权重保存频率(trainer.save_freq)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">设置完成多少个step后保存一次模型权重</span>
+                            </span>
+                        </label>
+                        <input type="number" class="form-input" id="update-freq" value="20">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">每问题推理生成答案数量(actor_rollout_ref.rollout.n)
+                            <span class="tooltip-container">
+                                <span class="tooltip-icon">!</span>
+                                <span class="tooltip">为每个 prompt 生成的 response 数量，也即 GRPO 中的 group size。</span>
+                            </span>
+                        </label>
+                        <input type="number" class="form-input" id="rollout-n" value="5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-secondary" onclick="goToPage('model')">上一步</button>
+                <button class="btn-primary" onclick="startTraininGPROcess()">开始训练</button>
+            </div>
+        </div>
+
+        <!-- 训练过程页面 -->
+        <div id="training-page" class="sub-page">
+            <div class="sub-page-header">
+                <h2 class="sub-page-title">🎯 训练过程</h2>
+                <button class="back-btn" onclick="goHome()">返回首页</button>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar">0%</div>
+                </div>
+
+                <div class="progress-info">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="stat-episode">0</div>
+                        <div class="progress-stat-label">当前轮数</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="stat-reward">0</div>
+                        <div class="progress-stat-label">当前奖励</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="stat-loss">0.00</div>
+                        <div class="progress-stat-label">当前损失</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="stat-avg-reward">0</div>
+                        <div class="progress-stat-label">平均奖励</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="log-container">
+                <div class="log-title">训练日志</div>
+                <div id="log-content">
+                    <div class="log-entry log-info">[系统] 等待开始训练...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 训练结果页面 -->
+        <div id="results-page" class="sub-page">
+            <div class="sub-page-header">
+                <h2 class="sub-page-title">📈 训练结果</h2>
+                <button class="back-btn" onclick="goHome()">返回首页</button>
+            </div>
+
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="stat-value" id="final-reward">0</div>
+                    <div class="stat-label">最终奖励</div>
+                    <div class="stat-change positive" id="reward-change">+0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="final-episodes">0</div>
+                    <div class="stat-label">训练轮数</div>
+                    <div class="stat-change positive" id="episodes-efficiency">效率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="final-avg-loss">0.00</div>
+                    <div class="stat-label">平均损失</div>
+                    <div class="stat-change negative" id="loss-reduction">-0%</div>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Reward 曲线</h3>
+                    <canvas id="reward-chart" class="chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Loss 曲线</h3>
+                    <canvas id="loss-chart" class="chart"></canvas>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3 class="card-title">训练总结</h3>
+                <div id="training-summary">
+                    <p>训练完成！模型性能已达到预期目标。</p>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-secondary" onclick="resetDemo()">重新训练</button>
+                <button class="btn-primary" onclick="goToPage('experience')">效果体验</button>
+            </div>
+        </div>
+
+        <!-- 效果体验页面 -->
+        <div id="experience-page" class="sub-page">
+            <div class="sub-page-header">
+                <h2 class="sub-page-title">🎭 效果体验</h2>
+                <button class="back-btn" onclick="goHome()">返回首页</button>
+            </div>
+
+            <div class="question-selector">
+                <h3 class="card-title">预设问题选择</h3>
+                <p style="color: #7f8c8d; margin-bottom: 15px;">选择一个问题，查看基础模型和增强模型的回答差异</p>
+                <div class="question-grid" id="question-grid">
+                    <!-- 问题将通过JS动态生成 -->
+                </div>
+            </div>
+
+            <div class="comparison-container">
+                <!-- 基础模型 -->
+                <div class="model-panel">
+                    <div class="model-header">
+                        <div class="model-icon base">🤖</div>
+                        <div class="model-info">
+                            <h3>基础模型</h3>
+                            <p>Base Model - 训练前</p>
+                        </div>
+                    </div>
+                    <div class="chat-box" id="base-chat-box">
+                        <p style="text-align: center; color: #95a5a6; padding: 40px;">请选择一个问题开始体验</p>
+                    </div>
+                </div>
+
+                <!-- 增强模型 -->
+                <div class="model-panel">
+                    <div class="model-header">
+                        <div class="model-icon enhanced">⚡</div>
+                        <div class="model-info">
+                            <h3>增强模型</h3>
+                            <p>Enhanced Model - 训练后</p>
+                        </div>
+                    </div>
+                    <div class="chat-box" id="enhanced-chat-box">
+                        <p style="text-align: center; color: #95a5a6; padding: 40px;">请选择一个问题开始体验</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-secondary" onclick="goToPage('results')">返回结果</button>
+                <button class="btn-primary" onclick="resetDemo()">完成演示</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增：数据集详情模态框 -->
+    <div id="dataset-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modal-title" style="margin-bottom: 20px; color: #2c3e50;">数据集详情</h3>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="data-table" id="dataset-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>问题(question)</th>
+                            <th>答案(answer)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataset-tbody">
+                        <!-- 数据将通过JS动态插入 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态
+        let currentPage = 'home';
+        let trainingInProgress = false;
+        let trainingData = {
+            episodes: [],
+            rewards: [],
+            losses: [],
+            avgRewards: []
+        };
+        let trainingTimer = null;
+        
+        // 新增：step参数(默认10),不显示在前台
+        const STEPS_PER_EPISODE = 10;
+
+        // 模拟数据集数据
+        const mockDatasets = {
+            insurance: [
+                { id: 1, input: "请问车险理赔需要哪些材料？", output: "车险理赔通常需要：保险单正本、索赔申请书、交通事故责任认定书、车辆修理发票、损失清单等。" },
+                { id: 2, input: "意外险包含医疗费用吗？", output: "大部分意外险包含意外医疗费用报销，具体保额和免赔额请参照您的保险合同条款。" },
+                { id: 3, input: "重疾险等待期是多长时间？", output: "重疾险的等待期通常为90天或180天，等待期内确诊疾病一般不赔付，具体视产品而定。" },
+                { id: 4, input: "寿险受益人可以指定吗？", output: "可以。投保人或者被保险人可以指定一人或者数人为身故保险金受益人。" },
+                { id: 5, input: "家财险保什么？", output: "家庭财产保险主要保障房屋主体、室内装修、以及室内财产（如家电、家具）因火灾、爆炸等造成的损失。" },
+                { id: 6, input: "保险犹豫期是多久？", output: "长期保险通常有10-15天的犹豫期，犹豫期内退保可全额退还保费（扣除工本费）。" },
+                { id: 7, input: "社保断缴会有影响吗？", output: "社保断缴可能会影响医保报销待遇和养老金领取年限，建议连续缴纳。" },
+                { id: 8, input: "如何查询保单状态？", output: "您可以通过保险公司官方APP、微信公众号或拨打客服热线查询保单状态。" },
+                { id: 9, input: "医疗险有免赔额吗？", output: "百万医疗险通常有1万元免赔额，超过免赔额的部分才能报销；小额医疗险免赔额较低或无免赔额。" },
+                { id: 10, input: "投保人豁免是什么？", output: "投保人豁免是指如果投保人发生合同约定的风险（如身故、重疾），可以免交后续保费，保障继续有效。" }
+            ],
+            education: [
+                { id: 1, input: "什么是牛顿第一定律？", output: "牛顿第一定律，又称惯性定律，指一切物体在没有受到外力作用的时候，总保持匀速直线运动状态或静止状态。" },
+                { id: 2, input: "如何提高英语听力？", output: "提高英语听力可以通过多听英文广播、看英文电影、跟读模仿以及进行专门的精听练习来实现。" },
+                { id: 3, input: "勾股定理公式是什么？", output: "勾股定理公式为 a² + b² = c²，其中a和b是直角三角形的两条直角边，c是斜边。" },
+                { id: 4, input: "光合作用的意义是什么？", output: "光合作用是制造有机物的主要途径，是生物界获取能量的根本来源，同时还维持了大气中的碳氧平衡。" },
+                { id: 5, input: "《红楼梦》的作者是谁？", output: "《红楼梦》的作者一般认为是曹雪芹，后四十回通常认为是高鹗所续。" },
+                { id: 6, input: "什么是微积分？", output: "微积分是研究函数的微分、积分以及有关概念和应用的数学分支，它是高等数学的基础。" },
+                { id: 7, input: "如何制定学习计划？", output: "制定学习计划应明确目标、分解任务、合理安排时间，并坚持执行与定期复盘。" },
+                { id: 8, input: "二战结束于哪一年？", output: "第二次世界大战于1945年结束。" },
+                { id: 9, input: "什么是元素周期表？", output: "元素周期表是根据原子序数从小到大排序的化学元素列表，揭示了元素性质的周期性变化规律。" },
+                { id: 10, input: "如何培养孩子的阅读兴趣？", output: "可以通过亲子共读、营造家庭阅读氛围、让孩子自主选择感兴趣的书籍等方式培养阅读兴趣。" }
+            ],
+            securities: [
+                { id: 1, input: "什么是市盈率（PE）？", output: "市盈率是指股票价格除以每股收益的比率，通常用来衡量股票的投资价值及风险。" },
+                { id: 2, input: "牛市和熊市有什么区别？", output: "牛市指证券市场行情普遍看涨，延续时间较长的大升市；熊市则指行情普遍看淡，延续时间较长的大跌市。" },
+                { id: 3, input: "什么是K线图？", output: "K线图又称蜡烛图，记录了股票一天的开盘价、收盘价、最高价和最低价，是技术分析的基础工具。" },
+                { id: 4, input: "如何开通股票账户？", output: "开通股票账户需要准备身份证和银行卡，通过券商的APP或营业部现场办理开户手续。" },
+                { id: 5, input: "什么是ETF？", output: "ETF（交易型开放式指数基金）是一种在交易所上市交易的、基金份额可变的一种开放式基金。" },
+                { id: 6, input: "什么是止损？", output: "止损是指当某一投资出现的亏损达到预定数额时，及时斩仓出局，以避免形成更大的亏损。" },
+                { id: 7, input: "分红派息对股价有影响吗？", output: "分红派息后，股价通常会进行除权除息处理，导致股价下调，但投资者总资产（股票+现金）理论上不变。" },
+                { id: 8, input: "什么是IPO？", output: "IPO（Initial Public Offering）即首次公开募股，指企业第一次通过证券交易所向公众公开发行股票。" },
+                { id: 9, input: "如何分析基本面？", output: "基本面分析主要关注公司的财务状况、盈利能力、行业地位、宏观经济环境等因素。" },
+                { id: 10, input: "什么是换手率？", output: "换手率是指在一定时间内市场中股票转手买卖的频率，是反映股票流通性强弱的指标之一。" }
+            ]
+        };
+
+        // 页面导航
+        function goToPage(page) {
+            // 隐藏所有页面
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('home-page').style.display = 'none';
+
+            // 显示目标页面
+            if (page === 'home') {
+                document.getElementById('home-page').style.display = 'block';
+            } else {
+                const targetPage = document.getElementById(`${page}-page`);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                    targetPage.classList.add('fade-in');
+                }
+            }
+
+            currentPage = page;
+            updateFlowNodes();
+        }
+
+        function goHome() {
+            if (trainingInProgress) {
+                if (!confirm('训练正在进行中，确定要返回吗？')) {
+                    return;
+                }
+            }
+            goToPage('home');
+        }
+
+        // 更新流程节点状态
+        function updateFlowNodes() {
+            const pages = ['data', 'model', 'config', 'training', 'results', 'experience'];
+            const pageIndex = pages.indexOf(currentPage);
+
+            pages.forEach((page, index) => {
+                const node = document.getElementById(`node-${page}`);
+                if (node) {
+                    node.classList.remove('active', 'completed');
+
+                    if (index < pageIndex) {
+                        node.classList.add('completed');
+                    } else if (index === pageIndex) {
+                        node.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        // 开始训练流程
+        function startTraining() {
+            goToPage('data');
+        }
+
+        // 新增：查看数据集详情
+        function viewDatasetDetails() {
+            const select = document.getElementById('dataset-select');
+            const datasetType = select.value;
+            const datasetName = select.options[select.selectedIndex].text;
+            const data = mockDatasets[datasetType];
+
+            if (!data) return;
+
+            // 设置标题
+            document.getElementById('modal-title').innerText = `${datasetName} - 前10条数据`;
+
+            // 填充表格
+            const tbody = document.getElementById('dataset-tbody');
+            tbody.innerHTML = ''; // 清空旧数据
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.input}</td>
+                    <td>${item.output}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 显示模态框
+            document.getElementById('dataset-modal').style.display = 'block';
+        }
+
+        // 新增：关闭模态框
+        function closeModal() {
+            document.getElementById('dataset-modal').style.display = 'none';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('dataset-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 开始训练过程
+        function startTraininGPROcess() {
+            if (trainingInProgress) {
+                return;
+            }
+
+            trainingInProgress = true;
+            goToPage('training');
+
+            // 重置训练数据
+            trainingData = {
+                episodes: [],
+                rewards: [],
+                losses: [],
+                avgRewards: []
+            };
+
+            // 获取训练参数
+            const totalEpisodes = parseInt(document.getElementById('total-episodes').value) || 100;
+            const learningRate = parseFloat(document.getElementById('learning-rate').value) || 0.00003;
+            
+            // 修改：获取新的数据集选择
+            const datasetSelect = document.getElementById('dataset-select');
+            const datasetName = datasetSelect.options[datasetSelect.selectedIndex].text;
+
+            // 添加日志
+            const totalSteps = totalEpisodes * STEPS_PER_EPISODE;
+            addLog('info', `开始训练，总轮数: ${totalEpisodes}, 每轮包含 ${STEPS_PER_EPISODE} 个step, 总训练次数: ${totalSteps}`);
+            addLog('info', `学习率: ${learningRate}`);
+            addLog('info', `数据集: ${datasetName}`);
+            addLog('info', `算法: ${document.getElementById('algorithm').value}`);
+
+            // 模拟训练过程
+            let currentEpisode = 0;
+            let currentStep = 0;
+            const updateInterval = 1200; // 毫秒
+
+            trainingTimer = setInterval(() => {
+                currentStep++;
+                
+                // 每完成STEPS_PER_EPISODE个step,算作完成1轮
+                if (currentStep % STEPS_PER_EPISODE === 0) {
+                    currentEpisode++;
+                    
+                    // 模拟训练数据(每轮的数据)
+                    const episodeReward = simulateReward(currentEpisode, totalEpisodes);
+                    const episodeLoss = simulateLoss(currentEpisode, totalEpisodes);
+
+                    trainingData.episodes.push(currentEpisode);
+                    trainingData.rewards.push(episodeReward);
+                    trainingData.losses.push(episodeLoss);
+
+                    // 计算平均奖励
+                    const recentRewards = trainingData.rewards.slice(-50);
+                    const avgReward = recentRewards.reduce((a, b) => a + b, 0) / recentRewards.length;
+                    trainingData.avgRewards.push(avgReward);
+
+                    // 更新UI
+                    const progress = Math.min(100, Math.round((currentEpisode / totalEpisodes) * 100));
+                    updateProgress(progress);
+                    updateStats(currentEpisode, episodeReward, episodeLoss, avgReward);
+
+                    // 每完成1轮,打印训练得分和loss
+                    addLog('info', `轮次 ${currentEpisode}/${totalEpisodes}: 得分=${episodeReward.toFixed(2)}, Loss=${episodeLoss.toFixed(4)}`);
+                }
+
+                // 训练完成
+                if (currentEpisode >= totalEpisodes) {
+                    clearInterval(trainingTimer);
+                    trainingInProgress = false;
+                    addLog('success', `训练完成！共完成 ${totalEpisodes} 轮训练, 总计 ${totalSteps} 次迭代`);
+                    setTimeout(() => {
+                        goToPage('results');
+                        showResults();
+                    }, 1000);
+                }
+            }, updateInterval);
+        }
+
+        // 模拟奖励曲线
+        function simulateReward(episode, totalEpisodes) {
+            const progress = episode / totalEpisodes;
+            const baseReward = 50 + progress * 40; // 基础奖励从50增长到90
+            const noise = (Math.random() - 0.5) * 10 * (1 - progress); // 噪声随训练减少
+            const seasonal = Math.sin(episode * 0.05) * 3; // 季节性波动
+            return Math.max(0, baseReward + noise + seasonal);
+        }
+
+        // 模拟损失曲线
+        function simulateLoss(episode, totalEpisodes) {
+            const progress = episode / totalEpisodes;
+            const baseLoss = 2.0 * Math.exp(-progress * 3); // 指数衰减
+            const noise = (Math.random() - 0.5) * 0.3 * (1 - progress);
+            return Math.max(0.001, baseLoss + noise);
+        }
+
+        // 更新进度条
+        function updateProgress(progress) {
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-bar').textContent = `${progress}%`;
+        }
+
+        // 更新统计信息
+        function updateStats(episode, reward, loss, avgReward) {
+            document.getElementById('stat-episode').textContent = episode;
+            document.getElementById('stat-reward').textContent = reward.toFixed(1);
+            document.getElementById('stat-loss').textContent = loss.toFixed(4);
+            document.getElementById('stat-avg-reward').textContent = avgReward.toFixed(1);
+        }
+
+        // 添加日志
+        function addLog(type, message) {
+            const logContent = document.getElementById('log-content');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
+
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // 显示训练结果
+        function showResults() {
+            if (trainingData.episodes.length === 0) {
+                return;
+            }
+
+            // 更新统计数据
+            const finalReward = trainingData.rewards[trainingData.rewards.length - 1];
+            const initialReward = trainingData.rewards[0];
+            const rewardImprovement = ((finalReward - initialReward) / initialReward * 100).toFixed(0);
+
+            const finalLoss = trainingData.losses[trainingData.losses.length - 1];
+            const initialLoss = trainingData.losses[0];
+            const lossReduction = ((initialLoss - finalLoss) / initialLoss * 100).toFixed(0);
+
+            document.getElementById('final-reward').textContent = finalReward.toFixed(1);
+            document.getElementById('reward-change').textContent = `+${rewardImprovement}%`;
+
+            document.getElementById('final-episodes').textContent = trainingData.episodes.length;
+            document.getElementById('episodes-efficiency').textContent = '高效率';
+
+            document.getElementById('final-avg-loss').textContent = finalLoss.toFixed(4);
+            document.getElementById('loss-reduction').textContent = `-${lossReduction}%`;
+
+            // 更新训练总结
+            const summary = document.getElementById('training-summary');
+            summary.innerHTML = `
+                <p><strong>训练完成！</strong></p>
+                <p>模型经过 ${trainingData.episodes.length} 轮训练，性能显著提升：</p>
+                <ul>
+                    <li>奖励从 ${initialReward.toFixed(2)} 提升到 ${finalReward.toFixed(2)}，提升了 ${rewardImprovement}%</li>
+                    <li>损失从 ${initialLoss.toFixed(4)} 降低到 ${finalLoss.toFixed(4)}，降低了 ${lossReduction}%</li>
+                    <li>平均最终奖励: ${(trainingData.avgRewards[trainingData.avgRewards.length - 1] || 0).toFixed(2)}</li>
+                </ul>
+                <p>模型训练成功，可以部署使用。</p>
+            `;
+
+            // 绘制图表
+            drawRewardChart();
+            drawLossChart();
+        }
+
+        // 绘制Reward曲线
+        function drawRewardChart() {
+            const canvas = document.getElementById('reward-chart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#ecf0f1';
+            ctx.lineWidth = 1;
+
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(50, height - 40);
+            ctx.lineTo(width - 20, height - 40);
+            ctx.stroke();
+
+            // Y轴
+            ctx.beginPath();
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, height - 40);
+            ctx.stroke();
+
+            // 绘制标签
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Episode', width / 2, height - 10);
+
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Reward', 0, 0);
+            ctx.restore();
+
+            // 计算数据范围
+            const maxReward = Math.max(...trainingData.rewards);
+            const minReward = Math.min(...trainingData.rewards);
+            const padding = 20;
+
+            // 绘制曲线
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            const xStep = (width - 70) / trainingData.episodes.length;
+
+            trainingData.episodes.forEach((episode, i) => {
+                const x = 50 + episode * xStep;
+                const y = height - 40 - ((trainingData.rewards[i] - minReward) / (maxReward - minReward)) * (height - 80);
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // 绘制平均曲线
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+
+            trainingData.episodes.forEach((episode, i) => {
+                const x = 50 + episode * xStep;
+                const y = height - 40 - ((trainingData.avgRewards[i] - minReward) / (maxReward - minReward)) * (height - 80);
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 图例
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(width - 150, 20, 20, 10);
+            ctx.fillStyle = '#2c3e50';
+            ctx.textAlign = 'left';
+            ctx.fillText('Reward', width - 120, 28);
+
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(width - 150, 40, 20, 10);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText('Avg Reward', width - 120, 48);
+        }
+
+        // 绘制Loss曲线
+        function drawLossChart() {
+            const canvas = document.getElementById('loss-chart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#ecf0f1';
+            ctx.lineWidth = 1;
+
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(50, height - 40);
+            ctx.lineTo(width - 20, height - 40);
+            ctx.stroke();
+
+            // Y轴
+            ctx.beginPath();
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, height - 40);
+            ctx.stroke();
+
+            // 绘制标签
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Episode', width / 2, height - 10);
+
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Loss', 0, 0);
+            ctx.restore();
+
+            // 计算数据范围
+            const maxLoss = Math.max(...trainingData.losses);
+            const minLoss = Math.min(...trainingData.losses);
+            const padding = 20;
+
+            // 绘制曲线
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            const xStep = (width - 70) / trainingData.episodes.length;
+
+            trainingData.episodes.forEach((episode, i) => {
+                const x = 50 + episode * xStep;
+                const y = height - 40 - ((trainingData.losses[i] - minLoss) / (maxLoss - minLoss)) * (height - 80);
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+        }
+
+        // 重置演示
+        function resetDemo() {
+            if (trainingInProgress) {
+                clearInterval(trainingTimer);
+            }
+
+            trainingInProgress = false;
+            currentPage = 'home';
+
+            // 重置所有页面
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('home-page').style.display = 'block';
+
+            // 重置流程节点
+            document.querySelectorAll('.flow-node').forEach(node => {
+                node.classList.remove('active', 'completed');
+            });
+
+            // 重置进度条
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-bar').textContent = '0%';
+
+            // 重置统计
+            document.getElementById('stat-episode').textContent = '0';
+            document.getElementById('stat-reward').textContent = '0';
+            document.getElementById('stat-loss').textContent = '0.00';
+            document.getElementById('stat-avg-reward').textContent = '0';
+
+            // 清空日志
+            document.getElementById('log-content').innerHTML =
+                '<div class="log-entry log-info">[系统] 等待开始训练...</div>';
+
+            // 清空训练数据
+            trainingData = {
+                episodes: [],
+                rewards: [],
+                losses: [],
+                avgRewards: []
+            };
+        }
+
+        // 下载结果
+        function downloadResults() {
+            const data = {
+                config: {
+                    dataset: document.getElementById('dataset-select').value,
+                    algorithm: document.getElementById('algorithm').value,
+                    learningRate: document.getElementById('learning-rate').value,
+                    batchSize: document.getElementById('batch-size').value,
+                    totalEpisodes: document.getElementById('total-episodes').value,
+                    gamma: document.getElementById('gamma').value,
+                    epsilon: document.getElementById('epsilon').value
+                },
+                results: {
+                    finalReward: trainingData.rewards[trainingData.rewards.length - 1],
+                    finalLoss: trainingData.losses[trainingData.losses.length - 1],
+                    totalEpisodes: trainingData.episodes.length
+                },
+                trainingData: trainingData
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rl_training_results.json';
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+
+        // 页面加载完成
+        window.onload = function() {
+            console.log('强化学习训练流程Demo已加载');
+            initializeExperiencePage();
+            // 初始化基础模型选择事件
+            initializeBaseModelSelection();
+        };
+
+        // 新增：初始化基础模型选择事件
+        function initializeBaseModelSelection() {
+            const baseModelSelect = document.getElementById('base-model');
+            const npuCountSelect = document.getElementById('npu-count');
+            
+            if (baseModelSelect && npuCountSelect) {
+                // 模型与NPU卡数量的对应关系
+                const modelToNpuMapping = {
+                    'qwen3-8b': '8',
+                    'qwen3-14b': '16',
+                    'qwen3-32b': '32'
+                };
+                
+                // 监听基础模型选择变化
+                baseModelSelect.addEventListener('change', function() {
+                    const selectedModel = this.value;
+                    const recommendedNpuCount = modelToNpuMapping[selectedModel];
+                    
+                    if (recommendedNpuCount) {
+                        npuCountSelect.value = recommendedNpuCount;
+                        // 可选：添加视觉反馈
+                        npuCountSelect.style.borderColor = '#667eea';
+                        setTimeout(() => {
+                            npuCountSelect.style.borderColor = '#ecf0f1';
+                        }, 500);
+                    }
+                });
+            }
+        }
+
+        // 新增：效果体验相关功能
+        let currentDataset = 'insurance';
+        let currentQuestionIndex = -1;
+
+        // 模拟基础模型回答(不正确/不完整)
+        const baseModelAnswers = {
+            insurance: [
+                "保险理赔需要身份证和银行卡。",
+                "意外险不包含医疗费用。",
+                "重疾险等待期是30天。",
+                "寿险受益人不能指定。",
+                "家财险只保房屋。",
+                "保险没有犹豫期。",
+                "社保断缴没有影响。",
+                "只能去线下查询保单。",
+                "医疗险没有免赔额。",
+                "投保人豁免是免费的。"
+            ],
+            education: [
+                "牛顿第一定律是关于运动的定律。",
+                "多听音乐就能提高听力。",
+                "勾股定理是a+b=c。",
+                "光合作用是植物生长。",
+                "《红楼梦》作者是鲁迅。",
+                "微积分是数学计算。",
+                "学习计划就是多做题。",
+                "二战结束于1999年。",
+                "元素周期表是化学表格。",
+                "给孩子多买书就能培养兴趣。"
+            ],
+            securities: [
+                "市盈率是股票价格。",
+                "牛市和熊市是一样的。",
+                "K线图是价格图表。",
+                "股票账户不需要身份证。",
+                "ETF是股票基金。",
+                "止损是继续持有。",
+                "分红派息不改变股价。",
+                "IPO是首次发行。",
+                "基本面就是看公司名字。",
+                "换手率是交易次数。"
+            ]
+        };
+
+        // 初始化效果体验页面
+        function initializeExperiencePage() {
+            generateQuestionButtons();
+        }
+
+        // 生成问题按钮
+        function generateQuestionButtons() {
+            const questionGrid = document.getElementById('question-grid');
+            if (!questionGrid) return;
+
+            // 获取当前选择的数据集
+            const datasetSelect = document.getElementById('dataset-select');
+            if (datasetSelect) {
+                currentDataset = datasetSelect.value;
+            }
+
+            const questions = mockDatasets[currentDataset];
+            questionGrid.innerHTML = '';
+
+            questions.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'question-btn';
+                // 优化：在问题下方显示正确答案，方便对比判断
+                btn.innerHTML = `
+                    <div style="margin-bottom: 8px;">
+                        <span class="question-number">${index + 1}.</span>${item.input}
+                    </div>
+                    <div style="font-size: 12px; color: #27ae60; margin-top: 5px; text-align: left; border-top: 1px dashed #ddd; padding-top: 5px;">
+                        <strong>✓ 正确答案:</strong> ${item.output}
+                    </div>
+                `;
+                btn.onclick = () => selectQuestion(index);
+                questionGrid.appendChild(btn);
+            });
+        }
+
+        // 选择问题
+        function selectQuestion(index) {
+            // 检查是否已完成训练
+            if (trainingData.episodes.length === 0) {
+                alert('请先进行模型训练后再进行效果对比');
+                return;
+            }
+
+            currentQuestionIndex = index;
+
+            // 更新按钮状态
+            const buttons = document.querySelectorAll('.question-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+
+            // 清空聊天框
+            const baseChatBox = document.getElementById('base-chat-box');
+            const enhancedChatBox = document.getElementById('enhanced-chat-box');
+
+            baseChatBox.innerHTML = '';
+            enhancedChatBox.innerHTML = '';
+
+            // 获取基础模型名称
+            const baseModelSelect = document.getElementById('base-model');
+            const baseModelName = baseModelSelect.options[baseModelSelect.selectedIndex].text;
+
+            // 更新模型标题
+            document.querySelector('.model-header .model-info h3').textContent = '基础模型';
+            document.querySelector('.model-header .model-info p').textContent = `${baseModelName} - 训练前`;
+
+            document.querySelectorAll('.model-header')[1].querySelector('h3').textContent = '增强模型';
+            document.querySelectorAll('.model-header')[1].querySelector('p').textContent = `${baseModelName} - 训练后`;
+
+            // 显示问题
+            const question = mockDatasets[currentDataset][index].input;
+            addMessage(baseChatBox, 'user', question);
+            addMessage(enhancedChatBox, 'user', question);
+
+            // 显示基础模型回答(先显示打字动画)
+            showTypingIndicator(baseChatBox);
+            setTimeout(() => {
+                removeTypingIndicator(baseChatBox);
+                const baseAnswer = baseModelAnswers[currentDataset][index];
+                addMessage(baseChatBox, 'assistant', baseAnswer);
+            }, 5000);
+
+            // 显示增强模型回答(延迟显示)
+            showTypingIndicator(enhancedChatBox);
+            setTimeout(() => {
+                removeTypingIndicator(enhancedChatBox);
+                const enhancedAnswer = mockDatasets[currentDataset][index].output;
+                addMessage(enhancedChatBox, 'assistant', enhancedAnswer);
+            }, 7000);
+        }
+
+        // 添加消息
+        function addMessage(container, type, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${type}`;
+
+            const label = document.createElement('div');
+            label.className = 'message-label';
+            label.textContent = type === 'user' ? '用户提问' : '模型回答';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+
+            messageDiv.appendChild(label);
+            messageDiv.appendChild(contentDiv);
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 显示打字动画
+        function showTypingIndicator(container) {
+            const indicator = document.createElement('div');
+            indicator.className = 'chat-message assistant';
+            indicator.id = 'typing-indicator';
+            indicator.innerHTML = `
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(indicator);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 移除打字动画
+        function removeTypingIndicator(container) {
+            const indicator = container.querySelector('#typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // 监听数据集变化,更新问题列表
+        const datasetSelect = document.getElementById('dataset-select');
+        if (datasetSelect) {
+            datasetSelect.addEventListener('change', function() {
+                currentDataset = this.value;
+                if (currentPage === 'experience') {
+                    generateQuestionButtons();
+                    // 清空聊天框
+                    document.getElementById('base-chat-box').innerHTML = '<p style="text-align: center; color: #95a5a6; padding: 40px;">请选择一个问题开始体验</p>';
+                    document.getElementById('enhanced-chat-box').innerHTML = '<p style="text-align: center; color: #95a5a6; padding: 40px;">请选择一个问题开始体验</p>';
+                    // 重置问题选择状态
+                    currentQuestionIndex = -1;
+                }
+            });
+        }
+    </script>
+
+    <script>
+
+        // 全局状态
+        let currentPage = 'home';
+        let trainingInProgress = false;
+        let trainingData = {
+            episodes: [],
+            rewards: [],
+            losses: [],
+            avgRewards: []
+        };
+        let trainingTimer = null;
+        
+        // 新增：step参数(默认10),不显示在前台
+        const STEPS_PER_EPISODE = 10;
+
+        // 模拟数据集数据
+        const mockDatasets = {
+            insurance: [
+                { id: 1, input: "请问车险理赔需要哪些材料？", output: "车险理赔通常需要：保险单正本、索赔申请书、交通事故责任认定书、车辆修理发票、损失清单等。" },
+                { id: 2, input: "意外险包含医疗费用吗？", output: "大部分意外险包含意外医疗费用报销，具体保额和免赔额请参照您的保险合同条款。" },
+                { id: 3, input: "重疾险等待期是多长时间？", output: "重疾险的等待期通常为90天或180天，等待期内确诊疾病一般不赔付，具体视产品而定。" },
+                { id: 4, input: "寿险受益人可以指定吗？", output: "可以。投保人或者被保险人可以指定一人或者数人为身故保险金受益人。" },
+                { id: 5, input: "家财险保什么？", output: "家庭财产保险主要保障房屋主体、室内装修、以及室内财产（如家电、家具）因火灾、爆炸等造成的损失。" },
+                { id: 6, input: "保险犹豫期是多久？", output: "长期保险通常有10-15天的犹豫期，犹豫期内退保可全额退还保费（扣除工本费）。" },
+                { id: 7, input: "社保断缴会有影响吗？", output: "社保断缴可能会影响医保报销待遇和养老金领取年限，建议连续缴纳。" },
+                { id: 8, input: "如何查询保单状态？", output: "您可以通过保险公司官方APP、微信公众号或拨打客服热线查询保单状态。" },
+                { id: 9, input: "医疗险有免赔额吗？", output: "百万医疗险通常有1万元免赔额，超过免赔额的部分才能报销；小额医疗险免赔额较低或无免赔额。" },
+                { id: 10, input: "投保人豁免是什么？", output: "投保人豁免是指如果投保人发生合同约定的风险（如身故、重疾），可以免交后续保费，保障继续有效。" }
+            ],
+            education: [
+                { id: 1, input: "什么是牛顿第一定律？", output: "牛顿第一定律，又称惯性定律，指一切物体在没有受到外力作用的时候，总保持匀速直线运动状态或静止状态。" },
+                { id: 2, input: "如何提高英语听力？", output: "提高英语听力可以通过多听英文广播、看英文电影、跟读模仿以及进行专门的精听练习来实现。" },
+                { id: 3, input: "勾股定理公式是什么？", output: "勾股定理公式为 a² + b² = c²，其中a和b是直角三角形的两条直角边，c是斜边。" },
+                { id: 4, input: "光合作用的意义是什么？", output: "光合作用是制造有机物的主要途径，是生物界获取能量的根本来源，同时还维持了大气中的碳氧平衡。" },
+                { id: 5, input: "《红楼梦》的作者是谁？", output: "《红楼梦》的作者一般认为是曹雪芹，后四十回通常认为是高鹗所续。" },
+                { id: 6, input: "什么是微积分？", output: "微积分是研究函数的微分、积分以及有关概念和应用的数学分支，它是高等数学的基础。" },
+                { id: 7, input: "如何制定学习计划？", output: "制定学习计划应明确目标、分解任务、合理安排时间，并坚持执行与定期复盘。" },
+                { id: 8, input: "二战结束于哪一年？", output: "第二次世界大战于1945年结束。" },
+                { id: 9, input: "什么是元素周期表？", output: "元素周期表是根据原子序数从小到大排序的化学元素列表，揭示了元素性质的周期性变化规律。" },
+                { id: 10, input: "如何培养孩子的阅读兴趣？", output: "可以通过亲子共读、营造家庭阅读氛围、让孩子自主选择感兴趣的书籍等方式培养阅读兴趣。" }
+            ],
+            securities: [
+                { id: 1, input: "什么是市盈率（PE）？", output: "市盈率是指股票价格除以每股收益的比率，通常用来衡量股票的投资价值及风险。" },
+                { id: 2, input: "牛市和熊市有什么区别？", output: "牛市指证券市场行情普遍看涨，延续时间较长的大升市；熊市则指行情普遍看淡，延续时间较长的大跌市。" },
+                { id: 3, input: "什么是K线图？", output: "K线图又称蜡烛图，记录了股票一天的开盘价、收盘价、最高价和最低价，是技术分析的基础工具。" },
+                { id: 4, input: "如何开通股票账户？", output: "开通股票账户需要准备身份证和银行卡，通过券商的APP或营业部现场办理开户手续。" },
+                { id: 5, input: "什么是ETF？", output: "ETF（交易型开放式指数基金）是一种在交易所上市交易的、基金份额可变的一种开放式基金。" },
+                { id: 6, input: "什么是止损？", output: "止损是指当某一投资出现的亏损达到预定数额时，及时斩仓出局，以避免形成更大的亏损。" },
+                { id: 7, input: "分红派息对股价有影响吗？", output: "分红派息后，股价通常会进行除权除息处理，导致股价下调，但投资者总资产（股票+现金）理论上不变。" },
+                { id: 8, input: "什么是IPO？", output: "IPO（Initial Public Offering）即首次公开募股，指企业第一次通过证券交易所向公众公开发行股票。" },
+                { id: 9, input: "如何分析基本面？", output: "基本面分析主要关注公司的财务状况、盈利能力、行业地位、宏观经济环境等因素。" },
+                { id: 10, input: "什么是换手率？", output: "换手率是指在一定时间内市场中股票转手买卖的频率，是反映股票流通性强弱的指标之一。" }
+            ]
+        };
+
+        // 页面导航
+        function goToPage(page) {
+            // 隐藏所有页面
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('home-page').style.display = 'none';
+
+            // 显示目标页面
+            if (page === 'home') {
+                document.getElementById('home-page').style.display = 'block';
+            } else {
+                const targetPage = document.getElementById(`${page}-page`);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                    targetPage.classList.add('fade-in');
+                }
+            }
+
+            currentPage = page;
+            updateFlowNodes();
+        }
+
+        function goHome() {
+            if (trainingInProgress) {
+                if (!confirm('训练正在进行中，确定要返回吗？')) {
+                    return;
+                }
+            }
+            goToPage('home');
+        }
+
+        // 更新流程节点状态
+        function updateFlowNodes() {
+            const pages = ['data', 'model', 'config', 'training', 'results', 'experience'];
+            const pageIndex = pages.indexOf(currentPage);
+
+            pages.forEach((page, index) => {
+                const node = document.getElementById(`node-${page}`);
+                if (node) {
+                    node.classList.remove('active', 'completed');
+
+                    if (index < pageIndex) {
+                        node.classList.add('completed');
+                    } else if (index === pageIndex) {
+                        node.classList.add('active');
+                    }
+                }
+            });
+        }
+
+        // 开始训练流程
+        function startTraining() {
+            goToPage('data');
+        }
+
+        // 新增：查看数据集详情
+        function viewDatasetDetails() {
+            const select = document.getElementById('dataset-select');
+            const datasetType = select.value;
+            const datasetName = select.options[select.selectedIndex].text;
+            const data = mockDatasets[datasetType];
+
+            if (!data) return;
+
+            // 设置标题
+            document.getElementById('modal-title').innerText = `${datasetName} - 前10条数据`;
+
+            // 填充表格
+            const tbody = document.getElementById('dataset-tbody');
+            tbody.innerHTML = ''; // 清空旧数据
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.input}</td>
+                    <td>${item.output}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 显示模态框
+            document.getElementById('dataset-modal').style.display = 'block';
+        }
+
+        // 新增：关闭模态框
+        function closeModal() {
+            document.getElementById('dataset-modal').style.display = 'none';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('dataset-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 开始训练过程
+        function startTraininGPROcess() {
+            if (trainingInProgress) {
+                return;
+            }
+
+            trainingInProgress = true;
+            goToPage('training');
+
+            // 重置训练数据
+            trainingData = {
+                episodes: [],
+                rewards: [],
+                losses: [],
+                avgRewards: []
+            };
+
+            // 获取训练参数
+            const totalEpisodes = parseInt(document.getElementById('total-episodes').value) || 100;
+            const learningRate = parseFloat(document.getElementById('learning-rate').value) || 0.00003;
+            
+            // 修改：获取新的数据集选择
+            const datasetSelect = document.getElementById('dataset-select');
+            const datasetName = datasetSelect.options[datasetSelect.selectedIndex].text;
+
+            // 添加日志
+            const totalSteps = totalEpisodes * STEPS_PER_EPISODE;
+            addLog('info', `开始训练，总轮数: ${totalEpisodes}, 每轮包含 ${STEPS_PER_EPISODE} 个step, 总训练次数: ${totalSteps}`);
+            addLog('info', `学习率: ${learningRate}`);
+            addLog('info', `数据集: ${datasetName}`);
+            addLog('info', `算法: ${document.getElementById('algorithm').value}`);
+
+            // 模拟训练过程
+            let currentEpisode = 0;
+            let currentStep = 0;
+            const updateInterval = 1200; // 毫秒
+
+            trainingTimer = setInterval(() => {
+                currentStep++;
+                
+                // 每完成STEPS_PER_EPISODE个step,算作完成1轮
+                if (currentStep % STEPS_PER_EPISODE === 0) {
+                    currentEpisode++;
+                    
+                    // 模拟训练数据(每轮的数据)
+                    const episodeReward = simulateReward(currentEpisode, totalEpisodes);
+                    const episodeLoss = simulateLoss(currentEpisode, totalEpisodes);
+
+                    trainingData.episodes.push(currentEpisode);
+                    trainingData.rewards.push(episodeReward);
+                    trainingData.losses.push(episodeLoss);
+
+                    // 计算平均奖励
+                    const recentRewards = trainingData.rewards.slice(-50);
+                    const avgReward = recentRewards.reduce((a, b) => a + b, 0) / recentRewards.length;
+                    trainingData.avgRewards.push(avgReward);
+
+                    // 更新UI
+                    const progress = Math.min(100, Math.round((currentEpisode / totalEpisodes) * 100));
+                    updateProgress(progress);
+                    updateStats(currentEpisode, episodeReward, episodeLoss, avgReward);
+
+                    // 每完成1轮,打印训练得分和loss
+                    addLog('info', `轮次 ${currentEpisode}/${totalEpisodes}: 得分=${episodeReward.toFixed(2)}, Loss=${episodeLoss.toFixed(4)}`);
+                }
+
+                // 训练完成
+                if (currentEpisode >= totalEpisodes) {
+                    clearInterval(trainingTimer);
+                    trainingInProgress = false;
+                    addLog('success', `训练完成！共完成 ${totalEpisodes} 轮训练, 总计 ${totalSteps} 次迭代`);
+                    setTimeout(() => {
+                        goToPage('results');
+                        showResults();
+                    }, 1000);
+                }
+            }, updateInterval);
+        }
+
+        // 模拟奖励曲线
+        function simulateReward(episode, totalEpisodes) {
+            const progress = episode / totalEpisodes;
+            const baseReward = 50 + progress * 40; // 基础奖励从50增长到90
+            const noise = (Math.random() - 0.5) * 10 * (1 - progress); // 噪声随训练减少
+            const seasonal = Math.sin(episode * 0.05) * 3; // 季节性波动
+            return Math.max(0, baseReward + noise + seasonal);
+        }
+
+        // 模拟损失曲线
+        function simulateLoss(episode, totalEpisodes) {
+            const progress = episode / totalEpisodes;
+            const baseLoss = 2.0 * Math.exp(-progress * 3); // 指数衰减
+            const noise = (Math.random() - 0.5) * 0.3 * (1 - progress);
+            return Math.max(0.001, baseLoss + noise);
+        }
+
+        // 更新进度条
+        function updateProgress(progress) {
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-bar').textContent = `${progress}%`;
+        }
+
+        // 更新统计信息
+        function updateStats(episode, reward, loss, avgReward) {
+            document.getElementById('stat-episode').textContent = episode;
+            document.getElementById('stat-reward').textContent = reward.toFixed(1);
+            document.getElementById('stat-loss').textContent = loss.toFixed(4);
+            document.getElementById('stat-avg-reward').textContent = avgReward.toFixed(1);
+        }
+
+        // 添加日志
+        function addLog(type, message) {
+            const logContent = document.getElementById('log-content');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
+
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // 显示训练结果
+        function showResults() {
+            if (trainingData.episodes.length === 0) {
+                return;
+            }
+
+            // 更新统计数据
+            const finalReward = trainingData.rewards[trainingData.rewards.length - 1];
+            const initialReward = trainingData.rewards[0];
+            const rewardImprovement = ((finalReward - initialReward) / initialReward * 100).toFixed(0);
+
+            const finalLoss = trainingData.losses[trainingData.losses.length - 1];
+            const initialLoss = trainingData.losses[0];
+            const lossReduction = ((initialLoss - finalLoss) / initialLoss * 100).toFixed(0);
+
+            document.getElementById('final-reward').textContent = finalReward.toFixed(1);
+            document.getElementById('reward-change').textContent = `+${rewardImprovement}%`;
+
+            document.getElementById('final-episodes').textContent = trainingData.episodes.length;
+            document.getElementById('episodes-efficiency').textContent = '高效率';
+
+            document.getElementById('final-avg-loss').textContent = finalLoss.toFixed(4);
+            document.getElementById('loss-reduction').textContent = `-${lossReduction}%`;
+
+            // 更新训练总结
+            const summary = document.getElementById('training-summary');
+            summary.innerHTML = `
+                <p><strong>训练完成！</strong></p>
+                <p>模型经过 ${trainingData.episodes.length} 轮训练，性能显著提升：</p>
+                <ul>
+                    <li>奖励从 ${initialReward.toFixed(2)} 提升到 ${finalReward.toFixed(2)}，提升了 ${rewardImprovement}%</li>
+                    <li>损失从 ${initialLoss.toFixed(4)} 降低到 ${finalLoss.toFixed(4)}，降低了 ${lossReduction}%</li>
+                    <li>平均最终奖励: ${(trainingData.avgRewards[trainingData.avgRewards.length - 1] || 0).toFixed(2)}</li>
+                </ul>
+                <p>模型训练成功，可以部署使用。</p>
+            `;
+
+            // 绘制图表
+            drawRewardChart();
+            drawLossChart();
+        }
+
+        // 绘制Reward曲线
+        function drawRewardChart() {
+            const canvas = document.getElementById('reward-chart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#ecf0f1';
+            ctx.lineWidth = 1;
+
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(50, height - 40);
+            ctx.lineTo(width - 20, height - 40);
+            ctx.stroke();
+
+            // Y轴
+            ctx.beginPath();
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, height - 40);
+            ctx.stroke();
+
+            // 绘制标签
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Episode', width / 2, height - 10);
+
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Reward', 0, 0);
+            ctx.restore();
+
+            // 计算数据范围
+            const maxReward = Math.max(...trainingData.rewards);
+            const minReward = Math.min(...trainingData.rewards);
+            const padding = 20;
+
+            // 绘制曲线
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            const xStep = (width - 70) / trainingData.episodes.length;
+
+            trainingData.episodes.forEach((episode, i) => {
+                const x = 50 + episode * xStep;
+                const y = height - 40 - ((trainingData.rewards[i] - minReward) / (maxReward - minReward)) * (height - 80);
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // 绘制平均曲线
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+
+            trainingData.episodes.forEach((episode, i) => {
+                const x = 50 + episode * xStep;
+                const y = height - 40 - ((trainingData.avgRewards[i] - minReward) / (maxReward - minReward)) * (height - 80);
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 图例
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(width - 150, 20, 20, 10);
+            ctx.fillStyle = '#2c3e50';
+            ctx.textAlign = 'left';
+            ctx.fillText('Reward', width - 120, 28);
+
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(width - 150, 40, 20, 10);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText('Avg Reward', width - 120, 48);
+        }
+
+        // 绘制Loss曲线
+        function drawLossChart() {
+            const canvas = document.getElementById('loss-chart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制坐标轴
+            ctx.strokeStyle = '#ecf0f1';
+            ctx.lineWidth = 1;
+
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(50, height - 40);
+            ctx.lineTo(width - 20, height - 40);
+            ctx.stroke();
+
+            // Y轴
+            ctx.beginPath();
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, height - 40);
+            ctx.stroke();
+
+            // 绘制标签
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Episode', width / 2, height - 10);
+
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Loss', 0, 0);
+            ctx.restore();
+
+            // 计算数据范围
+            const maxLoss = Math.max(...trainingData.losses);
+            const minLoss = Math.min(...trainingData.losses);
+            const padding = 20;
+
+            // 绘制曲线
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            const xStep = (width - 70) / trainingData.episodes.length;
+
+            trainingData.episodes.forEach((episode, i) => {
+                const x = 50 + episode * xStep;
+                const y = height - 40 - ((trainingData.losses[i] - minLoss) / (maxLoss - minLoss)) * (height - 80);
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+        }
+
+        // 重置演示
+        function resetDemo() {
+            if (trainingInProgress) {
+                clearInterval(trainingTimer);
+            }
+
+            trainingInProgress = false;
+            currentPage = 'home';
+
+            // 重置所有页面
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+            document.getElementById('home-page').style.display = 'block';
+
+            // 重置流程节点
+            document.querySelectorAll('.flow-node').forEach(node => {
+                node.classList.remove('active', 'completed');
+            });
+
+            // 重置进度条
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-bar').textContent = '0%';
+
+            // 重置统计
+            document.getElementById('stat-episode').textContent = '0';
+            document.getElementById('stat-reward').textContent = '0';
+            document.getElementById('stat-loss').textContent = '0.00';
+            document.getElementById('stat-avg-reward').textContent = '0';
+
+            // 清空日志
+            document.getElementById('log-content').innerHTML =
+                '<div class="log-entry log-info">[系统] 等待开始训练...</div>';
+
+            // 清空训练数据
+            trainingData = {
+                episodes: [],
+                rewards: [],
+                losses: [],
+                avgRewards: []
+            };
+        }
+
+        // 下载结果
+        function downloadResults() {
+            const data = {
+                config: {
+                    dataset: document.getElementById('dataset-select').value,
+                    algorithm: document.getElementById('algorithm').value,
+                    learningRate: document.getElementById('learning-rate').value,
+                    batchSize: document.getElementById('batch-size').value,
+                    totalEpisodes: document.getElementById('total-episodes').value,
+                    gamma: document.getElementById('gamma').value,
+                    epsilon: document.getElementById('epsilon').value
+                },
+                results: {
+                    finalReward: trainingData.rewards[trainingData.rewards.length - 1],
+                    finalLoss: trainingData.losses[trainingData.losses.length - 1],
+                    totalEpisodes: trainingData.episodes.length
+                },
+                trainingData: trainingData
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rl_training_results.json';
+            a.click();
+
+            URL.revokeObjectURL(url);
+        }
+
+        // 页面加载完成
+        window.onload = function() {
+            console.log('强化学习训练流程Demo已加载');
+            initializeExperiencePage();
+            // 初始化基础模型选择事件
+            initializeBaseModelSelection();
+        };
+
+        // 新增：初始化基础模型选择事件
+        function initializeBaseModelSelection() {
+            const baseModelSelect = document.getElementById('base-model');
+            const npuCountSelect = document.getElementById('npu-count');
+            
+            if (baseModelSelect && npuCountSelect) {
+                // 模型与NPU卡数量的对应关系
+                const modelToNpuMapping = {
+                    'qwen3-8b': '8',
+                    'qwen3-14b': '16',
+                    'qwen3-32b': '32'
+                };
+                
+                // 监听基础模型选择变化
+                baseModelSelect.addEventListener('change', function() {
+                    const selectedModel = this.value;
+                    const recommendedNpuCount = modelToNpuMapping[selectedModel];
+                    
+                    if (recommendedNpuCount) {
+                        npuCountSelect.value = recommendedNpuCount;
+                        // 可选：添加视觉反馈
+                        npuCountSelect.style.borderColor = '#667eea';
+                        setTimeout(() => {
+                            npuCountSelect.style.borderColor = '#ecf0f1';
+                        }, 500);
+                    }
+                });
+            }
+        }
+
+        // 新增：效果体验相关功能
+        let currentDataset = 'insurance';
+        let currentQuestionIndex = -1;
+
+        // 模拟基础模型回答(不正确/不完整)
+        const baseModelAnswers = {
+            insurance: [
+                "保险理赔需要身份证和银行卡。",
+                "意外险不包含医疗费用。",
+                "重疾险等待期是30天。",
+                "寿险受益人不能指定。",
+                "家财险只保房屋。",
+                "保险没有犹豫期。",
+                "社保断缴没有影响。",
+                "只能去线下查询保单。",
+                "医疗险没有免赔额。",
+                "投保人豁免是免费的。"
+            ],
+            education: [
+                "牛顿第一定律是关于运动的定律。",
+                "多听音乐就能提高听力。",
+                "勾股定理是a+b=c。",
+                "光合作用是植物生长。",
+                "《红楼梦》作者是鲁迅。",
+                "微积分是数学计算。",
+                "学习计划就是多做题。",
+                "二战结束于1999年。",
+                "元素周期表是化学表格。",
+                "给孩子多买书就能培养兴趣。"
+            ],
+            securities: [
+                "市盈率是股票价格。",
+                "牛市和熊市是一样的。",
+                "K线图是价格图表。",
+                "股票账户不需要身份证。",
+                "ETF是股票基金。",
+                "止损是继续持有。",
+                "分红派息不改变股价。",
+                "IPO是首次发行。",
+                "基本面就是看公司名字。",
+                "换手率是交易次数。"
+            ]
+        };
+
+        // 初始化效果体验页面
+        function initializeExperiencePage() {
+            generateQuestionButtons();
+        }
+
+        // 生成问题按钮
+        function generateQuestionButtons() {
+            const questionGrid = document.getElementById('question-grid');
+            if (!questionGrid) return;
+
+            // 获取当前选择的数据集
+            const datasetSelect = document.getElementById('dataset-select');
+            if (datasetSelect) {
+                currentDataset = datasetSelect.value;
+            }
+
+            const questions = mockDatasets[currentDataset];
+            questionGrid.innerHTML = '';
+
+            questions.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'question-btn';
+                // 优化：在问题下方显示正确答案，方便对比判断
+                btn.innerHTML = `
+                    <div style="margin-bottom: 8px;">
+                        <span class="question-number">${index + 1}.</span>${item.input}
+                    </div>
+                    <div style="font-size: 12px; color: #27ae60; margin-top: 5px; text-align: left; border-top: 1px dashed #ddd; padding-top: 5px;">
+                        <strong>✓ 正确答案:</strong> ${item.output}
+                    </div>
+                `;
+                btn.onclick = () => selectQuestion(index);
+                questionGrid.appendChild(btn);
+            });
+        }
+
+        // 选择问题
+        function selectQuestion(index) {
+            // 检查是否已完成训练
+            if (trainingData.episodes.length === 0) {
+                alert('请先进行模型训练后再进行效果对比');
+                return;
+            }
+
+            currentQuestionIndex = index;
+
+            // 更新按钮状态
+            const buttons = document.querySelectorAll('.question-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+
+            // 清空聊天框
+            const baseChatBox = document.getElementById('base-chat-box');
+            const enhancedChatBox = document.getElementById('enhanced-chat-box');
+
+            baseChatBox.innerHTML = '';
+            enhancedChatBox.innerHTML = '';
+
+            // 获取基础模型名称
+            const baseModelSelect = document.getElementById('base-model');
+            const baseModelName = baseModelSelect.options[baseModelSelect.selectedIndex].text;
+
+            // 更新模型标题
+            document.querySelector('.model-header .model-info h3').textContent = '基础模型';
+            document.querySelector('.model-header .model-info p').textContent = `${baseModelName} - 训练前`;
+
+            document.querySelectorAll('.model-header')[1].querySelector('h3').textContent = '增强模型';
+            document.querySelectorAll('.model-header')[1].querySelector('p').textContent = `${baseModelName} - 训练后`;
+
+            // 显示问题
+            const question = mockDatasets[currentDataset][index].input;
+            addMessage(baseChatBox, 'user', question);
+            addMessage(enhancedChatBox, 'user', question);
+
+            // 显示基础模型回答(先显示打字动画)
+            showTypingIndicator(baseChatBox);
+            setTimeout(() => {
+                removeTypingIndicator(baseChatBox);
+                const baseAnswer = baseModelAnswers[currentDataset][index];
+                addMessage(baseChatBox, 'assistant', baseAnswer);
+            }, 5000);
+
+            // 显示增强模型回答(延迟显示)
+            showTypingIndicator(enhancedChatBox);
+            setTimeout(() => {
+                removeTypingIndicator(enhancedChatBox);
+                const enhancedAnswer = mockDatasets[currentDataset][index].output;
+                addMessage(enhancedChatBox, 'assistant', enhancedAnswer);
+            }, 7000);
+        }
+
+        // 添加消息
+        function addMessage(container, type, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${type}`;
+
+            const label = document.createElement('div');
+            label.className = 'message-label';
+            label.textContent = type === 'user' ? '用户提问' : '模型回答';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+
+            messageDiv.appendChild(label);
+            messageDiv.appendChild(contentDiv);
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 显示打字动画
+        function showTypingIndicator(container) {
+            const indicator = document.createElement('div');
+            indicator.className = 'chat-message assistant';
+            indicator.id = 'typing-indicator';
+            indicator.innerHTML = `
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(indicator);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 移除打字动画
+        function removeTypingIndicator(container) {
+            const indicator = container.querySelector('#typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // 监听数据集变化,更新问题列表
+        const datasetSelect = document.getElementById('dataset-select');
+        if (datasetSelect) {
+            datasetSelect.addEventListener('change', function() {
+                currentDataset = this.value;
+                if (currentPage === 'experience') {
+                    generateQuestionButtons();
+                    // 清空聊天框
+                    document.getElementById('base-chat-box').innerHTML = '<p style="text-align: center; color: #95a5a6; padding: 40px;">请选择一个问题开始体验</p>';
+                    document.getElementById('enhanced-chat-box').innerHTML = '<p style="text-align: center; color: #95a5a6; padding: 40px;">请选择一个问题开始体验</p>';
+                    // 重置问题选择状态
+                    currentQuestionIndex = -1;
+                }
+            });
+        }
+    
+    </script>
+</body>
+</html>
+
+
+

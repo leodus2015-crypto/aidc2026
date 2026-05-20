@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 593 118" width="593" height="118" overflow="visible" role="img" aria-label="aidc2026 logo">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="serverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d2137;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0a3050;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="593" height="118" rx="12" fill="#0A1628"/>
+
+  <g transform="translate(10, 29)">
+    <g transform="translate(32, 29.5) scale(2.15) translate(-32, -29.5)">
+      <g filter="url(#glow)" stroke="#00D4FF" stroke-width="0.8" fill="none" opacity="0.85">
+        <line x1="10" y1="28" x2="18" y2="18"/>
+        <line x1="10" y1="28" x2="18" y2="38"/>
+        <line x1="18" y1="18" x2="28" y2="12"/>
+        <line x1="18" y1="18" x2="28" y2="24"/>
+        <line x1="18" y1="38" x2="28" y2="32"/>
+        <line x1="18" y1="38" x2="28" y2="44"/>
+        <line x1="28" y1="12" x2="36" y2="18"/>
+        <line x1="28" y1="24" x2="36" y2="18"/>
+        <line x1="28" y1="24" x2="36" y2="30"/>
+        <line x1="28" y1="32" x2="36" y2="30"/>
+        <line x1="28" y1="44" x2="36" y2="38"/>
+        <line x1="36" y1="18" x2="36" y2="30"/>
+        <line x1="36" y1="30" x2="36" y2="38"/>
+      </g>
+      <g fill="#00D4FF" filter="url(#glow)">
+        <circle cx="10" cy="28" r="2.2"/>
+        <circle cx="18" cy="18" r="1.8"/>
+        <circle cx="18" cy="38" r="1.8"/>
+        <circle cx="28" cy="12" r="1.8"/>
+        <circle cx="28" cy="24" r="1.8"/>
+        <circle cx="28" cy="32" r="1.8"/>
+        <circle cx="28" cy="44" r="1.8"/>
+        <circle cx="36" cy="18" r="2.0"/>
+        <circle cx="36" cy="30" r="2.0"/>
+        <circle cx="36" cy="38" r="2.0"/>
+      </g>
+      <g filter="url(#glow)">
+        <rect x="38" y="9" width="16" height="38" rx="2" fill="url(#serverGrad)" stroke="#00D4FF" stroke-width="0.9"/>
+        <rect x="40" y="12" width="12" height="7" rx="1" fill="#0d2a40" stroke="#00D4FF" stroke-width="0.6"/>
+        <rect x="41" y="14" width="6" height="1.5" rx="0.5" fill="#00D4FF" opacity="0.7"/>
+        <circle cx="50" cy="15.5" r="1" fill="#00D4FF" opacity="0.9"/>
+        <rect x="40" y="21" width="12" height="7" rx="1" fill="#0d2a40" stroke="#00D4FF" stroke-width="0.6"/>
+        <rect x="41" y="23" width="6" height="1.5" rx="0.5" fill="#00D4FF" opacity="0.7"/>
+        <circle cx="50" cy="24.5" r="1" fill="#00D4FF" opacity="0.9"/>
+        <rect x="40" y="30" width="12" height="7" rx="1" fill="#0d2a40" stroke="#00D4FF" stroke-width="0.6"/>
+        <rect x="41" y="32" width="6" height="1.5" rx="0.5" fill="#00D4FF" opacity="0.7"/>
+        <circle cx="50" cy="33.5" r="1" fill="#00D4FF" opacity="0.9"/>
+        <line x1="40" y1="40" x2="54" y2="40" stroke="#00D4FF" stroke-width="0.5" opacity="0.5"/>
+        <line x1="40" y1="42" x2="54" y2="42" stroke="#00D4FF" stroke-width="0.5" opacity="0.5"/>
+        <line x1="40" y1="44" x2="54" y2="44" stroke="#00D4FF" stroke-width="0.5" opacity="0.5"/>
+      </g>
+    </g>
+  </g>
+
+  <text
+    x="132" y="52"
+    font-family="'Segoe UI', 'Arial', sans-serif"
+    font-size="44"
+    font-weight="700"
+    letter-spacing="2"
+    fill="#FFFFFF"
+  >AIDC</text>
+
+  <text
+    x="132" y="96"
+    font-family="'Segoe UI', 'Arial', sans-serif"
+    font-size="30"
+    font-weight="400"
+    letter-spacing="2"
+    fill="#00D4FF"
+    opacity="0.92"
+  >2026</text>
+
+  <line x1="284" y1="14" x2="284" y2="104" stroke="#00D4FF" stroke-width="0.75" opacity="0.45"/>
+
+  <text
+    x="294" y="46"
+    font-family="'Segoe UI', 'Arial', sans-serif"
+    font-size="30"
+    font-weight="600"
+    letter-spacing="0.65"
+    fill="#00D4FF"
+    opacity="0.88"
+  >AI DATA CENTER</text>
+  <text
+    x="294" y="88"
+    font-family="'Segoe UI', 'Arial', sans-serif"
+    font-size="28"
+    font-weight="400"
+    letter-spacing="0.35"
+    fill="#7fb8cc"
+    opacity="0.82"
+  >Knowledge Sharing</text>
+</svg>
