@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="About us · AIDC 2026 站点使命、AI 使用与开发团队介绍。" />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>About us · AI Data Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <nav
+      class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl"
+      aria-label="主导航"
+    >
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center" aria-label="AIDC 2026 · 首页">
+        <img
+          src="aidc2026-logo.svg"
+          alt="AIDC 2026 · AI Data Center"
+          width="593"
+          height="118"
+          class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10"
+        />
+      </a>
+
+      <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+        <li>
+          <a
+            href="index.html#inference"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            Agentic推理
+          </a>
+        </li>
+        <li>
+          <a
+            href="post-training.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            后训练
+          </a>
+        </li>
+        <li>
+          <a
+            href="white-paper.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            白皮书
+          </a>
+        </li>
+        <li>
+          <a
+            href="about-us.html"
+            class="inline-block border-b-2 border-blue-600 pb-1 text-blue-700"
+            aria-current="page"
+          >
+            About us
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
+    <section class="flex flex-col gap-8 lg:gap-10">
+      <div class="w-full max-w-3xl xl:max-w-4xl">
+        <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">About us</h1>
+      </div>
+
+      <div class="grid gap-6 lg:gap-8">
+        <article id="mission" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Mission</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl">网站构建目的</h2>
+          <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
+            <p>
+              面向AI DC （AI数据中心）领域的知识分享和演示，辅助快速理解关键概念与公式。
+            </p>
+            <p>
+              AI Native，100%代码AI生成
+            </p>
+          </div>
+        </article>
+
+        <article id="code-volume" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Code Volume</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl">代码量</h2>
+          <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
+            <p>
+              统计本仓库内全部源代码文件（HTML、Shell、SVG 等），不含 PDF 等二进制资源与 <code class="rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800">.git</code> 目录。
+            </p>
+          </div>
+          <dl class="mt-6 grid gap-4 sm:grid-cols-3">
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+              <dt class="text-xs font-medium text-slate-500">总代码行数 · Prompt 折算</dt>
+              <dd class="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                <span class="text-lg font-semibold text-slate-900">6,239 行</span>
+                <span class="text-sm font-medium text-slate-400" aria-hidden="true">≈</span>
+                <span class="text-lg font-semibold text-blue-700">99K Tokens</span>
+              </dd>
+              <p class="mt-2 text-xs leading-5 text-slate-500">
+                若将全部源码一次性作为 Prompt 输入；246,973 字符 ÷ 2.5 字符/Token，区间约 62K–99K。
+              </p>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+              <dt class="text-xs font-medium text-slate-500">代码文件数</dt>
+              <dd class="mt-1 text-lg font-semibold text-slate-900">9 个</dd>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+              <dt class="text-xs font-medium text-slate-500">主要语言</dt>
+              <dd class="mt-1 text-sm font-medium text-slate-800">HTML · Shell · SVG</dd>
+            </div>
+          </dl>
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold text-slate-900">Languages 类型与占比</h3>
+            <ul class="mt-4 space-y-4" role="list">
+              <li>
+                <div class="flex items-center justify-between gap-4 text-sm">
+                  <span class="font-medium text-slate-800">HTML</span>
+                  <span class="shrink-0 tabular-nums text-slate-600">6,077 行 · 97.4%</span>
+                </div>
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                  <div class="h-full rounded-full bg-blue-600" style="width: 97.4%"></div>
+                </div>
+                <p class="mt-1.5 text-xs text-slate-500">7 个页面文件（含 Agentic 推理、后训练、白皮书、About 等）</p>
+              </li>
+              <li>
+                <div class="flex items-center justify-between gap-4 text-sm">
+                  <span class="font-medium text-slate-800">SVG</span>
+                  <span class="shrink-0 tabular-nums text-slate-600">104 行 · 1.7%</span>
+                </div>
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                  <div class="h-full rounded-full bg-violet-500" style="width: 1.7%"></div>
+                </div>
+                <p class="mt-1.5 text-xs text-slate-500">1 个矢量资源（站点 Logo）</p>
+              </li>
+              <li>
+                <div class="flex items-center justify-between gap-4 text-sm">
+                  <span class="font-medium text-slate-800">Shell</span>
+                  <span class="shrink-0 tabular-nums text-slate-600">58 行 · 0.9%</span>
+                </div>
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                  <div class="h-full rounded-full bg-emerald-500" style="width: 0.9%"></div>
+                </div>
+                <p class="mt-1.5 text-xs text-slate-500">1 个脚本（本地预览服务）</p>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <article id="usage" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Usage</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl">AI Tokens 消耗</h2>
+          <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
+            <p>
+              记录 AIDC 2026 站点在 Cursor 等 AI 辅助工具下的 Token 消耗。基准数据来自控制台 Included Usage 手工录入；自
+              <time id="usageTrackedSince" datetime="2026-05-24">2026-05-24</time>
+              起由项目 Hook 估算增量并叠加显示。
+            </p>
+            <p class="text-sm text-slate-500">
+              统计周期（基准）：
+              <span id="usageBaselinePeriod">2026-04-25 — 2026-05-25</span>
+              · 数据来源：
+              <span id="usageBaselineSource">Cursor Dashboard · Included Usage</span>
+            </p>
+          </div>
+          <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+              <dt class="text-xs font-medium text-slate-500">累计 Tokens</dt>
+              <dd id="usageTotalTokens" class="mt-1 text-lg font-semibold text-slate-900">155.3M</dd>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+              <dt class="text-xs font-medium text-slate-500">最近更新</dt>
+              <dd id="usageUpdatedAt" class="mt-1 text-sm font-medium text-slate-800">2026-05-25</dd>
+            </div>
+          </dl>
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold text-slate-900">模型 / 类别分布（基准期）</h3>
+            <ul id="usageBreakdown" class="mt-4 space-y-5" role="list">
+              <li>
+                <p class="text-sm font-semibold text-slate-800">API · 60.6M · Included Usage 62.8%</p>
+                <ul class="mt-3 space-y-3" role="list">
+                  <li>
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                      <span class="font-medium text-slate-800">gpt-5.5-medium</span>
+                      <span class="shrink-0 tabular-nums text-slate-600">41.2M · 47.0%</span>
+                    </div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                      <div class="h-full rounded-full bg-blue-600" style="width: 47%"></div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                      <span class="font-medium text-slate-800">premium</span>
+                      <span class="shrink-0 tabular-nums text-slate-600">19.4M · 15.8%</span>
+                    </div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                      <div class="h-full rounded-full bg-sky-500" style="width: 15.8%"></div>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p class="text-sm font-semibold text-slate-800">Auto + Composer · 94.7M · Included Usage 24.5%</p>
+                <ul class="mt-3 space-y-3" role="list">
+                  <li>
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                      <span class="font-medium text-slate-800">composer-2-fast</span>
+                      <span class="shrink-0 tabular-nums text-slate-600">59.6M · 17.2%</span>
+                    </div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                      <div class="h-full rounded-full bg-violet-500" style="width: 17.2%"></div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                      <span class="font-medium text-slate-800">composer-2.5-fast</span>
+                      <span class="shrink-0 tabular-nums text-slate-600">32.6M · 6.7%</span>
+                    </div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                      <div class="h-full rounded-full bg-indigo-500" style="width: 6.7%"></div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                      <span class="font-medium text-slate-800">auto</span>
+                      <span class="shrink-0 tabular-nums text-slate-600">2.4M · 0.6%</span>
+                    </div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                      <div class="h-full rounded-full bg-emerald-500" style="width: 0.6%"></div>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <p id="usageNote" class="mt-6 text-xs leading-5 text-slate-500">
+            Hook 增量按对话文本长度估算（约 2.5 字符 / Token），仅供趋势参考；请以 Cursor 控制台账单为准。
+          </p>
+        </article>
+
+        <article id="team" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Team</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl">开发团队介绍</h2>
+          <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
+            <p>
+              知行合一 ｜Talk is cheap. Execution is truth.
+            </p>
+          </div>
+          <ul class="mt-6 space-y-4">
+            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
+                <img
+                  src="assets/avatar_tech_cto_head_only.png"
+                  alt="来自大城市的人"
+                  width="48"
+                  height="48"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900">来自大城市的人 · 版主</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600">网站负责人、整体规划和设计</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
+                <img
+                  src="assets/cursor-logo.png"
+                  alt="Cursor"
+                  width="48"
+                  height="48"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900">Cursor Agent · 程序员</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600">组织若干个大模型，将产品经理的构想落地</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">虎</div>
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900">虎哥 · 程序员</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600">负责后训练页面设计和开发</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">泽</div>
+              <div class="min-w-0">
+                <p class="font-semibold text-slate-900">小泽 · 架构师</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600">负责核心公式设计和校对</p>
+              </div>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white py-6">
+    <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
+      <span>工信部备案号：
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition hover:text-slate-700"
+        >苏ICP备2026026790号-3</a>
+      </span>
+      <span class="hidden sm:inline" aria-hidden="true">|</span>
+      <span>公安备案号：
+        <a
+          href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition hover:text-slate-700"
+        >苏公网安备32010602012455号</a>
+      </span>
+    </p>
+  </footer>
+  <script>
+    (function () {
+      const fallback = {
+        baseline: {
+          source: "Cursor Dashboard · Included Usage",
+          period: "2026-04-25 — 2026-05-25",
+          recorded_at: "2026-05-24",
+          total_tokens: 155300000,
+          categories: [
+            {
+              name: "API",
+              tokens: 60600000,
+              usage_percent: 62.8,
+              items: [
+                { name: "gpt-5.5-medium", tokens: 41200000, usage_percent: 47.0 },
+                { name: "premium", tokens: 19400000, usage_percent: 15.8 },
+              ],
+            },
+            {
+              name: "Auto + Composer",
+              tokens: 94700000,
+              usage_percent: 24.5,
+              items: [
+                { name: "composer-2-fast", tokens: 59600000, usage_percent: 17.2 },
+                { name: "composer-2.5-fast", tokens: 32600000, usage_percent: 6.7 },
+                { name: "auto", tokens: 2400000, usage_percent: 0.6 },
+              ],
+            },
+          ],
+        },
+        tracked: { since: "2026-05-24", total_tokens: 0 },
+        updated_at: "2026-05-24T00:00:00+08:00",
+      };
+
+      const barColors = ["bg-blue-600", "bg-sky-500", "bg-violet-500", "bg-indigo-500", "bg-emerald-500", "bg-amber-500"];
+
+      function formatTokens(value) {
+        const n = Number(value) || 0;
+        if (n >= 1e9) return `${(n / 1e9).toFixed(2)}B`;
+        if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
+        if (n >= 1e3) return `${(n / 1e3).toFixed(1)}K`;
+        return n.toLocaleString("zh-CN");
+      }
+
+      function formatDate(value) {
+        if (!value) return "—";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value).slice(0, 10);
+        return date.toLocaleDateString("zh-CN");
+      }
+
+      function renderUsage(data) {
+        const baseline = data.baseline || {};
+        const tracked = data.tracked || {};
+        const baselineTokens = Number(baseline.total_tokens) || 0;
+        const trackedTokens = Number(tracked.total_tokens) || 0;
+        const totalTokens = baselineTokens + trackedTokens;
+
+        const setText = (id, text) => {
+          const node = document.getElementById(id);
+          if (node) node.textContent = text;
+        };
+
+        setText("usageTotalTokens", formatTokens(totalTokens));
+        setText("usageBaselinePeriod", baseline.period || "—");
+        setText("usageBaselineSource", baseline.source || "—");
+        setText("usageUpdatedAt", formatDate(data.updated_at || baseline.recorded_at));
+        setText("usageTrackedSince", formatDate(tracked.since));
+
+        const breakdown = document.getElementById("usageBreakdown");
+        if (!breakdown || !Array.isArray(baseline.categories)) return;
+
+        breakdown.innerHTML = baseline.categories
+          .map((category) => {
+            const items = (category.items || [])
+              .map((item, index) => {
+                const color = barColors[index % barColors.length];
+                const width = Math.max(0.6, Math.min(100, Number(item.usage_percent) || 0));
+                return `
+                  <li>
+                    <div class="flex items-center justify-between gap-4 text-sm">
+                      <span class="font-medium text-slate-800">${item.name}</span>
+                      <span class="shrink-0 tabular-nums text-slate-600">${formatTokens(item.tokens)} · ${width}%</span>
+                    </div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                      <div class="h-full rounded-full ${color}" style="width: ${width}%"></div>
+                    </div>
+                  </li>`;
+              })
+              .join("");
+
+            return `
+              <li>
+                <p class="text-sm font-semibold text-slate-800">${category.name} · ${formatTokens(category.tokens)} · Included Usage ${category.usage_percent}%</p>
+                <ul class="mt-3 space-y-3" role="list">${items}</ul>
+              </li>`;
+          })
+          .join("");
+      }
+
+      fetch("data/ai-usage.json", { cache: "no-store" })
+        .then((response) => (response.ok ? response.json() : fallback))
+        .then(renderUsage)
+        .catch(() => renderUsage(fallback));
+    })();
+  </script>
+</body>
+</html>

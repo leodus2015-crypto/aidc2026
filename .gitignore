@@ -1,2 +1,3 @@
 .DS_Store
 assets/*.pdf
+data/ai-usage.json.lock

@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "updated_at": "2026-05-25T22:41:00+08:00",
+  "baseline": {
+    "source": "Cursor Dashboard · Included Usage",
+    "period": "2026-04-25 — 2026-05-25",
+    "recorded_at": "2026-05-24",
+    "total_tokens": 155300000,
+    "categories": [
+      {
+        "name": "API",
+        "tokens": 60600000,
+        "usage_percent": 62.8,
+        "items": [
+          {
+            "name": "gpt-5.5-medium",
+            "tokens": 41200000,
+            "usage_percent": 47.0
+          },
+          {
+            "name": "premium",
+            "tokens": 19400000,
+            "usage_percent": 15.8
+          }
+        ]
+      },
+      {
+        "name": "Auto + Composer",
+        "tokens": 94700000,
+        "usage_percent": 24.5,
+        "items": [
+          {
+            "name": "composer-2-fast",
+            "tokens": 59600000,
+            "usage_percent": 17.2
+          },
+          {
+            "name": "composer-2.5-fast",
+            "tokens": 32600000,
+            "usage_percent": 6.7
+          },
+          {
+            "name": "auto",
+            "tokens": 2400000,
+            "usage_percent": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  "tracked": {
+    "method": "cursor-hooks-estimate",
+    "since": "2026-05-24",
+    "total_tokens": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "thinking_tokens": 0,
+    "sessions": 0,
+    "events": 0,
+    "by_model": {}
+  },
+  "notes": "baseline 来自 Cursor 控制台手工录入；tracked 为 Hook 估算增量，非官方账单。"
+}

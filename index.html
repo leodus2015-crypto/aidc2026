@@ -64,6 +64,14 @@
             白皮书
           </a>
         </li>
+        <li>
+          <a
+            href="about-us.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            About us
+          </a>
+        </li>
       </ul>
     </nav>
   </header>
@@ -412,7 +420,7 @@
 
         <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0">
           <strong class="font-semibold">计算说明（KV Cache）：</strong>
-          采用业界通用估算（见 <a href="https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing" class="font-semibold text-blue-800 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">KV Cache Sizing</a> 等资料）：<strong class="font-semibold">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>。其中 <strong class="font-semibold">2</strong> 表示 K、V 两个张量；GQA 模型使用 <strong class="font-semibold">KV 头数</strong>（非 Query 头数）。<strong class="font-semibold">dtype_size</strong> 由模型名称量化后缀联动：<strong class="font-semibold">W8A8 / W4A8 → INT8（1 byte）</strong>；未识别后缀默认 <strong class="font-semibold">BF16/FP16（2 bytes）</strong>；INT4 KV 为 0.5 byte（本页未从名称自动识别）。<strong class="font-semibold">MoE 专家数</strong>不乘入公式。DeepSeek 等若启用 <strong class="font-semibold">MLA / FP8 KV / 分页 KV</strong>，实测常低于本估算。
+          采用业界通用估算（见 <a href="https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing" class="font-semibold text-blue-800 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">KV Cache Sizing</a> 等资料）：标准 GQA 为 <strong class="font-semibold">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>。<strong class="font-semibold">DeepSeek R1 / V3.1（MLA）</strong> 为 <strong class="font-semibold">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong>（W4A8 / W8A8 均按激活 A8 → INT8 KV，1 byte/元素；W4 仅影响权重）。<strong class="font-semibold">GLM-5.1（MLA + DSA）</strong> 为 <strong class="font-semibold">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong>（W8A8 @ 1M 约 <strong class="font-semibold">51.4 GiB</strong>；仅 MLA 约 41.8 GiB）。<strong class="font-semibold">DeepSeek V4（CSA/HCA）</strong> 按 <strong class="font-semibold">BF16 @ 1M 锚点 × (dtype_size / 2) × seq_len 比例</strong> 估算（V4-Flash W8A8 约 <strong class="font-semibold">4.81 GiB</strong>，BF16 基准 9.62 GiB ÷ 2）。
         </div>
         </div>
       </div>
@@ -617,17 +625,64 @@
     };
 
     /**
-     * KV Cache 估算用模型画像（占位参数，与混部下拉型号对齐）。
+     * KV Cache 估算用模型画像（与混部下拉型号对齐）。
      * 标准公式（tutorialQ / vLLM 等）：
      * KV_bytes = 2 × L × H_kv × head_dim × seq_len × batch_size × dtype_size
+     * DeepSeek R1 / V3.1 使用 MLA 结构化公式（kv_lora_rank + qk_rope_head_dim，非标准 GQA）。
+     * GLM-5.1 使用 MLA + DSA（含 indexer key 与 FP32 scale）。
+     * DeepSeek V4 另见 v4KvCompressedAnchors（CSA/HCA 架构压缩）。
      */
     const kvModelProfiles = {
-      'DeepSeek-R1-W8A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128 },
-      'DeepSeek-V3.1-Terminus-W4A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128 },
-      'DeepSeek-V4-Flash-W8A8': { layers: 36, experts: 128, kvHeads: 96, headDim: 128 },
-      'DeepSeek-V4-Pro-W8A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128 },
+      'DeepSeek-R1-W8A8': {
+        layers: 61,
+        compressedKvDim: 512,
+        ropeHeadDim: 64,
+        experts: 256,
+        kvHeads: 128,
+        headDim: 128,
+        kvFormula: 'mla',
+      },
+      'DeepSeek-V3.1-Terminus-W4A8': {
+        layers: 61,
+        compressedKvDim: 512,
+        ropeHeadDim: 64,
+        experts: 256,
+        kvHeads: 128,
+        headDim: 128,
+        kvFormula: 'mla',
+      },
+      'DeepSeek-V4-Flash-W8A8': { layers: 43, experts: 128, kvHeads: 96, headDim: 128, kvFormula: 'v4-compressed' },
+      'DeepSeek-V4-Pro-W8A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128, kvFormula: 'v4-compressed' },
       'Qwen3.6-35B-A3B': { layers: 52, experts: 128, kvHeads: 32, headDim: 128 },
-      'GLM-5.1-W8A8': { layers: 46, experts: 384, kvHeads: 96, headDim: 128 },
+      'GLM-5.1-W8A8': {
+        layers: 78,
+        compressedKvDim: 512,
+        ropeHeadDim: 64,
+        dsaIndexHeadDim: 128,
+        dsaIndexScaleBytes: 4,
+        experts: 384,
+        kvHeads: 96,
+        headDim: 128,
+        kvFormula: 'mla-dsa',
+      },
+    };
+
+    /**
+     * DeepSeek V4：混合注意力 CSA/HCA 在序列长度上压缩 KV，非 V3 MLA 逐层低秩方案。
+     * BF16 锚点：V4-Flash @ seq_len=1M、batch=1 ≈ 9.62 GiB；W8A8（FP8 KV，1 byte）≈ 9.62 ÷ 2 = 4.81 GiB。
+     * Pro 的 bf16AnchorGiB 按 Flash × (L×H_kv)_Pro / (L×H_kv)_Flash 外推，待官方实测校准。
+     */
+    const v4KvCompressedAnchors = {
+      'DeepSeek-V4-Flash-W8A8': {
+        anchorSeqLen: 1_000_000,
+        bf16AnchorGiB: 9.62,
+        note: 'CSA/HCA 序列压缩；BF16 @ 1M 约 9.62 GiB，W8A8 KV 减半约 4.81 GiB',
+      },
+      'DeepSeek-V4-Pro-W8A8': {
+        anchorSeqLen: 1_000_000,
+        bf16AnchorGiB: 9.62 * ((61 * 128) / (43 * 96)),
+        note: '同 V4 压缩族；BF16 锚点按 Flash × (L×H_kv)_Pro / (L×H_kv)_Flash 外推',
+      },
     };
 
     /** 从模型名称解析 KV Cache 存储精度；推理框架中 kv_cache_dtype 可单独配置，此处按名称后缀缺省推断。 */
@@ -646,7 +701,7 @@
         return {
           label: 'INT8（W4A8 · A8）',
           dtypeBytes: 1,
-          note: '激活 A8，KV Cache 按 INT8（1 byte/element）估算',
+          note: 'W4 仅影响权重；KV Cache 随激活 A8 按 INT8（1 byte/element）估算',
         };
       }
 
@@ -681,7 +736,7 @@
       };
     }
 
-    function computeKvCacheBytes(profile, quant, seqLen, batchSize) {
+    function computeStandardKvCacheBytes(profile, quant, seqLen, batchSize) {
       return (
         2 *
         profile.layers *
@@ -691,6 +746,43 @@
         batchSize *
         quant.dtypeBytes
       );
+    }
+
+    function computeMlaKvCacheBytes(profile, quant, seqLen, batchSize) {
+      const perLayerPerToken = profile.compressedKvDim + profile.ropeHeadDim;
+      return profile.layers * perLayerPerToken * seqLen * batchSize * quant.dtypeBytes;
+    }
+
+    function computeMlaDsaKvCacheBytes(profile, quant, seqLen, batchSize) {
+      const mlaElements = profile.compressedKvDim + profile.ropeHeadDim;
+      const dsaIndexElements = profile.dsaIndexHeadDim;
+      const scaleBytes = profile.dsaIndexScaleBytes || 0;
+      const perLayerPerTokenBytes =
+        (mlaElements + dsaIndexElements) * quant.dtypeBytes + scaleBytes;
+      return profile.layers * perLayerPerTokenBytes * seqLen * batchSize;
+    }
+
+    function computeV4CompressedKvBytes(modelKey, quant, seqLen, batchSize) {
+      const anchor = v4KvCompressedAnchors[modelKey];
+      const bf16AnchorBytes = anchor.bf16AnchorGiB * 1024 ** 3;
+      const anchorKvBytes = bf16AnchorBytes * (quant.dtypeBytes / 2);
+      return (anchorKvBytes * seqLen * batchSize) / anchor.anchorSeqLen;
+    }
+
+    function computeKvCacheBytes(modelKey, profile, quant, seqLen, batchSize) {
+      if (profile.kvFormula === 'mla-dsa') {
+        return computeMlaDsaKvCacheBytes(profile, quant, seqLen, batchSize);
+      }
+
+      if (profile.kvFormula === 'mla') {
+        return computeMlaKvCacheBytes(profile, quant, seqLen, batchSize);
+      }
+
+      if (profile.kvFormula === 'v4-compressed' && v4KvCompressedAnchors[modelKey]) {
+        return computeV4CompressedKvBytes(modelKey, quant, seqLen, batchSize);
+      }
+
+      return computeStandardKvCacheBytes(profile, quant, seqLen, batchSize);
     }
 
     function syncNpuCapacityFromSelection() {
@@ -795,6 +887,18 @@
 
       kvcLayersRo.value = String(prof.layers);
       kvcExpertsRo.value = prof.experts != null ? String(prof.experts) : '—';
+      if (prof.kvFormula === 'mla-dsa') {
+        kvcKvHeadsRo.value = `${prof.compressedKvDim} (kv_lora_rank)`;
+        kvcHeadDimRo.value = `${prof.ropeHeadDim} (qk_rope) + ${prof.dsaIndexHeadDim} (DSA index)`;
+        return;
+      }
+
+      if (prof.kvFormula === 'mla') {
+        kvcKvHeadsRo.value = `${prof.compressedKvDim} (kv_lora_rank)`;
+        kvcHeadDimRo.value = `${prof.ropeHeadDim} (qk_rope_head_dim)`;
+        return;
+      }
+
       kvcKvHeadsRo.value = String(prof.kvHeads);
       kvcHeadDimRo.value = String(prof.headDim);
     }
@@ -833,16 +937,62 @@
       }
 
       const dtypeBytes = quant.dtypeBytes;
-      const bytes = computeKvCacheBytes(prof, quant, seqLen, batchSize);
-      const bytesPerToken =
-        2 * prof.layers * prof.kvHeads * prof.headDim * dtypeBytes;
+      const bytes = computeKvCacheBytes(key, prof, quant, seqLen, batchSize);
       const gib = bytes / 1024 ** 3;
       const mib = bytes / 1024 ** 2;
+      const seqLabel = seqLen.toLocaleString('zh-CN');
 
       kvcResultGb.textContent = gib.toFixed(4);
       kvcResultMiB.textContent = `（≈ ${mib.toLocaleString('zh-CN', { maximumFractionDigits: 2 })} MiB）`;
 
-      const seqLabel = seqLen.toLocaleString('zh-CN');
+      if (prof.kvFormula === 'mla-dsa') {
+        const standardBytes = computeStandardKvCacheBytes(prof, quant, seqLen, batchSize);
+        const standardGib = standardBytes / 1024 ** 3;
+        const mlaOnlyBytes = computeMlaKvCacheBytes(prof, quant, seqLen, batchSize);
+        const mlaOnlyGib = mlaOnlyBytes / 1024 ** 3;
+        const mlaElements = prof.compressedKvDim + prof.ropeHeadDim;
+        const perLayerPerTokenBytes =
+          (mlaElements + prof.dsaIndexHeadDim) * dtypeBytes + (prof.dsaIndexScaleBytes || 0);
+        const bytesPerToken = perLayerPerTokenBytes * prof.layers;
+
+        kvcResultSubtitle.textContent = `KV Cache 估算（GLM MLA + DSA · ${quant.label}）`;
+        kvcResultFormula.textContent =
+          `MLA+DSA 展开：L ${prof.layers} × seq_len ${seqLabel} × batch_size ${batchSize} × [(${prof.compressedKvDim} + ${prof.ropeHeadDim} + ${prof.dsaIndexHeadDim}) × dtype_size ${dtypeBytes} + indexer_scale ${prof.dsaIndexScaleBytes}] = ${perLayerPerTokenBytes} bytes/token/layer ≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
+          ` 全模型每 token ${bytesPerToken.toLocaleString('zh-CN')} bytes（≈ ${(bytesPerToken / 1024).toFixed(1)} KiB）。` +
+          ` 仅 MLA 口径 ≈ ${mlaOnlyGib.toFixed(2)} GiB；对比标准 GQA 展开式 ≈ ${standardGib.toFixed(2)} GiB。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未乘入 KV。`;
+        return;
+      }
+
+      if (prof.kvFormula === 'mla') {
+        const standardBytes = computeStandardKvCacheBytes(prof, quant, seqLen, batchSize);
+        const standardGib = standardBytes / 1024 ** 3;
+        const perLayerPerToken = prof.compressedKvDim + prof.ropeHeadDim;
+        const bytesPerToken = perLayerPerToken * prof.layers * dtypeBytes;
+
+        kvcResultSubtitle.textContent = `KV Cache 估算（DeepSeek MLA · ${quant.label}）`;
+        kvcResultFormula.textContent =
+          `MLA 展开：L ${prof.layers} × (kv_lora_rank ${prof.compressedKvDim} + qk_rope_head_dim ${prof.ropeHeadDim}) × seq_len ${seqLabel} × batch_size ${batchSize} × dtype_size ${dtypeBytes}（${quant.label}）≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
+          ` 每层每 token ${perLayerPerToken} 元素，全模型每 token ${bytesPerToken.toLocaleString('zh-CN')} bytes（≈ ${(bytesPerToken / 1024).toFixed(1)} KiB）。` +
+          ` 对比标准 GQA 展开式 ≈ ${standardGib.toFixed(2)} GiB。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未乘入 MLA KV。`;
+        return;
+      }
+
+      if (prof.kvFormula === 'v4-compressed' && v4KvCompressedAnchors[key]) {
+        const anchor = v4KvCompressedAnchors[key];
+        const standardBytes = computeStandardKvCacheBytes(prof, quant, seqLen, batchSize);
+        const standardGib = standardBytes / 1024 ** 3;
+        const bytesPerToken = bytes / seqLen / batchSize;
+        const anchorKvGiB = anchor.bf16AnchorGiB * (quant.dtypeBytes / 2);
+
+        kvcResultSubtitle.textContent = `KV Cache 估算（V4 CSA/HCA 压缩 · ${quant.label}）`;
+        kvcResultFormula.textContent =
+          `V4 压缩估算：BF16 基准 ${anchor.bf16AnchorGiB.toFixed(2)} GiB @ seq_len ${anchor.anchorSeqLen.toLocaleString('zh-CN')} × (dtype_size ${dtypeBytes} / 2) ≈ ${anchorKvGiB.toFixed(2)} GiB @ 1M × (seq_len ${seqLabel} / ${anchor.anchorSeqLen.toLocaleString('zh-CN')}) × batch_size ${batchSize} ≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
+          ` 对比标准 GQA 展开式 ≈ ${standardGib.toFixed(2)} GiB。${anchor.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未计入；每 token 约 ${Math.round(bytesPerToken).toLocaleString('zh-CN')} bytes（含架构压缩）。`;
+        return;
+      }
+
+      const bytesPerToken =
+        2 * prof.layers * prof.kvHeads * prof.headDim * dtypeBytes;
       kvcResultFormula.textContent =
         `展开：2(K/V) × L ${prof.layers} × num_key_value_heads ${prof.kvHeads} × head_dim ${prof.headDim} × seq_len ${seqLabel} × batch_size ${batchSize} × dtype_size ${dtypeBytes}（${quant.label}）≈ ${bytes.toLocaleString('zh-CN')} bytes。` +
         `每 token 约 ${Math.round(bytesPerToken).toLocaleString('zh-CN')} bytes（不含 batch）。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未计入。`;
