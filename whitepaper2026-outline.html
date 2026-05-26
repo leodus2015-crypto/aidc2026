@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI DC 白皮书 2.0 章节规划对齐工作台：标题、子标题与关键信息协作编辑。" />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>白皮书 2.0 章节规划 · AI Data Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+    .presentation-mode .edit-only {
+      display: none !important;
+    }
+    .presentation-mode #sectionEditor textarea,
+    .presentation-mode #sectionEditor input,
+    .presentation-mode #sectionEditor select {
+      pointer-events: none;
+      border-color: transparent;
+      background: transparent;
+      resize: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <nav
+      class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8"
+      aria-label="主导航"
+    >
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center gap-3" aria-label="AIDC 2026 · 首页">
+        <img
+          src="aidc2026-logo.svg"
+          alt="AIDC 2026 · AI Data Center"
+          width="593"
+          height="118"
+          class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10"
+        />
+        <span class="hidden rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900 sm:inline">内部 · 章节对齐</span>
+      </a>
+
+      <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+        <li>
+          <a
+            href="index.html#inference"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            Agentic推理
+          </a>
+        </li>
+        <li>
+          <a
+            href="post-training.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            后训练
+          </a>
+        </li>
+        <li>
+          <a
+            href="white-paper.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            白皮书
+          </a>
+        </li>
+        <li>
+          <a
+            href="about-us.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            About us
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <section class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Whitepaper 2.0 · Outline</p>
+        <h1 class="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+          白皮书 2.0 章节规划对齐
+        </h1>
+        <p class="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
+          用于团队对齐三章标题、子标题与关键信息。编辑后自动保存至浏览器本地；可通过 Markdown 导入导出与他人同步。
+        </p>
+      </div>
+
+      <div class="edit-only flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          id="btnPresentation"
+          class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          演示模式
+        </button>
+        <button
+          type="button"
+          id="btnExportMd"
+          class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          导出 Markdown
+        </button>
+        <button
+          type="button"
+          id="btnExportJson"
+          class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          导出 JSON
+        </button>
+        <button
+          type="button"
+          id="btnImport"
+          class="rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+        >
+          导入 Markdown
+        </button>
+        <button
+          type="button"
+          id="btnSaveNow"
+          class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          立即保存
+        </button>
+        <button
+          type="button"
+          id="btnReset"
+          class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+        >
+          恢复默认
+        </button>
+      </div>
+    </section>
+
+    <div
+      id="summaryBar"
+      class="mb-6 flex flex-wrap gap-2 text-xs font-medium text-slate-600"
+      aria-live="polite"
+    ></div>
+
+    <p id="saveStatus" class="mb-4 text-xs text-slate-500" aria-live="polite"></p>
+
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] xl:grid-cols-[minmax(0,18rem)_minmax(0,1fr)_minmax(0,14rem)]">
+      <aside class="min-w-0">
+        <div class="sticky top-24 rounded-3xl border border-slate-200 bg-white p-4 shadow-lg shadow-slate-200/60 sm:p-5">
+          <h2 class="text-sm font-semibold text-slate-900">章节目录</h2>
+          <p class="mt-1 text-xs text-slate-500">点击子章节进行编辑或演示</p>
+          <div id="outlineTree" class="mt-4 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1"></div>
+        </div>
+      </aside>
+
+      <section class="min-w-0">
+        <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6 lg:p-8">
+          <div id="sectionEditor" class="min-h-[24rem]">
+            <p class="text-slate-500">加载中…</p>
+          </div>
+        </div>
+      </aside>
+
+      <aside class="min-w-0 xl:block hidden">
+        <div class="sticky top-24 space-y-4">
+          <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60">
+            <h2 class="text-sm font-semibold text-slate-900">使用说明</h2>
+            <ul class="mt-3 space-y-2 text-xs leading-5 text-slate-600">
+              <li>· 左侧选择子章节，在中间编辑标题、副标题与关键信息。</li>
+              <li>· 修改后约 0.8 秒自动保存到浏览器 localStorage。</li>
+              <li>· 组会前「导出 Markdown」，会后可将更新版「导入 Markdown」。</li>
+              <li>· 小团队无需并发处理：后保存者覆盖先保存者。</li>
+            </ul>
+          </div>
+          <div class="rounded-3xl border border-blue-100 bg-blue-50/70 p-5">
+            <h2 class="text-sm font-semibold text-blue-900">Markdown 格式示例</h2>
+            <pre class="mt-3 overflow-x-auto rounded-xl bg-white/80 p-3 text-[10px] leading-5 text-slate-700"><code># 第1章 Agent 正在重塑每个企业
+
+> 定位：本章解决什么问题
+
+## 1.1 子章节标题
+
+副标题：核心命题
+
+### 关键信息
+- [已对齐] 第一条关键观点
+- [待讨论] 第二条关键观点
+
+### 支撑依据
+参考数据或案例
+
+### 待讨论
+尚未达成一致的开放问题
+
+负责人：张三
+状态：评审中</code></pre>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60">
+            <h2 class="text-sm font-semibold text-slate-900">后续挂接</h2>
+            <p class="mt-2 text-xs leading-5 text-slate-600">
+              定稿后可从
+              <a href="white-paper.html" class="font-semibold text-blue-700 hover:underline">白皮书页</a>
+              链入本页，或将结论回写至 2.0 版本展示区块。
+            </p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div
+    id="importPanel"
+    class="edit-only fixed inset-0 z-30 hidden flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="importTitle"
+  >
+    <div class="max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
+        <h2 id="importTitle" class="text-lg font-semibold text-slate-900">导入 Markdown</h2>
+        <button type="button" id="btnImportClose" class="rounded-lg px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">关闭</button>
+      </div>
+      <div class="space-y-4 overflow-y-auto p-5 sm:p-6" style="max-height: calc(90vh - 8rem)">
+        <p class="text-sm text-slate-600">粘贴 Markdown 文本，或选择 .md 文件。导入前可先预览解析结果。</p>
+        <label class="block">
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">选择文件</span>
+          <input id="importFile" type="file" accept=".md,text/markdown,text/plain" class="mt-2 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-blue-700" />
+        </label>
+        <label class="block">
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Markdown 内容</span>
+          <textarea
+            id="importText"
+            rows="14"
+            class="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 font-mono text-xs leading-5 text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            placeholder="# 第1章 …"
+          ></textarea>
+        </label>
+        <p id="importPreview" class="text-sm"></p>
+      </div>
+      <div class="flex flex-wrap justify-end gap-2 border-t border-slate-100 px-5 py-4 sm:px-6">
+        <button type="button" id="btnImportPreview" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">预览解析</button>
+        <button type="button" id="btnImportApply" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">确认导入</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-10 border-t border-slate-200 bg-white py-6">
+    <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
+      <span>工信部备案号：
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition hover:text-slate-700"
+        >苏ICP备2026026790号-3</a>
+      </span>
+      <span class="hidden sm:inline" aria-hidden="true">|</span>
+      <span>公安备案号：
+        <a
+          href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition hover:text-slate-700"
+        >苏公网安备32010602012455号</a>
+      </span>
+    </p>
+  </footer>
+
+  <script src="js/outline-workbench.js"></script>
+</body>
+</html>
