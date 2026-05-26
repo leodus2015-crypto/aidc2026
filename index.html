@@ -420,7 +420,7 @@
 
         <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0">
           <strong class="font-semibold">计算说明（KV Cache）：</strong>
-          采用业界通用估算（见 <a href="https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing" class="font-semibold text-blue-800 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">KV Cache Sizing</a> 等资料）：标准 GQA 为 <strong class="font-semibold">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>。<strong class="font-semibold">DeepSeek R1 / V3.1（MLA）</strong> 为 <strong class="font-semibold">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong>（W4A8 / W8A8 均按激活 A8 → INT8 KV，1 byte/元素；W4 仅影响权重）。<strong class="font-semibold">GLM-5.1（MLA + DSA）</strong> 为 <strong class="font-semibold">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong>（W8A8 @ 1M 约 <strong class="font-semibold">51.4 GiB</strong>；仅 MLA 约 41.8 GiB）。<strong class="font-semibold">DeepSeek V4（CSA/HCA）</strong> 按 <strong class="font-semibold">BF16 @ 1M 锚点 × (dtype_size / 2) × seq_len 比例</strong> 估算（V4-Flash W8A8 约 <strong class="font-semibold">4.81 GiB</strong>，BF16 基准 9.62 GiB ÷ 2）。
+          采用业界通用估算（见 <a href="https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing" class="font-semibold text-blue-800 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">KV Cache Sizing</a> 等资料）：标准 GQA 为 <strong class="font-semibold">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>。<strong class="font-semibold">Qwen3.6（混合注意力）</strong> 为 <strong class="font-semibold">L_full × 2 × H_kv × head_dim × seq_len × batch_size × dtype_size</strong>（FP16 @ 1M 约 <strong class="font-semibold">19.1 GiB</strong>；linear 层不计 KV）。<strong class="font-semibold">DeepSeek R1 / V3.1（MLA）</strong> 为 <strong class="font-semibold">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong>（W4A8 / W8A8 均按激活 A8 → INT8 KV，1 byte/元素；W4 仅影响权重）。<strong class="font-semibold">GLM-5.1（MLA + DSA）</strong> 为 <strong class="font-semibold">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong>（W8A8 @ 1M 约 <strong class="font-semibold">51.4 GiB</strong>；仅 MLA 约 41.8 GiB）。<strong class="font-semibold">DeepSeek V4（CSA/HCA）</strong> 按 <strong class="font-semibold">BF16 @ 1M 锚点 × (dtype_size / 2) × seq_len 比例</strong> 估算（V4-Flash W8A8 约 <strong class="font-semibold">4.81 GiB</strong>，BF16 基准 9.62 GiB ÷ 2）。
         </div>
         </div>
       </div>
@@ -630,6 +630,7 @@
      * KV_bytes = 2 × L × H_kv × head_dim × seq_len × batch_size × dtype_size
      * DeepSeek R1 / V3.1 使用 MLA 结构化公式（kv_lora_rank + qk_rope_head_dim，非标准 GQA）。
      * GLM-5.1 使用 MLA + DSA（含 indexer key 与 FP32 scale）。
+     * Qwen3.6 混合注意力：仅 full attention 层保存完整 KV（linear 层不计入）。
      * DeepSeek V4 另见 v4KvCompressedAnchors（CSA/HCA 架构压缩）。
      */
     const kvModelProfiles = {
@@ -653,7 +654,20 @@
       },
       'DeepSeek-V4-Flash-W8A8': { layers: 43, experts: 128, kvHeads: 96, headDim: 128, kvFormula: 'v4-compressed' },
       'DeepSeek-V4-Pro-W8A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128, kvFormula: 'v4-compressed' },
-      'Qwen3.6-35B-A3B': { layers: 52, experts: 128, kvHeads: 32, headDim: 128 },
+      'Qwen3.6-35B-A3B': {
+        layers: 40,
+        fullAttentionLayers: 10,
+        linearAttentionLayers: 30,
+        kvHeads: 2,
+        headDim: 256,
+        experts: 128,
+        kvFormula: 'qwen-hybrid-attention',
+        kvQuant: {
+          label: 'FP16',
+          dtypeBytes: 2,
+          note: 'KV Cache 按 FP16（2 bytes/element）估算；linear attention 层不逐 token 保存完整 KV',
+        },
+      },
       'GLM-5.1-W8A8': {
         layers: 78,
         compressedKvDim: 512,
@@ -736,6 +750,14 @@
       };
     }
 
+    function resolveKvQuant(modelKey, profile) {
+      if (profile?.kvQuant) {
+        return profile.kvQuant;
+      }
+
+      return parseKvQuantFromModelName(modelKey);
+    }
+
     function computeStandardKvCacheBytes(profile, quant, seqLen, batchSize) {
       return (
         2 *
@@ -762,6 +784,12 @@
       return profile.layers * perLayerPerTokenBytes * seqLen * batchSize;
     }
 
+    function computeQwenHybridKvCacheBytes(profile, quant, seqLen, batchSize) {
+      const elementsPerLayer = 2 * profile.kvHeads * profile.headDim;
+      const bytesPerToken = elementsPerLayer * quant.dtypeBytes * profile.fullAttentionLayers;
+      return bytesPerToken * seqLen * batchSize;
+    }
+
     function computeV4CompressedKvBytes(modelKey, quant, seqLen, batchSize) {
       const anchor = v4KvCompressedAnchors[modelKey];
       const bf16AnchorBytes = anchor.bf16AnchorGiB * 1024 ** 3;
@@ -776,6 +804,10 @@
 
       if (profile.kvFormula === 'mla') {
         return computeMlaKvCacheBytes(profile, quant, seqLen, batchSize);
+      }
+
+      if (profile.kvFormula === 'qwen-hybrid-attention') {
+        return computeQwenHybridKvCacheBytes(profile, quant, seqLen, batchSize);
       }
 
       if (profile.kvFormula === 'v4-compressed' && v4KvCompressedAnchors[modelKey]) {
@@ -872,7 +904,7 @@
     function syncKvProfileFromModel() {
       const key = modelNameKvc.value;
       const prof = kvModelProfiles[key];
-      const quant = parseKvQuantFromModelName(key);
+      const quant = prof ? resolveKvQuant(key, prof) : parseKvQuantFromModelName(key);
       kvcModelSizeRo.value = modelSizeMap[key] || '';
       kvcQuantRo.value = quant.label;
       kvcDtypeSizeRo.value = String(quant.dtypeBytes);
@@ -893,6 +925,13 @@
         return;
       }
 
+      if (prof.kvFormula === 'qwen-hybrid-attention') {
+        kvcLayersRo.value = `${prof.fullAttentionLayers}（full）+ ${prof.linearAttentionLayers}（linear）`;
+        kvcKvHeadsRo.value = String(prof.kvHeads);
+        kvcHeadDimRo.value = String(prof.headDim);
+        return;
+      }
+
       if (prof.kvFormula === 'mla') {
         kvcKvHeadsRo.value = `${prof.compressedKvDim} (kv_lora_rank)`;
         kvcHeadDimRo.value = `${prof.ropeHeadDim} (qk_rope_head_dim)`;
@@ -906,7 +945,7 @@
     function updateKvCacheEstimate() {
       const key = modelNameKvc.value;
       const prof = kvModelProfiles[key];
-      const quant = parseKvQuantFromModelName(key);
+      const quant = prof ? resolveKvQuant(key, prof) : parseKvQuantFromModelName(key);
       const seqLen = Number(kvcTokenCount.value);
       const batchSize = Number(kvcBatchSize.value);
 
@@ -974,6 +1013,23 @@
           `MLA 展开：L ${prof.layers} × (kv_lora_rank ${prof.compressedKvDim} + qk_rope_head_dim ${prof.ropeHeadDim}) × seq_len ${seqLabel} × batch_size ${batchSize} × dtype_size ${dtypeBytes}（${quant.label}）≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
           ` 每层每 token ${perLayerPerToken} 元素，全模型每 token ${bytesPerToken.toLocaleString('zh-CN')} bytes（≈ ${(bytesPerToken / 1024).toFixed(1)} KiB）。` +
           ` 对比标准 GQA 展开式 ≈ ${standardGib.toFixed(2)} GiB。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未乘入 MLA KV。`;
+        return;
+      }
+
+      if (prof.kvFormula === 'qwen-hybrid-attention') {
+        const totalLayers = prof.fullAttentionLayers + prof.linearAttentionLayers;
+        const elementsPerLayer = 2 * prof.kvHeads * prof.headDim;
+        const bytesPerLayer = elementsPerLayer * dtypeBytes;
+        const bytesPerToken = bytesPerLayer * prof.fullAttentionLayers;
+        const naiveFullGqaBytes =
+          2 * totalLayers * prof.kvHeads * prof.headDim * seqLen * batchSize * dtypeBytes;
+        const naiveFullGqaGib = naiveFullGqaBytes / 1024 ** 3;
+
+        kvcResultSubtitle.textContent = `KV Cache 估算（Qwen 混合注意力 · ${quant.label}）`;
+        kvcResultFormula.textContent =
+          `混合注意力：L_full ${prof.fullAttentionLayers} × 2(K/V) × H_kv ${prof.kvHeads} × head_dim ${prof.headDim} × seq_len ${seqLabel} × batch_size ${batchSize} × dtype_size ${dtypeBytes}（${quant.label}）≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
+          ` 每层每 token ${bytesPerLayer.toLocaleString('zh-CN')} bytes，全模型每 token ${bytesPerToken.toLocaleString('zh-CN')} bytes（${prof.linearAttentionLayers} 层 linear attention 未计入）。` +
+          ` 对比若 ${totalLayers} 层均为 full attention GQA ≈ ${naiveFullGqaGib.toFixed(2)} GiB。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未计入。`;
         return;
       }
 
