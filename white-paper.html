@@ -113,6 +113,17 @@
           >
             2.0版本
           </button>
+          <button
+            type="button"
+            id="tab-2026-draft"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-2026-draft"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+          >
+            2.0讨论稿
+          </button>
         </div>
       </div>
 
@@ -366,6 +377,16 @@
           </section>
         </div>
       </div>
+
+      <div id="panel-2026-draft" role="tabpanel" aria-labelledby="tab-2026-draft" class="hidden min-w-0 w-full" aria-hidden="true">
+        <div class="min-w-0 w-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            src="whitepaper2026-outline.html?embed=1"
+            title="白皮书 2.0 章节规划对齐工作台"
+            class="h-[min(75vh,56rem)] w-full min-h-[24rem] bg-white"
+          ></iframe>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -394,32 +415,36 @@
   <script>
     const tab2024 = document.getElementById('tab-2024');
     const tab2026 = document.getElementById('tab-2026');
+    const tab2026Draft = document.getElementById('tab-2026-draft');
     const panel2024 = document.getElementById('panel-2024');
     const panel2026 = document.getElementById('panel-2026');
+    const panel2026Draft = document.getElementById('panel-2026-draft');
 
     const TAB_ACTIVE_CLASS =
       'rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white';
     const TAB_INACTIVE_CLASS =
       'rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950';
 
+    const whitePaperTabs = [
+      { version: '2024', tab: tab2024, panel: panel2024 },
+      { version: '2026', tab: tab2026, panel: panel2026 },
+      { version: '2026-draft', tab: tab2026Draft, panel: panel2026Draft },
+    ];
+
     function selectWhitePaperTab(version) {
-      const is2024 = version === '2024';
-
-      tab2024.setAttribute('aria-selected', is2024 ? 'true' : 'false');
-      tab2026.setAttribute('aria-selected', is2024 ? 'false' : 'true');
-      tab2024.tabIndex = is2024 ? 0 : -1;
-      tab2026.tabIndex = is2024 ? -1 : 0;
-      tab2024.className = is2024 ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-      tab2026.className = is2024 ? TAB_INACTIVE_CLASS : TAB_ACTIVE_CLASS;
-
-      panel2024.classList.toggle('hidden', !is2024);
-      panel2024.setAttribute('aria-hidden', is2024 ? 'false' : 'true');
-      panel2026.classList.toggle('hidden', is2024);
-      panel2026.setAttribute('aria-hidden', is2024 ? 'true' : 'false');
+      whitePaperTabs.forEach(({ version: id, tab, panel }) => {
+        const active = id === version;
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.tabIndex = active ? 0 : -1;
+        tab.className = active ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
+        panel.classList.toggle('hidden', !active);
+        panel.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
     }
 
     tab2024.addEventListener('click', () => selectWhitePaperTab('2024'));
     tab2026.addEventListener('click', () => selectWhitePaperTab('2026'));
+    tab2026Draft.addEventListener('click', () => selectWhitePaperTab('2026-draft'));
 
     selectWhitePaperTab('2024');
   </script>

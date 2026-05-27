@@ -13,13 +13,23 @@
           "title": "Agent 和大模型共生发展，携手将 AI 转化为生产力",
           "subtitle": "从 Token 输出到生产力转化的范式转变",
           "keyPoints": [
-            { "id": "ch1-s1-k1", "text": "Agent 将大模型输出的 Token 转换成「生产力」，扩大应用场景范围", "status": "aligned" },
-            { "id": "ch1-s1-k2", "text": "准确理解意图、记忆历史、任务规划与工具调用是 Agent 落地的基础能力", "status": "aligned" },
-            { "id": "ch1-s1-k3", "text": "Agent 与基础大模型相互依赖、共生发展", "status": "draft" }
+            {
+              "id": "ch1-s1-k1",
+              "text": "Agent 将大模型输出的 Token 转换成「生产力」，扩大应用场景范围",
+              "status": "aligned"
+            },
+            {
+              "id": "ch1-s1-k2",
+              "text": "准确理解意图、记忆历史、任务规划与工具调用是 Agent 落地的基础能力",
+              "status": "aligned"
+            },
+            {
+              "id": "ch1-s1-k3",
+              "text": "Agent 与基础大模型相互依赖、共生发展",
+              "status": "draft"
+            }
           ],
-          "evidence": "参考 white-paper.html 2.0 版本第一章要点展开",
           "openQuestions": "",
-          "owner": "",
           "status": "review"
         },
         {
@@ -27,11 +37,13 @@
           "title": "Agent 会重塑软件，人工编排和自主规划两种范式融合演进",
           "subtitle": "软件形态与 Agent 编排范式的演进路径",
           "keyPoints": [
-            { "id": "ch1-s2-k1", "text": "人工编排与自主规划两种范式将长期并存并逐步融合", "status": "draft" }
+            {
+              "id": "ch1-s2-k1",
+              "text": "人工编排与自主规划两种范式将长期并存并逐步融合",
+              "status": "draft"
+            }
           ],
-          "evidence": "",
           "openQuestions": "是否需要单独小节对比 CoT / ReAct / Multi-Agent？",
-          "owner": "",
           "status": "draft"
         },
         {
@@ -39,12 +51,18 @@
           "title": "企业需构建具备四个工程能力的 Agent 平台",
           "subtitle": "岗位 Agent 与员工 Agent 两类形态",
           "keyPoints": [
-            { "id": "ch1-s3-k1", "text": "企业应打造岗位 Agent 和员工 Agent 两类 Agent", "status": "draft" },
-            { "id": "ch1-s3-k2", "text": "Agent 平台需具备四项工程能力（待细化命名）", "status": "discuss" }
+            {
+              "id": "ch1-s3-k1",
+              "text": "企业应打造岗位 Agent 和员工 Agent 两类 Agent",
+              "status": "draft"
+            },
+            {
+              "id": "ch1-s3-k2",
+              "text": "Agent 平台需具备四项工程能力（待细化命名）",
+              "status": "discuss"
+            }
           ],
-          "evidence": "",
           "openQuestions": "四项工程能力的正式命名与边界",
-          "owner": "",
           "status": "draft"
         },
         {
@@ -52,13 +70,23 @@
           "title": "Agent 对基础设施提出的新挑战和规划建议",
           "subtitle": "NPU / CPU / 存储的爆发式增长与规划建议",
           "keyPoints": [
-            { "id": "ch1-s4-k1", "text": "Agentic 推理驱动智算爆发式增长，Token 成为新的货币单位", "status": "aligned" },
-            { "id": "ch1-s4-k2", "text": "通算服务器需提供沙箱作为 Agent 运行环境，具备强隔离、快启动和高并发能力", "status": "aligned" },
-            { "id": "ch1-s4-k3", "text": "与 aidc 站点「Agentic 推理」「容量规划」章节形成交叉引用", "status": "discuss" }
+            {
+              "id": "ch1-s4-k1",
+              "text": "Agentic 推理驱动智算爆发式增长，Token 成为新的货币单位",
+              "status": "aligned"
+            },
+            {
+              "id": "ch1-s4-k2",
+              "text": "通算服务器需提供沙箱作为 Agent 运行环境，具备强隔离、快启动和高并发能力",
+              "status": "aligned"
+            },
+            {
+              "id": "ch1-s4-k3",
+              "text": "与 aidc 站点「Agentic 推理」「容量规划」章节形成交叉引用",
+              "status": "discuss"
+            }
           ],
-          "evidence": "index.html 推理 HBM 估算、容量规划区块",
           "openQuestions": "基础设施挑战是否独立成章，还是作为本章末节？",
-          "owner": "",
           "status": "review"
         }
       ]
@@ -73,11 +101,13 @@
           "title": "（子章节标题待定）",
           "subtitle": "",
           "keyPoints": [
-            { "id": "ch2-s1-k1", "text": "关键信息待补充", "status": "draft" }
+            {
+              "id": "ch2-s1-k1",
+              "text": "关键信息待补充",
+              "status": "draft"
+            }
           ],
-          "evidence": "",
           "openQuestions": "本章与第一章的边界如何划分？",
-          "owner": "",
           "status": "draft"
         }
       ]
@@ -92,11 +122,13 @@
           "title": "（子章节标题待定）",
           "subtitle": "",
           "keyPoints": [
-            { "id": "ch3-s1-k1", "text": "关键信息待补充", "status": "draft" }
+            {
+              "id": "ch3-s1-k1",
+              "text": "关键信息待补充",
+              "status": "draft"
+            }
           ],
-          "evidence": "",
           "openQuestions": "",
-          "owner": "",
           "status": "draft"
         }
       ]
