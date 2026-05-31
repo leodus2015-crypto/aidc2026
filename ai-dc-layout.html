@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI DC 布局：数据中心机柜与机房三维布局设计演示。" />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>AI DC布局 · AI Data Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <nav
+      class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl"
+      aria-label="主导航"
+    >
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center" aria-label="AIDC 2026 · 首页">
+        <img
+          src="aidc2026-logo.svg"
+          alt="AIDC 2026 · AI Data Center"
+          width="593"
+          height="118"
+          class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10"
+        />
+      </a>
+
+      <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+        <li>
+          <a
+            href="index.html#inference"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            Agentic推理
+          </a>
+        </li>
+        <li>
+          <a
+            href="post-training.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            后训练
+          </a>
+        </li>
+        <li>
+          <a
+            href="ai-dc-layout.html"
+            class="inline-block border-b-2 border-blue-600 pb-1 text-blue-700"
+            aria-current="page"
+          >
+            AI DC布局
+          </a>
+        </li>
+        <li>
+          <a
+            href="white-paper.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            白皮书
+          </a>
+        </li>
+        <li>
+          <a
+            href="about-us.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+          >
+            About us
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
+    <section class="flex flex-col gap-6 lg:gap-8">
+      <div class="w-full max-w-3xl xl:max-w-4xl">
+        <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+          AI DC布局
+        </h1>
+      </div>
+
+      <div class="min-w-0 w-full">
+        <div
+          class="inline-flex flex-wrap gap-1 rounded-2xl bg-slate-100 p-1 shadow-inner shadow-slate-200/60"
+          role="tablist"
+          aria-label="布局案例"
+        >
+          <button
+            type="button"
+            id="tab-case-a"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-case-a"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white"
+          >
+            案例A
+          </button>
+          <button
+            type="button"
+            id="tab-case-b"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-case-b"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+          >
+            案例B
+          </button>
+        </div>
+      </div>
+
+      <div id="panel-case-a" role="tabpanel" aria-labelledby="tab-case-a" class="min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            src="datacenter-3d-v3%202.html"
+            title="AI DC 布局 · 案例A"
+            class="block h-[min(85vh,60rem)] w-full min-h-[32rem] bg-[#f4f3ef]"
+          ></iframe>
+        </div>
+      </div>
+
+      <div id="panel-case-b" role="tabpanel" aria-labelledby="tab-case-b" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            src="datacenter-3d-case-b.html"
+            title="AI DC 布局 · 案例B"
+            class="block h-[min(85vh,60rem)] w-full min-h-[32rem] bg-[#f4f3ef]"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white py-6">
+    <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
+      <span>工信部备案号：
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition hover:text-slate-700"
+        >苏ICP备2026026790号-3</a>
+      </span>
+      <span class="hidden sm:inline" aria-hidden="true">|</span>
+      <span>公安备案号：
+        <a
+          href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition hover:text-slate-700"
+        >苏公网安备32010602012455号</a>
+      </span>
+    </p>
+  </footer>
+
+  <script>
+    const tabCaseA = document.getElementById('tab-case-a');
+    const tabCaseB = document.getElementById('tab-case-b');
+    const panelCaseA = document.getElementById('panel-case-a');
+    const panelCaseB = document.getElementById('panel-case-b');
+
+    const TAB_ACTIVE_CLASS =
+      'rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white';
+    const TAB_INACTIVE_CLASS =
+      'rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950';
+
+    function selectLayoutCase(mode) {
+      const isA = mode === 'a';
+
+      tabCaseA.setAttribute('aria-selected', isA ? 'true' : 'false');
+      tabCaseB.setAttribute('aria-selected', isA ? 'false' : 'true');
+      tabCaseA.tabIndex = isA ? 0 : -1;
+      tabCaseB.tabIndex = isA ? -1 : 0;
+      tabCaseA.className = isA ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
+      tabCaseB.className = isA ? TAB_INACTIVE_CLASS : TAB_ACTIVE_CLASS;
+
+      panelCaseA.classList.toggle('hidden', !isA);
+      panelCaseA.setAttribute('aria-hidden', isA ? 'false' : 'true');
+      panelCaseB.classList.toggle('hidden', isA);
+      panelCaseB.setAttribute('aria-hidden', isA ? 'true' : 'false');
+    }
+
+    tabCaseA.addEventListener('click', () => selectLayoutCase('a'));
+    tabCaseB.addEventListener('click', () => selectLayoutCase('b'));
+  </script>
+</body>
+</html>

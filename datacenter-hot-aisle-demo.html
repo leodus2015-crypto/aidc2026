@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机房冷热通道 · 3D 示意</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0b1a33;
+      color: #e2e8f0;
+      overflow: hidden;
+      height: 100dvh;
+    }
+    #topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      background: rgba(11, 26, 51, 0.88);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      backdrop-filter: blur(8px);
+    }
+    #topbar h1 { font-size: 14px; font-weight: 700; }
+    #topbar p { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    #legend {
+      display: flex;
+      gap: 14px;
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+    #legend span { display: inline-flex; align-items: center; gap: 6px; }
+    #legend i { display: inline-block; width: 22px; height: 3px; border-radius: 99px; }
+    #legend .cold i { background: repeating-linear-gradient(90deg, #38bdf8 0 6px, transparent 6px 10px); }
+    #legend .hot i { background: repeating-linear-gradient(90deg, #f87171 0 6px, transparent 6px 10px); }
+    #hint { font-size: 11px; color: #64748b; }
+    #canvas-wrap { position: fixed; inset: 0; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <header id="topbar">
+    <div>
+      <h1>机房冷热通道 · 3D 示意</h1>
+      <p>冷风自冷通道地板进入机柜 → 热风排向热通道 → 上升至机柜上方消失</p>
+    </div>
+    <div id="legend">
+      <span class="cold"><i></i>冷风</span>
+      <span class="hot"><i></i>热风</span>
+    </div>
+    <span id="hint">拖拽旋转 · 滚轮缩放</span>
+  </header>
+  <div id="canvas-wrap"></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const CFG = {
+      cols: 6,
+      rackW: 0.65,
+      rackD: 1.0,
+      rackH: 2.0,
+      hotAisleW: 1.1,
+      coldAisleW: 1.0,
+      rackColor: 0x334155,
+    };
+
+    CFG.totalW = CFG.cols * CFG.rackW;
+    CFG.row0Z = -(CFG.rackD / 2 + CFG.hotAisleW / 2);
+    CFG.row1Z = +(CFG.rackD / 2 + CFG.hotAisleW / 2);
+    CFG.coldAisle0Z = CFG.row0Z - CFG.rackD / 2 - CFG.coldAisleW / 2;
+    CFG.coldAisle1Z = CFG.row1Z + CFG.rackD / 2 + CFG.coldAisleW / 2;
+    CFG.fadeY = CFG.rackH * 1.05;
+
+    const wrap = document.getElementById('canvas-wrap');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const speedMul = reducedMotion ? 0.45 : 1;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b1a33);
+    scene.fog = new THREE.Fog(0x0b1a33, 16, 38);
+
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 80);
+    camera.position.set(0, 7, 10);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    wrap.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, CFG.rackH * 0.42, 0);
+    controls.maxPolarAngle = Math.PI * 0.48;
+    controls.minDistance = 5;
+    controls.maxDistance = 22;
+
+    scene.add(new THREE.AmbientLight(0x8899bb, 0.55));
+    const key = new THREE.DirectionalLight(0xf0f4ff, 1.2);
+    key.position.set(5, 10, 6);
+    scene.add(key);
+    scene.add(new THREE.HemisphereLight(0x93c5fd, 0x1e293b, 0.35));
+
+    const floorW = CFG.totalW + 3;
+    const floorD = CFG.coldAisle1Z - CFG.coldAisle0Z + CFG.coldAisleW + 1.5;
+
+    const raisedFloor = new THREE.Mesh(
+      new THREE.BoxGeometry(floorW, 0.08, floorD),
+      new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.75, metalness: 0.05 })
+    );
+    raisedFloor.position.set(0, 0.04, (CFG.coldAisle0Z + CFG.coldAisle1Z) / 2);
+    scene.add(raisedFloor);
+
+    const grid = new THREE.GridHelper(floorW, 14, 0x3b82f6, 0x1e3a5f);
+    grid.position.y = 0.09;
+    grid.material.transparent = true;
+    grid.material.opacity = 0.35;
+    scene.add(grid);
+
+    function aisleLabel(text, color, z, rotY = 0) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = color;
+      ctx.font = 'bold 68px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 0.5), mat);
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.rotation.z = rotY;
+      mesh.position.set(0, 0.1, z);
+      return mesh;
+    }
+
+    scene.add(aisleLabel('冷通道', '#0284c7', CFG.coldAisle0Z));
+    scene.add(aisleLabel('冷通道', '#0284c7', CFG.coldAisle1Z));
+    scene.add(aisleLabel('热通道', '#dc2626', 0));
+
+    function tintAisle(w, d, z, color, opacity) {
+      const m = new THREE.Mesh(
+        new THREE.PlaneGeometry(w, d),
+        new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false })
+      );
+      m.rotation.x = -Math.PI / 2;
+      m.position.set(0, 0.095, z);
+      scene.add(m);
+    }
+    tintAisle(CFG.totalW * 0.96, CFG.coldAisleW * 0.9, CFG.coldAisle0Z, 0x0ea5e9, 0.14);
+    tintAisle(CFG.totalW * 0.96, CFG.coldAisleW * 0.9, CFG.coldAisle1Z, 0x0ea5e9, 0.14);
+    tintAisle(CFG.totalW * 0.96, CFG.hotAisleW * 0.92, 0, 0xef4444, 0.16);
+
+    function createRack(intakeSign) {
+      const group = new THREE.Group();
+      const { rackW: w, rackD: d, rackH: h } = CFG;
+
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(w * 0.94, h * 0.94, d * 0.94),
+        new THREE.MeshStandardMaterial({ color: CFG.rackColor, roughness: 0.5, metalness: 0.2 })
+      );
+      body.position.y = h / 2 + 0.08;
+      group.add(body);
+
+      const edges = new THREE.LineSegments(
+        new THREE.EdgesGeometry(new THREE.BoxGeometry(w * 0.94, h * 0.94, d * 0.94)),
+        new THREE.LineBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.45 })
+      );
+      edges.position.y = h / 2 + 0.08;
+      group.add(edges);
+
+      const front = new THREE.Mesh(
+        new THREE.BoxGeometry(w * 0.86, h * 0.9, 0.04),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.35, metalness: 0.3 })
+      );
+      front.position.set(0, h / 2 + 0.08, intakeSign * d * 0.47);
+      group.add(front);
+
+      for (let u = 0; u < 8; u++) {
+        const slot = new THREE.Mesh(
+          new THREE.BoxGeometry(w * 0.78, 0.025, 0.02),
+          new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.4, roughness: 0.4 })
+        );
+        slot.position.set(0, 0.28 + u * (h * 0.08) + 0.08, intakeSign * d * 0.475);
+        group.add(slot);
+      }
+      return group;
+    }
+
+    for (let col = 0; col < CFG.cols; col++) {
+      const x = col * CFG.rackW - CFG.totalW / 2 + CFG.rackW / 2;
+      const r0 = createRack(-1);
+      r0.position.set(x, 0, CFG.row0Z);
+      scene.add(r0);
+      const r1 = createRack(+1);
+      r1.position.set(x, 0, CFG.row1Z);
+      scene.add(r1);
+    }
+
+    const flowCurves = { cold: [], hot: [] };
+    const { rackD: d, rackH: h } = CFG;
+
+    for (let col = 0; col < CFG.cols; col++) {
+      const x = col * CFG.rackW - CFG.totalW / 2 + CFG.rackW / 2;
+
+      flowCurves.cold.push(new THREE.CubicBezierCurve3(
+        new THREE.Vector3(x, 0.12, CFG.coldAisle0Z),
+        new THREE.Vector3(x, h * 0.62, CFG.coldAisle0Z + 0.15),
+        new THREE.Vector3(x, h * 0.52, CFG.row0Z - d * 0.28),
+        new THREE.Vector3(x, h * 0.38, CFG.row0Z - d * 0.44)
+      ));
+      flowCurves.cold.push(new THREE.CubicBezierCurve3(
+        new THREE.Vector3(x, 0.12, CFG.coldAisle1Z),
+        new THREE.Vector3(x, h * 0.62, CFG.coldAisle1Z - 0.15),
+        new THREE.Vector3(x, h * 0.52, CFG.row1Z + d * 0.28),
+        new THREE.Vector3(x, h * 0.38, CFG.row1Z + d * 0.44)
+      ));
+
+      flowCurves.hot.push(new THREE.CubicBezierCurve3(
+        new THREE.Vector3(x, h * 0.3, CFG.row0Z + d * 0.47),
+        new THREE.Vector3(x, h * 0.42, CFG.row0Z + d * 0.18),
+        new THREE.Vector3(x, h * 1.18, -CFG.hotAisleW * 0.16),
+        new THREE.Vector3(x, CFG.fadeY + 0.42, 0)
+      ));
+      flowCurves.hot.push(new THREE.CubicBezierCurve3(
+        new THREE.Vector3(x, h * 0.3, CFG.row1Z - d * 0.47),
+        new THREE.Vector3(x, h * 0.42, CFG.row1Z - d * 0.18),
+        new THREE.Vector3(x, h * 1.18, CFG.hotAisleW * 0.16),
+        new THREE.Vector3(x, CFG.fadeY + 0.42, 0)
+      ));
+    }
+
+    function buildDashedGuide(curves, color, dash = 48) {
+      const group = new THREE.Group();
+      curves.forEach((curve) => {
+        const pts = curve.getPoints(dash);
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        const line = new THREE.Line(geo, new THREE.LineDashedMaterial({
+          color,
+          dashSize: 0.14,
+          gapSize: 0.1,
+          transparent: true,
+          opacity: 0.55,
+          depthWrite: false,
+        }));
+        line.computeLineDistances();
+        group.add(line);
+      });
+      return group;
+    }
+    scene.add(buildDashedGuide(flowCurves.cold, 0x38bdf8));
+    scene.add(buildDashedGuide(flowCurves.hot, 0xf87171));
+
+    const COLD_N = reducedMotion ? 40 : 96;
+    const HOT_N = reducedMotion ? 40 : 96;
+    const coldFlows = [];
+    const hotFlows = [];
+
+    function addFlowPool(target, type, count, curves, colorHex) {
+      const color = new THREE.Color(colorHex);
+      for (let i = 0; i < count; i++) {
+        target.push({
+          type,
+          curve: curves[i % curves.length],
+          t: Math.random(),
+          speed: (0.07 + Math.random() * 0.06) * speedMul * (type === 'hot' ? 1.05 : 1),
+          phase: Math.random() * Math.PI * 2,
+          color,
+        });
+      }
+    }
+    addFlowPool(coldFlows, 'cold', COLD_N, flowCurves.cold, 0x38bdf8);
+    addFlowPool(hotFlows, 'hot', HOT_N, flowCurves.hot, 0xf87171);
+
+    const ARROW_R = 0.058;
+    const ARROW_H = 0.2;
+    const arrowGeo = new THREE.ConeGeometry(ARROW_R, ARROW_H, 6);
+    arrowGeo.translate(0, ARROW_H / 2, 0);
+
+    function createArrowMesh(count, baseColor) {
+      const mat = new THREE.MeshBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.95,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      const mesh = new THREE.InstancedMesh(arrowGeo, mat, count);
+      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      for (let i = 0; i < count; i++) {
+        mesh.setColorAt(i, new THREE.Color(baseColor));
+      }
+      mesh.instanceColor.needsUpdate = true;
+      return mesh;
+    }
+
+    const coldArrows = createArrowMesh(COLD_N, 0x38bdf8);
+    const hotArrows = createArrowMesh(HOT_N, 0xf87171);
+    scene.add(coldArrows);
+    scene.add(hotArrows);
+
+    const COLD_PARTICLE_N = reducedMotion ? 50 : 160;
+    const HOT_PARTICLE_N = reducedMotion ? 50 : 160;
+    const coldParticlesFlow = [];
+    const hotParticlesFlow = [];
+    addFlowPool(coldParticlesFlow, 'cold', COLD_PARTICLE_N, flowCurves.cold, 0x7dd3fc);
+    addFlowPool(hotParticlesFlow, 'hot', HOT_PARTICLE_N, flowCurves.hot, 0xfb7185);
+
+    function createParticleSystem(count) {
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({
+        size: 0.07,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.88,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true,
+      });
+      const points = new THREE.Points(geo, mat);
+      return { points, positions, colors, geo };
+    }
+
+    const coldParticles = createParticleSystem(COLD_PARTICLE_N);
+    const hotParticles = createParticleSystem(HOT_PARTICLE_N);
+    scene.add(coldParticles.points);
+    scene.add(hotParticles.points);
+
+    const tmp = new THREE.Vector3();
+    const tangent = new THREE.Vector3();
+    const up = new THREE.Vector3(0, 1, 0);
+    const dummy = new THREE.Object3D();
+    const clock = new THREE.Clock();
+
+    function updateArrowInstances(mesh, flowList, dt) {
+      flowList.forEach((f, i) => {
+        f.t += f.speed * dt;
+        if (f.t >= 1) f.t -= 1;
+
+        f.curve.getPoint(f.t, tmp);
+        const wobble = Math.sin(f.phase + f.t * 10) * 0.025;
+        tmp.x += wobble * (f.type === 'cold' ? 1 : 0.6);
+
+        f.curve.getTangent(f.t, tangent);
+        if (tangent.lengthSq() < 1e-8) tangent.set(0, 1, 0);
+        tangent.normalize();
+
+        let alpha = 1;
+        if (f.type === 'cold') {
+          alpha = f.t < 0.08 ? f.t / 0.08 : f.t > 0.88 ? (1 - f.t) / 0.12 : 1;
+        } else {
+          alpha = f.t < 0.05 ? f.t / 0.05 : f.t > 0.72 ? Math.max(0, (1 - f.t) / 0.28) : 1;
+        }
+
+        dummy.position.copy(tmp).addScaledVector(tangent, ARROW_H * 0.42);
+        if (tangent.dot(up) < -0.999) {
+          dummy.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI);
+        } else {
+          dummy.quaternion.setFromUnitVectors(up, tangent);
+        }
+        dummy.scale.setScalar(1.05 + alpha * 0.2);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+        mesh.setColorAt(i, f.color.clone().multiplyScalar(alpha));
+      });
+      mesh.instanceMatrix.needsUpdate = true;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    }
+
+    function updateParticleSystem(system, flowList, dt) {
+      flowList.forEach((f, i) => {
+        f.t += f.speed * 1.35 * dt;
+        if (f.t >= 1) f.t -= 1;
+
+        f.curve.getPoint(f.t, tmp);
+        const wobble = Math.sin(f.phase + f.t * 13) * 0.035;
+        tmp.x += wobble * (f.type === 'cold' ? 1 : 0.7);
+
+        let alpha = 1;
+        if (f.type === 'cold') {
+          alpha = f.t < 0.08 ? f.t / 0.08 : f.t > 0.88 ? (1 - f.t) / 0.12 : 1;
+        } else {
+          alpha = f.t < 0.05 ? f.t / 0.05 : f.t > 0.7 ? Math.max(0, (1 - f.t) / 0.3) : 1;
+        }
+
+        system.positions[i * 3] = tmp.x;
+        system.positions[i * 3 + 1] = tmp.y;
+        system.positions[i * 3 + 2] = tmp.z;
+        system.colors[i * 3] = f.color.r * alpha;
+        system.colors[i * 3 + 1] = f.color.g * alpha;
+        system.colors[i * 3 + 2] = f.color.b * alpha;
+      });
+      system.geo.attributes.position.needsUpdate = true;
+      system.geo.attributes.color.needsUpdate = true;
+    }
+
+    function updateFlows(dt) {
+      updateParticleSystem(coldParticles, coldParticlesFlow, dt);
+      updateParticleSystem(hotParticles, hotParticlesFlow, dt);
+      updateArrowInstances(coldArrows, coldFlows, dt);
+      updateArrowInstances(hotArrows, hotFlows, dt);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      updateFlows(Math.min(clock.getDelta(), 0.05));
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
