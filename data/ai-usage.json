@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-05-31T23:56:11+08:00",
+  "updated_at": "2026-06-01T20:35:27+08:00",
   "baseline": {
     "source": "Cursor Dashboard · Included Usage",
     "period": "2026-04-25 — 2026-05-25",
@@ -51,15 +51,15 @@
   "tracked": {
     "method": "cursor-hooks-estimate",
     "since": "2026-05-24",
-    "total_tokens": 24476,
-    "input_tokens": 1412,
-    "output_tokens": 8145,
-    "thinking_tokens": 14919,
+    "total_tokens": 33076,
+    "input_tokens": 1911,
+    "output_tokens": 9566,
+    "thinking_tokens": 21599,
     "sessions": 0,
-    "events": 114,
+    "events": 184,
     "by_model": {
-      "composer-2.5-fast": 17326,
-      "gpt-5.5-medium": 7150
+      "composer-2.5-fast": 18234,
+      "gpt-5.5-medium": 14842
     }
   },
   "notes": "baseline 来自 Cursor 控制台手工录入；tracked 为 Hook 估算增量，非官方账单。"

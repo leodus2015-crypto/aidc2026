@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DataCenter 3D 设计器</title>
+<title>DataCenter 3D 设计器 · 案例B</title>
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -96,6 +96,7 @@
   .sbf-group { margin-bottom: 14px; }
   .sbf-label { display: block; font-size: 10px; color: var(--dc-text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; font-weight: 600; }
   .sbf-row { display: grid; gap: 8px; }
+  .sbf-row.c4 { grid-template-columns: repeat(4, 1fr); }
   .sbf-row.c3 { grid-template-columns: 1fr 1fr 1fr; }
   .sbf-row.c2 { grid-template-columns: 1fr 1fr; }
   .sbf-input {
@@ -103,9 +104,14 @@
     background: var(--dc-surface); color: var(--dc-text); font-size: 12px; transition: border-color .2s, box-shadow .2s;
   }
   .sbf-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+  .sbf-input:disabled { background: #f3f4f6; color: #6b7280; cursor: not-allowed; opacity: 1; }
   select.sbf-input { appearance: auto; }
   .sbf-hint { font-size: 9px; color: var(--dc-text-faint); margin-top: 2px; line-height: 1.3; }
 
+  .layout-actions { display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 8px; }
+  .layout-actions button { padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .rule-actions { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 8px; margin-top: 8px; }
+  .rule-actions button { padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
   .btn-primary {
     padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: 600;
     background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none;
@@ -333,7 +339,7 @@
 
 <!-- ===== Top Bar ===== -->
 <div id="topbar">
-  <div class="logo">⚡ DC Designer <small>案例A · 数据中心 3D 设计器</small></div>
+  <div class="logo">⚡ DC Designer <small>案例B · 数据中心 3D 设计器</small></div>
   <div class="tb-group">
     <button class="tb-btn active" data-view="top">俯视</button>
     <button class="tb-btn" data-view="horiz">水平</button>
@@ -361,11 +367,14 @@
       <div class="sbf-group">
         <div class="sbf-label">机房结构</div>
         <div class="sbf-row c2" style="margin-bottom:6px">
-          <div><label class="sbf-label" style="font-size:9px;">排数</label><input class="sbf-input" id="cfg-rows" type="number" value="8" min="1"></div>
-          <div><label class="sbf-label" style="font-size:9px;">每排机柜数</label><input class="sbf-input" id="cfg-cols" type="number" value="22" min="1"></div>
+          <div><label class="sbf-label" style="font-size:9px;">排数</label><input class="sbf-input" id="cfg-rows" type="number" value="12" min="1"></div>
+          <div><label class="sbf-label" style="font-size:9px;">每排机柜数</label><input class="sbf-input" id="cfg-cols" type="number" value="14" min="1"></div>
         </div>
-        <div class="sbf-row c3">
-          <div><label class="sbf-label" style="font-size:9px;">排间距 (m)</label><input class="sbf-input" id="cfg-spacing" type="number" value="1.0" min="0.1" step="0.1"></div>
+        <div class="sbf-row c2" style="margin-bottom:6px">
+          <div><label class="sbf-label" style="font-size:9px;">冷通道 (m)</label><input class="sbf-input" id="cfg-cold-aisle" type="number" value="1.6" min="0.1" step="0.1"></div>
+          <div><label class="sbf-label" style="font-size:9px;">热通道 (m)</label><input class="sbf-input" id="cfg-hot-aisle" type="number" value="1.2" min="0.1" step="0.1"></div>
+        </div>
+        <div class="sbf-row c2">
           <div><label class="sbf-label" style="font-size:9px;">机柜深度 (m)</label><input class="sbf-input" id="cfg-depth" type="number" value="1.0" min="0.1" step="0.1"></div>
           <div><label class="sbf-label" style="font-size:9px;">机柜高度 (U)</label><input class="sbf-input" id="cfg-u" type="number" value="42" min="1"></div>
         </div>
@@ -379,14 +388,18 @@
         </div>
       </div>
       <div class="sbf-group">
-        <div class="sbf-label">默认设备功耗</div>
-        <div class="sbf-row c3">
-          <div><label class="sbf-label" style="font-size:9px;">AI (W)</label><input class="sbf-input" id="cfg-w-ai" type="number" value="2000" step="100"></div>
-          <div><label class="sbf-label" style="font-size:9px;">总线 (W)</label><input class="sbf-input" id="cfg-w-bus" type="number" value="500" step="50"></div>
-          <div><label class="sbf-label" style="font-size:9px;">普通 (W)</label><input class="sbf-input" id="cfg-w-norm" type="number" value="300" step="50"></div>
+        <div class="sbf-label">机柜功耗</div>
+        <div class="sbf-row c4">
+          <div><label class="sbf-label" style="font-size:9px;">AI (W)</label><input class="sbf-input" id="cfg-w-ai" type="number" value="14600" step="100"></div>
+          <div><label class="sbf-label" style="font-size:9px;">总线 (W)</label><input class="sbf-input" id="cfg-w-bus" type="number" value="16800" step="50"></div>
+          <div><label class="sbf-label" style="font-size:9px;">普通 (W)</label><input class="sbf-input" id="cfg-w-norm" type="number" value="250" step="50"></div>
+          <div><label class="sbf-label" style="font-size:9px;">空机柜 (W)</label><input class="sbf-input" id="cfg-w-empty" type="number" value="0" step="50"></div>
         </div>
       </div>
-      <button class="btn-primary" id="btn-apply-layout">✓ 更新布局</button>
+      <div class="layout-actions">
+        <button class="btn-outline" id="btn-unlock-layout">解锁</button>
+        <button class="btn-primary" id="btn-apply-layout">✓ 更新布局</button>
+      </div>
       <div id="override-warning" style="display:none;margin-top:6px;font-size:10px;color:#f59e0b;text-align:center;padding:6px;background:#f59e0b11;border-radius:6px;border:1px solid #f59e0b33;">
         ⚠ 当前有 <span id="override-count">0</span> 个机柜被单独编辑过，更新布局将清空这些修改。
       </div>
@@ -435,7 +448,10 @@
           支持格式: <code>开始-结束</code>、<code>开始-结束:步长</code> 或 <code>值1,值2,值3</code>
         </div>
       </div>
-      <button class="btn-sm btn-outline" id="rule-add-btn" style="width:100%;margin-top:8px;padding:6px;">+ 添加规则</button>
+      <div class="rule-actions">
+        <button class="btn-sm btn-outline" id="rule-add-btn">+ 添加规则</button>
+        <button class="btn-sm btn-outline" id="btn-unlock-rules">解锁</button>
+      </div>
     </div>
 
     <!-- VIEWS -->
@@ -567,11 +583,12 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 // STATE
 // ======================================================================
 const C = {
-  rows: 8, cols: 22,
+  rows: 12, cols: 14,
   rackW: 0.6, rackD: 1.0, rackU: 42, uMm: 44.45,
-  rowSpacing: 1.0,
+  coldAisleSpacing: 1.6,
+  hotAisleSpacing: 1.2,
   totalW: 0, totalD: 0, rackH: 0,
-  defaultPower: { ai: 2000, bus: 500, normal: 300 },
+  defaultPower: { ai: 14600, bus: 16800, normal: 250, empty: 0 },
   colorMode: 'type',
   currentView: 'top',
   filterRow: -1,
@@ -595,7 +612,8 @@ function saveState() {
       C: {
         rows: C.rows, cols: C.cols,
         rackW: C.rackW, rackD: C.rackD, rackU: C.rackU, uMm: C.uMm,
-        rowSpacing: C.rowSpacing,
+        coldAisleSpacing: C.coldAisleSpacing,
+        hotAisleSpacing: C.hotAisleSpacing,
         defaultPower: C.defaultPower,
       },
       store: {
@@ -615,6 +633,12 @@ function loadState() {
     if (!raw) return false;
     const data = JSON.parse(raw);
     if (data.C) Object.assign(C, data.C);
+    if (C.rowSpacing != null && C.coldAisleSpacing == null) C.coldAisleSpacing = C.rowSpacing;
+    if (C.rowSpacing != null && C.hotAisleSpacing == null) C.hotAisleSpacing = C.rowSpacing;
+    if (C.coldAisleSpacing == null) C.coldAisleSpacing = 1.6;
+    if (C.hotAisleSpacing == null) C.hotAisleSpacing = 1.2;
+    delete C.rowSpacing;
+    C.defaultPower = { ai: 14600, bus: 16800, normal: 250, empty: 0, ...(C.defaultPower || {}) };
     if (data.store) {
       if (data.store.rules) store.rules = data.store.rules;
       if (data.store.viewIdx) store.viewIdx = data.store.viewIdx;
@@ -787,7 +811,7 @@ function getRackDevices(row, col) {
   const key = `${row},${col}`;
   if (store.rackOverrides[key]?.devices) return store.rackOverrides[key].devices;
   const types = computeMatchingRuleTypes(row, col, store.rules);
-  if (types.length === 0) return getDefaultDevices('normal');
+  if (types.length === 0) return getDefaultDevices('empty');
   const devices = [];
   for (const type of types) devices.push(...getDefaultDevices(type));
   return devices;
@@ -795,14 +819,16 @@ function getRackDevices(row, col) {
 
 function getDefaultDevices(type) {
   switch (type) {
-    case 'ai': return [{ name: 'AI 服务器', u: 8, qty: 4, power: C.defaultPower.ai }];
-    case 'bus': return [{ name: '总线交换机', u: 1, qty: 14, power: C.defaultPower.bus }];
+    case 'ai': return [{ name: 'AI 机柜', u: C.rackU, qty: 1, power: C.defaultPower.ai }];
+    case 'bus': return [{ name: '总线机柜', u: C.rackU, qty: 1, power: C.defaultPower.bus }];
+    case 'normal': return [{ name: '普通机柜', u: C.rackU, qty: 1, power: C.defaultPower.normal }];
+    case 'empty': return C.defaultPower.empty > 0 ? [{ name: '空机柜', u: 0, qty: 1, power: C.defaultPower.empty }] : [];
     default: return [];
   }
 }
 
 function calcRackPower(devices) {
-  return devices.reduce((a, d) => a + d.power * d.qty, 0);
+  return devices.reduce((a, d) => a + (d.power || 0) * (d.qty || 0), 0);
 }
 
 function calcRackUsedU(devices) {
@@ -814,6 +840,7 @@ function calcRackUsedU(devices) {
 // ======================================================================
 const RACK_COLORS = { ai: 0x3b82f6, bus: 0x10b981, normal: 0x6b7280 };
 const PWR_COLORS = [0x10b981, 0x84cc16, 0xf59e0b, 0xef4444];
+const ZERO_POWER_COLOR = new THREE.Color(0xd6d3d1);
 
 function interpolateColor(colors, t) {
   t = Math.max(0, Math.min(1, t));
@@ -829,6 +856,7 @@ let allRackGroups = [];
 let rackGroup, measureGroup, labelGroup, aisleDoorGroup, acGroup, hotAisleGroup, coolingFlowGroup;
 let coolingFlowState = null;
 const coolingFlowClock = new THREE.Clock();
+let rulesLocked = true;
 
 function createAisleDoubleDoor(x, zCenter, zSpan, height) {
   const group = new THREE.Group();
@@ -894,7 +922,7 @@ function buildAisleDoors() {
     const zBack = getRackPos(r, 0).z + rackD / 2;
     const zFront = getRackPos(r + 1, 0).z - rackD / 2;
     const zCenter = (zBack + zFront) / 2;
-    const zSpan = Math.max(zFront - zBack, C.rowSpacing * 0.9);
+    const zSpan = Math.max(zFront - zBack, C.hotAisleSpacing * 0.9);
 
     aisleDoorGroup.add(createAisleDoubleDoor(-halfW - doorOffset, zCenter, zSpan, rackH));
     aisleDoorGroup.add(createAisleDoubleDoor(halfW + doorOffset, zCenter, zSpan, rackH));
@@ -931,7 +959,7 @@ function buildHotAisles() {
     const zBack = getRackPos(r, 0).z + rackD / 2;
     const zFront = getRackPos(r + 1, 0).z - rackD / 2;
     const zCenter = (zBack + zFront) / 2;
-    const zSpan = Math.max(zFront - zBack, C.rowSpacing * 0.85);
+    const zSpan = Math.max(zFront - zBack, C.hotAisleSpacing * 0.85);
 
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(C.totalW * 0.98, zSpan * 0.96),
@@ -1069,12 +1097,12 @@ function buildCoolingFlowCurves() {
   }
 
   if (C.rows > 0) {
-    const edgeAisleHalf = Math.max(C.rowSpacing, 0.4) * 0.85 * 0.5;
+    const edgeAisleHalf = Math.max(C.coldAisleSpacing, 0.4) * 0.85 * 0.5;
     const firstZ = getRackPos(0, 0).z;
-    const firstColdZ = firstZ - d / 2 - C.rowSpacing / 2;
+    const firstColdZ = firstZ - d / 2 - C.coldAisleSpacing / 2;
     const lastRow = C.rows - 1;
     const lastZ = getRackPos(lastRow, 0).z;
-    const lastColdZ = lastZ + d / 2 + C.rowSpacing / 2;
+    const lastColdZ = lastZ + d / 2 + C.coldAisleSpacing / 2;
 
     addColdAisle(firstColdZ, edgeAisleHalf);
     addColdAisle(lastColdZ, edgeAisleHalf);
@@ -1106,7 +1134,7 @@ function buildCoolingFlowCurves() {
     const zBack = getRackPos(r, 0).z + d / 2;
     const zFront = getRackPos(r + 1, 0).z - d / 2;
     const zCenter = (zBack + zFront) / 2;
-    const aisleHalf = Math.max(zFront - zBack, C.rowSpacing * 0.85) * 0.5;
+    const aisleHalf = Math.max(zFront - zBack, C.coldAisleSpacing * 0.85) * 0.5;
 
     if (r % 2 === 1) {
       addColdAisle(zCenter, aisleHalf);
@@ -1355,10 +1383,25 @@ function createRack(row, col) {
   return group;
 }
 
+function getAisleSpacingBetweenRows(rowIndex) {
+  return rowIndex % 2 === 0 ? C.hotAisleSpacing : C.coldAisleSpacing;
+}
+
+function computeTotalDepth() {
+  let totalD = C.rows * C.rackD;
+  for (let r = 0; r < C.rows - 1; r++) {
+    totalD += getAisleSpacingBetweenRows(r);
+  }
+  return totalD;
+}
+
 function getRackPos(row, col) {
   const mirroredCol = C.cols - 1 - col;
   const x = mirroredCol * C.rackW - C.totalW / 2 + C.rackW / 2;
-  const z = row * (C.rackD + C.rowSpacing) - C.totalD / 2 + C.rackD / 2;
+  let z = -C.totalD / 2 + C.rackD / 2;
+  for (let r = 0; r < row; r++) {
+    z += C.rackD + getAisleSpacingBetweenRows(r);
+  }
   return { x, z };
 }
 
@@ -1392,10 +1435,11 @@ function recolorRacks() {
     ud.usedU = calcRackUsedU(devices);
     ud.matchedTypes = computeMatchingRuleTypes(ud.row, ud.col, store.rules);
     let color;
+    const p = ud.power || 0;
+    const isZeroPower = C.colorMode === 'power' && p <= 0;
     if (C.colorMode === 'power') {
-      const p = ud.power || 0;
       const t = powerRange.max > powerRange.min ? (p - powerRange.min) / (powerRange.max - powerRange.min) : 0;
-      color = interpolateColor(PWR_COLORS, t);
+      color = isZeroPower ? ZERO_POWER_COLOR : interpolateColor(PWR_COLORS, t);
     } else {
       color = new THREE.Color(RACK_COLORS[type] || RACK_COLORS.normal);
     }
@@ -1404,7 +1448,9 @@ function recolorRacks() {
         if (child.geometry.type === 'BoxGeometry' && child.position.length() < 0.01) {
           child.material.color.copy(color);
           child.material.emissive.copy(color);
-          child.material.emissiveIntensity = type === 'ai' ? 0.06 : 0.02;
+          child.material.emissiveIntensity = isZeroPower ? 0 : (type === 'ai' ? 0.06 : 0.02);
+          child.material.transparent = isZeroPower;
+          child.material.opacity = isZeroPower ? 0.34 : 1;
           child.material.needsUpdate = true;
         }
       }
@@ -1412,6 +1458,7 @@ function recolorRacks() {
     group.children.forEach(child => {
       if (child.isLineSegments) {
         child.material.color.copy(color).multiplyScalar(1.4);
+        child.material.opacity = isZeroPower ? 0.12 : 0.2;
         child.material.needsUpdate = true;
       }
     });
@@ -1480,7 +1527,7 @@ function showRackTooltip(ud, clientX, clientY) {
 function buildScene() {
   C.rackH = C.rackU * C.uMm / 1000;
   C.totalW = C.cols * C.rackW;
-  C.totalD = C.rows * C.rackD + (C.rows - 1) * C.rowSpacing;
+  C.totalD = computeTotalDepth();
 
   if (rackGroup) { scene.remove(rackGroup); disposeGroup(rackGroup); }
   if (measureGroup) { scene.remove(measureGroup); disposeGroup(measureGroup); }
@@ -1539,7 +1586,7 @@ function clearLabelRendererDom() {
 // ======================================================================
 function buildMeasurements() {
   const mg = measureGroup;
-  const { totalW, totalD, rackW, rackD, rowSpacing, rows, cols } = C;
+  const { totalW, totalD, rackW, rackD, coldAisleSpacing, hotAisleSpacing, rows, cols } = C;
   const halfW = totalW / 2, halfD = totalD / 2;
   const off = 1.6, Y = 0.015;
   const dimColor = 0x3b82f6;
@@ -1572,14 +1619,14 @@ function buildMeasurements() {
   mkLabel(`= ${totalW.toFixed(1)}m`, 0, Y - 0.3, tz, 'val');
 
   const rx = halfW + off;
-  const r0z = -halfD + rackD / 2;
-  const r1z = r0z + rackD + rowSpacing;
+  const r0z = getRackPos(0, 0).z;
+  const r1z = getRackPos(1, 0).z;
   line(new THREE.Vector3(rx, Y, r0z + rackD / 2), new THREE.Vector3(rx, Y, r1z - rackD / 2), dm);
   tickAt(new THREE.Vector3(rx, Y, r0z + rackD / 2), new THREE.Vector3(-1, 0, 0));
   tickAt(new THREE.Vector3(rx, Y, r1z - rackD / 2), new THREE.Vector3(-1, 0, 0));
   line(new THREE.Vector3(halfW - rackW / 2, Y, r0z + rackD / 2), new THREE.Vector3(rx, Y, r0z + rackD / 2), gdm);
   line(new THREE.Vector3(halfW - rackW / 2, Y, r1z - rackD / 2), new THREE.Vector3(rx, Y, r1z - rackD / 2), gdm);
-  mkLabel(`排间距 ${rowSpacing}m`, rx + 0.5, Y + 0.8, (r0z + rackD / 2 + r1z - rackD / 2) / 2, 'hl');
+  mkLabel(`热通道 ${hotAisleSpacing}m`, rx + 0.5, Y + 0.8, (r0z + rackD / 2 + r1z - rackD / 2) / 2, 'hl');
 
   const rx2 = halfW + off + 2.2;
   line(new THREE.Vector3(rx2, Y, -halfD), new THREE.Vector3(rx2, Y, halfD), dm);
@@ -1588,7 +1635,7 @@ function buildMeasurements() {
   line(new THREE.Vector3(halfW - rackW / 2, Y, -halfD + rackD / 2), new THREE.Vector3(rx2, Y, -halfD), gdm);
   line(new THREE.Vector3(halfW - rackW / 2, Y, halfD - rackD / 2), new THREE.Vector3(rx2, Y, halfD), gdm);
   mkLabel(`总深度 ${totalD.toFixed(1)}m`, rx2 + 0.5, Y + 0.8, 0, 'val');
-  mkLabel(`${rows}排 × ${rackD}m + ${rows - 1} × ${rowSpacing}m`, rx2 + 0.5, Y - 0.3, 0, '');
+  mkLabel(`${rows}排 × ${rackD}m + 冷${coldAisleSpacing}m/热${hotAisleSpacing}m`, rx2 + 0.5, Y - 0.3, 0, '');
 
   const m = 0.3;
   const pts = [
@@ -1704,7 +1751,8 @@ function renderRules() {
   const types = { ai: '🔵 AI 设备', bus: '🟢 总线柜', normal: '⬜ 普通' };
   const dots = { ai: '#3b82f6', bus: '#10b981', normal: '#6b7280' };
   if (store.rules.length === 0) {
-    el.innerHTML = '<div style="font-size:11px;color:#475569;padding:8px;">暂未添加规则，所有机柜默认为普通机柜。<br>点击下方"+ 添加规则"创建。</div>';
+    el.innerHTML = '<div style="font-size:11px;color:#475569;padding:8px;">暂未添加规则，所有机柜默认为空机柜。<br>点击下方"+ 添加规则"创建。</div>';
+    setRuleInputsLocked(rulesLocked);
     return;
   }
   el.innerHTML = store.rules.map((rule, i) => `
@@ -1715,15 +1763,16 @@ function renderRules() {
         <div class="r-desc">第 ${rule.rows} 排 → 第 ${rule.cols} 柜 → ${types[rule.type]}</div>
       </div>
       <div class="r-actions">
-        <button class="btn-sm btn-outline" data-ri="${i}" data-action="edit" style="font-size:9px;padding:2px 5px;">✏️</button>
-        <button class="btn-sm ${rule.enabled ? 'btn-success' : 'btn-outline'}" data-ri="${i}" data-action="toggle" style="font-size:9px;padding:2px 5px;">${rule.enabled ? 'ON' : 'OFF'}</button>
-        <button class="btn-sm btn-danger" data-ri="${i}" data-action="delete" style="font-size:9px;padding:2px 5px;">✕</button>
+        <button class="btn-sm btn-outline" data-ri="${i}" data-action="edit" ${rulesLocked ? 'disabled' : ''} style="font-size:9px;padding:2px 5px;">✏️</button>
+        <button class="btn-sm ${rule.enabled ? 'btn-success' : 'btn-outline'}" data-ri="${i}" data-action="toggle" ${rulesLocked ? 'disabled' : ''} style="font-size:9px;padding:2px 5px;">${rule.enabled ? 'ON' : 'OFF'}</button>
+        <button class="btn-sm btn-danger" data-ri="${i}" data-action="delete" ${rulesLocked ? 'disabled' : ''} style="font-size:9px;padding:2px 5px;">✕</button>
       </div>
     </div>
   `).join('');
   el.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
+      if (rulesLocked) return;
       const i = parseInt(btn.dataset.ri);
       if (btn.dataset.action === 'toggle') {
         store.rules[i].enabled = !store.rules[i].enabled;
@@ -1742,9 +1791,34 @@ function renderRules() {
       }
     });
   });
+  setRuleInputsLocked(rulesLocked);
+}
+
+function setRuleInputsLocked(locked) {
+  ['rule-rows', 'rule-cols', 'rule-type', 'rule-name', 'rule-save', 'rule-cancel', 'rule-add-btn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = locked;
+  });
+  const btn = document.getElementById('btn-unlock-rules');
+  if (btn) {
+    btn.textContent = locked ? '解锁' : '提交';
+    btn.setAttribute('aria-pressed', locked ? 'false' : 'true');
+  }
+}
+
+function setRulesLocked(locked) {
+  rulesLocked = locked;
+  if (locked) {
+    document.getElementById('rule-form')?.classList.remove('open');
+    editingRuleIndex = -1;
+    const saveBtn = document.getElementById('rule-save');
+    if (saveBtn) saveBtn.textContent = '✓';
+  }
+  renderRules();
 }
 
 function openRuleEditor(index) {
+  if (rulesLocked) return;
   const rule = store.rules[index];
   editingRuleIndex = index;
   document.getElementById('rule-name').value = rule.name || '';
@@ -1959,6 +2033,23 @@ function rebuildFull() {
   buildScene();
 }
 
+const layoutInputIds = [
+  'cfg-rows', 'cfg-cols', 'cfg-cold-aisle', 'cfg-hot-aisle', 'cfg-depth', 'cfg-depth2', 'cfg-u',
+  'cfg-width', 'cfg-umm', 'cfg-w-ai', 'cfg-w-bus', 'cfg-w-norm', 'cfg-w-empty',
+];
+
+function setLayoutInputsLocked(locked) {
+  layoutInputIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = locked;
+  });
+  const btn = document.getElementById('btn-unlock-layout');
+  if (btn) {
+    btn.textContent = locked ? '解锁' : '已解锁';
+    btn.setAttribute('aria-pressed', locked ? 'false' : 'true');
+  }
+}
+
 // ======================================================================
 // Init
 // ======================================================================
@@ -1968,16 +2059,18 @@ function init() {
   if (!loaded) {
     // Default rules (1-indexed)
     store.rules = [
-      { name: '总线柜 (第3-6排, 第1柜)', rows: '3-6', cols: '1', type: 'bus', enabled: true },
-      { name: 'AI 奇数排 (1,3,5,7)', rows: '1-7:2', cols: '4,7,10,13,16,19', type: 'ai', enabled: true },
-      { name: 'AI 偶数排 (2,4,6,8)', rows: '2-8:2', cols: '3,6,9,12,15,18', type: 'ai', enabled: true },
+      { name: '总线柜 (第3-6排, 第1柜)', rows: '4,6,8,10', cols: '2', type: 'bus', enabled: true },
+      { name: 'AI 奇数排 (1,3,5,7)', rows: '1,3,5,7,9,11', cols: '5,8,11,14', type: 'ai', enabled: true },
+      { name: 'AI 偶数排 (2,4,6,8)', rows: '2,4,6,8,10,12', cols: '4,7,10,13', type: 'ai', enabled: true },
+      { name: 'Leaf交换机', rows: '1,2,11,12', cols: '2', type: 'normal', enabled: true },
     ];
   }
 
   // Sync form fields with state
   document.getElementById('cfg-rows').value = C.rows;
   document.getElementById('cfg-cols').value = C.cols;
-  document.getElementById('cfg-spacing').value = C.rowSpacing;
+  document.getElementById('cfg-cold-aisle').value = C.coldAisleSpacing;
+  document.getElementById('cfg-hot-aisle').value = C.hotAisleSpacing;
   document.getElementById('cfg-depth').value = C.rackD;
   document.getElementById('cfg-depth2').value = C.rackD;
   document.getElementById('cfg-u').value = C.rackU;
@@ -1985,11 +2078,14 @@ function init() {
   document.getElementById('cfg-umm').value = C.uMm;
   document.getElementById('cfg-w-ai').value = C.defaultPower.ai;
   document.getElementById('cfg-w-bus').value = C.defaultPower.bus;
-  document.getElementById('cfg-w-norm').value = C.defaultPower.norm;
+  document.getElementById('cfg-w-norm').value = C.defaultPower.normal;
+  document.getElementById('cfg-w-empty').value = C.defaultPower.empty;
+  setLayoutInputsLocked(true);
 
   buildScene();
   setView('angle', false);
   renderRules();
+  setRulesLocked(true);
   updateOverrideWarning();
 
   setTimeout(() => {
@@ -2046,6 +2142,11 @@ document.querySelectorAll('.sb-tab').forEach(tab => {
   });
 });
 
+document.getElementById('btn-unlock-layout').addEventListener('click', () => {
+  setLayoutInputsLocked(false);
+  toast('布局参数已解锁');
+});
+
 document.getElementById('btn-apply-layout').addEventListener('click', async () => {
   const overrideCount = Object.keys(store.rackOverrides).length;
   if (overrideCount > 0) {
@@ -2056,32 +2157,52 @@ document.getElementById('btn-apply-layout').addEventListener('click', async () =
 
   const rows = parseInt(document.getElementById('cfg-rows').value) || 8;
   const cols = parseInt(document.getElementById('cfg-cols').value) || 22;
-  const spacing = parseFloat(document.getElementById('cfg-spacing').value) || 1.0;
+  const coldAisle = parseFloat(document.getElementById('cfg-cold-aisle').value) || 1.6;
+  const hotAisle = parseFloat(document.getElementById('cfg-hot-aisle').value) || 1.2;
   const depth = parseFloat(document.getElementById('cfg-depth').value) || 1.0;
   const u = parseInt(document.getElementById('cfg-u').value) || 42;
   const w = parseFloat(document.getElementById('cfg-width').value) || 0.6;
   const umm = parseFloat(document.getElementById('cfg-umm').value) || 44.45;
-  const wAi = parseInt(document.getElementById('cfg-w-ai').value) || 2000;
-  const wBus = parseInt(document.getElementById('cfg-w-bus').value) || 500;
-  const wNorm = parseInt(document.getElementById('cfg-w-norm').value) || 300;
+  const wAi = parseInt(document.getElementById('cfg-w-ai').value) || 14600;
+  const wBus = parseInt(document.getElementById('cfg-w-bus').value) || 16800;
+  const wNorm = parseInt(document.getElementById('cfg-w-norm').value) || 250;
+  const wEmpty = parseInt(document.getElementById('cfg-w-empty').value) || 0;
 
-  C.rows = rows; C.cols = cols; C.rowSpacing = spacing;
+  C.rows = rows; C.cols = cols;
+  C.coldAisleSpacing = coldAisle;
+  C.hotAisleSpacing = hotAisle;
   C.rackD = depth; C.rackU = u; C.rackW = w;
   C.uMm = umm;
-  C.defaultPower = { ai: wAi, bus: wBus, normal: wNorm };
+  C.defaultPower = { ai: wAi, bus: wBus, normal: wNorm, empty: wEmpty };
   document.getElementById('cfg-depth2').value = depth;
 
   if (overrideCount > 0) store.rackOverrides = {};
 
   rebuildFull();
   renderRules();
-  toast('布局已更新');
+  updateOverrideWarning();
+  saveState();
+  setLayoutInputsLocked(true);
+  toast('布局已更新并保存');
 });
 
 document.getElementById('cfg-depth').addEventListener('input', () => { document.getElementById('cfg-depth2').value = document.getElementById('cfg-depth').value; });
 document.getElementById('cfg-depth2').addEventListener('input', () => { document.getElementById('cfg-depth').value = document.getElementById('cfg-depth2').value; });
 
+document.getElementById('btn-unlock-rules').addEventListener('click', () => {
+  if (rulesLocked) {
+    setRulesLocked(false);
+    toast('规则已解锁');
+    return;
+  }
+  rebuildAfterRuleChange();
+  renderRules();
+  setRulesLocked(true);
+  toast('规则已提交并保存');
+});
+
 document.getElementById('rule-add-btn').addEventListener('click', () => {
+  if (rulesLocked) return;
   editingRuleIndex = -1;
   document.getElementById('rule-save').textContent = '✓';
   document.getElementById('rule-name').value = '';
@@ -2091,6 +2212,7 @@ document.getElementById('rule-add-btn').addEventListener('click', () => {
 });
 
 document.getElementById('rule-save').addEventListener('click', () => {
+  if (rulesLocked) return;
   const rows = document.getElementById('rule-rows').value.trim();
   const cols = document.getElementById('rule-cols').value.trim();
   const type = document.getElementById('rule-type').value;
@@ -2108,9 +2230,11 @@ document.getElementById('rule-save').addEventListener('click', () => {
   document.getElementById('rule-form').classList.remove('open');
   rebuildAfterRuleChange();
   renderRules();
+  toast('规则已保存，请点击提交锁定');
 });
 
 document.getElementById('rule-cancel').addEventListener('click', () => {
+  if (rulesLocked) return;
   document.getElementById('rule-form').classList.remove('open');
   editingRuleIndex = -1;
   document.getElementById('rule-save').textContent = '✓';
