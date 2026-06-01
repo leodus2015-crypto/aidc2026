@@ -95,28 +95,28 @@
           <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl">代码量</h2>
           <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
             <p>
-              统计本仓库内全部源代码文件（HTML、Shell、SVG 等），不含 PDF 等二进制资源与 <code class="rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800">.git</code> 目录。
+              统计本仓库内全部源代码文件（HTML、JavaScript、Shell、SVG 等），不含 PDF 等二进制资源与 <code class="rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800">.git</code> 目录。
             </p>
           </div>
           <dl class="mt-6 grid gap-4 sm:grid-cols-3">
             <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
               <dt class="text-xs font-medium text-slate-500">总代码行数 · Prompt 折算</dt>
               <dd class="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span class="text-lg font-semibold text-slate-900">6,239 行</span>
+                <span class="text-lg font-semibold text-slate-900">12,581 行</span>
                 <span class="text-sm font-medium text-slate-400" aria-hidden="true">≈</span>
-                <span class="text-lg font-semibold text-blue-700">99K Tokens</span>
+                <span class="text-lg font-semibold text-blue-700">198K Tokens</span>
               </dd>
               <p class="mt-2 text-xs leading-5 text-slate-500">
-                若将全部源码一次性作为 Prompt 输入；246,973 字符 ÷ 2.5 字符/Token，区间约 62K–99K。
+                若将全部源码一次性作为 Prompt 输入；493,985 字符 ÷ 2.5 字符/Token，区间约 165K–247K。
               </p>
             </div>
             <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
               <dt class="text-xs font-medium text-slate-500">代码文件数</dt>
-              <dd class="mt-1 text-lg font-semibold text-slate-900">9 个</dd>
+              <dd class="mt-1 text-lg font-semibold text-slate-900">17 个</dd>
             </div>
             <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
               <dt class="text-xs font-medium text-slate-500">主要语言</dt>
-              <dd class="mt-1 text-sm font-medium text-slate-800">HTML · Shell · SVG</dd>
+              <dd class="mt-1 text-sm font-medium text-slate-800">HTML · JavaScript · Shell · SVG</dd>
             </div>
           </dl>
           <div class="mt-8">
@@ -125,30 +125,40 @@
               <li>
                 <div class="flex items-center justify-between gap-4 text-sm">
                   <span class="font-medium text-slate-800">HTML</span>
-                  <span class="shrink-0 tabular-nums text-slate-600">6,077 行 · 97.4%</span>
+                  <span class="shrink-0 tabular-nums text-slate-600">11,643 行 · 92.5%</span>
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                  <div class="h-full rounded-full bg-blue-600" style="width: 97.4%"></div>
+                  <div class="h-full rounded-full bg-blue-600" style="width: 92.5%"></div>
                 </div>
-                <p class="mt-1.5 text-xs text-slate-500">8 个页面文件（含 Agentic 推理、后训练、AI DC布局、白皮书、About 等）</p>
+                <p class="mt-1.5 text-xs text-slate-500">14 个页面文件（含 Agentic 推理、后训练、AI DC 布局、白皮书、3D 案例、About 等）</p>
+              </li>
+              <li>
+                <div class="flex items-center justify-between gap-4 text-sm">
+                  <span class="font-medium text-slate-800">JavaScript</span>
+                  <span class="shrink-0 tabular-nums text-slate-600">776 行 · 6.2%</span>
+                </div>
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+                  <div class="h-full rounded-full bg-amber-500" style="width: 6.2%"></div>
+                </div>
+                <p class="mt-1.5 text-xs text-slate-500">1 个脚本（白皮书 2.0 章节规划工作台）</p>
               </li>
               <li>
                 <div class="flex items-center justify-between gap-4 text-sm">
                   <span class="font-medium text-slate-800">SVG</span>
-                  <span class="shrink-0 tabular-nums text-slate-600">104 行 · 1.7%</span>
+                  <span class="shrink-0 tabular-nums text-slate-600">104 行 · 0.8%</span>
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                  <div class="h-full rounded-full bg-violet-500" style="width: 1.7%"></div>
+                  <div class="h-full rounded-full bg-violet-500" style="width: 0.8%"></div>
                 </div>
                 <p class="mt-1.5 text-xs text-slate-500">1 个矢量资源（站点 Logo）</p>
               </li>
               <li>
                 <div class="flex items-center justify-between gap-4 text-sm">
                   <span class="font-medium text-slate-800">Shell</span>
-                  <span class="shrink-0 tabular-nums text-slate-600">58 行 · 0.9%</span>
+                  <span class="shrink-0 tabular-nums text-slate-600">58 行 · 0.5%</span>
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                  <div class="h-full rounded-full bg-emerald-500" style="width: 0.9%"></div>
+                  <div class="h-full rounded-full bg-emerald-500" style="width: 0.5%"></div>
                 </div>
                 <p class="mt-1.5 text-xs text-slate-500">1 个脚本（本地预览服务）</p>
               </li>
@@ -161,89 +171,33 @@
           <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl">AI Tokens 消耗</h2>
           <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
             <p>
-              记录 AIDC 2026 站点在 Cursor 等 AI 辅助工具下的 Token 消耗。基准数据来自控制台 Included Usage 手工录入；自
-              <time id="usageTrackedSince" datetime="2026-05-24">2026-05-24</time>
-              起由项目 Hook 估算增量并叠加显示。
+              记录 AIDC 2026 站点在 Cursor 等 AI 辅助工具下的 Token 消耗。数据来自控制台 Included Usage，按账单周期<strong>手工录入</strong>；同一周期重复提交时以最新值<strong>替换</strong>，不累加。
             </p>
             <p class="text-sm text-slate-500">
-              统计周期（基准）：
-              <span id="usageBaselinePeriod">2026-04-25 — 2026-05-25</span>
-              · 数据来源：
-              <span id="usageBaselineSource">Cursor Dashboard · Included Usage</span>
+              数据来源：
+              <span id="usageSource">Cursor Dashboard · Included Usage</span>
             </p>
           </div>
           <dl class="mt-6 grid gap-4 sm:grid-cols-2">
             <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
               <dt class="text-xs font-medium text-slate-500">累计 Tokens</dt>
-              <dd id="usageTotalTokens" class="mt-1 text-lg font-semibold text-slate-900">155.3M</dd>
+              <dd id="usageTotalTokens" class="mt-1 text-lg font-semibold text-slate-900">—</dd>
             </div>
             <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
               <dt class="text-xs font-medium text-slate-500">最近更新</dt>
-              <dd id="usageUpdatedAt" class="mt-1 text-sm font-medium text-slate-800">2026-05-25</dd>
+              <dd id="usageUpdatedAt" class="mt-1 text-sm font-medium text-slate-800">—</dd>
             </div>
           </dl>
           <div class="mt-8">
-            <h3 class="text-sm font-semibold text-slate-900">模型 / 类别分布（基准期）</h3>
-            <ul id="usageBreakdown" class="mt-4 space-y-5" role="list">
-              <li>
-                <p class="text-sm font-semibold text-slate-800">API · 60.6M · Included Usage 62.8%</p>
-                <ul class="mt-3 space-y-3" role="list">
-                  <li>
-                    <div class="flex items-center justify-between gap-4 text-sm">
-                      <span class="font-medium text-slate-800">gpt-5.5-medium</span>
-                      <span class="shrink-0 tabular-nums text-slate-600">41.2M · 47.0%</span>
-                    </div>
-                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                      <div class="h-full rounded-full bg-blue-600" style="width: 47%"></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center justify-between gap-4 text-sm">
-                      <span class="font-medium text-slate-800">premium</span>
-                      <span class="shrink-0 tabular-nums text-slate-600">19.4M · 15.8%</span>
-                    </div>
-                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                      <div class="h-full rounded-full bg-sky-500" style="width: 15.8%"></div>
-                    </div>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <p class="text-sm font-semibold text-slate-800">Auto + Composer · 94.7M · Included Usage 24.5%</p>
-                <ul class="mt-3 space-y-3" role="list">
-                  <li>
-                    <div class="flex items-center justify-between gap-4 text-sm">
-                      <span class="font-medium text-slate-800">composer-2-fast</span>
-                      <span class="shrink-0 tabular-nums text-slate-600">59.6M · 17.2%</span>
-                    </div>
-                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                      <div class="h-full rounded-full bg-violet-500" style="width: 17.2%"></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center justify-between gap-4 text-sm">
-                      <span class="font-medium text-slate-800">composer-2.5-fast</span>
-                      <span class="shrink-0 tabular-nums text-slate-600">32.6M · 6.7%</span>
-                    </div>
-                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                      <div class="h-full rounded-full bg-indigo-500" style="width: 6.7%"></div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="flex items-center justify-between gap-4 text-sm">
-                      <span class="font-medium text-slate-800">auto</span>
-                      <span class="shrink-0 tabular-nums text-slate-600">2.4M · 0.6%</span>
-                    </div>
-                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                      <div class="h-full rounded-full bg-emerald-500" style="width: 0.6%"></div>
-                    </div>
-                  </li>
-                </ul>
-              </li>
-            </ul>
+            <h3 class="text-sm font-semibold text-slate-900">统计周期</h3>
+            <ul id="usagePeriodList" class="mt-3 space-y-2 text-sm text-slate-700" role="list"></ul>
+          </div>
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold text-slate-900">模型 / 类别分布（<span id="usageDetailPeriod">—</span>）</h3>
+            <ul id="usageBreakdown" class="mt-4 space-y-5" role="list"></ul>
           </div>
           <p id="usageNote" class="mt-6 text-xs leading-5 text-slate-500">
-            Hook 增量按对话文本长度估算（约 2.5 字符 / Token），仅供趋势参考；请以 Cursor 控制台账单为准。
+            各周期 Token 为当期内 Included Usage 快照，请勿跨周期累加；以 Cursor 控制台账单为准。
           </p>
         </article>
 
@@ -330,35 +284,60 @@
   <script>
     (function () {
       const fallback = {
-        baseline: {
-          source: "Cursor Dashboard · Included Usage",
-          period: "2026-04-25 — 2026-05-25",
-          recorded_at: "2026-05-24",
-          total_tokens: 155300000,
-          categories: [
-            {
-              name: "API",
-              tokens: 60600000,
-              usage_percent: 62.8,
-              items: [
-                { name: "gpt-5.5-medium", tokens: 41200000, usage_percent: 47.0 },
-                { name: "premium", tokens: 19400000, usage_percent: 15.8 },
-              ],
-            },
-            {
-              name: "Auto + Composer",
-              tokens: 94700000,
-              usage_percent: 24.5,
-              items: [
-                { name: "composer-2-fast", tokens: 59600000, usage_percent: 17.2 },
-                { name: "composer-2.5-fast", tokens: 32600000, usage_percent: 6.7 },
-                { name: "auto", tokens: 2400000, usage_percent: 0.6 },
-              ],
-            },
-          ],
-        },
-        tracked: { since: "2026-05-24", total_tokens: 0 },
-        updated_at: "2026-05-24T00:00:00+08:00",
+        version: 2,
+        source: "Cursor Dashboard · Included Usage",
+        updated_at: "2026-06-02T12:00:00+08:00",
+        periods: [
+          {
+            period: "2026-04-25 — 2026-05-25",
+            period_start: "2026-04-25",
+            period_end: "2026-05-25",
+            recorded_at: "2026-05-24",
+            total_tokens: 155300000,
+            categories: [
+              {
+                name: "API",
+                tokens: 60600000,
+                usage_percent: 62.8,
+                items: [
+                  { name: "gpt-5.5-medium", tokens: 41200000, usage_percent: 47.0 },
+                  { name: "premium", tokens: 19400000, usage_percent: 15.8 },
+                ],
+              },
+              {
+                name: "Auto + Composer",
+                tokens: 94700000,
+                usage_percent: 24.5,
+                items: [
+                  { name: "composer-2-fast", tokens: 59600000, usage_percent: 17.2 },
+                  { name: "composer-2.5-fast", tokens: 32600000, usage_percent: 6.7 },
+                  { name: "auto", tokens: 2400000, usage_percent: 0.6 },
+                ],
+              },
+            ],
+          },
+          {
+            period: "2026-05-25 — 2026-06-25",
+            period_start: "2026-05-25",
+            period_end: "2026-06-25",
+            recorded_at: "2026-06-02",
+            total_tokens: 103300000,
+            categories: [
+              {
+                name: "API",
+                tokens: 53200000,
+                usage_percent: 100.0,
+                items: [{ name: "gpt-5.5-medium", tokens: 53200000, usage_percent: 100.0 }],
+              },
+              {
+                name: "Auto + Composer",
+                tokens: 50100000,
+                usage_percent: 26.0,
+                items: [{ name: "composer-2.5-fast", tokens: 50100000, usage_percent: 26.0 }],
+              },
+            ],
+          },
+        ],
       };
 
       const barColors = ["bg-blue-600", "bg-sky-500", "bg-violet-500", "bg-indigo-500", "bg-emerald-500", "bg-amber-500"];
@@ -378,28 +357,29 @@
         return date.toLocaleDateString("zh-CN");
       }
 
-      function renderUsage(data) {
-        const baseline = data.baseline || {};
-        const tracked = data.tracked || {};
-        const baselineTokens = Number(baseline.total_tokens) || 0;
-        const trackedTokens = Number(tracked.total_tokens) || 0;
-        const totalTokens = baselineTokens + trackedTokens;
+      function normalizePeriods(data) {
+        if (Array.isArray(data.periods) && data.periods.length) {
+          return [...data.periods].sort((a, b) => String(a.period_start).localeCompare(String(b.period_start)));
+        }
+        const baseline = data.baseline;
+        if (!baseline) return [];
+        return [
+          {
+            period: baseline.period,
+            period_start: baseline.period_start || baseline.period?.split("—")[0]?.trim(),
+            period_end: baseline.period_end || baseline.period?.split("—")[1]?.trim(),
+            recorded_at: baseline.recorded_at,
+            total_tokens: baseline.total_tokens,
+            categories: baseline.categories || [],
+          },
+        ];
+      }
 
-        const setText = (id, text) => {
-          const node = document.getElementById(id);
-          if (node) node.textContent = text;
-        };
-
-        setText("usageTotalTokens", formatTokens(totalTokens));
-        setText("usageBaselinePeriod", baseline.period || "—");
-        setText("usageBaselineSource", baseline.source || "—");
-        setText("usageUpdatedAt", formatDate(data.updated_at || baseline.recorded_at));
-        setText("usageTrackedSince", formatDate(tracked.since));
-
-        const breakdown = document.getElementById("usageBreakdown");
-        if (!breakdown || !Array.isArray(baseline.categories)) return;
-
-        breakdown.innerHTML = baseline.categories
+      function renderBreakdown(categories) {
+        if (!Array.isArray(categories) || !categories.length) {
+          return `<li class="text-sm text-slate-500">暂无明细</li>`;
+        }
+        return categories
           .map((category) => {
             const items = (category.items || [])
               .map((item, index) => {
@@ -425,6 +405,38 @@
               </li>`;
           })
           .join("");
+      }
+
+      function renderUsage(data) {
+        const periods = normalizePeriods(data);
+        const latest = periods[periods.length - 1];
+
+        const setText = (id, text) => {
+          const node = document.getElementById(id);
+          if (node) node.textContent = text;
+        };
+
+        const totalTokens = periods.reduce((sum, entry) => sum + (Number(entry.total_tokens) || 0), 0);
+
+        setText("usageSource", data.source || "Cursor Dashboard · Included Usage");
+        setText("usageUpdatedAt", formatDate(data.updated_at || latest?.recorded_at));
+        setText("usageTotalTokens", periods.length ? formatTokens(totalTokens) : "—");
+        setText("usageDetailPeriod", latest?.period || "—");
+
+        const periodList = document.getElementById("usagePeriodList");
+        if (periodList) {
+          periodList.innerHTML = periods.length
+            ? periods
+                .map(
+                  (entry) =>
+                    `<li class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2"><span>${entry.period}</span><span class="tabular-nums font-semibold text-slate-900">${formatTokens(entry.total_tokens)}</span></li>`
+                )
+                .join("")
+            : `<li class="text-slate-500">暂无录入</li>`;
+        }
+
+        const breakdown = document.getElementById("usageBreakdown");
+        if (breakdown) breakdown.innerHTML = renderBreakdown(latest?.categories || []);
       }
 
       fetch("data/ai-usage.json", { cache: "no-store" })

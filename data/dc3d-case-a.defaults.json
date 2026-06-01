@@ -1,0 +1,22 @@
+{
+  "label": "案例A（风冷超节点）",
+  "source": "datacenter-3d-case-b.html",
+  "savedAt": "2026-06-01",
+  "C": {
+    "rows": 8,
+    "cols": 13,
+    "rackW": 0.6,
+    "rackD": 1.0,
+    "rackU": 42,
+    "uMm": 44.45,
+    "coldAisleSpacing": 1.6,
+    "hotAisleSpacing": 1.2,
+    "defaultPower": { "ai": 15000, "bus": 7000, "normal": 300, "empty": 0 }
+  },
+  "rules": [
+    { "name": "总线柜 (第3-6排, 第1柜)", "rows": "1-8", "cols": "13", "type": "bus", "enabled": true },
+    { "name": "AI 奇数排 (1,3,5,7)", "rows": "1,3,5,7", "cols": "2,4,6,8,10,12", "type": "ai", "enabled": true },
+    { "name": "AI 偶数排 (2,4,6,8)", "rows": "2,4,6,8", "cols": "2,4,6,8,10,12", "type": "ai", "enabled": true },
+    { "name": "Leaf交换机", "rows": "1,3,5,7", "cols": "2", "type": "normal", "enabled": true }
+  ]
+}

@@ -1,25 +1,4 @@
 {
   "version": 1,
-  "hooks": {
-    "beforeSubmitPrompt": [
-      {
-        "command": "python3 .cursor/hooks/track-ai-usage.py"
-      }
-    ],
-    "afterAgentResponse": [
-      {
-        "command": "python3 .cursor/hooks/track-ai-usage.py"
-      }
-    ],
-    "afterAgentThought": [
-      {
-        "command": "python3 .cursor/hooks/track-ai-usage.py"
-      }
-    ],
-    "sessionEnd": [
-      {
-        "command": "python3 .cursor/hooks/track-ai-usage.py"
-      }
-    ]
-  }
+  "hooks": {}
 }

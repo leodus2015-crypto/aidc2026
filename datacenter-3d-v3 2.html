@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DataCenter 3D 设计器 · 案例B</title>
+<title>DataCenter 3D 设计器 · 案例B（风冷超节点）</title>
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -126,11 +126,6 @@
   .btn-success { background: #10b981; color: #fff; }
   .btn-success:hover { filter: brightness(1.08); }
 
-  .override-badge {
-    display: inline-block; font-size: 9px; padding: 1px 5px; border-radius: 99px;
-    background: #fef3c7; color: #92400e; border: 1px solid #fde68a;
-  }
-
   .rule-list { display: flex; flex-direction: column; gap: 6px; }
   .rule-item {
     background: var(--dc-surface); border: 1px solid var(--dc-border); border-radius: 6px;
@@ -192,71 +187,6 @@
   #tooltip .tt-section-body { margin-top: 3px; font-size: 10px; line-height: 1.45; color: var(--dc-text-secondary); }
   #tooltip .tt-shared { margin-top: 6px; font-size: 9px; color: var(--dc-text-faint); }
 
-  #modal-overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(28, 25, 23, 0.28); backdrop-filter: blur(4px);
-    display: none; align-items: center; justify-content: center;
-    padding: 10px;
-  }
-  #modal-overlay.open { display: flex; }
-
-  #modal {
-    background: var(--dc-surface); border: 1px solid var(--dc-border); border-radius: 14px;
-    width: 460px; max-width: 100%; max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(28, 25, 23, 0.12);
-  }
-  #modal-header {
-    padding: 14px 16px; border-bottom: 1px solid var(--dc-border);
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    background: var(--dc-surface-muted);
-  }
-  #modal-header h3 { font-size: 14px; font-weight: 600; color: var(--dc-text); }
-  #modal-close {
-    width: 28px; height: 28px; border-radius: 6px; border: none;
-    background: transparent; color: var(--dc-text-muted); font-size: 18px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  #modal-close:hover { background: var(--dc-surface-inset); color: var(--dc-text); }
-  #modal-body { padding: 14px 16px; }
-  .mod-section { margin-bottom: 12px; }
-  .mod-section label { display: block; font-size: 10px; color: var(--dc-text-muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; font-weight: 600; }
-  .mod-type-group { display: flex; gap: 6px; }
-  .mod-type-btn {
-    flex: 1; padding: 6px 8px; border-radius: 6px; font-size: 11px; font-weight: 500;
-    border: 1px solid var(--dc-border); background: var(--dc-surface); color: var(--dc-text-secondary);
-    transition: all .2s;
-  }
-  .mod-type-btn:hover { border-color: #2563eb; color: #2563eb; }
-  .mod-type-btn.active { color: #fff; }
-  .mod-type-btn.t-normal.active { background: #6b7280; border-color: #6b7280; }
-  .mod-type-btn.t-ai.active { background: #3b82f6; border-color: #3b82f6; }
-  .mod-type-btn.t-bus.active { background: #10b981; border-color: #10b981; }
-
-  .mod-device {
-    background: var(--dc-surface-muted); border: 1px solid var(--dc-border); border-radius: 6px;
-    padding: 8px 10px; margin-bottom: 6px;
-  }
-  .mod-device .md-row { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
-  .mod-device .md-row > * { min-width: 0; }
-  .mod-device input { background: var(--dc-surface); border: 1px solid var(--dc-border); border-radius: 4px; padding: 4px 6px; color: var(--dc-text); font-size: 12px; }
-  .mod-device input:focus { border-color: #2563eb; }
-  .mod-device .md-name { flex: 2; min-width: 60px; }
-  .mod-device .md-num { width: 44px; text-align: center; }
-  .mod-device .md-power { width: 54px; }
-  .mod-device .md-u { width: 40px; text-align: center; }
-  .mod-device .md-lbl { font-size: 9px; color: var(--dc-text-muted); white-space: nowrap; }
-
-  .mod-usage-bar { height: 6px; background: var(--dc-surface-inset); border-radius: 99px; overflow: hidden; margin: 4px 0; }
-  .mod-usage-bar .fill { height: 100%; border-radius: 99px; transition: width .3s; }
-  .mod-usage-bar .fill.ok { background: #3b82f6; }
-  .mod-usage-bar .fill.warn { background: #f59e0b; }
-  .mod-usage-bar .fill.over { background: #ef4444; }
-
-  .mod-footer {
-    padding: 10px 16px; border-top: 1px solid var(--dc-border);
-    display: flex; gap: 8px; justify-content: flex-end; background: var(--dc-surface-muted);
-  }
-
   #toast-container {
     position: fixed; top: 56px; left: 50%; transform: translateX(-50%); z-index: 300;
     display: flex; flex-direction: column; gap: 6px; align-items: center;
@@ -305,9 +235,9 @@
   #confirm-box p { font-size: 12px; color: var(--dc-text-secondary); margin-bottom: 16px; line-height: 1.4; }
   #confirm-box .cf-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-  #sidebar ::-webkit-scrollbar, #modal ::-webkit-scrollbar { width: 3px; }
-  #sidebar ::-webkit-scrollbar-track, #modal ::-webkit-scrollbar-track { background: transparent; }
-  #sidebar ::-webkit-scrollbar-thumb, #modal ::-webkit-scrollbar-thumb { background: var(--dc-border-strong); border-radius: 99px; }
+  #sidebar ::-webkit-scrollbar { width: 3px; }
+  #sidebar ::-webkit-scrollbar-track { background: transparent; }
+  #sidebar ::-webkit-scrollbar-thumb { background: var(--dc-border-strong); border-radius: 99px; }
 
   @media (max-width: 860px) {
     #sidebar { width: 280px; }
@@ -339,7 +269,7 @@
 
 <!-- ===== Top Bar ===== -->
 <div id="topbar">
-  <div class="logo">⚡ DC Designer <small>案例B · 数据中心 3D 设计器</small></div>
+  <div class="logo">⚡ DC Designer <small>案例B（风冷超节点） · 数据中心 3D 设计器</small></div>
   <div class="tb-group">
     <button class="tb-btn active" data-view="top">俯视</button>
     <button class="tb-btn" data-view="horiz">水平</button>
@@ -392,16 +322,13 @@
         <div class="sbf-row c4">
           <div><label class="sbf-label" style="font-size:9px;">AI (W)</label><input class="sbf-input" id="cfg-w-ai" type="number" value="14600" step="100"></div>
           <div><label class="sbf-label" style="font-size:9px;">总线 (W)</label><input class="sbf-input" id="cfg-w-bus" type="number" value="16800" step="50"></div>
-          <div><label class="sbf-label" style="font-size:9px;">普通 (W)</label><input class="sbf-input" id="cfg-w-norm" type="number" value="250" step="50"></div>
+          <div><label class="sbf-label" style="font-size:9px;">Leaf (W)</label><input class="sbf-input" id="cfg-w-norm" type="number" value="250" step="50"></div>
           <div><label class="sbf-label" style="font-size:9px;">空机柜 (W)</label><input class="sbf-input" id="cfg-w-empty" type="number" value="0" step="50"></div>
         </div>
       </div>
       <div class="layout-actions">
         <button class="btn-outline" id="btn-unlock-layout">解锁</button>
         <button class="btn-primary" id="btn-apply-layout">✓ 更新布局</button>
-      </div>
-      <div id="override-warning" style="display:none;margin-top:6px;font-size:10px;color:#f59e0b;text-align:center;padding:6px;background:#f59e0b11;border-radius:6px;border:1px solid #f59e0b33;">
-        ⚠ 当前有 <span id="override-count">0</span> 个机柜被单独编辑过，更新布局将清空这些修改。
       </div>
     </div>
 
@@ -410,7 +337,7 @@
       <div style="font-size:12px;font-weight:600;margin-bottom:4px;">机柜类型分配规则</div>
       <div style="font-size:10px;color:#64748b;margin-bottom:10px;line-height:1.4;">
         规则按顺序执行（从上到下），后执行的覆盖前面的冲突。<br>
-        点击机柜可单独覆写类型。规则中的行列号从 <strong>1</strong> 开始计数。
+        规则中的行列号从 <strong>1</strong> 开始计数。
       </div>
       <div class="rule-list" id="rule-list"></div>
       <div class="rule-form" id="rule-form">
@@ -432,7 +359,7 @@
             <select class="sbf-input" id="rule-type">
               <option value="ai">AI 设备柜</option>
               <option value="bus">总线交换机柜</option>
-              <option value="normal">普通机柜</option>
+              <option value="normal">Leaf交换机</option>
             </select>
           </div>
           <div>
@@ -500,47 +427,6 @@
   <div class="tt-pwr" id="tt-pwr"></div>
 </div>
 
-<!-- ===== Modal (Rack Editor) ===== -->
-<div id="modal-overlay">
-  <div id="modal">
-    <div id="modal-header">
-      <h3 id="modal-title">机柜编辑</h3>
-      <button id="modal-close">✕</button>
-    </div>
-    <div id="modal-body">
-      <div class="mod-section">
-        <label>机柜类型</label>
-        <div class="mod-type-group">
-          <button class="mod-type-btn t-normal" data-type="normal">⬜ 普通</button>
-          <button class="mod-type-btn t-ai" data-type="ai">🔵 AI 设备</button>
-          <button class="mod-type-btn t-bus" data-type="bus">🟢 总线柜</button>
-        </div>
-      </div>
-      <div class="mod-section">
-        <label>设备列表</label>
-        <div id="device-list"></div>
-        <button class="btn-sm btn-outline" id="device-add-btn" style="width:100%;margin-top:4px;padding:5px;">+ 添加设备</button>
-      </div>
-      <div class="mod-section" id="mod-usage-section">
-        <label>U 位使用</label>
-        <div style="display:flex;justify-content:space-between;font-size:11px;">
-          <span id="mod-u-used">0</span>
-          <span id="mod-u-total">/ 42 U</span>
-        </div>
-        <div class="mod-usage-bar"><div class="fill ok" id="mod-u-bar" style="width:0%"></div></div>
-      </div>
-      <div class="mod-section">
-        <label>总功耗</label>
-        <div style="font-size:16px;font-weight:700;color:#f59e0b;"><span id="mod-total-power">0</span> W</div>
-      </div>
-    </div>
-    <div class="mod-footer">
-      <button class="btn-sm btn-outline" id="modal-cancel">取消</button>
-      <button class="btn-sm btn-success" id="modal-save">✓ 保存</button>
-    </div>
-  </div>
-</div>
-
 <!-- ===== Confirm Dialog ===== -->
 <div id="confirm-overlay">
   <div id="confirm-box">
@@ -598,7 +484,6 @@ const store = {
   rules: [],
   viewIdx: 0,
   savedViews: [],
-  rackOverrides: {},
 };
 
 // ======================================================================
@@ -620,7 +505,6 @@ function saveState() {
         rules: store.rules,
         viewIdx: store.viewIdx,
         savedViews: store.savedViews,
-        rackOverrides: store.rackOverrides,
       },
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -643,7 +527,6 @@ function loadState() {
       if (data.store.rules) store.rules = data.store.rules;
       if (data.store.viewIdx) store.viewIdx = data.store.viewIdx;
       if (data.store.savedViews) store.savedViews = data.store.savedViews;
-      if (data.store.rackOverrides) store.rackOverrides = data.store.rackOverrides;
     }
     return true;
   } catch (e) { return false; }
@@ -800,16 +683,27 @@ function computeMatchingRuleTypes(row0, col0, rules) {
   return Array.from(matched).sort((a, b) => (priority[b] || 0) - (priority[a] || 0));
 }
 
+function getTooltipTypeLabel(type, shared) {
+  if (shared && type === 'ai') return 'AI 机柜';
+  if (shared && type === 'normal') return 'Leaf交换机';
+  const labels = { ai: 'AI 设备柜', bus: '总线交换机柜', normal: 'Leaf交换机', empty: '空机柜' };
+  return labels[type] || 'Leaf交换机';
+}
+
+function getTooltipDevices(type, shared) {
+  const devices = getDefaultDevices(type).map(device => ({ ...device }));
+  if (shared && type === 'normal') {
+    devices.forEach(device => { device.name = 'Leaf交换机'; });
+  }
+  return devices;
+}
+
 function computeRackType(row0, col0, rules) {
-  const key = `${row0},${col0}`;
-  if (store.rackOverrides[key]?.type) return store.rackOverrides[key].type;
   const types = computeMatchingRuleTypes(row0, col0, rules);
   return types[0] || 'normal';
 }
 
 function getRackDevices(row, col) {
-  const key = `${row},${col}`;
-  if (store.rackOverrides[key]?.devices) return store.rackOverrides[key].devices;
   const types = computeMatchingRuleTypes(row, col, store.rules);
   if (types.length === 0) return getDefaultDevices('empty');
   const devices = [];
@@ -821,7 +715,7 @@ function getDefaultDevices(type) {
   switch (type) {
     case 'ai': return [{ name: 'AI 机柜', u: C.rackU, qty: 1, power: C.defaultPower.ai }];
     case 'bus': return [{ name: '总线机柜', u: C.rackU, qty: 1, power: C.defaultPower.bus }];
-    case 'normal': return [{ name: '普通机柜', u: C.rackU, qty: 1, power: C.defaultPower.normal }];
+    case 'normal': return [{ name: 'Leaf交换机', u: C.rackU, qty: 1, power: C.defaultPower.normal }];
     case 'empty': return C.defaultPower.empty > 0 ? [{ name: '空机柜', u: 0, qty: 1, power: C.defaultPower.empty }] : [];
     default: return [];
   }
@@ -838,9 +732,153 @@ function calcRackUsedU(devices) {
 // ======================================================================
 // 3D Rack
 // ======================================================================
-const RACK_COLORS = { ai: 0x3b82f6, bus: 0x10b981, normal: 0x6b7280 };
+const RACK_COLORS = { ai: 0x3b82f6, bus: 0x10b981, normal: 0xf59e0b, empty: 0x6b7280 };
 const PWR_COLORS = [0x10b981, 0x84cc16, 0xf59e0b, 0xef4444];
 const ZERO_POWER_COLOR = new THREE.Color(0xd6d3d1);
+
+function isAiLeafSplitRack(matchedTypes) {
+  return matchedTypes && matchedTypes.includes('ai') && matchedTypes.includes('normal');
+}
+
+function makeRackBodyMaterial(color, emissiveIntensity = 0.02) {
+  const c = color instanceof THREE.Color ? color : new THREE.Color(color);
+  return new THREE.MeshStandardMaterial({
+    color: c, roughness: 0.4, metalness: 0.15,
+    emissive: c.clone(), emissiveIntensity,
+  });
+}
+
+function getRackTypeColor(row, col, matchedTypes, type) {
+  if (isEmptyNormalRack(row, col, type)) return new THREE.Color(RACK_COLORS.empty);
+  return new THREE.Color(RACK_COLORS[type] || RACK_COLORS.normal);
+}
+
+function getRackAccentColor(row, col, matchedTypes, type, ySign) {
+  if (isEmptyNormalRack(row, col, type)) {
+    return new THREE.Color(RACK_COLORS.empty).multiplyScalar(0.65);
+  }
+  if (isAiLeafSplitRack(matchedTypes)) {
+    return new THREE.Color(ySign > 0 ? RACK_COLORS.normal : RACK_COLORS.ai).multiplyScalar(0.65);
+  }
+  return getRackTypeColor(row, col, matchedTypes, type).clone().multiplyScalar(0.65);
+}
+
+function addRackBodyMeshes(group, row, col, matchedTypes, type, rw, rh, rd) {
+  const bodyW = rw * 0.96, bodyH = rh * 0.96, bodyD = rd * 0.96;
+  let edgeColor;
+  if (isEmptyNormalRack(row, col, type)) {
+    const baseColor = new THREE.Color(RACK_COLORS.empty);
+    const body = new THREE.Mesh(
+      new THREE.BoxGeometry(bodyW, bodyH, bodyD),
+      makeRackBodyMaterial(baseColor, 0.02)
+    );
+    body.userData.rackColorPart = 'single';
+    body.castShadow = true;
+    body.receiveShadow = true;
+    group.add(body);
+    edgeColor = baseColor;
+  } else if (isAiLeafSplitRack(matchedTypes)) {
+    const halfH = bodyH / 2;
+    const bottomColor = new THREE.Color(RACK_COLORS.ai);
+    const topColor = new THREE.Color(RACK_COLORS.normal);
+    const bottom = new THREE.Mesh(
+      new THREE.BoxGeometry(bodyW, halfH, bodyD),
+      makeRackBodyMaterial(bottomColor, 0.06)
+    );
+    bottom.userData.rackColorPart = 'bottom';
+    bottom.position.y = -halfH / 2;
+    bottom.castShadow = true;
+    bottom.receiveShadow = true;
+    group.add(bottom);
+    const top = new THREE.Mesh(
+      new THREE.BoxGeometry(bodyW, halfH, bodyD),
+      makeRackBodyMaterial(topColor, 0.03)
+    );
+    top.userData.rackColorPart = 'top';
+    top.position.y = halfH / 2;
+    top.castShadow = true;
+    top.receiveShadow = true;
+    group.add(top);
+    edgeColor = bottomColor.clone().lerp(topColor, 0.5);
+  } else {
+    const baseColor = getRackTypeColor(row, col, matchedTypes, type);
+    const body = new THREE.Mesh(
+      new THREE.BoxGeometry(bodyW, bodyH, bodyD),
+      makeRackBodyMaterial(baseColor, type === 'ai' ? 0.06 : 0.02)
+    );
+    body.userData.rackColorPart = 'single';
+    body.castShadow = true;
+    body.receiveShadow = true;
+    group.add(body);
+    edgeColor = baseColor;
+  }
+  const edgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(bodyW, bodyH, bodyD));
+  const edgeMat = new THREE.LineBasicMaterial({
+    color: edgeColor.clone().multiplyScalar(1.4), transparent: true, opacity: 0.2,
+  });
+  const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+  edges.userData.rackColorPart = 'edge';
+  group.add(edges);
+  return edgeColor;
+}
+
+function applyRackTypeColor(group, ud, powerColor) {
+  const matchedTypes = ud.matchedTypes;
+  const split = isAiLeafSplitRack(matchedTypes);
+  const type = ud.type;
+  const p = ud.power || 0;
+  const isZeroPower = C.colorMode === 'power' && p <= 0;
+  const isEmpty = isEmptyNormalRack(ud.row, ud.col, type);
+  const bottomColor = new THREE.Color(RACK_COLORS.ai);
+  const topColor = new THREE.Color(RACK_COLORS.normal);
+  const singleColor = powerColor || (isEmpty
+    ? new THREE.Color(RACK_COLORS.empty)
+    : new THREE.Color(RACK_COLORS[type] || RACK_COLORS.normal));
+
+  group.traverse(child => {
+    if (!child.isMesh || !child.material) return;
+    const part = child.userData.rackColorPart;
+    if (part === 'accent') {
+      if (C.colorMode === 'power') {
+        child.material.color.copy(singleColor);
+      } else {
+        child.material.color.copy(getRackAccentColor(ud.row, ud.col, matchedTypes, type, child.userData.ySign || 1));
+      }
+      child.material.needsUpdate = true;
+      return;
+    }
+    if (part === 'bottom') {
+      child.material.color.copy(C.colorMode === 'power' ? singleColor : bottomColor);
+      child.material.emissive.copy(child.material.color);
+      child.material.emissiveIntensity = isZeroPower ? 0 : 0.06;
+    } else if (part === 'top') {
+      child.material.color.copy(C.colorMode === 'power' ? singleColor : topColor);
+      child.material.emissive.copy(child.material.color);
+      child.material.emissiveIntensity = isZeroPower ? 0 : 0.03;
+    } else if (part === 'single') {
+      child.material.color.copy(singleColor);
+      child.material.emissive.copy(singleColor);
+      child.material.emissiveIntensity = isZeroPower ? 0 : (isEmpty ? 0.02 : (type === 'ai' ? 0.06 : 0.02));
+    }
+    if (part === 'bottom' || part === 'top' || part === 'single') {
+      child.material.transparent = isZeroPower;
+      child.material.opacity = isZeroPower ? 0.34 : 1;
+      child.material.needsUpdate = true;
+    }
+  });
+  group.children.forEach(child => {
+    if (child.isLineSegments && child.userData.rackColorPart === 'edge') {
+      const edgeColor = C.colorMode === 'power'
+        ? singleColor
+        : (isEmpty
+          ? new THREE.Color(RACK_COLORS.empty)
+          : (split ? bottomColor.clone().lerp(topColor, 0.5) : singleColor));
+      child.material.color.copy(edgeColor).multiplyScalar(1.4);
+      child.material.opacity = isZeroPower ? 0.12 : 0.2;
+      child.material.needsUpdate = true;
+    }
+  });
+}
 
 function interpolateColor(colors, t) {
   t = Math.max(0, Math.min(1, t));
@@ -853,7 +891,7 @@ function interpolateColor(colors, t) {
 }
 
 let allRackGroups = [];
-let rackGroup, measureGroup, labelGroup, aisleDoorGroup, acGroup, hotAisleGroup, coolingFlowGroup;
+let rackGroup, measureGroup, labelGroup, aisleDoorGroup, acGroup, hotAisleGroup, coldAisleGroup, coolingFlowGroup;
 let coolingFlowState = null;
 const coolingFlowClock = new THREE.Clock();
 let rulesLocked = true;
@@ -895,7 +933,7 @@ function createAisleDoubleDoor(x, zCenter, zSpan, height) {
     const handle = new THREE.Mesh(new THREE.BoxGeometry(thickness * 0.45, panelH * 0.1, 0.03), handleMat);
     handle.position.set(sign * thickness * 0.35, -panelH * 0.05, -sign * leafDepth * 0.25);
     leaf.add(handle);
-    leaf.position.set(x, 0, zCenter + sign * (leafDepth / 2 + gap / 2));
+    leaf.position.set(x, getRackBaseY(), zCenter + sign * (leafDepth / 2 + gap / 2));
     group.add(leaf);
   }
 
@@ -976,33 +1014,85 @@ function buildHotAisles() {
 }
 
 function createHotAisleLabel(zCenter) {
-  const { rackH } = C;
-  const textHeight = rackH * 0.175;
-  const canvas = document.createElement('canvas');
-  canvas.width = 640;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#dc2626';
-  ctx.font = 'bold 200px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('热通道', canvas.width / 2, canvas.height / 2);
+  const { rackH, hotAisleSpacing } = C;
+  const group = new THREE.Group();
 
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.needsUpdate = true;
-  const mat = new THREE.MeshBasicMaterial({
-    map: tex,
+  const floatEl = document.createElement('div');
+  floatEl.textContent = `热通道=${hotAisleSpacing}m`;
+  floatEl.style.color = '#2563eb';
+  floatEl.style.fontSize = '12px';
+  floatEl.style.fontWeight = '700';
+  floatEl.style.fontFamily = 'monospace';
+  floatEl.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
+  floatEl.style.whiteSpace = 'nowrap';
+  const floatLb = new CSS2DObject(floatEl);
+  floatLb.position.set(0, getRackBaseY() + rackH * 0.34, zCenter);
+  labelGroup.add(floatLb);
+
+  return group;
+}
+
+function buildColdAisles() {
+  if (coldAisleGroup) {
+    scene.remove(coldAisleGroup);
+    disposeGroup(coldAisleGroup);
+  }
+  coldAisleGroup = new THREE.Group();
+
+  if (C.rows < 2) {
+    scene.add(coldAisleGroup);
+    return;
+  }
+
+  const { rackD } = C;
+  const floorMat = new THREE.MeshStandardMaterial({
+    color: 0x0ea5e9,
+    roughness: 0.82,
+    metalness: 0,
     transparent: true,
+    opacity: 0.3,
     depthWrite: false,
-    side: THREE.DoubleSide,
   });
-  const planeW = textHeight * (canvas.width / canvas.height) * 0.92;
-  const planeD = textHeight;
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(planeW, planeD), mat);
-  mesh.rotation.x = -Math.PI / 2;
-  mesh.position.set(0, rackH * 0.34, zCenter);
-  return mesh;
+
+  for (let r = 0; r < C.rows - 1; r++) {
+    if (r % 2 === 0) continue;
+
+    const zBack = getRackPos(r, 0).z + rackD / 2;
+    const zFront = getRackPos(r + 1, 0).z - rackD / 2;
+    const zCenter = (zBack + zFront) / 2;
+    const zSpan = Math.max(zFront - zBack, C.coldAisleSpacing * 0.85);
+
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(C.totalW * 0.98, zSpan * 0.96),
+      floorMat.clone()
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.set(0, 0.015, zCenter);
+    floor.receiveShadow = false;
+    coldAisleGroup.add(floor);
+    coldAisleGroup.add(createColdAisleLabel(zCenter));
+  }
+
+  scene.add(coldAisleGroup);
+}
+
+function createColdAisleLabel(zCenter) {
+  const { rackH, coldAisleSpacing } = C;
+  const group = new THREE.Group();
+
+  const floatEl = document.createElement('div');
+  floatEl.textContent = `冷通道=${coldAisleSpacing}m`;
+  floatEl.style.color = '#2563eb';
+  floatEl.style.fontSize = '12px';
+  floatEl.style.fontWeight = '700';
+  floatEl.style.fontFamily = 'monospace';
+  floatEl.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
+  floatEl.style.whiteSpace = 'nowrap';
+  const floatLb = new CSS2DObject(floatEl);
+  floatLb.position.set(0, getRackBaseY() + rackH * 0.34, zCenter);
+  labelGroup.add(floatLb);
+
+  return group;
 }
 
 function createUnifiedAirConditionerWall() {
@@ -1038,7 +1128,7 @@ function createUnifiedAirConditionerWall() {
   group.add(topCap);
 
   const halfW = C.totalW / 2;
-  group.position.set(halfW + gap + unitW / 2, 0, 0);
+  group.position.set(halfW + gap + unitW / 2, getRackBaseY(), 0);
   return group;
 }
 
@@ -1055,6 +1145,16 @@ function buildACUnits() {
 function getACVentX() {
   const gap = C.rackW * 5 - 1;
   return C.totalW / 2 + gap - 0.03;
+}
+
+function getACVentY() {
+  return getRackBaseY() + C.rackH * 0.96 * 0.06;
+}
+
+function getAcRackAisleCenterX() {
+  const halfW = C.totalW / 2;
+  const gap = C.rackW * 5 - 1;
+  return halfW + gap * 0.5;
 }
 
 function disposeCoolingFlowEffects() {
@@ -1080,18 +1180,21 @@ function isEmptyNormalRack(row, col, type) {
 function buildCoolingFlowCurves() {
   const curves = { coldAisle: [], coldRack: [], hot: [] };
   const { rackD: d, rackH: h } = C;
+  const baseY = getRackBaseY();
   const acVentX = getACVentX();
   const xMin = -C.totalW / 2 + C.rackW * 0.35;
-  const hotTopY = h * 1.08;
+  const hotTopY = baseY + h * 1.08;
 
   function addColdAisle(zCenter, aisleHalf) {
+    const acVentY = getACVentY();
+    const floorY = 0.14;
     [-0.36, 0, 0.36].forEach(offset => {
       const zLane = zCenter + aisleHalf * offset;
       curves.coldAisle.push(new THREE.CubicBezierCurve3(
-        new THREE.Vector3(acVentX, 0.14, zLane),
-        new THREE.Vector3(C.totalW * 0.28, 0.14, zLane),
-        new THREE.Vector3(-C.totalW * 0.12, 0.14, zLane),
-        new THREE.Vector3(xMin, 0.14, zLane)
+        new THREE.Vector3(acVentX, acVentY, zLane),
+        new THREE.Vector3(C.totalW * 0.28, acVentY * 0.8 + floorY * 0.2, zLane),
+        new THREE.Vector3(-C.totalW * 0.12, acVentY * 0.35 + floorY * 0.65, zLane),
+        new THREE.Vector3(xMin, floorY, zLane)
       ));
     });
   }
@@ -1111,20 +1214,20 @@ function buildCoolingFlowCurves() {
       const firstX = getRackPos(0, c).x;
       if (rackHasCoolingLoad(0, c)) {
         curves.coldRack.push(new THREE.CubicBezierCurve3(
-          new THREE.Vector3(firstX, 0.12, firstColdZ),
-          new THREE.Vector3(firstX, h * 0.08, firstColdZ + edgeAisleHalf * 0.2),
-          new THREE.Vector3(firstX, h * 0.12, firstZ - d * 0.5),
-          new THREE.Vector3(firstX, h * 0.16, firstZ - d * 0.36)
+          new THREE.Vector3(firstX, baseY + 0.12, firstColdZ),
+          new THREE.Vector3(firstX, baseY + h * 0.08, firstColdZ + edgeAisleHalf * 0.2),
+          new THREE.Vector3(firstX, baseY + h * 0.12, firstZ - d * 0.5),
+          new THREE.Vector3(firstX, baseY + h * 0.16, firstZ - d * 0.36)
         ));
       }
 
       const lastX = getRackPos(lastRow, c).x;
       if (rackHasCoolingLoad(lastRow, c)) {
         curves.coldRack.push(new THREE.CubicBezierCurve3(
-          new THREE.Vector3(lastX, 0.12, lastColdZ),
-          new THREE.Vector3(lastX, h * 0.08, lastColdZ - edgeAisleHalf * 0.2),
-          new THREE.Vector3(lastX, h * 0.12, lastZ + d * 0.5),
-          new THREE.Vector3(lastX, h * 0.16, lastZ + d * 0.36)
+          new THREE.Vector3(lastX, baseY + 0.12, lastColdZ),
+          new THREE.Vector3(lastX, baseY + h * 0.08, lastColdZ - edgeAisleHalf * 0.2),
+          new THREE.Vector3(lastX, baseY + h * 0.12, lastZ + d * 0.5),
+          new THREE.Vector3(lastX, baseY + h * 0.16, lastZ + d * 0.36)
         ));
       }
     }
@@ -1150,34 +1253,34 @@ function buildCoolingFlowCurves() {
       if (r % 2 === 1) {
         if (hasRack) {
           curves.coldRack.push(new THREE.CubicBezierCurve3(
-            new THREE.Vector3(x, 0.12, zCenter - aisleHalf * 0.18),
-            new THREE.Vector3(x, h * 0.08, zCenter - aisleHalf * 0.28),
-            new THREE.Vector3(x, h * 0.12, zR + d * 0.5),
-            new THREE.Vector3(x, h * 0.16, zR + d * 0.36)
+            new THREE.Vector3(x, baseY + 0.12, zCenter - aisleHalf * 0.18),
+            new THREE.Vector3(x, baseY + h * 0.08, zCenter - aisleHalf * 0.28),
+            new THREE.Vector3(x, baseY + h * 0.12, zR + d * 0.5),
+            new THREE.Vector3(x, baseY + h * 0.16, zR + d * 0.36)
           ));
         }
         if (hasNextRack) {
           curves.coldRack.push(new THREE.CubicBezierCurve3(
-            new THREE.Vector3(x, 0.12, zCenter + aisleHalf * 0.18),
-            new THREE.Vector3(x, h * 0.08, zCenter + aisleHalf * 0.28),
-            new THREE.Vector3(x, h * 0.12, zNext - d * 0.5),
-            new THREE.Vector3(x, h * 0.16, zNext - d * 0.36)
+            new THREE.Vector3(x, baseY + 0.12, zCenter + aisleHalf * 0.18),
+            new THREE.Vector3(x, baseY + h * 0.08, zCenter + aisleHalf * 0.28),
+            new THREE.Vector3(x, baseY + h * 0.12, zNext - d * 0.5),
+            new THREE.Vector3(x, baseY + h * 0.16, zNext - d * 0.36)
           ));
         }
       } else {
         if (hasRack) {
           curves.hot.push(new THREE.CubicBezierCurve3(
-            new THREE.Vector3(x, h * 0.5, zR + d * 0.47),
-            new THREE.Vector3(x, h * 0.62, zCenter - aisleHalf * 0.2),
-            new THREE.Vector3(x, h * 0.92, zCenter),
+            new THREE.Vector3(x, baseY + h * 0.5, zR + d * 0.47),
+            new THREE.Vector3(x, baseY + h * 0.62, zCenter - aisleHalf * 0.2),
+            new THREE.Vector3(x, baseY + h * 0.92, zCenter),
             new THREE.Vector3(x, hotTopY, zCenter)
           ));
         }
         if (hasNextRack) {
           curves.hot.push(new THREE.CubicBezierCurve3(
-            new THREE.Vector3(x, h * 0.5, zNext - d * 0.47),
-            new THREE.Vector3(x, h * 0.62, zCenter + aisleHalf * 0.2),
-            new THREE.Vector3(x, h * 0.92, zCenter),
+            new THREE.Vector3(x, baseY + h * 0.5, zNext - d * 0.47),
+            new THREE.Vector3(x, baseY + h * 0.62, zCenter + aisleHalf * 0.2),
+            new THREE.Vector3(x, baseY + h * 0.92, zCenter),
             new THREE.Vector3(x, hotTopY, zCenter)
           ));
         }
@@ -1318,33 +1421,27 @@ function createRack(row, col) {
   const usedU = calcRackUsedU(devices);
   const { rackW: rw, rackD: rd, rackH: rh } = C;
 
+  const matchedTypes = computeMatchingRuleTypes(row, col, store.rules);
+
   const group = new THREE.Group();
   group.userData = {
     row, col, type, power, devices, usedU,
-    matchedTypes: computeMatchingRuleTypes(row, col, store.rules),
+    matchedTypes,
   };
 
-  const baseColor = new THREE.Color(RACK_COLORS[type] || RACK_COLORS.normal);
-
-  const bodyGeo = new THREE.BoxGeometry(rw * 0.96, rh * 0.96, rd * 0.96);
-  const bodyMat = new THREE.MeshStandardMaterial({
-    color: baseColor, roughness: 0.4, metalness: 0.15,
-    emissive: baseColor, emissiveIntensity: type === 'ai' ? 0.06 : 0.02,
-  });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.castShadow = true; body.receiveShadow = true;
-  group.add(body);
-
-  const edgeGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(rw * 0.96, rh * 0.96, rd * 0.96));
-  const edgeMat = new THREE.LineBasicMaterial({ color: baseColor.clone().multiplyScalar(1.4), transparent: true, opacity: 0.2 });
-  group.add(new THREE.LineSegments(edgeGeo, edgeMat));
+  addRackBodyMeshes(group, row, col, matchedTypes, type, rw, rh, rd);
 
   for (let side = -1; side <= 1; side += 2) {
     for (let yi = -1; yi <= 1; yi += 2) {
       const strip = new THREE.Mesh(
         new THREE.BoxGeometry(rw * 0.90, rh * 0.03, rd * 0.04),
-        new THREE.MeshStandardMaterial({ color: baseColor.clone().multiplyScalar(0.65), roughness: 0.3, metalness: 0.4 })
+        new THREE.MeshStandardMaterial({
+          color: getRackAccentColor(row, col, matchedTypes, type, yi),
+          roughness: 0.3, metalness: 0.4,
+        })
       );
+      strip.userData.rackColorPart = 'accent';
+      strip.userData.ySign = yi;
       strip.position.set(0, yi * rh * 0.42, side * rd * 0.5);
       group.add(strip);
     }
@@ -1356,7 +1453,7 @@ function createRack(row, col) {
     const fillH = rh * fillRatio * 0.85;
     const fillW = rw * 0.7;
     const fillMat = new THREE.MeshStandardMaterial({
-      color: type === 'ai' ? 0x60a5fa : type === 'bus' ? 0x34d399 : 0x9ca3af,
+      color: type === 'ai' ? 0x60a5fa : type === 'bus' ? 0x34d399 : 0xfbbf24,
       transparent: true, opacity: 0.15, roughness: 0.5,
     });
     const fillMesh = new THREE.Mesh(new THREE.BoxGeometry(fillW, fillH, 0.01), fillMat);
@@ -1379,7 +1476,7 @@ function createRack(row, col) {
   }
 
   const pos = getRackPos(row, col);
-  group.position.set(pos.x, 0, pos.z);
+  group.position.set(pos.x, getRackBaseY(), pos.z);
   return group;
 }
 
@@ -1395,6 +1492,24 @@ function computeTotalDepth() {
   return totalD;
 }
 
+function formatTotalDepthLabel(totalD) {
+  return `总长度=${totalD.toFixed(1)}m`;
+}
+
+function createDepthDimensionLabel(text, x, y, z) {
+  const floatEl = document.createElement('div');
+  floatEl.textContent = text;
+  floatEl.style.color = '#2563eb';
+  floatEl.style.fontSize = '12px';
+  floatEl.style.fontWeight = '700';
+  floatEl.style.fontFamily = 'monospace';
+  floatEl.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
+  floatEl.style.whiteSpace = 'nowrap';
+  const floatLb = new CSS2DObject(floatEl);
+  floatLb.position.set(x, y, z);
+  labelGroup.add(floatLb);
+}
+
 function getRackPos(row, col) {
   const mirroredCol = C.cols - 1 - col;
   const x = mirroredCol * C.rackW - C.totalW / 2 + C.rackW / 2;
@@ -1403,6 +1518,10 @@ function getRackPos(row, col) {
     z += C.rackD + getAisleSpacingBetweenRows(r);
   }
   return { x, z };
+}
+
+function getRackBaseY() {
+  return C.rackH * 0.96 / 2;
 }
 
 // ======================================================================
@@ -1441,27 +1560,9 @@ function recolorRacks() {
       const t = powerRange.max > powerRange.min ? (p - powerRange.min) / (powerRange.max - powerRange.min) : 0;
       color = isZeroPower ? ZERO_POWER_COLOR : interpolateColor(PWR_COLORS, t);
     } else {
-      color = new THREE.Color(RACK_COLORS[type] || RACK_COLORS.normal);
+      color = null;
     }
-    group.traverse(child => {
-      if (child.isMesh && child.material) {
-        if (child.geometry.type === 'BoxGeometry' && child.position.length() < 0.01) {
-          child.material.color.copy(color);
-          child.material.emissive.copy(color);
-          child.material.emissiveIntensity = isZeroPower ? 0 : (type === 'ai' ? 0.06 : 0.02);
-          child.material.transparent = isZeroPower;
-          child.material.opacity = isZeroPower ? 0.34 : 1;
-          child.material.needsUpdate = true;
-        }
-      }
-    });
-    group.children.forEach(child => {
-      if (child.isLineSegments) {
-        child.material.color.copy(color).multiplyScalar(1.4);
-        child.material.opacity = isZeroPower ? 0.12 : 0.2;
-        child.material.needsUpdate = true;
-      }
-    });
+    applyRackTypeColor(group, ud, color);
     ud.type = type;
   }
 }
@@ -1471,21 +1572,18 @@ function formatDeviceSummary(devices) {
 }
 
 function showRackTooltip(ud, clientX, clientY) {
-  const types = { ai: 'AI 设备柜', bus: '总线交换机柜', normal: '普通机柜', empty: '空机柜' };
   const tagStyles = {
     ai: 'background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe;',
     bus: 'background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;',
-    normal: 'background:#44403c;color:#ffffff;border:1px solid #292524;',
+    normal: 'background:#fef9c3;color:#854d0e;border:1px solid #fde047;',
     empty: 'background:#e7e5e4;color:#44403c;border:1px solid #d6d3d1;',
   };
-  const key = `${ud.row},${ud.col}`;
-  const overridden = !!store.rackOverrides[key];
   const matchedTypes = ud.matchedTypes || computeMatchingRuleTypes(ud.row, ud.col, store.rules);
-  const shared = matchedTypes.length > 1 && !overridden;
+  const shared = matchedTypes.length > 1;
   const displayType = isEmptyNormalRack(ud.row, ud.col, ud.type) ? 'empty' : ud.type;
 
-  document.getElementById('tt-name').innerHTML =
-    `排 ${ud.row + 1} · 第 ${ud.col + 1} 柜${overridden ? ' <span class="override-badge">已编辑</span>' : ''}`;
+  document.getElementById('tt-name').textContent =
+    `排 ${ud.row + 1} · 第 ${ud.col + 1} 柜`;
   document.getElementById('tt-pos').textContent =
     `Row ${ud.row + 1}, Col ${ud.col + 1} · 合计 ${(ud.power || 0).toLocaleString()} W · ${(ud.usedU || 0)}/${C.rackU} U`;
 
@@ -1496,19 +1594,19 @@ function showRackTooltip(ud, clientX, clientY) {
   if (shared) {
     singleTagWrap.style.display = 'none';
     sectionsEl.innerHTML = matchedTypes.map(type => {
-      const devices = getDefaultDevices(type);
+      const devices = getTooltipDevices(type, true);
       return `
         <div class="tt-section">
-          <div class="tt-section-head"><span class="tt-tag" style="${tagStyles[type] || tagStyles.normal}">${types[type] || '普通机柜'}</span></div>
+          <div class="tt-section-head"><span class="tt-tag" style="${tagStyles[type] || tagStyles.normal}">${getTooltipTypeLabel(type, true)}</span></div>
           <div class="tt-section-body">${formatDeviceSummary(devices)}<br>${calcRackUsedU(devices)} U · ${calcRackPower(devices).toLocaleString()} W</div>
         </div>`;
-    }).join('') + `<div class="tt-shared">${matchedTypes.includes('ai') && matchedTypes.includes('normal') ? 'AI 与普通设备共用此机柜' : '多种设备规则叠加，共用此机柜'}</div>`;
+    }).join('') + `<div class="tt-shared">${matchedTypes.includes('ai') && matchedTypes.includes('normal') ? 'AI 与 Leaf交换机共用此机柜' : '多种设备规则叠加，共用此机柜'}</div>`;
     pwrEl.textContent = '';
   } else {
     singleTagWrap.style.display = '';
     sectionsEl.innerHTML = '';
     const tag = document.getElementById('tt-tag');
-    tag.textContent = types[displayType] || '普通机柜';
+    tag.textContent = getTooltipTypeLabel(displayType, false);
     tag.style.cssText = tagStyles[displayType] || tagStyles.normal;
     pwrEl.textContent = `⚡ ${(ud.power || 0).toLocaleString()} W · ${(ud.usedU || 0)}/${C.rackU} U`;
   }
@@ -1534,6 +1632,7 @@ function buildScene() {
   if (labelGroup) { scene.remove(labelGroup); disposeGroup(labelGroup); }
   if (aisleDoorGroup) { scene.remove(aisleDoorGroup); disposeGroup(aisleDoorGroup); }
   if (hotAisleGroup) { scene.remove(hotAisleGroup); disposeGroup(hotAisleGroup); }
+  if (coldAisleGroup) { scene.remove(coldAisleGroup); disposeGroup(coldAisleGroup); }
   if (acGroup) { scene.remove(acGroup); disposeGroup(acGroup); }
   disposeCoolingFlowEffects();
   clearLabelRendererDom();
@@ -1557,13 +1656,13 @@ function buildScene() {
   recolorRacks();
   buildAisleDoors();
   buildHotAisles();
+  buildColdAisles();
   buildACUnits();
   buildMeasurements();
   buildRowLabels();
   applyRowFilter();
   updateStats();
   updateViewList();
-  updateOverrideWarning();
   saveState();
 }
 
@@ -1615,8 +1714,7 @@ function buildMeasurements() {
   tickAt(new THREE.Vector3(halfW, Y, tz), new THREE.Vector3(0, 0, 1));
   line(new THREE.Vector3(-halfW + rackW / 2, Y, -halfD), new THREE.Vector3(-halfW, Y, tz), gdm);
   line(new THREE.Vector3(halfW - rackW / 2, Y, -halfD), new THREE.Vector3(halfW, Y, tz), gdm);
-  mkLabel(`${cols}柜 × ${rackW}m`, 0, Y + 0.8, tz, 'hl');
-  mkLabel(`= ${totalW.toFixed(1)}m`, 0, Y - 0.3, tz, 'val');
+  mkLabel(`总宽度 = ${cols}柜 × ${rackW}m = ${totalW.toFixed(1)}m`, 0, Y + 0.8, tz, 'hl');
 
   const rx = halfW + off;
   const r0z = getRackPos(0, 0).z;
@@ -1626,7 +1724,6 @@ function buildMeasurements() {
   tickAt(new THREE.Vector3(rx, Y, r1z - rackD / 2), new THREE.Vector3(-1, 0, 0));
   line(new THREE.Vector3(halfW - rackW / 2, Y, r0z + rackD / 2), new THREE.Vector3(rx, Y, r0z + rackD / 2), gdm);
   line(new THREE.Vector3(halfW - rackW / 2, Y, r1z - rackD / 2), new THREE.Vector3(rx, Y, r1z - rackD / 2), gdm);
-  mkLabel(`热通道 ${hotAisleSpacing}m`, rx + 0.5, Y + 0.8, (r0z + rackD / 2 + r1z - rackD / 2) / 2, 'hl');
 
   const rx2 = halfW + off + 2.2;
   line(new THREE.Vector3(rx2, Y, -halfD), new THREE.Vector3(rx2, Y, halfD), dm);
@@ -1634,8 +1731,12 @@ function buildMeasurements() {
   tickAt(new THREE.Vector3(rx2, Y, halfD), new THREE.Vector3(-1, 0, 0), 0.2);
   line(new THREE.Vector3(halfW - rackW / 2, Y, -halfD + rackD / 2), new THREE.Vector3(rx2, Y, -halfD), gdm);
   line(new THREE.Vector3(halfW - rackW / 2, Y, halfD - rackD / 2), new THREE.Vector3(rx2, Y, halfD), gdm);
-  mkLabel(`总深度 ${totalD.toFixed(1)}m`, rx2 + 0.5, Y + 0.8, 0, 'val');
-  mkLabel(`${rows}排 × ${rackD}m + 冷${coldAisleSpacing}m/热${hotAisleSpacing}m`, rx2 + 0.5, Y - 0.3, 0, '');
+  createDepthDimensionLabel(
+    formatTotalDepthLabel(totalD),
+    getAcRackAisleCenterX(),
+    getRackBaseY() + C.rackH * 0.34,
+    0
+  );
 
   const m = 0.3;
   const pts = [
@@ -1667,7 +1768,7 @@ function buildRowLabels() {
     d.style.borderRadius = '3px';
     d.style.border = '1px solid #e7e5e4';
     const lb = new CSS2DObject(d);
-    lb.position.set(-halfW - 1.0, 0.4, pos.z);
+    lb.position.set(-halfW - 1.0, getRackBaseY() + 0.4, pos.z);
     labelGroup.add(lb);
   }
 }
@@ -1694,8 +1795,8 @@ function setView(name, animate = true) {
     case 'horiz': {
       const r = Math.min(2, C.rows - 1);
       const p = getRackPos(r, 0);
-      pos = new THREE.Vector3(0, rackH * 0.5, p.z + totalW * 0.7 + 2);
-      center.set(0, rackH * 0.3, p.z);
+      pos = new THREE.Vector3(0, getRackBaseY() + rackH * 0.5, p.z + totalW * 0.7 + 2);
+      center.set(0, getRackBaseY() + rackH * 0.3, p.z);
       break;
     }
     default: pos = new THREE.Vector3(totalW * 0.6 + 5, Math.max(totalW, totalD) * 0.5 + 3, totalD * 0.6 + 5); break;
@@ -1733,23 +1834,14 @@ function updateStats() {
 }
 
 // ======================================================================
-// Override warning
-// ======================================================================
-function updateOverrideWarning() {
-  const el = document.getElementById('override-warning');
-  const count = document.getElementById('override-count');
-  const n = Object.keys(store.rackOverrides).length;
-  if (n > 0) { el.style.display = 'block'; count.textContent = n; }
-  else { el.style.display = 'none'; }
-}
-
-// ======================================================================
 // Rules UI
 // ======================================================================
+let editingRuleIndex = -1;
+
 function renderRules() {
   const el = document.getElementById('rule-list');
-  const types = { ai: '🔵 AI 设备', bus: '🟢 总线柜', normal: '⬜ 普通' };
-  const dots = { ai: '#3b82f6', bus: '#10b981', normal: '#6b7280' };
+  const types = { ai: '🔵 AI 设备', bus: '🟢 总线柜', normal: '🟡 Leaf交换机' };
+  const dots = { ai: '#3b82f6', bus: '#10b981', normal: '#f59e0b' };
   if (store.rules.length === 0) {
     el.innerHTML = '<div style="font-size:11px;color:#475569;padding:8px;">暂未添加规则，所有机柜默认为空机柜。<br>点击下方"+ 添加规则"创建。</div>';
     setRuleInputsLocked(rulesLocked);
@@ -1866,82 +1958,6 @@ function updateViewList() {
 }
 
 // ======================================================================
-// Rack Editor Modal
-// ======================================================================
-let editingRack = null;
-let editingRuleIndex = -1;
-
-function openRackEditor(row, col) {
-  editingRack = { row, col };
-  const key = `${row},${col}`;
-  const ov = store.rackOverrides[key];
-  const defType = computeRackType(row, col, store.rules);
-  const currentType = ov?.type || defType;
-  const devices = ov?.devices ? JSON.parse(JSON.stringify(ov.devices)) : getRackDevices(row, col);
-
-  const isOverridden = !!ov;
-  const matchedTypes = computeMatchingRuleTypes(row, col, store.rules);
-  const shared = matchedTypes.length > 1 && !ov;
-  const emptyRackLabel = currentType === 'normal' && !devices.some(d => (d.qty || 0) > 0 && (d.u || 0) > 0) ? ' · 空机柜' : '';
-  document.getElementById('modal-title').textContent =
-    `排 ${row + 1} · 第 ${col + 1} 柜${emptyRackLabel}${shared ? ' · 共用机柜' : ''}${isOverridden ? ' ⚡已编辑' : ''}`;
-  document.getElementById('modal-overlay').classList.add('open');
-
-  document.querySelectorAll('.mod-type-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.type === currentType);
-  });
-  renderDeviceEditor(devices);
-  updateModalStats(devices);
-}
-
-function renderDeviceEditor(devices) {
-  const el = document.getElementById('device-list');
-  el.innerHTML = devices.map((d, i) => `
-    <div class="mod-device" data-di="${i}">
-      <div class="md-row">
-        <input class="md-name" value="${d.name}" placeholder="设备名" data-field="name" data-di="${i}">
-        <span class="md-lbl">U</span>
-        <input class="md-u" type="number" value="${d.u}" min="1" max="${C.rackU}" data-field="u" data-di="${i}">
-        <span class="md-lbl">×</span>
-        <input class="md-num" type="number" value="${d.qty}" min="0" max="999" data-field="qty" data-di="${i}">
-        <span class="md-lbl">W</span>
-        <input class="md-power" type="number" value="${d.power}" min="0" step="50" data-field="power" data-di="${i}">
-        <button class="btn-sm btn-danger" data-di="${i}" data-action="del-device" style="font-size:9px;padding:2px 5px;">✕</button>
-      </div>
-    </div>
-  `).join('');
-  el.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', () => {
-      const di = parseInt(inp.dataset.di);
-      const field = inp.dataset.field;
-      const val = field === 'name' ? inp.value : parseFloat(inp.value) || 0;
-      devices[di][field] = val;
-      updateModalStats(devices);
-    });
-  });
-  el.querySelectorAll('[data-action="del-device"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const di = parseInt(btn.dataset.di);
-      devices.splice(di, 1);
-      renderDeviceEditor(devices);
-      updateModalStats(devices);
-    });
-  });
-}
-
-function updateModalStats(devices) {
-  const usedU = devices.reduce((a, d) => a + d.u * d.qty, 0);
-  const totalPower = devices.reduce((a, d) => a + d.power * d.qty, 0);
-  const ratio = Math.min(usedU / C.rackU, 1);
-  document.getElementById('mod-u-used').textContent = usedU;
-  document.getElementById('mod-u-total').textContent = `/ ${C.rackU} U`;
-  const bar = document.getElementById('mod-u-bar');
-  bar.style.width = (ratio * 100) + '%';
-  bar.className = 'fill ' + (ratio > 1 ? 'over' : ratio > 0.85 ? 'warn' : 'ok');
-  document.getElementById('mod-total-power').textContent = totalPower;
-}
-
-// ======================================================================
 // Interaction
 // ======================================================================
 const raycaster = new THREE.Raycaster();
@@ -1962,7 +1978,6 @@ function onPointerMove(e) {
     if (!g || g.userData.row === undefined) { hideTip(); return; }
     const ud = g.userData;
     showRackTooltip(ud, e.clientX, e.clientY);
-    renderer.domElement.style.cursor = 'pointer';
     if (hovered && hovered !== g) unhighlight(hovered);
     highlight(g);
     hovered = g;
@@ -1995,14 +2010,6 @@ function unhighlight(g) {
 }
 
 function hideTip() { tooltip.classList.remove('show'); }
-
-function onClick(e) {
-  if (!hovered) return;
-  const ud = hovered.userData;
-  if (ud.row === undefined) return;
-  showRackTooltip(ud, e.clientX, e.clientY);
-  openRackEditor(ud.row, ud.col);
-}
 
 // ======================================================================
 // Rebuild helpers
@@ -2086,7 +2093,6 @@ function init() {
   setView('angle', false);
   renderRules();
   setRulesLocked(true);
-  updateOverrideWarning();
 
   setTimeout(() => {
     if (!loaded) setView('angle', true);
@@ -2147,14 +2153,7 @@ document.getElementById('btn-unlock-layout').addEventListener('click', () => {
   toast('布局参数已解锁');
 });
 
-document.getElementById('btn-apply-layout').addEventListener('click', async () => {
-  const overrideCount = Object.keys(store.rackOverrides).length;
-  if (overrideCount > 0) {
-    const ok = await confirmDialog('确认更新布局',
-      `当前有 ${overrideCount} 个机柜被单独编辑过。更新布局将清空这些修改。确定继续吗？`);
-    if (!ok) return;
-  }
-
+document.getElementById('btn-apply-layout').addEventListener('click', () => {
   const rows = parseInt(document.getElementById('cfg-rows').value) || 8;
   const cols = parseInt(document.getElementById('cfg-cols').value) || 22;
   const coldAisle = parseFloat(document.getElementById('cfg-cold-aisle').value) || 1.6;
@@ -2176,11 +2175,8 @@ document.getElementById('btn-apply-layout').addEventListener('click', async () =
   C.defaultPower = { ai: wAi, bus: wBus, normal: wNorm, empty: wEmpty };
   document.getElementById('cfg-depth2').value = depth;
 
-  if (overrideCount > 0) store.rackOverrides = {};
-
   rebuildFull();
   renderRules();
-  updateOverrideWarning();
   saveState();
   setLayoutInputsLocked(true);
   toast('布局已更新并保存');
@@ -2268,67 +2264,9 @@ document.getElementById('reset-camera-btn').addEventListener('click', () => {
   setView(C.currentView, true);
 });
 
-// Modal
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-cancel').addEventListener('click', closeModal);
-document.getElementById('modal-overlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-
-document.getElementById('modal-save').addEventListener('click', () => {
-  if (!editingRack) return;
-  const { row, col } = editingRack;
-  const type = document.querySelector('.mod-type-btn.active')?.dataset.type || 'normal';
-  const deviceEls = document.querySelectorAll('.mod-device');
-  const devices = Array.from(deviceEls).map(el => ({
-    name: el.querySelector('.md-name').value,
-    u: parseInt(el.querySelector('.md-u').value) || 1,
-    qty: parseInt(el.querySelector('.md-num').value) || 0,
-    power: parseInt(el.querySelector('.md-power').value) || 0,
-  })).filter(d => d.qty > 0);
-
-  store.rackOverrides[`${row},${col}`] = { type, devices };
-  rebuildAfterRuleChange();
-  closeModal();
-  toast(`排 ${row+1} · 第 ${col+1} 柜已保存`);
-});
-
-document.getElementById('device-add-btn').addEventListener('click', () => {
-  const el = document.getElementById('device-list');
-  const devices = [];
-  el.querySelectorAll('.mod-device').forEach(devEl => {
-    devices.push({
-      name: devEl.querySelector('.md-name').value,
-      u: parseInt(devEl.querySelector('.md-u').value) || 1,
-      qty: parseInt(devEl.querySelector('.md-num').value) || 0,
-      power: parseInt(devEl.querySelector('.md-power').value) || 0,
-    });
-  });
-  devices.push({ name: '新设备', u: 2, qty: 1, power: 500 });
-  renderDeviceEditor(devices);
-  updateModalStats(devices);
-});
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  editingRack = null;
-}
-
-// Modal type buttons
-document.querySelectorAll('.mod-type-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (btn.classList.contains('active')) return;
-    document.querySelectorAll('.mod-type-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const newType = btn.dataset.type;
-    const devices = JSON.parse(JSON.stringify(getDefaultDevices(newType)));
-    renderDeviceEditor(devices);
-    updateModalStats(devices);
-  });
-});
-
 // Pointer events
 renderer.domElement.addEventListener('pointermove', onPointerMove);
 renderer.domElement.addEventListener('pointerleave', () => { hideTip(); if (hovered) { unhighlight(hovered); hovered = null; } });
-renderer.domElement.addEventListener('click', onClick);
 
 function onResize() {
   const w = container.clientWidth, h = container.clientHeight;
@@ -2347,7 +2285,7 @@ function updateRowFilter() {
   for (let i = 0; i < C.rows; i++) sel.innerHTML += `<option value="${i}">排 ${i + 1}</option>`;
 }
 const origBuild = buildScene;
-buildScene = function() { origBuild(); updateRowFilter(); updateOverrideWarning(); };
+buildScene = function() { origBuild(); updateRowFilter(); };
 
 // ======================================================================
 // Start
@@ -2357,7 +2295,7 @@ animate();
 
 console.log('🏭 DataCenter 3D Designer v2 已启动');
 console.log('• 鼠标左键旋转 | 滚轮缩放 | 右键平移');
-console.log('• 悬停查看信息 | 点击编辑机柜');
+console.log('• 悬停查看机柜信息');
 console.log('• 配置自动保存到 localStorage');
 </script>
 </body>

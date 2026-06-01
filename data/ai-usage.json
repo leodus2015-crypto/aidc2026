@@ -1,66 +1,89 @@
 {
-  "version": 1,
-  "updated_at": "2026-06-01T20:35:27+08:00",
-  "baseline": {
-    "source": "Cursor Dashboard · Included Usage",
-    "period": "2026-04-25 — 2026-05-25",
-    "recorded_at": "2026-05-24",
-    "total_tokens": 155300000,
-    "categories": [
-      {
-        "name": "API",
-        "tokens": 60600000,
-        "usage_percent": 62.8,
-        "items": [
-          {
-            "name": "gpt-5.5-medium",
-            "tokens": 41200000,
-            "usage_percent": 47.0
-          },
-          {
-            "name": "premium",
-            "tokens": 19400000,
-            "usage_percent": 15.8
-          }
-        ]
-      },
-      {
-        "name": "Auto + Composer",
-        "tokens": 94700000,
-        "usage_percent": 24.5,
-        "items": [
-          {
-            "name": "composer-2-fast",
-            "tokens": 59600000,
-            "usage_percent": 17.2
-          },
-          {
-            "name": "composer-2.5-fast",
-            "tokens": 32600000,
-            "usage_percent": 6.7
-          },
-          {
-            "name": "auto",
-            "tokens": 2400000,
-            "usage_percent": 0.6
-          }
-        ]
-      }
-    ]
-  },
-  "tracked": {
-    "method": "cursor-hooks-estimate",
-    "since": "2026-05-24",
-    "total_tokens": 33076,
-    "input_tokens": 1911,
-    "output_tokens": 9566,
-    "thinking_tokens": 21599,
-    "sessions": 0,
-    "events": 184,
-    "by_model": {
-      "composer-2.5-fast": 18234,
-      "gpt-5.5-medium": 14842
+  "version": 2,
+  "updated_at": "2026-06-02T00:40:04+08:00",
+  "source": "Cursor Dashboard · Included Usage",
+  "notes": "各周期均为控制台手工录入；同一周期（起止日期相同）重复录入时以最新值替换，不累加。已停止 Hook 自动估算。",
+  "periods": [
+    {
+      "period": "2026-04-25 — 2026-05-25",
+      "period_start": "2026-04-25",
+      "period_end": "2026-05-25",
+      "recorded_at": "2026-05-24",
+      "total_tokens": 155300000,
+      "categories": [
+        {
+          "name": "API",
+          "tokens": 60600000,
+          "usage_percent": 62.8,
+          "items": [
+            {
+              "name": "gpt-5.5-medium",
+              "tokens": 41200000,
+              "usage_percent": 47.0
+            },
+            {
+              "name": "premium",
+              "tokens": 19400000,
+              "usage_percent": 15.8
+            }
+          ]
+        },
+        {
+          "name": "Auto + Composer",
+          "tokens": 94700000,
+          "usage_percent": 24.5,
+          "items": [
+            {
+              "name": "composer-2-fast",
+              "tokens": 59600000,
+              "usage_percent": 17.2
+            },
+            {
+              "name": "composer-2.5-fast",
+              "tokens": 32600000,
+              "usage_percent": 6.7
+            },
+            {
+              "name": "auto",
+              "tokens": 2400000,
+              "usage_percent": 0.6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "period_start": "2026-05-25",
+      "period_end": "2026-06-25",
+      "total_tokens": 103300000,
+      "categories": [
+        {
+          "name": "API",
+          "tokens": 53200000,
+          "usage_percent": 100.0,
+          "items": [
+            {
+              "name": "gpt-5.5-medium",
+              "tokens": 53200000,
+              "usage_percent": 100.0
+            }
+          ]
+        },
+        {
+          "name": "Auto + Composer",
+          "tokens": 50100000,
+          "usage_percent": 26.0,
+          "items": [
+            {
+              "name": "composer-2.5-fast",
+              "tokens": 50100000,
+              "usage_percent": 26.0
+            }
+          ]
+        }
+      ],
+      "period": "2026-05-25 — 2026-06-25",
+      "recorded_at": "2026-06-02"
     }
-  },
-  "notes": "baseline 来自 Cursor 控制台手工录入；tracked 为 Hook 估算增量，非官方账单。"
+  ]
 }

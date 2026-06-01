@@ -1,6 +1,10 @@
 aidc 静态站点归档
-版本：v2026.05.07
-日期：2026-05-07
+版本：v2026.06.01
+日期：2026-06-01
 
 包含：index.html、404.html、capacity.html、docs.html、preview-8011.sh
+      ai-dc-layout.html、datacenter-3d-case-b.html、datacenter-3d-v3 2.html
+      white-paper.html、white-paper-2.0.html、white-paper-2.0-draft.html
+      about-us.html、data/ai-usage.json、data/dc3d-case-*.defaults.json
 说明：与本目录源码一致；解压即用或与服务器 wwwroot 同步。
+      3D 案例默认配置见 data/dc3d-case-a.defaults.json / dc3d-case-b.defaults.json。
