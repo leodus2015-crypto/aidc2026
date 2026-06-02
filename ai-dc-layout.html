@@ -82,7 +82,7 @@
         <div
           class="inline-flex flex-wrap gap-1 rounded-2xl bg-slate-100 p-1 shadow-inner shadow-slate-200/60"
           role="tablist"
-          aria-label="布局案例"
+          aria-label="布局与规划"
         >
           <button
             type="button"
@@ -90,6 +90,7 @@
             role="tab"
             aria-selected="true"
             aria-controls="panel-case-a"
+            data-layout-tab="a"
             class="rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white"
           >
             案例A（风冷超节点）
@@ -100,10 +101,23 @@
             role="tab"
             aria-selected="false"
             aria-controls="panel-case-b"
+            data-layout-tab="b"
             tabindex="-1"
             class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
           >
             案例B（风冷超节点）
+          </button>
+          <button
+            type="button"
+            id="tab-plan"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-plan"
+            data-layout-tab="plan"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+          >
+            AI DC规划
           </button>
         </div>
       </div>
@@ -124,6 +138,17 @@
             src="datacenter-3d-v3%202.html"
             title="AI DC 布局 · 案例B（风冷超节点）"
             class="block h-[min(85vh,60rem)] w-full min-h-[32rem] bg-[#f4f3ef]"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
+      <div id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            src="aidc-calculation.html"
+            title="AI DC 布局 · AI DC规划"
+            class="block h-[min(90vh,72rem)] w-full min-h-[40rem] bg-[#f2f6fc]"
             loading="lazy"
           ></iframe>
         </div>
@@ -154,34 +179,31 @@
   </footer>
 
   <script>
-    const tabCaseA = document.getElementById('tab-case-a');
-    const tabCaseB = document.getElementById('tab-case-b');
-    const panelCaseA = document.getElementById('panel-case-a');
-    const panelCaseB = document.getElementById('panel-case-b');
-
     const TAB_ACTIVE_CLASS =
       'rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white';
     const TAB_INACTIVE_CLASS =
       'rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950';
 
-    function selectLayoutCase(mode) {
-      const isA = mode === 'a';
+    const layoutTabs = Array.from(document.querySelectorAll('[data-layout-tab]')).map((tab) => ({
+      id: tab.dataset.layoutTab,
+      tab,
+      panel: document.getElementById(tab.getAttribute('aria-controls')),
+    }));
 
-      tabCaseA.setAttribute('aria-selected', isA ? 'true' : 'false');
-      tabCaseB.setAttribute('aria-selected', isA ? 'false' : 'true');
-      tabCaseA.tabIndex = isA ? 0 : -1;
-      tabCaseB.tabIndex = isA ? -1 : 0;
-      tabCaseA.className = isA ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-      tabCaseB.className = isA ? TAB_INACTIVE_CLASS : TAB_ACTIVE_CLASS;
-
-      panelCaseA.classList.toggle('hidden', !isA);
-      panelCaseA.setAttribute('aria-hidden', isA ? 'false' : 'true');
-      panelCaseB.classList.toggle('hidden', isA);
-      panelCaseB.setAttribute('aria-hidden', isA ? 'true' : 'false');
+    function selectLayoutTab(mode) {
+      layoutTabs.forEach(({ id, tab, panel }) => {
+        const active = id === mode;
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.tabIndex = active ? 0 : -1;
+        tab.className = active ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
+        panel.classList.toggle('hidden', !active);
+        panel.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
     }
 
-    tabCaseA.addEventListener('click', () => selectLayoutCase('a'));
-    tabCaseB.addEventListener('click', () => selectLayoutCase('b'));
+    layoutTabs.forEach(({ id, tab }) => {
+      tab.addEventListener('click', () => selectLayoutTab(id));
+    });
   </script>
 </body>
 </html>
