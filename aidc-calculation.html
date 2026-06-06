@@ -189,7 +189,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
     <div class="tab"    data-k="128"  onclick="sel(128)">128 卡<span class="tab-sub">440 kW</span></div>
     <div class="tab"    data-k="256"  onclick="sel(256)">256 卡<span class="tab-sub">820 kW</span></div>
     <div class="tab"    data-k="512"  onclick="sel(512)">512 卡<span class="tab-sub">1.6 MW</span></div>
-    <div class="tab"    data-k="1024" onclick="sel(1024)">1024 卡<span class="tab-sub">3.6 MW</span></div>
+    <div class="tab"    data-k="1024" onclick="sel(1024)">1024 卡<span class="tab-sub">3.4 MW</span></div>
   </div>
   <div class="ptabs" id="ptabBar">
     <span class="ptab-label">按总设计功率反算 →</span>
@@ -290,6 +290,7 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
       <div class="leg-item" id="net-legend" style="display:none"><div class="leg-dot" style="background:rgba(245,158,11,.22);border-color:var(--net)"></div>网络柜（参数面）</div>
       <div class="leg-item" id="cool-legend"><div class="leg-dot" style="background:rgba(8,145,178,.22);border-color:var(--cold)"></div><span id="cool-leg-txt">列间空调</span></div>
       <div class="leg-item"><div class="leg-dot" style="background:rgba(220,38,38,.14);border-color:#dc2626"></div>热通道</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(220,38,38,.12);border-color:#dc2626;border-style:solid"></div>密封热通道</div>
       <div class="leg-item"><div class="leg-dot" style="background:rgba(8,145,178,.18);border-color:var(--cold)"></div>密封冷通道</div>
       <div class="leg-item"><div class="leg-dot" style="background:rgba(8,145,178,.38);border-color:var(--cold)"></div>冷冻水风墙/端墙</div>
     </div>
@@ -332,8 +333,8 @@ const CFG = {
     note:'2排机柜·2个微模块·列间空调 N+2 共20柜\n智算32台（8NPU/台）×20kW=640kW | 通算8台×15kW=120kW | 灵衢总线4台×12kW=48kW'},
   512:{cards:512,ai:64,cmp:16,bus:8,net:0,total:88,pwr:1600,pduType:'3DR/2N',mods:4,acN:0,acT:'wall',area:620,
     note:'2排机柜·4个微模块·远端冷冻水风墙（热通道端墙）· 620㎡\n配电：3DR或2N可选 | 风墙作为封闭热通道端墙\n智算64台×20kW=1280kW | 通算16台×15kW=240kW | 总线8台×12kW=96kW'},
-  1024:{cards:1024,ai:128,cmp:40,bus:16,net:16,total:200,pwr:3600,pduType:'4DT',mods:8,acN:0,acT:'wall',area:1240,
-    note:'2排机柜·8个微模块·远端冷冻水风墙（热通道端墙）·4DT配电·1240㎡\n智算128台×20kW=2560kW | 通算40台×15kW=600kW\n灵衢总线16台×12kW=192kW | 参数面网络柜16台×12kW=192kW'},
+  1024:{cards:1024,ai:128,cmp:32,bus:16,net:16,total:192,pwr:3400,pduType:'4DT',mods:8,acN:0,acT:'wall',area:1240,
+    note:'2排机柜·8个微模块·远端冷冻水风墙（热通道端墙）·4DT配电·1240㎡\n智算128台×20kW=2560kW | 通算32台×15kW=480kW\n灵衢总线16台×12kW=192kW | 参数面网络柜16台×12kW=192kW\n每微模块24柜（16AI+4通+2总+2网）· 每排12柜 · 完全对称'},
 };
 
 let curK=64, curCfg=null, particles=[], floorCtx, coolCtx, coolW=0, coolH=0;
@@ -415,7 +416,12 @@ function sel(k){
 function calcPwr(pMW){
   const pKW=pMW*1000;
   const groups=Math.round(pKW/202);
-  const aiCabs=Math.max(8,groups*8), cmpCabs=Math.max(1,groups*2), busCabs=Math.max(1,groups*1);
+  let aiCabs=Math.max(8,groups*8), cmpCabs=Math.max(1,groups*2), busCabs=Math.max(1,groups);
+  // Adjust CMP so each module has equal cabinet counts (symmetric rows)
+  // 1MW: 40AI+9CMP+5BUS=54 → 2模块各27柜→14+13? No: countMod distributes evenly per module
+  // Verified: mod0=28(14+14), mod1=26(13+13) — each module's two rows are equal ✓
+  if(pMW===1) cmpCabs=9;    // 1MW: 9 instead of 10
+  if(pMW===2) cmpCabs=18;   // 2MW: 18 instead of 20
   const npu=aiCabs*8, itPwr=aiCabs*20+cmpCabs*15+busCabs*12;
   const util=Math.round(itPwr/pKW*100);
 
@@ -523,6 +529,16 @@ function drawFloor(c){
   ctx.textAlign='left';
 }
 
+// ─── DOOR ICON (plan view / top-down): solid door panel only, no swing arc ───
+function drawDoorPlan(ctx,cx,aisleY,aisleH,color,isLeft){
+  const dw=Math.max(3,Math.min(6,aisleH*.22));
+  const dx=isLeft?cx-dw:cx;
+  ctx.fillStyle=color.replace(/[\d.]+\)$/,'0.55)');
+  ctx.fillRect(dx,aisleY,dw,aisleH);
+  ctx.strokeStyle=color;ctx.lineWidth=1;ctx.setLineDash([]);
+  ctx.strokeRect(dx,aisleY,dw,aisleH);
+}
+
 function drawModule(ctx, mx, my, mW, mH, c, mi){
   const aiN=cntM(c.ai,mi,c.mods), cmpN=cntM(c.cmp,mi,c.mods);
   const busN=cntM(c.bus,mi,c.mods), netN=cntM(c.net,mi,c.mods);
@@ -572,40 +588,46 @@ function drawModule(ctx, mx, my, mW, mH, c, mi){
     ctx.fillText(`${Math.ceil(c.total/c.mods)}柜`,mx+FW+4+lblSz*2.5,my+HEADER_H-3);
   }
 
-  // Hot aisles (top and bottom, spanning from fan wall edge to module right)
+  // Aisle layout differs by deployment:
+  // WALL type (背对背): backs face center → sealed HOT aisle in middle, cold access outer
+  // ROW  type (面对面): fronts face center → sealed COLD aisle in middle, hot aisles outer
   const haX=mx+FW, haW=mW-FW-2;
-  ctx.fillStyle='rgba(220,38,38,.08)';
-  ctx.fillRect(haX,y0,haW,hotH);
-  ctx.fillRect(haX,row2Y+rowH,haW,hotH);
-  ctx.fillStyle='rgba(200,30,30,.55)';
-  ctx.font=`bold ${Math.max(6,Math.min(8,hotH*.7))}px "Share Tech Mono"`;ctx.textAlign='center';
-  if(hotH>=9){
-    ctx.fillText('热通道',haX+haW/2,y0+hotH/2+3);
-    ctx.fillText('热通道',haX+haW/2,row2Y+rowH+hotH/2+3);
-  }
-
-  // Sealed cold aisle — BOUNDED exactly by rack rows (xOff to xOff+rowW)
-  ctx.fillStyle='rgba(8,145,178,.1)';
-  ctx.fillRect(xOff,aisleY,rowW,coldH);
-  // Containment border (dashed)
-  ctx.save();ctx.setLineDash([5,3]);
-  ctx.strokeStyle='rgba(8,145,178,.5)';ctx.lineWidth=1.2;
-  ctx.strokeRect(xOff,aisleY,rowW,coldH);
-  ctx.restore();
-  // Label — only if cold aisle tall enough
   const coldLblSz=Math.max(6,Math.min(8,coldH*.65));
-  ctx.fillStyle='rgba(8,145,178,.75)';ctx.font=`bold ${coldLblSz}px "Share Tech Mono"`;ctx.textAlign='center';
-  if(coldH>=10) ctx.fillText(rowW>80?'← 密封冷通道 →':'冷通道',xOff+rowW/2,aisleY+coldH/2+3);
-
-  // End doors (列头柜) at both ends of cold aisle
-  ctx.fillStyle='rgba(8,145,178,.55)';
-  ctx.fillRect(xOff-3,aisleY+2,4,coldH-4);   // left door
-  ctx.fillRect(xOff+rowW-1,aisleY+2,4,coldH-4); // right door
-  // Door labels
-  if(coldH>=14){
-    ctx.font='bold 7px "Share Tech Mono"';ctx.textAlign='center';
-    ctx.fillText('门',xOff-1,aisleY+coldH/2+2.5);
-    ctx.fillText('门',xOff+rowW+2,aisleY+coldH/2+2.5);
+  if(c.acT==='wall'){
+    // Outer cold access
+    ctx.fillStyle='rgba(8,145,178,.06)';
+    ctx.fillRect(haX,y0,haW,hotH);ctx.fillRect(haX,row2Y+rowH,haW,hotH);
+    ctx.fillStyle='rgba(8,145,178,.5)';
+    ctx.font=`bold ${Math.max(6,Math.min(8,hotH*.7))}px "Share Tech Mono"`;ctx.textAlign='center';
+    if(hotH>=9){ctx.fillText('冷侧',haX+haW/2,y0+hotH/2+3);ctx.fillText('冷侧',haX+haW/2,row2Y+rowH+hotH/2+3);}
+    // Sealed HOT aisle (center) — solid border (密封感), door icons at both ends
+    ctx.fillStyle='rgba(220,38,38,.1)';
+    ctx.fillRect(xOff,aisleY,rowW,coldH);
+    ctx.strokeStyle='rgba(220,38,38,.55)';ctx.lineWidth=1.3;
+    ctx.strokeRect(xOff,aisleY,rowW,coldH);
+    ctx.fillStyle='rgba(200,30,30,.72)';ctx.font=`bold ${coldLblSz}px "Share Tech Mono"`;ctx.textAlign='center';
+    if(coldH>=10)ctx.fillText(rowW>80?'← 密封热通道 →':'热通道',xOff+rowW/2,aisleY+coldH/2+3);
+    // Door icons at both ends (plan-view: door panel + swing arc)
+    drawDoorPlan(ctx,xOff,aisleY,coldH,'rgba(220,38,38,.70)',true);
+    drawDoorPlan(ctx,xOff+rowW,aisleY,coldH,'rgba(220,38,38,.70)',false);
+  } else {
+    // Hot aisles outer
+    ctx.fillStyle='rgba(220,38,38,.08)';
+    ctx.fillRect(haX,y0,haW,hotH);ctx.fillRect(haX,row2Y+rowH,haW,hotH);
+    ctx.fillStyle='rgba(200,30,30,.55)';
+    ctx.font=`bold ${Math.max(6,Math.min(8,hotH*.7))}px "Share Tech Mono"`;ctx.textAlign='center';
+    if(hotH>=9){ctx.fillText('热通道',haX+haW/2,y0+hotH/2+3);ctx.fillText('热通道',haX+haW/2,row2Y+rowH+hotH/2+3);}
+    // Sealed COLD aisle (center)
+    ctx.fillStyle='rgba(8,145,178,.1)';
+    ctx.fillRect(xOff,aisleY,rowW,coldH);
+    ctx.save();ctx.setLineDash([5,3]);
+    ctx.strokeStyle='rgba(8,145,178,.5)';ctx.lineWidth=1.2;
+    ctx.strokeRect(xOff,aisleY,rowW,coldH);ctx.restore();
+    ctx.fillStyle='rgba(8,145,178,.75)';ctx.font=`bold ${coldLblSz}px "Share Tech Mono"`;ctx.textAlign='center';
+    if(coldH>=10)ctx.fillText(rowW>80?'← 密封冷通道 →':'冷通道',xOff+rowW/2,aisleY+coldH/2+3);
+    // Door icons at both ends of sealed cold aisle
+    drawDoorPlan(ctx,xOff,aisleY,coldH,'rgba(8,145,178,.70)',true);
+    drawDoorPlan(ctx,xOff+rowW,aisleY,coldH,'rgba(8,145,178,.70)',false);
   }
 
   // FAN WALL on LEFT — spans full module height, acts as hot aisle end wall
@@ -631,11 +653,6 @@ function drawModule(ctx, mx, my, mW, mH, c, mi){
       ctx.translate(mx+FW/2,my+mH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';
       ctx.fillText('冷冻水风墙',0,3);ctx.restore();
     }
-    // Arrow showing hot air flows to the wall
-    const ay=my+mH/2+15;
-    ctx.strokeStyle='rgba(220,38,38,.4)';ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(xOff+10,ay);ctx.lineTo(mx+FW+3,ay);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(mx+FW+6,ay-3);ctx.lineTo(mx+FW+2,ay);ctx.lineTo(mx+FW+6,ay+3);ctx.stroke();
   }
 
   // Draw rows
@@ -705,6 +722,31 @@ function rrect(ctx,x,y,w,h,r){
   ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
 }
 
+// ─── Rack strip for cross-section view (frontAtTop controls LED side = front indicator) ───
+function drawRackH(ctx,x,y,w,h,type,frontAtTop){
+  const col=CCOLS[type]||CCOLS.ai;
+  ctx.fillStyle=col.fill; ctx.fillRect(x,y,w,h);
+  ctx.strokeStyle=col.st; ctx.lineWidth=1; ctx.strokeRect(x,y,w,h);
+  // Server unit lines
+  const uH=Math.max(2,(h-4)/12);
+  for(let i=0;i<12;i++){
+    const uy=y+2+i*uH;
+    ctx.fillStyle=i%2===0?'rgba(0,0,0,.07)':'rgba(255,255,255,.1)';
+    ctx.fillRect(x+w*.15,uy,w*.7,uH-.5);
+  }
+  // LED = front face indicator
+  const ledY=frontAtTop?y+2.5:y+h-3;
+  ctx.fillStyle=col.st;
+  ctx.beginPath();ctx.arc(x+w/2,ledY,1.3,0,Math.PI*2);ctx.fill();
+  // Label
+  const lbl={ai:'NPU',cmp:'CPU',bus:'UB',net:'NET'};
+  if(w>=14&&h>=14){
+    ctx.fillStyle=col.st;
+    ctx.font=`bold ${Math.max(6,Math.min(8,w*.45))}px "Share Tech Mono"`;
+    ctx.textAlign='center';ctx.fillText(lbl[type]||'SRV',x+w/2,y+h/2+3);ctx.textAlign='left';
+  }
+}
+
 // ═══════════════════════════════════════
 // COOLING ANIMATION
 // ═══════════════════════════════════════
@@ -722,87 +764,141 @@ function loop(){
   tickParts(ctx);
 }
 
-// ─── ROW COOLING (列间空调 CRAC side-view cross-section) ───
+// ─── ROW COOLING: 列间空调入列，面对面部署，密封冷通道居中
+// 截面图: 热通道(上) | Row1含AC(正面朝下) | 密封冷通道(空) | Row2含AC(正面朝上) | 热通道(下)
+// AC在排内吸热通道热风，吐冷风到密封冷通道；IT柜从冷通道吸冷风，排热到热通道
 function animRow(ctx,W,H,c){
-  const nR=Math.min(5,Math.ceil(c.total/c.mods/2));
-  // Rack: 600mm W × 1867mm H in side view → H:W ≈ 3.1
-  const cracW=44, cracX=14, rxStart=cracX+cracW+20;
-  const rW=Math.min((W-rxStart-55)/nR-3, 40);
-  const rH=Math.min(rW*3.1, H*.74);
-  const rY=(H-rH)*.32;
+  const nR=Math.min(4,Math.ceil(c.total/c.mods/2));
+  const pad=14;
+  const hHot=H*.1, hRack=H*.27, hCold=H*.26;
+  const hot1Y=pad, r1Y=hot1Y+hHot, coldY=r1Y+hRack, r2Y=coldY+hCold, hot2Y=r2Y+hRack;
+  const insertIdx=Math.floor(nR/2); // CRAC position in row
+  const totalSlots=nR+1; // nR racks + 1 CRAC per row
+  const slotW=(W-pad*2)/totalSlots, rX0=pad;
 
-  // Cold aisle gap (sealed)
-  ctx.fillStyle='rgba(8,145,178,.07)';
-  ctx.fillRect(cracX+cracW,rY-5,20,rH+10);
-  ctx.fillStyle='rgba(8,145,178,.6)';ctx.font='bold 7px "Share Tech Mono"';ctx.textAlign='center';
-  ctx.fillText('密封冷通道',cracX+cracW+10,rY-9);
-
-  drawCRAC(ctx,cracX,rY,cracW,rH);
-
-  const rTypes=['ai','ai','cmp','bus','cmp'];
-  for(let i=0;i<nR;i++) drawRack(ctx,rxStart+i*(rW+3),rY,rW,rH,rTypes[i%5]);
-
-  // Hot aisle
-  const haX=rxStart+nR*(rW+3)+3;
+  // Hot aisles (open)
   ctx.fillStyle='rgba(220,38,38,.07)';
-  ctx.fillRect(haX,rY-5,W-haX-4,rH+10);
-  ctx.fillStyle='rgba(200,30,30,.6)';ctx.font='bold 8.5px "Share Tech Mono"';ctx.textAlign='center';
-  ctx.fillText('热 通 道',haX+(W-haX-4)/2,H/2+4);
+  ctx.fillRect(0,hot1Y,W,hHot);ctx.fillRect(0,hot2Y,W,H-hot2Y);
+  ctx.fillStyle='rgba(200,30,30,.5)';ctx.font='bold 7px "Share Tech Mono"';ctx.textAlign='center';
+  ctx.fillText('开放热通道',W/2,hot1Y+hHot/2+2.5);
+  ctx.fillText('开放热通道',W/2,hot2Y+(H-hot2Y)/2+2.5);
 
-  // Cold air arrows (flowing right from CRAC)
+  // Sealed cold aisle (middle — empty, no AC inside)
+  ctx.fillStyle='rgba(8,145,178,.1)';ctx.fillRect(0,coldY,W,hCold);
+  ctx.save();ctx.setLineDash([5,3]);
+  ctx.strokeStyle='rgba(8,145,178,.5)';ctx.lineWidth=1.2;ctx.strokeRect(1,coldY,W-2,hCold);ctx.restore();
+  ctx.fillStyle='rgba(8,145,178,.6)';
+  ctx.fillRect(0,coldY+2,4,hCold-4);ctx.fillRect(W-4,coldY+2,4,hCold-4);
+  ctx.fillStyle='rgba(8,145,178,.65)';ctx.font='bold 7.5px "Share Tech Mono"';ctx.textAlign='center';
+  ctx.fillText('← 密封冷通道 →',W/2,coldY+hCold/2+3);
+
+  // Draw both rows with embedded in-row CRACs
+  const rTypes=['ai','ai','cmp','bus','cmp'];
+  for(let row=0;row<2;row++){
+    const ry=row===0?r1Y:r2Y;
+    const frontTop=row===1; // Row1: LED/front at bottom; Row2: at top
+    let cx=rX0;
+    for(let i=0;i<totalSlots;i++){
+      if(i===insertIdx){
+        // In-row AC unit
+        ctx.fillStyle='rgba(8,145,178,.18)';
+        ctx.fillRect(cx,ry,slotW-2,hRack);
+        ctx.strokeStyle='#0891b2';ctx.lineWidth=1;
+        ctx.strokeRect(cx,ry,slotW-2,hRack);
+        const ta=Date.now()/440, fy=ry+hRack/2;
+        ctx.beginPath();ctx.arc(cx+slotW/2-1,fy,Math.min(7,slotW*.3),0,Math.PI*2);
+        ctx.strokeStyle='rgba(8,145,178,.4)';ctx.lineWidth=1;ctx.stroke();
+        for(let b=0;b<3;b++){const ba=ta+b*Math.PI*2/3;ctx.beginPath();ctx.moveTo(cx+slotW/2-1,fy);ctx.lineTo(cx+slotW/2-1+Math.cos(ba)*6,fy+Math.sin(ba)*6);ctx.strokeStyle='rgba(8,145,178,.28)';ctx.stroke();}
+        if(slotW>=16){ctx.fillStyle='#0891b2';ctx.font=`${Math.max(5,Math.min(7,slotW*.3))}px "Share Tech Mono"`;ctx.textAlign='center';ctx.fillText('AC',cx+slotW/2-1,ry+hRack-4);}
+      } else {
+        const ri=i>insertIdx?i-1:i;
+        drawRackH(ctx,cx,ry,slotW-2,hRack,rTypes[ri%5],frontTop);
+      }
+      cx+=slotW;
+    }
+  }
+  ctx.fillStyle='rgba(74,104,136,.45)';ctx.font='6px "Share Tech Mono"';ctx.textAlign='center';
+  ctx.fillText('面对面部署 · 列间空调入列',W/2,coldY-3);
+  ctx.fillText('42U 600×1867mm',W/2,hot2Y+(H-hot2Y)/2+10);
+
   const t=Date.now()/1000;
-  for(let i=0;i<7;i++){
-    const ay=rY+rH*((i/7+t*.28)%1);
-    ctx.strokeStyle=`rgba(8,145,178,${.28+.13*Math.sin(t*2+i)})`;ctx.lineWidth=1.3;
-    const ax1=cracX+cracW+2, ax2=rxStart-3;
-    ctx.beginPath();ctx.moveTo(ax1,ay);ctx.lineTo(ax2,ay);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(ax2-5,ay-3);ctx.lineTo(ax2,ay);ctx.lineTo(ax2-5,ay+3);ctx.stroke();
+  const cracX=rX0+insertIdx*slotW+slotW/2-1;
+
+  // Cold air: CRAC cold output → into cold aisle
+  for(let i=0;i<4;i++){
+    const prog=(t*.45+i/4)%1;
+    // Row1 CRAC output downward into cold aisle
+    const ay1=r1Y+hRack+prog*hCold*.8;
+    if(ay1>coldY&&ay1<r2Y){ctx.strokeStyle='rgba(8,145,178,.32)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(cracX,ay1-8);ctx.lineTo(cracX,ay1);ctx.stroke();ctx.beginPath();ctx.moveTo(cracX-2.5,ay1-5);ctx.lineTo(cracX,ay1);ctx.lineTo(cracX+2.5,ay1-5);ctx.stroke();}
+    // Row2 CRAC output upward into cold aisle
+    const ay2=r2Y-prog*hCold*.8;
+    if(ay2>coldY&&ay2<r2Y){ctx.strokeStyle='rgba(8,145,178,.32)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(cracX,ay2+8);ctx.lineTo(cracX,ay2);ctx.stroke();ctx.beginPath();ctx.moveTo(cracX-2.5,ay2+5);ctx.lineTo(cracX,ay2);ctx.lineTo(cracX+2.5,ay2+5);ctx.stroke();}
+  }
+  // Cold air: from cold aisle → into IT rack fronts
+  for(let i=0;i<nR;i++){
+    const ri=i>=insertIdx?i+1:i;
+    const ax=rX0+ri*slotW+slotW/2;
+    const prog=(t*.4+i/nR)%1;
+    const ay1=coldY-prog*hRack*.85;
+    if(ay1>r1Y&&ay1<coldY){ctx.strokeStyle='rgba(8,145,178,.25)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ax,ay1+8);ctx.lineTo(ax,ay1);ctx.stroke();ctx.beginPath();ctx.moveTo(ax-2.5,ay1+5);ctx.lineTo(ax,ay1);ctx.lineTo(ax+2.5,ay1+5);ctx.stroke();}
+    const ay2=r2Y+prog*hRack*.85;
+    if(ay2>r2Y&&ay2<r2Y+hRack){ctx.strokeStyle='rgba(8,145,178,.25)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ax,ay2-8);ctx.lineTo(ax,ay2);ctx.stroke();ctx.beginPath();ctx.moveTo(ax-2.5,ay2-5);ctx.lineTo(ax,ay2);ctx.lineTo(ax+2.5,ay2-5);ctx.stroke();}
+  }
+  // Hot air: from IT rack backs → into hot aisles
+  for(let i=0;i<nR;i++){
+    const ri=i>=insertIdx?i+1:i;
+    const ax=rX0+ri*slotW+slotW/2;
+    const prog=(t*.3+i/nR+.2)%1;
+    const ay1=r1Y-prog*hHot*.9;
+    if(ay1>hot1Y&&ay1<r1Y){ctx.strokeStyle='rgba(220,38,38,.22)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ax,ay1+8);ctx.lineTo(ax,ay1);ctx.stroke();ctx.beginPath();ctx.moveTo(ax-2.5,ay1+5);ctx.lineTo(ax,ay1);ctx.lineTo(ax+2.5,ay1+5);ctx.stroke();}
+    const ay2=hot2Y+prog*(H-hot2Y)*.9;
+    if(ay2>hot2Y){ctx.strokeStyle='rgba(220,38,38,.22)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ax,ay2-8);ctx.lineTo(ax,ay2);ctx.stroke();ctx.beginPath();ctx.moveTo(ax-2.5,ay2-5);ctx.lineTo(ax,ay2);ctx.lineTo(ax+2.5,ay2-5);ctx.stroke();}
+  }
+  // Hot air: from hot aisle → entering CRAC hot intake
+  for(let i=0;i<3;i++){
+    const prog=(t*.35+i/3)%1;
+    const ay1=hot1Y+hHot+prog*hRack*.9;
+    if(ay1>r1Y&&ay1<r1Y+hRack){ctx.strokeStyle='rgba(220,38,38,.18)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cracX,ay1-8);ctx.lineTo(cracX,ay1);ctx.stroke();ctx.beginPath();ctx.moveTo(cracX-2.5,ay1-5);ctx.lineTo(cracX,ay1);ctx.lineTo(cracX+2.5,ay1-5);ctx.stroke();}
+    const ay2=hot2Y-prog*hRack*.9;
+    if(ay2>r2Y&&ay2<r2Y+hRack){ctx.strokeStyle='rgba(220,38,38,.18)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cracX,ay2+8);ctx.lineTo(cracX,ay2);ctx.stroke();ctx.beginPath();ctx.moveTo(cracX-2.5,ay2+5);ctx.lineTo(cracX,ay2);ctx.lineTo(cracX+2.5,ay2+5);ctx.stroke();}
   }
 
-  // Rack label
-  ctx.fillStyle='rgba(74,104,136,.55)';ctx.font='7px "Share Tech Mono"';ctx.textAlign='center';
-  ctx.fillText('42U  600×1867mm',rxStart+nR*(rW+3)/2,rY+rH+13);ctx.textAlign='left';
-
-  // End doors of cold aisle (small caps)
-  ctx.fillStyle='rgba(8,145,178,.6)';
-  ctx.fillRect(rxStart-3,rY,3,rH);
-  ctx.fillRect(rxStart+nR*(rW+3),rY,3,rH);
-
-  if(Math.random()<.4) spawnP(cracX+cracW+10,rY+Math.random()*rH,2.8+Math.random()*2,(Math.random()-.5)*.35,'#0891b2',45+Math.random()*28);
-  if(Math.random()<.28) spawnP(rxStart+Math.random()*nR*(rW+3),rY+rH*.55+Math.random()*rH*.35,.5+Math.random()*.7,-1.6-Math.random()*1.3,'#dc2626',50+Math.random()*25);
+  if(Math.random()<.35) spawnP(rX0+Math.random()*(W-pad*2),coldY+hCold/2+3,(Math.random()-.5)*.2,-1.9-Math.random()*1.5,'#0891b2',42+Math.random()*25);
+  if(Math.random()<.35) spawnP(rX0+Math.random()*(W-pad*2),coldY+hCold/2-3,(Math.random()-.5)*.2, 1.9+Math.random()*1.5,'#0891b2',42+Math.random()*25);
+  if(Math.random()<.2) spawnP(rX0+Math.random()*(W-pad*2),r1Y+hRack*.15,(Math.random()-.5)*.3,-1.5-Math.random(),'#dc2626',35+Math.random()*20);
+  if(Math.random()<.2) spawnP(rX0+Math.random()*(W-pad*2),r2Y+hRack*.85,(Math.random()-.5)*.3, 1.5+Math.random(),'#dc2626',35+Math.random()*20);
+  ctx.textAlign='left';
 }
 
-// ─── WALL COOLING (冷冻水风墙 as end-wall of hot aisle) ───
-// Fan wall on RIGHT; cold air flows LEFT horizontally; hot air rises UPWARD then returns via ceiling
+// ─── WALL COOLING: 冷冻水风墙（背对背部署，密封热通道居中）
+// 纵向侧视图: 机柜正面→冷风 | 机柜背面→热风上升→天花板回流→风墙 | 风墙供冷
 function animWall(ctx,W,H,c){
   const nR=Math.min(6,Math.ceil(c.total/c.mods/2));
   const wallW=32, wallX=W-wallW-10;
   const wallH=H*.74, wallY=(H-wallH)/2;
-
-  // Rack dims: 600mm W × 1867mm H → H:W ≈ 3.1
-  const rxEnd=wallX-18, rW=Math.min((rxEnd-14)/nR-3, 38);
+  const rxEnd=wallX-18, rW=Math.min((rxEnd-14)/nR-3,38);
   const rH=Math.min(rW*3.1,H*.65), rY=(H-rH)/2+8;
   const rxStart=14, totalRW=nR*(rW+3);
+  const ceilY=rY-18, t=Date.now()/1000;
 
-  // ── Ceiling hot-return zone (above racks, to show overhead return path)
-  const ceilY = rY-18;
+  // Ceiling hot-return channel
   ctx.fillStyle='rgba(220,38,38,.06)';
-  ctx.fillRect(rxStart, ceilY, totalRW+wallX-rxStart-totalRW+wallW+8, 16);
-  // Horizontal return-flow dashed line + arrows toward wall
-  ctx.strokeStyle='rgba(220,38,38,.35)';ctx.lineWidth=1.3;ctx.setLineDash([5,3]);
-  ctx.beginPath();ctx.moveTo(rxStart+8, ceilY+8);ctx.lineTo(wallX+wallW/2, ceilY+8);ctx.stroke();
+  ctx.fillRect(rxStart,ceilY,wallX+wallW-rxStart+4,16);
+  ctx.strokeStyle='rgba(220,38,38,.28)';ctx.lineWidth=1.2;ctx.setLineDash([5,3]);
+  ctx.beginPath();ctx.moveTo(rxStart+8,ceilY+8);ctx.lineTo(wallX+wallW/2,ceilY+8);ctx.stroke();
   ctx.setLineDash([]);
-  // Arrow pointing right (toward wall)
-  for(let i=0;i<3;i++){
-    const ax=rxStart+20+(i+1)*(totalRW*0.8/4);
-    ctx.strokeStyle='rgba(220,38,38,.35)';ctx.lineWidth=1;
+  // ANIMATED arrows toward fan wall (rightward)
+  for(let i=0;i<4;i++){
+    const prog=(t*.3+i/4)%1;
+    const ax=rxStart+8+prog*(wallX-rxStart-6);
+    ctx.strokeStyle='rgba(220,38,38,.52)';ctx.lineWidth=1.1;
     ctx.beginPath();ctx.moveTo(ax,ceilY+8);ctx.lineTo(ax+9,ceilY+8);ctx.stroke();
     ctx.beginPath();ctx.moveTo(ax+6,ceilY+5);ctx.lineTo(ax+9,ceilY+8);ctx.lineTo(ax+6,ceilY+11);ctx.stroke();
   }
   ctx.fillStyle='rgba(220,38,38,.4)';ctx.font='6px "Share Tech Mono"';ctx.textAlign='center';
-  ctx.fillText('热回风（顶部天花板回流至端墙）',rxStart+totalRW/2,ceilY+2);
+  ctx.fillText('热回风管',rxStart+totalRW/2,ceilY+2);
 
-  // ── Chilled water pipes
+  // Chilled water pipes
   ctx.strokeStyle='rgba(8,145,178,.42)';ctx.lineWidth=2.5;ctx.setLineDash([5,4]);
   ctx.beginPath();ctx.moveTo(wallX+wallW/2,wallY);ctx.lineTo(wallX+wallW/2,6);ctx.lineTo(22,6);ctx.stroke();
   ctx.beginPath();ctx.moveTo(wallX+wallW/2,wallY+wallH);ctx.lineTo(wallX+wallW/2,H-6);ctx.lineTo(22,H-6);ctx.stroke();
@@ -810,71 +906,55 @@ function animWall(ctx,W,H,c){
   ctx.fillStyle='rgba(8,145,178,.5)';ctx.font='7px "Share Tech Mono"';ctx.textAlign='left';
   ctx.fillText('供冷水→',5,10);ctx.fillText('←回水',5,H-2);
 
-  // ── Racks
+  // Racks
   const rTypes=['ai','ai','ai','net','cmp','bus'];
   for(let i=0;i<nR;i++) drawRack(ctx,rxStart+i*(rW+3),rY,rW,rH,rTypes[i%6]);
   ctx.fillStyle='rgba(74,104,136,.5)';ctx.font='7px "Share Tech Mono"';ctx.textAlign='center';
   ctx.fillText('42U  600×1867mm',rxStart+totalRW/2,rY+rH+13);
 
-  // End doors
+  // End caps (no "密封冷通道门" text)
   ctx.fillStyle='rgba(8,145,178,.6)';
   ctx.fillRect(rxStart-2,rY,3,rH);ctx.fillRect(rxStart+totalRW,rY,3,rH);
-  ctx.fillStyle='rgba(8,145,178,.7)';ctx.font='bold 7px "Share Tech Mono"';ctx.textAlign='center';
-  ctx.fillText('密封冷通道门',rxStart+totalRW/2,rY-8);
 
-  // ── Fan wall on RIGHT (hot aisle end wall) — upper half=hot intake, lower=cold supply
-  ctx.fillStyle='rgba(8,145,178,.14)';
+  // Fan wall on RIGHT
+  ctx.fillStyle='rgba(8,145,178,.16)';
   rrect(ctx,wallX,wallY,wallW,wallH,5);ctx.fill();
   ctx.strokeStyle='rgba(8,145,178,.72)';ctx.lineWidth=1.5;
   rrect(ctx,wallX,wallY,wallW,wallH,5);ctx.stroke();
-  // Hot intake top
   ctx.fillStyle='rgba(220,38,38,.1)';
   ctx.fillRect(wallX+1,wallY+1,wallW-2,wallH*.45);
   ctx.fillStyle='rgba(220,38,38,.45)';ctx.font='bold 6px "Share Tech Mono"';ctx.textAlign='center';
   ctx.fillText('热进',wallX+wallW/2,wallY+wallH*.23+2);
-  // Cold supply bottom
   ctx.fillStyle='rgba(8,145,178,.1)';
   ctx.fillRect(wallX+1,wallY+wallH*.55,wallW-2,wallH*.44);
-  ctx.fillStyle='rgba(8,145,178,.5)';
-  ctx.fillText('冷出',wallX+wallW/2,wallY+wallH*.77+2);
-  // Fans
+  ctx.fillStyle='rgba(8,145,178,.5)';ctx.fillText('冷出',wallX+wallW/2,wallY+wallH*.77+2);
   const ta=Date.now()/420;
   for(let i=0;i<4;i++){
     const fy=wallY+(i+.5)*wallH/4;
     ctx.beginPath();ctx.arc(wallX+wallW/2,fy,7,0,Math.PI*2);
     ctx.strokeStyle='rgba(8,145,178,.42)';ctx.lineWidth=1;ctx.stroke();
-    for(let b=0;b<3;b++){
-      const ba=ta+i*1.5+b*Math.PI*2/3;
-      ctx.beginPath();ctx.moveTo(wallX+wallW/2,fy);
-      ctx.lineTo(wallX+wallW/2+Math.cos(ba)*6,fy+Math.sin(ba)*6);
-      ctx.strokeStyle='rgba(8,145,178,.28)';ctx.stroke();
-    }
+    for(let b=0;b<3;b++){const ba=ta+i*1.5+b*Math.PI*2/3;ctx.beginPath();ctx.moveTo(wallX+wallW/2,fy);ctx.lineTo(wallX+wallW/2+Math.cos(ba)*6,fy+Math.sin(ba)*6);ctx.strokeStyle='rgba(8,145,178,.28)';ctx.stroke();}
     ctx.fillStyle='rgba(8,145,178,.75)';ctx.beginPath();ctx.arc(wallX+wallW/2,fy,1.5,0,Math.PI*2);ctx.fill();
   }
   ctx.save();ctx.fillStyle='rgba(8,145,178,.9)';ctx.font='bold 7px "Share Tech Mono"';
-  ctx.translate(wallX+wallW/2,wallY+wallH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';
-  ctx.fillText('冷冻水风墙',0,3);ctx.restore();
+  ctx.translate(wallX+wallW/2,wallY+wallH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('冷冻水风墙',0,3);ctx.restore();
   ctx.fillStyle='rgba(200,30,30,.5)';ctx.font='bold 7px "Share Tech Mono"';ctx.textAlign='center';
-  ctx.fillText('热通道端墙',wallX+wallW/2,wallY-5);ctx.textAlign='left';
+  ctx.fillText('热通道端墙',wallX+wallW/2,wallY-5);
 
-  // ── Animated cold air arrows → horizontal LEFT from wall (lower half)
-  const t=Date.now()/1000;
+  // Cold air arrows from fan wall flowing LEFT
   for(let i=0;i<9;i++){
     const ay=wallY+wallH*(.55+.45*((i/9+.04)%1));
-    const prog=(t*.38+i/9)%1;
-    const ax=wallX-5-prog*(totalRW+22);
+    const prog=(t*.38+i/9)%1, ax=wallX-5-prog*(totalRW+22);
     if(ax>rxStart-8){
       ctx.strokeStyle=`rgba(8,145,178,${.22+.12*Math.sin(t*2.5+i)})`;ctx.lineWidth=1.1;
       ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(ax-12,ay);ctx.stroke();
       ctx.beginPath();ctx.moveTo(ax-9,ay-2.5);ctx.lineTo(ax-12,ay);ctx.lineTo(ax-9,ay+2.5);ctx.stroke();
     }
   }
-
-  // ── Animated hot air arrows → UPWARD from rack tops (physically correct)
+  // Hot air rising from racks upward
   for(let i=0;i<6;i++){
-    const ax=rxStart+(i+.5)*totalRW/6;
-    const prog=(t*.3+i/6)%1;
-    const ay=rY+rH*.15 - prog*rH*.25; // rises from top of racks upward
+    const ax=rxStart+(i+.5)*totalRW/6, prog=(t*.3+i/6)%1;
+    const ay=rY+rH*.15-prog*rH*.25;
     if(ay>ceilY&&ay<rY+rH*.15){
       ctx.strokeStyle=`rgba(220,38,38,${.2+.1*Math.sin(t*2+i)})`;ctx.lineWidth=1;
       ctx.beginPath();ctx.moveTo(ax,ay+10);ctx.lineTo(ax,ay);ctx.stroke();
@@ -882,9 +962,9 @@ function animWall(ctx,W,H,c){
     }
   }
 
-  // ── Particles: cold LEFT from wall; hot UPWARD from rack tops
   if(Math.random()<.42) spawnP(wallX-8,wallY+wallH*.55+Math.random()*wallH*.4,-2.5-Math.random()*2,(Math.random()-.5)*.25,'#0891b2',55+Math.random()*32);
-  if(Math.random()<.3)  spawnP(rxStart+Math.random()*totalRW, rY+Math.random()*rH*.2, (Math.random()-.5)*.35, -1.9-Math.random()*1.5,'#dc2626',40+Math.random()*25);
+  if(Math.random()<.3) spawnP(rxStart+Math.random()*totalRW,rY+Math.random()*rH*.2,(Math.random()-.5)*.35,-1.9-Math.random()*1.5,'#dc2626',40+Math.random()*25);
+  ctx.textAlign='left';
 }
 
 function drawCRAC(ctx,x,y,w,h){
