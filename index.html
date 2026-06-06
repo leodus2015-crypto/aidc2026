@@ -279,8 +279,8 @@
             <label for="pdDeployMode" class="block text-sm font-medium text-slate-700">PD部署方式</label>
             <select id="pdDeployMode" name="pdDeployMode"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-              <option value="32-2p1d" selected>32卡-2P+1D</option>
-              <option value="64-2p2d">64卡-2P+2D</option>
+              <option value="32-1p1d" selected>32卡-1P1D</option>
+              <option value="48-1p1d">48卡-1P1D</option>
             </select>
             <p class="mt-2 text-xs leading-5 text-slate-500">
               每种部署方式下，Prefill / Decode 各占一半总卡数，并按 P、D 组数拆分；<strong class="font-medium text-slate-600">每组独立部署一整份模型权重</strong>，再按组内卡数均摊到单卡。
@@ -614,21 +614,21 @@
 
     /** Prefill / Decode 各占一半总卡数；每组独立部署一整份 modelGb，组内均摊。 */
     const pdDeployLayouts = {
-      '32-2p1d': {
-        label: '32卡-2P+1D',
+      '32-1p1d': {
+        label: '32卡-1P1D',
         totalCards: 32,
         pCardTotal: 16,
-        pGroups: 2,
+        pGroups: 1,
         dCardTotal: 16,
         dGroups: 1,
       },
-      '64-2p2d': {
-        label: '64卡-2P+2D',
-        totalCards: 64,
-        pCardTotal: 32,
-        pGroups: 2,
-        dCardTotal: 32,
-        dGroups: 2,
+      '48-1p1d': {
+        label: '48卡-1P1D',
+        totalCards: 48,
+        pCardTotal: 24,
+        pGroups: 1,
+        dCardTotal: 24,
+        dGroups: 1,
       },
     };
 
