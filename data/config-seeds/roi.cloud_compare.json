@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "ds-v4": {
+    "title": "DeepSeek V4 档",
+    "refInputMiss": 0.5,
+    "refInputHit": 0.125,
+    "refOutput": 2.0,
+    "clouds": [
+      { "name": "DeepSeek 官方", "inputMiss": 0.5, "inputHit": 0.125, "output": 1.6 },
+      { "name": "硅基流动", "inputMiss": 1.0, "inputHit": 0.25, "output": 2.0 },
+      { "name": "阿里云百炼", "inputMiss": 0.6, "inputHit": 0.15, "output": 2.4 },
+      { "name": "火山引擎", "inputMiss": 0.5, "inputHit": 0.125, "output": 2.0 },
+      { "name": "腾讯云", "inputMiss": 0.8, "inputHit": 0.2, "output": 3.2 },
+      { "name": "天翼云", "inputMiss": 0.9, "inputHit": 0.225, "output": 3.5 }
+    ]
+  },
+  "glm-51": {
+    "title": "GLM-5.1 档",
+    "refInputMiss": 3.0,
+    "refInputHit": 0.75,
+    "refOutput": 15.0,
+    "clouds": [
+      { "name": "智谱 AI 官方", "inputMiss": 3.0, "inputHit": 0.75, "output": 12.0 },
+      { "name": "硅基流动", "inputMiss": 6.0, "inputHit": 1.5, "output": 28.0 },
+      { "name": "阿里云百炼", "inputMiss": 3.5, "inputHit": 0.875, "output": 15.0 },
+      { "name": "火山引擎", "inputMiss": 4.0, "inputHit": 1.0, "output": 18.0 },
+      { "name": "腾讯云", "inputMiss": 4.5, "inputHit": 1.125, "output": 20.0 },
+      { "name": "京东云", "inputMiss": 4.2, "inputHit": 1.05, "output": 19.0 }
+    ]
+  }
+}

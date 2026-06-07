@@ -40,6 +40,7 @@
         <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
           以<strong class="font-semibold text-slate-800">算力规模（P）</strong>与<strong class="font-semibold text-slate-800">集群功率（MW）</strong>联动建模，左侧 CAPEX、右侧 OPEX，中部比价图实时反映竞争力。
         </p>
+        <p id="configSourceBadge" class="mt-2 text-xs font-medium text-slate-500" aria-live="polite"></p>
       </div>
 
       <form id="roiForm" class="grid items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
@@ -383,6 +384,13 @@
                   class="mt-2 h-11 w-full cursor-default rounded-xl border border-slate-200 bg-slate-50 px-3 text-base text-slate-600" />
               </div>
             </div>
+            <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4">
+              <button type="button" id="syncConfigBtn"
+                class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                同步当前参数到云端
+              </button>
+              <span id="syncConfigHint" class="text-xs text-slate-500"></span>
+            </div>
           </div>
         </div>
 
@@ -426,6 +434,7 @@
     </div>
   </div>
 
+  <script src="js/config-loader.js"></script>
   <script>
     const SPEC = {
       kwPer64Cards: 125,
@@ -440,7 +449,27 @@
     const MW_PER_P = SPEC.kwPer64Cards / SPEC.cardsPer64Kw / 1000;
     const KEY_PASSWORD = 'aidc2026';
 
-    const CLOUD_COMPARE = {
+    const LOCAL_ROI_DEFAULTS = {
+      computeP: 512,
+      clusterMw: 1.0,
+      pctItDevice: 65,
+      pctPowerCool: 25,
+      pctLandBuild: 10,
+      npuUnitPrice: 50,
+      ascendInItPct: 85,
+      deprecYears: 5,
+      pue: 1.25,
+      elecPrice: 0.65,
+      utilization: 75,
+      tpsInputMiss: 900,
+      tpsInputHit: 3600,
+      tpsOutput: 28,
+      annualFixedOpex: 800,
+      capexOpexPct: 3,
+      serviceModel: 'ds-v4',
+    };
+
+    const LOCAL_CLOUD_COMPARE = {
       'ds-v4': {
         title: 'DeepSeek V4 档',
         refInputMiss: 0.5,
@@ -470,6 +499,9 @@
         ],
       },
     };
+
+    let CLOUD_COMPARE = JSON.parse(JSON.stringify(LOCAL_CLOUD_COMPARE));
+    let configLoadMeta = { defaults: 'local', cloud: 'local' };
 
     let activeScenario = 'ds-v4';
     let syncLock = false;
@@ -507,6 +539,105 @@
       if (type === 'miss') return cloud.inputMiss;
       if (type === 'hit') return cloud.inputHit;
       return cloud.output;
+    }
+
+    function applyRoiConfig(cfg) {
+      if (!cfg) return;
+      const setNum = (id, val) => {
+        if (val == null || val === '' || !$(id)) return;
+        $(id).value = val;
+      };
+      setNum('computeP', cfg.computeP);
+      setNum('clusterMw', cfg.clusterMw != null ? fmtNum(Number(cfg.clusterMw), 4) : null);
+      setNum('pctItDevice', cfg.pctItDevice);
+      setNum('pctPowerCool', cfg.pctPowerCool);
+      setNum('pctLandBuild', cfg.pctLandBuild);
+      setNum('npuUnitPrice', cfg.npuUnitPrice);
+      setNum('ascendInItPct', cfg.ascendInItPct);
+      setNum('deprecYears', cfg.deprecYears);
+      setNum('pue', cfg.pue);
+      setNum('elecPrice', cfg.elecPrice);
+      setNum('utilization', cfg.utilization);
+      setNum('tpsInputMiss', cfg.tpsInputMiss);
+      setNum('tpsInputHit', cfg.tpsInputHit);
+      setNum('tpsOutput', cfg.tpsOutput);
+      if (cfg.annualFixedOpex != null) $('annualFixedOpex').value = cfg.annualFixedOpex;
+      if (cfg.capexOpexPct != null) $('capexOpexPct').value = cfg.capexOpexPct;
+      if (cfg.serviceModel) $('serviceModel').value = cfg.serviceModel;
+    }
+
+    function collectRoiConfigForSave() {
+      return {
+        schemaVersion: 1,
+        computeP: Number($('computeP').value),
+        clusterMw: Number($('clusterMw').value),
+        pctItDevice: Number($('pctItDevice').value),
+        pctPowerCool: Number($('pctPowerCool').value),
+        pctLandBuild: Number($('pctLandBuild').value),
+        npuUnitPrice: Number($('npuUnitPrice').value),
+        ascendInItPct: Number($('ascendInItPct').value),
+        deprecYears: Number($('deprecYears').value),
+        pue: Number($('pue').value),
+        elecPrice: Number($('elecPrice').value),
+        utilization: Number($('utilization').value),
+        tpsInputMiss: Number($('tpsInputMiss').value),
+        tpsInputHit: Number($('tpsInputHit').value),
+        tpsOutput: Number($('tpsOutput').value),
+        annualFixedOpex: Number($('annualFixedOpex').value),
+        capexOpexPct: Number($('capexOpexPct').value),
+        serviceModel: $('serviceModel').value,
+      };
+    }
+
+    function mergeCloudCompare(remote) {
+      if (!remote || typeof remote !== 'object') return;
+      CLOUD_COMPARE = JSON.parse(JSON.stringify(LOCAL_CLOUD_COMPARE));
+      Object.keys(remote).forEach((k) => {
+        if (k === 'schemaVersion') return;
+        if (remote[k] && typeof remote[k] === 'object') {
+          CLOUD_COMPARE[k] = { ...CLOUD_COMPARE[k], ...remote[k] };
+        }
+      });
+    }
+
+    function updateConfigSourceBadge() {
+      const el = $('configSourceBadge');
+      if (!el) return;
+      const d = configLoadMeta.defaults;
+      const c = configLoadMeta.cloud;
+      if (d === 'database' && c === 'database') {
+        el.textContent = '配置来源：云端数据库（全量同步）';
+        el.className = 'mt-2 text-xs font-medium text-emerald-700';
+      } else if (d === 'database' || c === 'database') {
+        el.textContent = '配置来源：部分云端 + 部分本地默认';
+        el.className = 'mt-2 text-xs font-medium text-amber-700';
+      } else {
+        el.textContent = '配置来源：本地默认（数据库不可用或未配置）';
+        el.className = 'mt-2 text-xs font-medium text-slate-500';
+      }
+    }
+
+    async function syncConfigToCloud() {
+      const hint = $('syncConfigHint');
+      if (!keyParamsUnlocked) {
+        hint.textContent = '请先开启并解锁关键参数';
+        hint.className = 'text-xs text-rose-600';
+        return;
+      }
+      hint.textContent = '同步中…';
+      hint.className = 'text-xs text-slate-500';
+      try {
+        const token = KEY_PASSWORD;
+        await AidcConfig.save('roi.defaults', collectRoiConfigForSave(), token);
+        await AidcConfig.save('roi.cloud_compare', { schemaVersion: 1, ...CLOUD_COMPARE }, token);
+        hint.textContent = '已同步到云端';
+        hint.className = 'text-xs text-emerald-700';
+        configLoadMeta = { defaults: 'database', cloud: 'database' };
+        updateConfigSourceBadge();
+      } catch (err) {
+        hint.textContent = '同步失败：' + (err.message || err);
+        hint.className = 'text-xs text-rose-600';
+      }
     }
 
     function readState() {
@@ -904,14 +1035,33 @@
     });
     $('serviceModel').addEventListener('change', applyServiceModel);
 
-    $('npuUnitPrice').value = SPEC.defaultUnitPriceWan;
-    $('computeP').value = 512;
-    $('clusterMw').value = fmtNum(pToMw(512), 4);
-    ['fullNpuPrice', 'fullAscendItPct'].forEach((id) => { $(id).readOnly = true; $(id).classList.add('cursor-default', 'bg-slate-50'); });
-    syncAscendNet('ascend');
-    updatePctSumHint();
-    syncKeyToFull();
-    renderAll();
+    $('syncConfigBtn').addEventListener('click', syncConfigToCloud);
+
+    async function bootPage() {
+      const [defaultsResult, cloudResult] = await Promise.all([
+        AidcConfig.load('roi.defaults', LOCAL_ROI_DEFAULTS),
+        AidcConfig.load('roi.cloud_compare', LOCAL_CLOUD_COMPARE),
+      ]);
+      configLoadMeta = { defaults: defaultsResult.source, cloud: cloudResult.source };
+      mergeCloudCompare(cloudResult.data);
+      applyRoiConfig(defaultsResult.data);
+      activeScenario = $('serviceModel').value === 'glm-51' ? 'glm-51' : 'ds-v4';
+      ['fullNpuPrice', 'fullAscendItPct'].forEach((id) => {
+        $(id).readOnly = true;
+        $(id).classList.add('cursor-default', 'bg-slate-50');
+      });
+      syncAscendNet('ascend');
+      updatePctSumHint();
+      syncKeyToFull();
+      updateConfigSourceBadge();
+      document.querySelectorAll('.cmp-tab').forEach((b) => {
+        const on = b.dataset.scenario === activeScenario;
+        b.className = 'cmp-tab rounded-xl px-4 py-2 text-sm font-semibold transition ' + (on ? 'text-blue-700 shadow-sm bg-white' : 'text-slate-600 hover:bg-white/80');
+      });
+      renderAll();
+    }
+
+    bootPage();
   </script>
 </body>
 </html>

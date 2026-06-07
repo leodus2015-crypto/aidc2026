@@ -1,0 +1,42 @@
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(ROOT / ".env")
+
+DATABASE_HOST = os.getenv("DATABASE_HOST", "").strip()
+DATABASE_PORT = int(os.getenv("DATABASE_PORT", "3306"))
+DATABASE_USER = os.getenv("DATABASE_USER", "").strip()
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "aidc").strip()
+
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "aidc2026").strip()
+API_HOST = os.getenv("API_HOST", "127.0.0.1")
+API_PORT = int(os.getenv("API_PORT", "8012"))
+CORS_ORIGINS = [
+    o.strip()
+    for o in os.getenv(
+        "CORS_ORIGINS",
+        "http://127.0.0.1:8011,http://localhost:8011",
+    ).split(",")
+    if o.strip()
+]
+
+ALLOWED_CONFIG_KEYS = frozenset(
+    {
+        "roi.defaults",
+        "roi.cloud_compare",
+        "inference.defaults",
+        "aidc_calc.cfg",
+        "dc3d.case_a",
+        "dc3d.case_b",
+        "outline.2026",
+        "ai_usage",
+    }
+)
+
+
+def database_configured() -> bool:
+    return bool(DATABASE_HOST and DATABASE_USER and DATABASE_NAME)

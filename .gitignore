@@ -1,3 +1,6 @@
 .DS_Store
 assets/*.pdf
 data/ai-usage.json.lock
+.env
+api/__pycache__/
+api/**/__pycache__/
