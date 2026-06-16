@@ -632,17 +632,15 @@ function verifyUnlockPassword(input) {
 function updateConfigSourceBadge() {
   const el = document.getElementById('configSourceBadge');
   if (!el) return;
-  const { source, version, fromLocalStorage } = configLoadMeta;
+  const { source, fromLocalStorage } = configLoadMeta;
   if (fromLocalStorage) {
-    el.textContent = '配置来源：浏览器本地缓存（未读数据库，清空缓存后可拉云端）';
+    el.textContent = '配置来源：本地缓存';
     el.className = 'config-source-badge cache';
   } else if (source === 'database') {
-    el.textContent = version
-      ? `配置来源：云端数据库（${CONFIG_KEY} · v${version}）`
-      : `配置来源：云端数据库（${CONFIG_KEY}）`;
+    el.textContent = '配置来源：云数据库';
     el.className = 'config-source-badge database';
   } else {
-    el.textContent = `配置来源：本地默认（数据库不可用或未导入 ${CONFIG_KEY}）`;
+    el.textContent = '配置来源：本地默认';
     el.className = 'config-source-badge local';
   }
 }
