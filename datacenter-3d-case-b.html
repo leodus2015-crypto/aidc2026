@@ -451,6 +451,7 @@
 </div>
 
 <!-- ===== Three.js ===== -->
+<script src="js/config-loader.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -530,6 +531,34 @@ function loadState() {
     }
     return true;
   } catch (e) { return false; }
+}
+
+const CONFIG_KEY = 'dc3d.case_a';
+const LOCAL_DC3D_DEFAULTS = {
+  label: '案例A（风冷超节点）',
+  C: {
+    rows: 8, cols: 13,
+    rackW: 0.6, rackD: 1.0, rackU: 42, uMm: 44.45,
+    coldAisleSpacing: 1.6, hotAisleSpacing: 1.2,
+    defaultPower: { ai: 15000, bus: 7000, normal: 300, empty: 0 },
+  },
+  rules: [
+    { name: '总线柜 (第3-6排, 第1柜)', rows: '1-8', cols: '13', type: 'bus', enabled: true },
+    { name: 'AI 奇数排 (1,3,5,7)', rows: '1,3,5,7', cols: '2,4,6,8,10,12', type: 'ai', enabled: true },
+    { name: 'AI 偶数排 (2,4,6,8)', rows: '2,4,6,8', cols: '2,4,6,8,10,12', type: 'ai', enabled: true },
+    { name: 'Leaf交换机', rows: '1,3,5,7', cols: '2', type: 'normal', enabled: true },
+  ],
+};
+
+function applyRemoteConfig(data) {
+  if (data.C) Object.assign(C, data.C);
+  if (C.rowSpacing != null && C.coldAisleSpacing == null) C.coldAisleSpacing = C.rowSpacing;
+  if (C.rowSpacing != null && C.hotAisleSpacing == null) C.hotAisleSpacing = C.rowSpacing;
+  if (C.coldAisleSpacing == null) C.coldAisleSpacing = 1.6;
+  if (C.hotAisleSpacing == null) C.hotAisleSpacing = 1.2;
+  delete C.rowSpacing;
+  C.defaultPower = { ai: 15000, bus: 7000, normal: 300, empty: 0, ...(C.defaultPower || {}) };
+  if (Array.isArray(data.rules) && data.rules.length) store.rules = data.rules;
 }
 
 // ======================================================================
@@ -2060,19 +2089,7 @@ function setLayoutInputsLocked(locked) {
 // ======================================================================
 // Init
 // ======================================================================
-function init() {
-  const loaded = loadState();
-
-  if (!loaded) {
-    // Default rules (1-indexed)
-    store.rules = [
-      { name: '总线柜 (第3-6排, 第1柜)', rows: '1-8', cols: '13', type: 'bus', enabled: true },
-      { name: 'AI 奇数排 (1,3,5,7)', rows: '1,3,5,7', cols: '2,4,6,8,10,12', type: 'ai', enabled: true },
-      { name: 'AI 偶数排 (2,4,6,8)', rows: '2,4,6,8', cols: '2,4,6,8,10,12', type: 'ai', enabled: true },
-      { name: 'Leaf交换机', rows: '1,3,5,7', cols: '2', type: 'normal', enabled: true },
-    ];
-  }
-
+function initUI(fromLocalStorage, configSource) {
   // Sync form fields with state
   document.getElementById('cfg-rows').value = C.rows;
   document.getElementById('cfg-cols').value = C.cols;
@@ -2095,10 +2112,22 @@ function init() {
   setRulesLocked(true);
 
   setTimeout(() => {
-    if (!loaded) setView('angle', true);
+    if (!fromLocalStorage) setView('angle', true);
   }, 100);
 
-  if (loaded) toast('已恢复上次的配置');
+  if (fromLocalStorage) toast('已恢复上次的配置');
+  else if (configSource === 'database') toast('已加载云端配置');
+}
+
+async function boot() {
+  const loaded = loadState();
+  let configSource = 'local';
+  if (!loaded) {
+    const result = await AidcConfig.load(CONFIG_KEY, LOCAL_DC3D_DEFAULTS);
+    configSource = result.source;
+    applyRemoteConfig(result.data);
+  }
+  initUI(loaded, configSource);
 }
 
 // ======================================================================
@@ -2290,7 +2319,7 @@ buildScene = function() { origBuild(); updateRowFilter(); };
 // ======================================================================
 // Start
 // ======================================================================
-init();
+boot();
 animate();
 
 console.log('🏭 DataCenter 3D Designer v2 · 案例A（风冷超节点） 已启动');
