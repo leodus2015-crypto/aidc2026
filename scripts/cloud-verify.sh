@@ -46,7 +46,7 @@ python3 <<'PY'
 import sys
 sys.path.insert(0, "api")
 from db import fetch_config
-for key in ("roi.defaults", "roi.cloud_compare", "dc3d.case_a", "dc3d.case_b"):
+for key in ("roi.defaults", "roi.cloud_compare", "dc3d.case_a", "dc3d.case_b", "site.unlock_password"):
     row = fetch_config(key)
     if row:
         print(f"   ✓ {key}  version={row.get('version')}")

@@ -32,6 +32,7 @@ ALLOWED_CONFIG_KEYS = frozenset(
         "aidc_calc.cfg",
         "dc3d.case_a",
         "dc3d.case_b",
+        "site.unlock_password",
         "outline.2026",
         "ai_usage",
     }

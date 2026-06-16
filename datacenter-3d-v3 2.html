@@ -90,6 +90,30 @@
   .sb-tab:hover { color: var(--dc-text-secondary); }
   .sb-tab.active { color: #1d4ed8; border-bottom-color: #2563eb; background: var(--dc-surface); }
   .sb-content { flex: 1; overflow-y: auto; padding: 14px; background: var(--dc-bg); }
+  .config-source-badge {
+    margin: 0;
+    padding: 8px 14px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.45;
+    border-bottom: 1px solid var(--dc-border);
+    background: var(--dc-surface-muted);
+    color: var(--dc-text-muted);
+  }
+  .config-source-badge.database {
+    background: #ecfdf5;
+    color: #065f46;
+    border-bottom-color: #6ee7b7;
+  }
+  .config-source-badge.cache {
+    background: #fffbeb;
+    color: #92400e;
+    border-bottom-color: #fcd34d;
+  }
+  .config-source-badge.local {
+    background: var(--dc-surface-muted);
+    color: var(--dc-text-muted);
+  }
   .sb-panel { display: none; }
   .sb-panel.active { display: block; }
 
@@ -235,6 +259,22 @@
   #confirm-box p { font-size: 12px; color: var(--dc-text-secondary); margin-bottom: 16px; line-height: 1.4; }
   #confirm-box .cf-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
+  #pwd-overlay {
+    position: fixed; inset: 0; z-index: 260;
+    background: rgba(28, 25, 23, 0.28); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  #pwd-overlay.open { display: flex; }
+  #pwd-box {
+    background: var(--dc-surface); border: 1px solid var(--dc-border); border-radius: 12px;
+    padding: 20px; max-width: 360px; width: 100%;
+    box-shadow: 0 20px 60px rgba(28, 25, 23, 0.12);
+  }
+  #pwd-box h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--dc-text); }
+  #pwd-box p { font-size: 12px; color: var(--dc-text-secondary); margin-bottom: 12px; line-height: 1.4; }
+  #pwd-box .pwd-error { font-size: 11px; color: #dc2626; margin-top: 6px; display: none; }
+  #pwd-box .cf-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+
   #sidebar ::-webkit-scrollbar { width: 3px; }
   #sidebar ::-webkit-scrollbar-track { background: transparent; }
   #sidebar ::-webkit-scrollbar-thumb { background: var(--dc-border-strong); border-radius: 99px; }
@@ -290,6 +330,7 @@
     <button class="sb-tab" data-tab="rules">📋 规则</button>
     <button class="sb-tab" data-tab="views">👁 视图</button>
   </div>
+  <p id="configSourceBadge" class="config-source-badge local" aria-live="polite">配置来源：加载中…</p>
   <div class="sb-content">
 
     <!-- LAYOUT -->
@@ -439,6 +480,20 @@
   </div>
 </div>
 
+<!-- ===== Password Dialog ===== -->
+<div id="pwd-overlay">
+  <div id="pwd-box">
+    <h4>输入访问密码</h4>
+    <p>解锁布局或规则需验证身份（不区分大小写）。</p>
+    <input id="pwd-input" type="password" autocomplete="off" placeholder="密码" class="sbf-input" />
+    <p id="pwd-error" class="pwd-error">密码错误，请重试。</p>
+    <div class="cf-actions">
+      <button class="btn-sm btn-outline" id="pwd-cancel">取消</button>
+      <button class="btn-sm btn-primary" id="pwd-ok">确认</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== Toast Container ===== -->
 <div id="toast-container"></div>
 
@@ -561,6 +616,37 @@ function applyRemoteConfig(data) {
   if (Array.isArray(data.rules) && data.rules.length) store.rules = data.rules;
 }
 
+let configLoadMeta = { source: 'local', version: null, fromLocalStorage: false };
+
+const LOCAL_UNLOCK_PASSWORD = { password: 'aidc2026' };
+let unlockPassword = LOCAL_UNLOCK_PASSWORD.password;
+
+function normalizeUnlockPassword(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function verifyUnlockPassword(input) {
+  return normalizeUnlockPassword(input) === normalizeUnlockPassword(unlockPassword);
+}
+
+function updateConfigSourceBadge() {
+  const el = document.getElementById('configSourceBadge');
+  if (!el) return;
+  const { source, version, fromLocalStorage } = configLoadMeta;
+  if (fromLocalStorage) {
+    el.textContent = '配置来源：浏览器本地缓存（未读数据库，清空缓存后可拉云端）';
+    el.className = 'config-source-badge cache';
+  } else if (source === 'database') {
+    el.textContent = version
+      ? `配置来源：云端数据库（${CONFIG_KEY} · v${version}）`
+      : `配置来源：云端数据库（${CONFIG_KEY}）`;
+    el.className = 'config-source-badge database';
+  } else {
+    el.textContent = `配置来源：本地默认（数据库不可用或未导入 ${CONFIG_KEY}）`;
+    el.className = 'config-source-badge local';
+  }
+}
+
 // ======================================================================
 // Toast system
 // ======================================================================
@@ -592,6 +678,53 @@ function confirmDialog(title, msg) {
     };
     document.getElementById('confirm-overlay').onclick = (e) => {
       if (e.target === e.currentTarget) { document.getElementById('confirm-overlay').classList.remove('open'); resolve(false); }
+    };
+  });
+}
+
+function promptUnlockPassword(onSuccess) {
+  return new Promise((resolve) => {
+    const overlay = document.getElementById('pwd-overlay');
+    const input = document.getElementById('pwd-input');
+    const err = document.getElementById('pwd-error');
+    const okBtn = document.getElementById('pwd-ok');
+    const cancelBtn = document.getElementById('pwd-cancel');
+
+    const cleanup = () => {
+      overlay.classList.remove('open');
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+      overlay.onclick = null;
+      input.onkeydown = null;
+    };
+
+    input.value = '';
+    err.style.display = 'none';
+    overlay.classList.add('open');
+    input.focus();
+
+    okBtn.onclick = () => {
+      if (verifyUnlockPassword(input.value)) {
+        cleanup();
+        resolve(true);
+        if (onSuccess) onSuccess();
+      } else {
+        err.style.display = 'block';
+      }
+    };
+    cancelBtn.onclick = () => {
+      cleanup();
+      resolve(false);
+    };
+    overlay.onclick = (e) => {
+      if (e.target === overlay) {
+        cleanup();
+        resolve(false);
+      }
+    };
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') okBtn.click();
+      if (e.key === 'Escape') cancelBtn.click();
     };
   });
 }
@@ -2117,16 +2250,30 @@ function initUI(fromLocalStorage, configSource) {
 
   if (fromLocalStorage) toast('已恢复上次的配置');
   else if (configSource === 'database') toast('已加载云端配置');
+  updateConfigSourceBadge();
 }
 
 async function boot() {
   const loaded = loadState();
   let configSource = 'local';
+  let configVersion = null;
+
+  const pwdResult = await AidcConfig.load('site.unlock_password', LOCAL_UNLOCK_PASSWORD);
+  if (pwdResult.data && pwdResult.data.password) {
+    unlockPassword = pwdResult.data.password;
+  }
+
   if (!loaded) {
     const result = await AidcConfig.load(CONFIG_KEY, LOCAL_DC3D_DEFAULTS);
     configSource = result.source;
+    configVersion = result.version;
     applyRemoteConfig(result.data);
   }
+  configLoadMeta = {
+    source: configSource,
+    version: configVersion,
+    fromLocalStorage: loaded,
+  };
   initUI(loaded, configSource);
 }
 
@@ -2177,9 +2324,13 @@ document.querySelectorAll('.sb-tab').forEach(tab => {
   });
 });
 
-document.getElementById('btn-unlock-layout').addEventListener('click', () => {
-  setLayoutInputsLocked(false);
-  toast('布局参数已解锁');
+document.getElementById('btn-unlock-layout').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-unlock-layout');
+  if (btn.getAttribute('aria-pressed') === 'true') return;
+  await promptUnlockPassword(() => {
+    setLayoutInputsLocked(false);
+    toast('布局参数已解锁');
+  });
 });
 
 document.getElementById('btn-apply-layout').addEventListener('click', () => {
@@ -2214,10 +2365,12 @@ document.getElementById('btn-apply-layout').addEventListener('click', () => {
 document.getElementById('cfg-depth').addEventListener('input', () => { document.getElementById('cfg-depth2').value = document.getElementById('cfg-depth').value; });
 document.getElementById('cfg-depth2').addEventListener('input', () => { document.getElementById('cfg-depth').value = document.getElementById('cfg-depth2').value; });
 
-document.getElementById('btn-unlock-rules').addEventListener('click', () => {
+document.getElementById('btn-unlock-rules').addEventListener('click', async () => {
   if (rulesLocked) {
-    setRulesLocked(false);
-    toast('规则已解锁');
+    await promptUnlockPassword(() => {
+      setRulesLocked(false);
+      toast('规则已解锁');
+    });
     return;
   }
   rebuildAfterRuleChange();
