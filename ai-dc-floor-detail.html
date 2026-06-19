@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI 数据中心单层详细平面图：EHU 空调机房、风冷/液冷机房、配电与水力模块。" />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>单层详细平面图 · AI Data Center</title>
+  <script src="js/embed-mode.js"></script>
+  <link rel="stylesheet" href="css/embed.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body { min-height: 100%; }
+    .zone { stroke-width: 2; rx: 8; }
+    .label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; font-weight: 700; }
+    .sub-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; font-weight: 600; }
+    .dim { stroke: #475569; stroke-width: 1.8; fill: none; }
+    .dim-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; font-weight: 700; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="ai-dc-floor-detail">
+  <header class="aidc-chrome sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <nav class="mx-auto flex max-w-[100rem] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 sm:px-6" data-i18n-aria-label="nav.aria" aria-label="主导航">
+      <a href="index.html" class="flex shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
+        <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" class="h-7 w-auto object-contain sm:h-8" />
+      </a>
+      <p class="hidden text-sm font-semibold text-slate-800 sm:block" data-pt-i18n="单层详细平面图">单层详细平面图</p>
+      <ul class="flex flex-wrap items-center gap-4 text-xs font-semibold sm:gap-5 sm:text-sm">
+        <li><a href="ai-dc-design.html" class="text-blue-700" data-i18n="nav.aiDcLayout">AI DC规划</a></li>
+        <li><a href="index.html#inference" class="text-slate-600 hover:text-slate-950" data-i18n="nav.inference">Agentic推理</a></li>
+        <li><a href="post-training.html" class="text-slate-600 hover:text-slate-950" data-i18n="nav.postTraining">后训练</a></li>
+        <li><a href="white-paper.html" class="text-slate-600 hover:text-slate-950" data-i18n="nav.whitePaper">白皮书</a></li>
+      </ul>
+      <div id="lang-switch-root" class="ml-auto shrink-0"></div>
+    </nav>
+  </header>
+
+  <main class="floor-detail-main mx-auto max-w-[100rem] px-4 py-3 sm:px-6">
+    <section class="floor-detail-intro mb-3 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Floor Plan · 133m × 92m</p>
+        <h1 class="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl" data-pt-i18n="单层详细平面图">单层详细平面图</h1>
+      </div>
+      <p class="max-w-xl text-sm leading-6 text-slate-500" data-pt-i18n="根据手绘草图整理为结构化示意图，非施工比例图；房间名称与尺寸按图中可识别信息保留。">
+        根据手绘草图整理为结构化示意图，非施工比例图；房间名称与尺寸按图中可识别信息保留。
+      </p>
+    </section>
+
+    <section class="floor-plan-section overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+      <svg viewBox="50 12 1215 962" preserveAspectRatio="xMidYMid meet" class="floor-plan-svg block h-auto w-full max-w-full bg-[#f8fafc] sm:min-h-[28rem]" role="img" aria-label="单层数据中心详细平面图">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+          </marker>
+          <linearGradient id="paper" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="100%" stop-color="#f8fafc" />
+          </linearGradient>
+        </defs>
+
+        <!-- Building boundary -->
+        <rect x="170" y="95" width="1080" height="780" rx="10" fill="url(#paper)" stroke="#0f172a" stroke-width="3" />
+
+        <!-- Side service strips — left/right mirrored around building center (x=710). -->
+        <rect x="185" y="120" width="26" height="190" class="zone" fill="#f8fafc" stroke="#64748b" />
+        <rect x="185" y="405" width="26" height="170" class="zone" fill="#f8fafc" stroke="#64748b" />
+        <rect x="185" y="650" width="26" height="205" class="zone" fill="#f8fafc" stroke="#64748b" />
+        <rect x="1209" y="120" width="26" height="190" class="zone" fill="#f8fafc" stroke="#64748b" />
+        <rect x="1209" y="405" width="26" height="170" class="zone" fill="#f8fafc" stroke="#64748b" />
+        <rect x="1209" y="650" width="26" height="205" class="zone" fill="#f8fafc" stroke="#64748b" />
+
+        <g transform="translate(710 485) scale(1.154761905 1.059782609) translate(-720 -488)">
+        <!-- Top left module -->
+        <rect x="300" y="120" width="395" height="92" class="zone" fill="#e0f2fe" stroke="#0284c7" />
+        <text x="497.5" y="176" text-anchor="middle" class="label" font-size="24" data-pt-i18n="EHU 空调机房">EHU 空调机房</text>
+        <rect x="300" y="212" width="395" height="126.5" class="zone" fill="#e2e8f0" stroke="#475569" />
+        <text x="497.5" y="275" text-anchor="middle" class="label" font-size="24" data-pt-i18n="风冷 / 液冷机房">风冷 / 液冷机房</text>
+
+        <!-- Top right module -->
+        <rect x="745" y="120" width="395" height="92" class="zone" fill="#e0f2fe" stroke="#0284c7" />
+        <text x="942.5" y="176" text-anchor="middle" class="label" font-size="24" data-pt-i18n="EHU 空调机房">EHU 空调机房</text>
+        <rect x="745" y="212" width="395" height="126.5" class="zone" fill="#e2e8f0" stroke="#475569" />
+        <text x="942.5" y="275" text-anchor="middle" class="label" font-size="24" data-pt-i18n="风冷 / 液冷机房">风冷 / 液冷机房</text>
+
+        <!-- Middle left utility block -->
+        <rect x="300" y="379.5" width="119.6" height="210.5" class="zone" fill="#ccfbf1" stroke="#0d9488" />
+        <text x="359.8" y="475" text-anchor="middle" class="label" font-size="20" data-pt-i18n="液冷&#10;水力&#10;模块间">
+          <tspan x="359.8" dy="0">液冷</tspan>
+          <tspan x="359.8" dy="29">水力</tspan>
+          <tspan x="359.8" dy="29">模块间</tspan>
+        </text>
+        <rect x="419.6" y="379.5" width="104.6" height="210.5" class="zone" fill="#fef3c7" stroke="#d97706" />
+        <text x="471.9" y="493" text-anchor="middle" class="label" font-size="20" data-pt-i18n="低压&#10;配电">
+          <tspan x="471.9" dy="0">低压</tspan>
+          <tspan x="471.9" dy="30">配电</tspan>
+        </text>
+        <rect x="524.2" y="379.5" width="104.6" height="210.5" class="zone" fill="#fef3c7" stroke="#d97706" />
+        <text x="576.5" y="493" text-anchor="middle" class="label" font-size="20" data-pt-i18n="低压&#10;配电">
+          <tspan x="576.5" dy="0">低压</tspan>
+          <tspan x="576.5" dy="30">配电</tspan>
+        </text>
+        <rect x="628.8" y="379.5" width="66.2" height="210.5" class="zone" fill="#f1f5f9" stroke="#64748b" />
+        <text x="661.9" y="493" text-anchor="middle" class="label" font-size="20" data-pt-i18n="电气&#10;室">
+          <tspan x="661.9" dy="0">电气</tspan>
+          <tspan x="661.9" dy="30">室</tspan>
+        </text>
+
+        <!-- Middle right utility block -->
+        <rect x="745" y="379.5" width="95.6" height="210.5" class="zone" fill="#fde68a" stroke="#ca8a04" />
+        <text x="792.8" y="493" text-anchor="middle" class="label" font-size="20" data-pt-i18n="中压&#10;室">
+          <tspan x="792.8" dy="0">中压</tspan>
+          <tspan x="792.8" dy="30">室</tspan>
+        </text>
+        <rect x="840.6" y="379.5" width="89.3" height="210.5" class="zone" fill="#fef3c7" stroke="#d97706" />
+        <text x="885.3" y="493" text-anchor="middle" class="label" font-size="20" data-pt-i18n="低压&#10;配电">
+          <tspan x="885.3" dy="0">低压</tspan>
+          <tspan x="885.3" dy="30">配电</tspan>
+        </text>
+        <rect x="929.9" y="379.5" width="116.4" height="210.5" class="zone" fill="#f8fafc" stroke="#94a3b8" />
+        <text x="988.1" y="505" text-anchor="middle" class="sub-label" font-size="18" data-pt-i18n="预留">预留</text>
+        <rect x="1046.3" y="379.5" width="93.7" height="210.5" class="zone" fill="#ccfbf1" stroke="#0d9488" />
+        <text x="1093.2" y="475" text-anchor="middle" class="label" font-size="20" data-pt-i18n="液冷&#10;水力&#10;模块间">
+          <tspan x="1093.2" dy="0">液冷</tspan>
+          <tspan x="1093.2" dy="29">水力</tspan>
+          <tspan x="1093.2" dy="29">模块间</tspan>
+        </text>
+
+        <!-- Bottom left module -->
+        <rect x="300" y="630" width="395" height="118" class="zone" fill="#e2e8f0" stroke="#475569" />
+        <text x="497.5" y="689" text-anchor="middle" class="label" font-size="24" data-pt-i18n="风冷 / 液冷机房">风冷 / 液冷机房</text>
+        <rect x="300" y="748" width="395" height="108" class="zone" fill="#e0f2fe" stroke="#0284c7" />
+        <text x="497.5" y="802" text-anchor="middle" class="label" font-size="24" data-pt-i18n="EHU 空调机房">EHU 空调机房</text>
+
+        <!-- Bottom right module -->
+        <rect x="745" y="630" width="395" height="118" class="zone" fill="#e2e8f0" stroke="#475569" />
+        <text x="942.5" y="689" text-anchor="middle" class="label" font-size="24" data-pt-i18n="风冷 / 液冷机房">风冷 / 液冷机房</text>
+        <rect x="745" y="748" width="395" height="108" class="zone" fill="#e0f2fe" stroke="#0284c7" />
+        <text x="942.5" y="802" text-anchor="middle" class="label" font-size="24" data-pt-i18n="EHU 空调机房">EHU 空调机房</text>
+
+        <!-- Circulation gaps / corridors -->
+        <line x1="720" y1="105" x2="720" y2="875" stroke="#0f172a" stroke-width="2" stroke-dasharray="8 8" opacity="0.38" />
+        <line x1="300" y1="338.5" x2="695" y2="338.5" stroke="#0f172a" stroke-width="2" opacity="0.65" />
+        <line x1="745" y1="338.5" x2="1140" y2="338.5" stroke="#0f172a" stroke-width="2" opacity="0.65" />
+        <line x1="300" y1="590" x2="695" y2="590" stroke="#0f172a" stroke-width="2" opacity="0.65" />
+        <line x1="745" y1="590" x2="1140" y2="590" stroke="#0f172a" stroke-width="2" opacity="0.65" />
+        </g>
+
+        <!-- Dimensions -->
+        <line x1="170" y1="62" x2="1250" y2="62" class="dim" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+        <line x1="170" y1="74" x2="170" y2="95" class="dim" />
+        <line x1="1250" y1="74" x2="1250" y2="95" class="dim" />
+        <text x="710" y="45" text-anchor="middle" class="dim-text" font-size="24">133m</text>
+
+        <line x1="122" y1="95" x2="122" y2="875" class="dim" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+        <line x1="140" y1="95" x2="170" y2="95" class="dim" />
+        <line x1="140" y1="875" x2="170" y2="875" class="dim" />
+        <text x="88" y="500" text-anchor="middle" class="dim-text" font-size="24" transform="rotate(-90 88 500)">92m</text>
+
+        <!-- Legend -->
+        <g transform="translate(170 905)">
+          <rect x="0" y="0" width="1080" height="48" rx="14" fill="#ffffff" stroke="#e2e8f0" />
+          <g transform="translate(24 15)">
+            <rect width="18" height="18" rx="4" fill="#e0f2fe" stroke="#0284c7" />
+            <text x="28" y="14" class="sub-label" font-size="14" data-pt-i18n="EHU 空调机房">EHU 空调机房</text>
+          </g>
+          <g transform="translate(190 15)">
+            <rect width="18" height="18" rx="4" fill="#e2e8f0" stroke="#475569" />
+            <text x="28" y="14" class="sub-label" font-size="14" data-pt-i18n="风冷 / 液冷机房">风冷 / 液冷机房</text>
+          </g>
+          <g transform="translate(390 15)">
+            <rect width="18" height="18" rx="4" fill="#fef3c7" stroke="#d97706" />
+            <text x="28" y="14" class="sub-label" font-size="14" data-pt-i18n="低压配电">低压配电</text>
+          </g>
+          <g transform="translate(530 15)">
+            <rect width="18" height="18" rx="4" fill="#fde68a" stroke="#ca8a04" />
+            <text x="28" y="14" class="sub-label" font-size="14" data-pt-i18n="中压室">中压室</text>
+          </g>
+          <g transform="translate(650 15)">
+            <rect width="18" height="18" rx="4" fill="#ccfbf1" stroke="#0d9488" />
+            <text x="28" y="14" class="sub-label" font-size="14" data-pt-i18n="水力模块间">水力模块间</text>
+          </g>
+          <text x="1010" y="31" text-anchor="end" class="sub-label" font-size="13" data-pt-i18n="示意图 · 非施工图">示意图 · 非施工图</text>
+        </g>
+      </svg>
+    </section>
+  </main>
+
+  <script>
+    function L(s) {
+      if (!s || !window.AidcI18n) return s;
+      return AidcI18n.getLookupText(s);
+    }
+    function applyPtI18nEl(el) {
+      var key = el.getAttribute('data-pt-i18n');
+      if (!key) return;
+      var val = L(key);
+      var tspans = el.querySelectorAll('tspan');
+      if (tspans.length) {
+        val.split('\n').forEach(function (line, i) {
+          if (tspans[i]) tspans[i].textContent = line;
+        });
+      } else {
+        el.textContent = val;
+      }
+    }
+    function applyDemoStaticI18n() {
+      document.querySelectorAll('[data-pt-i18n]').forEach(applyPtI18nEl);
+    }
+</script>
+  <script src="js/aidc-locale-bridge.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/lang-switch.js"></script>
+  <script src="js/i18n-bootstrap.js"></script>
+  <script>
+    AidcI18nBootstrap.bootstrap('ai-dc-floor-detail', {
+      onReady: function () { applyDemoStaticI18n(); },
+      onLocaleChange: function () { applyDemoStaticI18n(); },
+    });
+    if (window.AidcLocaleBridge) {
+      AidcLocaleBridge.initIframeListener(function (locale) {
+        if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+          AidcI18n.setLocale(locale, { page: 'ai-dc-floor-detail', common: true, basePath: 'i18n/' });
+        }
+      }, { selfSource: 'ai-dc-floor-detail' });
+    }
+  </script>
+</body>
+</html>

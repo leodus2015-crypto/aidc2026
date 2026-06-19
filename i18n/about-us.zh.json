@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "title": "About US · AI Data Center",
+    "description": "About US · AIDC 2026 站点使命、AI 使用与开发团队介绍。"
+  },
+  "page": {
+    "h1": "About US"
+  },
+  "mission": {
+    "tag": "Mission",
+    "title": "网站构建目的",
+    "p1": "面向AI DC （AI数据中心）领域的知识分享和演示，辅助快速理解关键概念与公式。",
+    "p2": "AI Native，100%代码AI生成"
+  },
+  "codeVolume": {
+    "tag": "Code Volume",
+    "title": "代码量",
+    "intro": "统计本仓库内全部源代码文件（HTML、JavaScript、Shell、SVG 等），不含 PDF 等二进制资源与 <code class=\"rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800\">.git</code> 目录。",
+    "statLinesLabel": "总代码行数 · Prompt 折算",
+    "statLinesValue": "15,449 行",
+    "statTokensValue": "255K Tokens",
+    "statLinesNote": "若将全部源码一次性作为 Prompt 输入；637,221 字符 ÷ 2.5 字符/Token，区间约 212K–319K。",
+    "statFilesLabel": "代码文件数",
+    "statFilesValue": "33 个",
+    "statLangLabel": "主要语言",
+    "statLangValue": "HTML · JavaScript · Shell · SVG",
+    "langChartTitle": "Languages 类型与占比",
+    "langHtmlShare": "12,475 行 · 80.8%",
+    "langHtmlNote": "16 个页面文件（首页、Agentic 推理、后训练、AI DC 规划、机房布局、3D 案例、ROI、About 等）",
+    "langJsShare": "2,693 行 · 17.4%",
+    "langJsNote": "12 个脚本（i18n、各页逻辑、配置加载与语言桥接等）",
+    "langSvgShare": "104 行 · 0.7%",
+    "langSvgNote": "1 个矢量资源（站点 Logo）",
+    "langShellShare": "177 行 · 1.1%",
+    "langShellNote": "4 个脚本（本地预览、API 启动与校验）"
+  },
+  "usage": {
+    "tag": "Usage",
+    "title": "AI Tokens 消耗",
+    "intro": "记录 AIDC 2026 站点在 Cursor 等 AI 辅助工具下的 Token 消耗。数据来自控制台 Included Usage，按账单周期<strong>手工录入</strong>；同一周期重复提交时以最新值<strong>替换</strong>，不累加。",
+    "dataSourceLabel": "数据来源：",
+    "totalLabel": "累计 Tokens",
+    "updatedLabel": "最近更新",
+    "periodsTitle": "统计周期",
+    "breakdownTitle": "模型 / 类别分布（{period}）",
+    "note": "各周期 Token 为当期内 Included Usage 快照，请勿跨周期累加；以 Cursor 控制台账单为准。",
+    "catCache": "Cache 缓存",
+    "catApi": "API",
+    "catComposer": "Auto + Composer",
+    "itemCacheRead": "Cache Read 缓存读取",
+    "itemCacheWrite": "Cache Write 缓存写入"
+  },
+  "team": {
+    "tag": "Team",
+    "title": "开发团队介绍",
+    "motto": "知行合一 ｜Talk is cheap. Execution is truth.",
+    "m1Name": "来自大城市的人 · 版主",
+    "m1Role": "网站负责人、整体规划和设计",
+    "m1Alt": "来自大城市的人",
+    "m2Name": "Cursor Agent · 程序员",
+    "m2Role": "组织若干个大模型，将产品经理的构想落地",
+    "m2Alt": "Cursor",
+    "m3Name": "虎哥 · 程序员",
+    "m3Role": "负责后训练页面设计和开发",
+    "m3Alt": "虎哥",
+    "m4Name": "Johnson · 程序员",
+    "m4Role": "负责 AI DC 布局案例页面",
+    "m4Alt": "Johnson",
+    "m5Name": "飞飞 · 程序员",
+    "m5Role": "负责 AI DC 规划页面",
+    "m5Alt": "飞飞",
+    "m6Name": "Andy · 架构师",
+    "m6Role": "负责核心公式设计和校对",
+    "m6Alt": "Andy"
+  },
+  "msg": {
+    "noBreakdown": "暂无明细",
+    "noEntries": "暂无录入",
+    "categoryLine": "{name} · {tokens} · Included Usage {percent}%"
+  }
+}

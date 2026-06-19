@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "title": "404 · AI Data Center"
+  },
+  "page": {
+    "code": "404",
+    "h1": "Page not found",
+    "body": "The link may be broken, or the page has not been published yet. Please return to the home page.",
+    "backHome": "Back to home",
+    "viewDocs": "View documentation"
+  }
+}

@@ -29,30 +29,31 @@
     }
   </script>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
+<body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="aidc-investment-roi">
   <header id="site-header" class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
-    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl" aria-label="主导航">
-      <a href="index.html" class="flex min-w-0 shrink-0 items-center" aria-label="AIDC 2026 · 首页">
+    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl" data-i18n-aria-label="nav.aria" aria-label="主导航">
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
         <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10" />
       </a>
-      <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
-        <li><a href="index.html#inference" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">Agentic推理</a></li>
-        <li><a href="post-training.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">后训练</a></li>
-        <li><a href="ai-dc-layout.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">AI DC布局</a></li>
-        <li><a href="white-paper.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">白皮书</a></li>
-        <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">About US</a></li>
-      </ul>
+      <div class="ml-auto flex flex-wrap items-center gap-4">
+        <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+        <li><a href="ai-dc-design.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.aiDcLayout">AI DC规划</a></li>
+        <li><a href="index.html#inference" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.inference">Agentic推理</a></li>
+        <li><a href="post-training.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.postTraining">后训练</a></li>
+        <li><a href="white-paper.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.whitePaper">白皮书</a></li>
+        <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.aboutUs">About US</a></li>
+        </ul>
+        <div id="lang-switch-root" class="shrink-0"></div>
+      </div>
     </nav>
   </header>
 
   <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
     <section class="flex flex-col gap-8 lg:gap-10">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Investment ROI</p>
-        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">Token 服务投资收益分析</h1>
-        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-          以<strong class="font-semibold text-slate-800">算力规模（P）</strong>与<strong class="font-semibold text-slate-800">集群功率（MW）</strong>联动建模，左侧 CAPEX、右侧 OPEX，中部比价图实时反映竞争力。
-        </p>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="page.eyebrow">Investment ROI</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1"></h1>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="page.introHtml"></p>
         <p id="configSourceBadge" class="mt-2 text-xs font-medium text-slate-500" aria-live="polite"></p>
       </div>
 
@@ -426,9 +427,9 @@
 
   <footer id="site-footer" class="border-t border-slate-200 bg-white py-6">
     <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
-      <span>工信部备案号：<a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a></span>
+      <span><span data-i18n="footer.miit"></span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a></span>
       <span class="hidden sm:inline" aria-hidden="true">|</span>
-      <span>公安备案号：<a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a></span>
+      <span><span data-i18n="footer.publicSecurity"></span><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a></span>
     </p>
   </footer>
 
@@ -449,6 +450,14 @@
 
   <script src="js/config-loader.js"></script>
   <script>
+
+    function L(s) {
+      if (!s || !window.AidcI18n) return s;
+      return AidcI18n.getLookupText(s);
+    }
+    function localeTag() {
+      return AidcI18n && AidcI18n.getLocale() === 'en' ? 'en-US' : 'zh-CN';
+    }
     const SPEC = {
       kwPer64Cards: 125,
       cardsPer64Kw: 64,
@@ -724,7 +733,7 @@
       const sum = Number($('pctItDevice').value) + Number($('pctPowerCool').value) + Number($('pctLandBuild').value);
       const el = $('pctSumHint');
       if (Math.abs(sum - 100) < 0.01) {
-        el.textContent = '三项合计 100%';
+        el.textContent = L('三项合计 100%');
         el.className = 'mt-2 text-xs text-emerald-600';
       } else {
         el.textContent = `三项合计 ${fmtNum(sum, 0)}%（应为 100%）`;
@@ -902,7 +911,7 @@
         <div class="mt-4 grid gap-4 lg:grid-cols-3">
           ${renderComparePanel('输入 · 未命中', '元/百万 Token（云公开输入价 vs 自建均摊）', s, sc, 'miss')}
           ${renderComparePanel('输入 · 命中', '元/百万 Token（云公开缓存命中价 vs 自建均摊）', s, sc, 'hit')}
-          ${renderComparePanel('输出', '元/百万 Token（云公开输出价 vs 自建均摊）', s, sc, 'out')}
+          ${renderComparePanel(L('输出'), '元/百万 Token（云公开输出价 vs 自建均摊）', s, sc, 'out')}
         </div>`;
     }
 
@@ -911,21 +920,21 @@
         ['算力规模 P', fmtNum(s.computeP, 2) + ' P', '1 卡 = 1P（2026H2）'],
         ['NPU 数量', s.npuCount + ' 卡', '= P 取整'],
         ['集群 IT 功率', fmtNum(s.clusterMw, 4) + ' MW', '64 卡 = 125kW'],
-        ['昇腾采购', fmtWan(s.ascendCost), 'P × 单卡价'],
-        ['IT 设备投资', fmtWan(s.itEquipment), `昇腾 ÷ ${fmtNum(s.ascendPct * 100, 0)}%`],
+        [L('昇腾采购'), fmtWan(s.ascendCost), 'P × 单卡价'],
+        [L('IT 设备投资'), fmtWan(s.itEquipment), `昇腾 ÷ ${fmtNum(s.ascendPct * 100, 0)}%`],
         ['供电/散热投资', fmtWan(s.powerCapex), `总投资 × ${fmtNum(s.powerPct * 100, 0)}%`],
         ['土地/建筑投资', fmtWan(s.landCapex), `总投资 × ${fmtNum(s.landPct * 100, 0)}%`],
-        ['总投资 CAPEX', fmtWan(s.totalCapex), 'IT 设备 ÷ IT 工程占比'],
+        [L('总投资 CAPEX'), fmtWan(s.totalCapex), 'IT 设备 ÷ IT 工程占比'],
         ['年输出 Token', fmtTokens(s.annualTokens), 'P × 输出 t/s × 86400 × 365 × u'],
         ['年输入·未命中', fmtTokens(s.annualMissTokens), 'P × 未命中 t/s × 86400 × 365 × u'],
         ['年输入·命中', fmtTokens(s.annualHitTokens), 'P × 命中 t/s × 86400 × 365 × u'],
-        ['年 Token 合计', fmtTokens(s.annualTotalTokens), '未命中 + 命中 + 输出'],
+        [L('年 Token 合计'), fmtTokens(s.annualTotalTokens), '未命中 + 命中 + 输出'],
         ['输入/输出 t/s', `${fmtNum(s.tpsInputMiss, 0)} / ${fmtNum(s.tpsInputHit, 0)} / ${fmtNum(s.tpsOutput, 1)}`, '未命中 / 命中 / 输出'],
-        ['年折旧', fmtWan(s.annualDep), `${s.deprecYears} 年`],
-        ['年电费', fmtWan(s.annualPower), 'MW × 8760 × PUE × u × 电价'],
+        [L('年折旧'), fmtWan(s.annualDep), `${s.deprecYears} 年`],
+        [L('年电费'), fmtWan(s.annualPower), 'MW × 8760 × PUE × u × 电价'],
         ['自建均摊 / M', fmtNum(s.costPerMBlended, 3) + ' 元', '全成本 ÷ 三类 Token 合计'],
         ['自建输出摊销 / M', fmtNum(s.costPerM, 3) + ' 元', '全成本 ÷ 年输出 Token'],
-        ['对标均摊价', fmtNum(s.refBlended, 2) + ' 元/M', '按 t/s 占比加权云价'],
+        [L('对标均摊价'), fmtNum(s.refBlended, 2) + ' 元/M', '按 t/s 占比加权云价'],
         ['年净利润（对标）', fmtWan(s.profit), `对标均摊 ${fmtNum(s.refBlended, 2)} 元/M`],
         ['盈亏平衡利用率', Number.isFinite(s.breakeven) && s.breakeven <= 1 ? fmtNum(s.breakeven * 100, 1) + '%' : '—', '固定 ÷ 边际'],
         ['静态回收期', Number.isFinite(s.payback) ? fmtNum(s.payback, 1) + ' 年' : '—', 'CAPEX ÷ 年利润'],
@@ -1074,7 +1083,30 @@
       renderAll();
     }
 
-    bootPage();
+  </script>
+
+  <script src="js/aidc-locale-bridge.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/lang-switch.js"></script>
+  <script src="js/i18n-bootstrap.js"></script>
+  <script>
+    AidcI18nBootstrap.bootstrap('aidc-investment-roi', {
+      onReady: function () {
+        if (typeof bootPage === 'function') bootPage();
+      },
+      onLocaleChange: function () {
+        if (typeof renderAll === 'function') renderAll();
+        if (typeof updateConfigSourceBadge === 'function') updateConfigSourceBadge();
+        if (typeof updatePctSumHint === 'function') updatePctSumHint();
+      },
+    });
+    if (window.AidcLocaleBridge) {
+      AidcLocaleBridge.initIframeListener(function (locale) {
+        if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+          AidcI18n.setLocale(locale, { page: 'aidc-investment-roi', common: true, basePath: 'i18n/' });
+        }
+      }, { selfSource: 'aidc-investment-roi' });
+    }
   </script>
 </body>
 </html>

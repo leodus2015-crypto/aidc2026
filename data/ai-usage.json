@@ -1,89 +1,118 @@
 {
   "version": 2,
-  "updated_at": "2026-06-02T00:40:04+08:00",
-  "source": "Cursor Dashboard · Included Usage",
-  "notes": "各周期均为控制台手工录入；同一周期（起止日期相同）重复录入时以最新值替换，不累加。已停止 Hook 自动估算。",
+  "updated_at": "2026-06-19T12:00:00+08:00",
+  "source": "Cursor Dashboard · usage-events-2026-06-19.csv",
+  "notes": "由 Cursor 导出 CSV 汇总；Included 行按账单周期拆分。Cache = Cache Read + Input (w/ Cache Write)；API / Auto + Composer = Input (w/o Cache Write) + Output Tokens。",
   "periods": [
     {
       "period": "2026-04-25 — 2026-05-25",
       "period_start": "2026-04-25",
       "period_end": "2026-05-25",
-      "recorded_at": "2026-05-24",
-      "total_tokens": 155300000,
+      "recorded_at": "2026-06-19",
+      "total_tokens": 84624306,
       "categories": [
         {
+          "name": "Cache",
+          "tokens": 77889664,
+          "usage_percent": 92.0,
+          "items": [
+            {
+              "name": "Cache Read",
+              "tokens": 77889664,
+              "usage_percent": 92.0
+            },
+            {
+              "name": "Cache Write",
+              "tokens": 0,
+              "usage_percent": 0.0
+            }
+          ]
+        },
+        {
           "name": "API",
-          "tokens": 60600000,
-          "usage_percent": 62.8,
+          "tokens": 489627,
+          "usage_percent": 0.6,
           "items": [
             {
               "name": "gpt-5.5-medium",
-              "tokens": 41200000,
-              "usage_percent": 47.0
-            },
-            {
-              "name": "premium",
-              "tokens": 19400000,
-              "usage_percent": 15.8
+              "tokens": 489627,
+              "usage_percent": 0.6
             }
           ]
         },
         {
           "name": "Auto + Composer",
-          "tokens": 94700000,
-          "usage_percent": 24.5,
+          "tokens": 6245015,
+          "usage_percent": 7.4,
           "items": [
             {
-              "name": "composer-2-fast",
-              "tokens": 59600000,
-              "usage_percent": 17.2
+              "name": "composer-2.5-fast",
+              "tokens": 3278591,
+              "usage_percent": 3.9
             },
             {
-              "name": "composer-2.5-fast",
-              "tokens": 32600000,
-              "usage_percent": 6.7
+              "name": "composer-2-fast",
+              "tokens": 2808023,
+              "usage_percent": 3.3
             },
             {
               "name": "auto",
-              "tokens": 2400000,
-              "usage_percent": 0.6
+              "tokens": 158401,
+              "usage_percent": 0.2
             }
           ]
         }
       ]
     },
     {
+      "period": "2026-05-25 — 2026-06-25",
       "period_start": "2026-05-25",
       "period_end": "2026-06-25",
-      "total_tokens": 103300000,
+      "recorded_at": "2026-06-19",
+      "total_tokens": 75566407,
       "categories": [
         {
+          "name": "Cache",
+          "tokens": 68232576,
+          "usage_percent": 90.3,
+          "items": [
+            {
+              "name": "Cache Read",
+              "tokens": 68232576,
+              "usage_percent": 90.3
+            },
+            {
+              "name": "Cache Write",
+              "tokens": 0,
+              "usage_percent": 0.0
+            }
+          ]
+        },
+        {
           "name": "API",
-          "tokens": 53200000,
-          "usage_percent": 100.0,
+          "tokens": 2781102,
+          "usage_percent": 3.7,
           "items": [
             {
               "name": "gpt-5.5-medium",
-              "tokens": 53200000,
-              "usage_percent": 100.0
+              "tokens": 2781102,
+              "usage_percent": 3.7
             }
           ]
         },
         {
           "name": "Auto + Composer",
-          "tokens": 50100000,
-          "usage_percent": 26.0,
+          "tokens": 4552729,
+          "usage_percent": 6.0,
           "items": [
             {
               "name": "composer-2.5-fast",
-              "tokens": 50100000,
-              "usage_percent": 26.0
+              "tokens": 4552729,
+              "usage_percent": 6.0
             }
           ]
         }
-      ],
-      "period": "2026-05-25 — 2026-06-25",
-      "recorded_at": "2026-06-02"
+      ]
     }
   ]
 }

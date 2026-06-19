@@ -303,9 +303,11 @@
     #stats .stat-item { display: none; }
     #stats .stat-item.mobile-show { display: inline; }
   }
+
+
 </style>
 </head>
-<body>
+<body data-i18n-page="datacenter-3d-v3-2">
 
 <!-- ===== Top Bar ===== -->
 <div id="topbar">
@@ -517,6 +519,16 @@
 </script>
 
 <script type="module">
+const L = (s) => (globalThis.AidcI18n?.getLookupText?.(s) ?? s);
+const localeTag = () => (globalThis.AidcI18n?.getLocale?.() === 'en' ? 'en-US' : 'zh-CN');
+function refreshDatacenterI18n() {
+  if (typeof renderRules === 'function') renderRules();
+  if (typeof updateViewList === 'function') updateViewList();
+  if (typeof updateConfigSourceBadge === 'function') updateConfigSourceBadge();
+  if (typeof updateStats === 'function') updateStats();
+  if (typeof updateRowFilter === 'function') updateRowFilter();
+}
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
@@ -590,7 +602,7 @@ function loadState() {
 
 const CONFIG_KEY = 'dc3d.case_b';
 const LOCAL_DC3D_DEFAULTS = {
-  label: '案例B（风冷超节点）',
+  label: L('案例B（风冷超节点）'),
   C: {
     rows: 12, cols: 14,
     rackW: 0.6, rackD: 1.0, rackU: 42, uMm: 44.45,
@@ -598,10 +610,10 @@ const LOCAL_DC3D_DEFAULTS = {
     defaultPower: { ai: 14600, bus: 16800, normal: 250, empty: 0 },
   },
   rules: [
-    { name: '总线柜 (第3-6排, 第1柜)', rows: '4,6,8,10', cols: '2', type: 'bus', enabled: true },
-    { name: 'AI 奇数排 (1,3,5,7)', rows: '1,3,5,7,9,11', cols: '5,8,11,14', type: 'ai', enabled: true },
-    { name: 'AI 偶数排 (2,4,6,8)', rows: '2,4,6,8,10,12', cols: '4,7,10,13', type: 'ai', enabled: true },
-    { name: 'Leaf交换机', rows: '1,2,11,12', cols: '2', type: 'normal', enabled: true },
+    { name: L('总线柜 (第3-6排, 第1柜)'), rows: '4,6,8,10', cols: '2', type: 'bus', enabled: true },
+    { name: L('AI 奇数排 (1,3,5,7)'), rows: '1,3,5,7,9,11', cols: '5,8,11,14', type: 'ai', enabled: true },
+    { name: L('AI 偶数排 (2,4,6,8)'), rows: '2,4,6,8,10,12', cols: '4,7,10,13', type: 'ai', enabled: true },
+    { name: L('Leaf交换机'), rows: '1,2,11,12', cols: '2', type: 'normal', enabled: true },
   ],
 };
 
@@ -634,13 +646,13 @@ function updateConfigSourceBadge() {
   if (!el) return;
   const { source, fromLocalStorage } = configLoadMeta;
   if (fromLocalStorage) {
-    el.textContent = '配置来源：本地缓存';
+    el.textContent = L('配置来源：本地缓存');
     el.className = 'config-source-badge cache';
   } else if (source === 'database') {
-    el.textContent = '配置来源：云数据库';
+    el.textContent = L('配置来源：云数据库');
     el.className = 'config-source-badge database';
   } else {
-    el.textContent = '配置来源：本地默认';
+    el.textContent = L('配置来源：本地默认');
     el.className = 'config-source-badge local';
   }
 }
@@ -844,16 +856,16 @@ function computeMatchingRuleTypes(row0, col0, rules) {
 }
 
 function getTooltipTypeLabel(type, shared) {
-  if (shared && type === 'ai') return 'AI 机柜';
-  if (shared && type === 'normal') return 'Leaf交换机';
-  const labels = { ai: 'AI 设备柜', bus: '总线交换机柜', normal: 'Leaf交换机', empty: '空机柜' };
-  return labels[type] || 'Leaf交换机';
+  if (shared && type === 'ai') return L('AI 机柜');
+  if (shared && type === 'normal') return L('Leaf交换机');
+  const labels = { ai: L('AI 设备柜'), bus: L('总线交换机柜'), normal: L('Leaf交换机'), empty: L('空机柜') };
+  return labels[type] || L('Leaf交换机');
 }
 
 function getTooltipDevices(type, shared) {
   const devices = getDefaultDevices(type).map(device => ({ ...device }));
   if (shared && type === 'normal') {
-    devices.forEach(device => { device.name = 'Leaf交换机'; });
+    devices.forEach(device => { device.name = L('Leaf交换机'); });
   }
   return devices;
 }
@@ -873,10 +885,10 @@ function getRackDevices(row, col) {
 
 function getDefaultDevices(type) {
   switch (type) {
-    case 'ai': return [{ name: 'AI 机柜', u: C.rackU, qty: 1, power: C.defaultPower.ai }];
-    case 'bus': return [{ name: '总线机柜', u: C.rackU, qty: 1, power: C.defaultPower.bus }];
-    case 'normal': return [{ name: 'Leaf交换机', u: C.rackU, qty: 1, power: C.defaultPower.normal }];
-    case 'empty': return C.defaultPower.empty > 0 ? [{ name: '空机柜', u: 0, qty: 1, power: C.defaultPower.empty }] : [];
+    case 'ai': return [{ name: L('AI 机柜'), u: C.rackU, qty: 1, power: C.defaultPower.ai }];
+    case 'bus': return [{ name: L('总线机柜'), u: C.rackU, qty: 1, power: C.defaultPower.bus }];
+    case 'normal': return [{ name: L('Leaf交换机'), u: C.rackU, qty: 1, power: C.defaultPower.normal }];
+    case 'empty': return C.defaultPower.empty > 0 ? [{ name: L('空机柜'), u: 0, qty: 1, power: C.defaultPower.empty }] : [];
     default: return [];
   }
 }
@@ -1760,7 +1772,7 @@ function showRackTooltip(ud, clientX, clientY) {
           <div class="tt-section-head"><span class="tt-tag" style="${tagStyles[type] || tagStyles.normal}">${getTooltipTypeLabel(type, true)}</span></div>
           <div class="tt-section-body">${formatDeviceSummary(devices)}<br>${calcRackUsedU(devices)} U · ${calcRackPower(devices).toLocaleString()} W</div>
         </div>`;
-    }).join('') + `<div class="tt-shared">${matchedTypes.includes('ai') && matchedTypes.includes('normal') ? 'AI 与 Leaf交换机共用此机柜' : '多种设备规则叠加，共用此机柜'}</div>`;
+    }).join('') + `<div class="tt-shared">${matchedTypes.includes('ai') && matchedTypes.includes('normal') ? L('AI 与 Leaf交换机共用此机柜') : L('多种设备规则叠加，共用此机柜')}</div>`;
     pwrEl.textContent = '';
   } else {
     singleTagWrap.style.display = '';
@@ -1987,7 +1999,7 @@ function updateStats() {
     if (t === 'ai') ai++; else if (t === 'bus') bus++;
     totalPwr += g.userData.power || 0;
   }
-  statRacks.textContent = allRackGroups.length + ' 柜';
+  statRacks.textContent = allRackGroups.length + L(' 柜');
   statAi.textContent = ai + ' AI';
   statPwr.textContent = (totalPwr / 1000).toFixed(1) + ' kW';
   statDims.textContent = `${C.totalW.toFixed(1)}×${C.totalD.toFixed(1)} m`;
@@ -2000,10 +2012,10 @@ let editingRuleIndex = -1;
 
 function renderRules() {
   const el = document.getElementById('rule-list');
-  const types = { ai: '🔵 AI 设备', bus: '🟢 总线柜', normal: '🟡 Leaf交换机' };
+  const types = { ai: L('🔵 AI 设备'), bus: L('🟢 总线柜'), normal: L('🟡 Leaf交换机') };
   const dots = { ai: '#3b82f6', bus: '#10b981', normal: '#f59e0b' };
   if (store.rules.length === 0) {
-    el.innerHTML = '<div style="font-size:11px;color:#475569;padding:8px;">暂未添加规则，所有机柜默认为空机柜。<br>点击下方"+ 添加规则"创建。</div>';
+    el.innerHTML = L('<div style="font-size:11px;color:#475569;padding:8px;">暂未添加规则，所有机柜默认为空机柜。<br>点击下方"+ 添加规则"创建。</div>');
     setRuleInputsLocked(rulesLocked);
     return;
   }
@@ -2011,7 +2023,7 @@ function renderRules() {
     <div class="rule-item${rule.enabled ? '' : ' disabled'}">
       <span class="r-dot" style="background:${dots[rule.type] || '#6b7280'}"></span>
       <div class="r-info">
-        <div class="r-title">${rule.name || '未命名规则'}</div>
+        <div class="r-title">${rule.name || L('未命名规则')}</div>
         <div class="r-desc">第 ${rule.rows} 排 → 第 ${rule.cols} 柜 → ${types[rule.type]}</div>
       </div>
       <div class="r-actions">
@@ -2030,14 +2042,14 @@ function renderRules() {
         store.rules[i].enabled = !store.rules[i].enabled;
         rebuildAfterRuleChange();
         renderRules();
-        toast(store.rules[i].enabled ? '规则已启用' : '规则已禁用');
+        toast(store.rules[i].enabled ? L('规则已启用') : L('规则已禁用'));
       } else if (btn.dataset.action === 'delete') {
         store.rules.splice(i, 1);
         if (editingRuleIndex === i) editingRuleIndex = -1;
         else if (editingRuleIndex > i) editingRuleIndex--;
         rebuildAfterRuleChange();
         renderRules();
-        toast('规则已删除', 'warn');
+        toast(L('规则已删除'), 'warn');
       } else if (btn.dataset.action === 'edit') {
         openRuleEditor(i);
       }
@@ -2053,7 +2065,7 @@ function setRuleInputsLocked(locked) {
   });
   const btn = document.getElementById('btn-unlock-rules');
   if (btn) {
-    btn.textContent = locked ? '解锁' : '提交';
+    btn.textContent = locked ? L('解锁') : L('提交');
     btn.setAttribute('aria-pressed', locked ? 'false' : 'true');
   }
 }
@@ -2077,7 +2089,7 @@ function openRuleEditor(index) {
   document.getElementById('rule-rows').value = rule.rows || '';
   document.getElementById('rule-cols').value = rule.cols || '';
   document.getElementById('rule-type').value = rule.type || 'normal';
-  document.getElementById('rule-save').textContent = '✓ 更新';
+  document.getElementById('rule-save').textContent = L('✓ 更新');
   document.getElementById('rule-form').classList.add('open');
 }
 
@@ -2087,7 +2099,7 @@ function openRuleEditor(index) {
 function updateViewList() {
   const el = document.getElementById('view-list');
   if (store.savedViews.length === 0) {
-    el.innerHTML = '<div style="font-size:11px;color:#475569;padding:4px;">暂无已保存视角</div>';
+    el.innerHTML = L('<div style="font-size:11px;color:#475569;padding:4px;">暂无已保存视角</div>');
     return;
   }
   el.innerHTML = store.savedViews.map((v, i) => `
@@ -2212,7 +2224,7 @@ function setLayoutInputsLocked(locked) {
   });
   const btn = document.getElementById('btn-unlock-layout');
   if (btn) {
-    btn.textContent = locked ? '解锁' : '已解锁';
+    btn.textContent = locked ? L('解锁') : L('已解锁');
     btn.setAttribute('aria-pressed', locked ? 'false' : 'true');
   }
 }
@@ -2246,8 +2258,8 @@ function initUI(fromLocalStorage, configSource) {
     if (!fromLocalStorage) setView('angle', true);
   }, 100);
 
-  if (fromLocalStorage) toast('已恢复上次的配置');
-  else if (configSource === 'database') toast('已加载云端配置');
+  if (fromLocalStorage) toast(L('已恢复上次的配置'));
+  else if (configSource === 'database') toast(L('已加载云端配置'));
   updateConfigSourceBadge();
 }
 
@@ -2327,7 +2339,7 @@ document.getElementById('btn-unlock-layout').addEventListener('click', async () 
   if (btn.getAttribute('aria-pressed') === 'true') return;
   await promptUnlockPassword(() => {
     setLayoutInputsLocked(false);
-    toast('布局参数已解锁');
+    toast(L('布局参数已解锁'));
   });
 });
 
@@ -2357,7 +2369,7 @@ document.getElementById('btn-apply-layout').addEventListener('click', () => {
   renderRules();
   saveState();
   setLayoutInputsLocked(true);
-  toast('布局已更新并保存');
+  toast(L('布局已更新并保存'));
 });
 
 document.getElementById('cfg-depth').addEventListener('input', () => { document.getElementById('cfg-depth2').value = document.getElementById('cfg-depth').value; });
@@ -2367,14 +2379,14 @@ document.getElementById('btn-unlock-rules').addEventListener('click', async () =
   if (rulesLocked) {
     await promptUnlockPassword(() => {
       setRulesLocked(false);
-      toast('规则已解锁');
+      toast(L('规则已解锁'));
     });
     return;
   }
   rebuildAfterRuleChange();
   renderRules();
   setRulesLocked(true);
-  toast('规则已提交并保存');
+  toast(L('规则已提交并保存'));
 });
 
 document.getElementById('rule-add-btn').addEventListener('click', () => {
@@ -2393,20 +2405,20 @@ document.getElementById('rule-save').addEventListener('click', () => {
   const cols = document.getElementById('rule-cols').value.trim();
   const type = document.getElementById('rule-type').value;
   const name = document.getElementById('rule-name').value.trim() || `规则 ${store.rules.length + 1}`;
-  if (!rows || !cols) { alert('请填写行和列范围'); return; }
+  if (!rows || !cols) { alert(L('请填写行和列范围')); return; }
 
   if (editingRuleIndex >= 0 && editingRuleIndex < store.rules.length) {
     store.rules[editingRuleIndex] = { ...store.rules[editingRuleIndex], name, rows, cols, type };
     editingRuleIndex = -1;
-    toast('规则已更新');
+    toast(L('规则已更新'));
   } else {
     store.rules.push({ name, rows, cols, type, enabled: true });
-    toast('规则已添加');
+    toast(L('规则已添加'));
   }
   document.getElementById('rule-form').classList.remove('open');
   rebuildAfterRuleChange();
   renderRules();
-  toast('规则已保存，请点击提交锁定');
+  toast(L('规则已保存，请点击提交锁定'));
 });
 
 document.getElementById('rule-cancel').addEventListener('click', () => {
@@ -2461,7 +2473,7 @@ new ResizeObserver(onResize).observe(container);
 // Row filter population
 function updateRowFilter() {
   const sel = document.getElementById('row-filter-select');
-  sel.innerHTML = '<option value="-1">全部显示</option>';
+  sel.innerHTML = L('<option value="-1">全部显示</option>');
   for (let i = 0; i < C.rows; i++) sel.innerHTML += `<option value="${i}">排 ${i + 1}</option>`;
 }
 const origBuild = buildScene;
@@ -2473,10 +2485,28 @@ buildScene = function() { origBuild(); updateRowFilter(); };
 boot();
 animate();
 
-console.log('🏭 DataCenter 3D Designer v2 已启动');
-console.log('• 鼠标左键旋转 | 滚轮缩放 | 右键平移');
-console.log('• 悬停查看机柜信息');
-console.log('• 配置自动保存到 localStorage');
+console.log(L('🏭 DataCenter 3D Designer v2 已启动'));
+console.log(L('• 鼠标左键旋转 | 滚轮缩放 | 右键平移'));
+console.log(L('• 悬停查看机柜信息'));
+console.log(L('• 配置自动保存到 localStorage'));
 </script>
+
+  <script src="js/aidc-locale-bridge.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/lang-switch.js"></script>
+  <script src="js/i18n-bootstrap.js"></script>
+  <script>
+    AidcI18nBootstrap.bootstrap('datacenter-3d-v3-2', {
+      onReady: function () { refreshDatacenterI18n(); },
+      onLocaleChange: function () { refreshDatacenterI18n(); },
+    });
+    if (window.AidcLocaleBridge) {
+      AidcLocaleBridge.initIframeListener(function (locale) {
+        if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+          AidcI18n.setLocale(locale, { page: 'datacenter-3d-v3-2', common: false, basePath: 'i18n/' });
+        }
+      }, { selfSource: 'datacenter-3d-v3-2' });
+    }
+  </script>
 </body>
 </html>

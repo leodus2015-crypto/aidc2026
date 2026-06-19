@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "title": "Data Hall Layout · AI Data Center",
+    "description": "Data hall layout: four-layer building schematic and single-floor plan."
+  },
+  "cards": {
+    "fourLayer": "Four-Layer Data Center Schematic",
+    "floorDetail": "Single Floor Plan"
+  },
+  "iframe": {
+    "fourLayer": "Four-Layer Data Center Schematic",
+    "floorDetail": "Single Floor Plan"
+  }
+}

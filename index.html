@@ -22,13 +22,13 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
+<body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="index">
   <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
     <nav
       class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl"
-      aria-label="主导航"
+      data-i18n-aria-label="nav.aria" aria-label="主导航"
     >
-      <a href="index.html" class="flex min-w-0 shrink-0 items-center" aria-label="AIDC 2026 · 首页">
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
         <img
           src="aidc2026-logo.svg"
           alt="AIDC 2026 · AI Data Center"
@@ -38,12 +38,23 @@
         />
       </a>
 
-      <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+      <div class="ml-auto flex flex-wrap items-center gap-4">
+        <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+        <li>
+          <a
+            href="ai-dc-design.html"
+            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+            data-i18n="nav.aiDcLayout"
+          >
+            AI DC规划
+          </a>
+        </li>
         <li>
           <a
             href="index.html#inference"
             class="inline-block border-b-2 border-blue-600 pb-1 text-blue-700"
             aria-current="page"
+            data-i18n="nav.inference"
           >
             Agentic推理
           </a>
@@ -52,22 +63,16 @@
           <a
             href="post-training.html"
             class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+            data-i18n="nav.postTraining"
           >
             后训练
           </a>
         </li>
         <li>
           <a
-            href="ai-dc-layout.html"
-            class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
-          >
-            AI DC布局
-          </a>
-        </li>
-        <li>
-          <a
             href="white-paper.html"
             class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+            data-i18n="nav.whitePaper"
           >
             白皮书
           </a>
@@ -76,35 +81,35 @@
           <a
             href="about-us.html"
             class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+            data-i18n="nav.aboutUs"
           >
             About US
           </a>
         </li>
-      </ul>
+        </ul>
+        <div id="lang-switch-root" class="shrink-0"></div>
+      </div>
     </nav>
   </header>
 
   <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
     <section id="inference" class="flex flex-col gap-8 lg:gap-10 xl:gap-12">
       <div class="w-full max-w-3xl xl:max-w-4xl">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">
-          大模型推理HBM需求
-        </h1>
-        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-          请选择<strong class="font-semibold text-blue-700">PD混部</strong>或<strong class="font-semibold text-blue-700">PD分离</strong>估算权重与 HBM；需要评估序列占用时可切换到<strong class="font-semibold text-blue-700">KV Cache计算</strong>。PD混部支持所有模型，PD分离可以提升性能，但仅支持部分模型的特定部署方式。
-        </p>
+        <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1"></h1>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="page.intro"></p>
       </div>
 
       <div class="min-w-0 w-full">
         <div
           class="inline-flex flex-wrap gap-1 rounded-2xl bg-slate-100 p-1 shadow-inner shadow-slate-200/60"
           role="tablist"
-          aria-label="推理模式"
+          data-i18n-aria-label="page.tablistAria" aria-label="推理模式"
         >
           <button
             type="button"
             id="tab-mixed"
             role="tab"
+            data-i18n="page.tabMixed"
             aria-selected="true"
             aria-controls="panel-mixed"
             class="rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white"
@@ -115,6 +120,7 @@
             type="button"
             id="tab-separated"
             role="tab"
+            data-i18n="page.tabSeparated"
             aria-selected="false"
             aria-controls="panel-separated"
             tabindex="-1"
@@ -126,6 +132,7 @@
             type="button"
             id="tab-kvcache"
             role="tab"
+            data-i18n="page.tabKvcache"
             aria-selected="false"
             aria-controls="panel-kvcache"
             tabindex="-1"
@@ -141,7 +148,7 @@
         <div class="xl:grid xl:grid-cols-2 xl:items-start xl:gap-8">
           <form class="min-w-0 w-full max-w-full justify-self-start space-y-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5 lg:space-y-0 xl:max-w-xl" id="hbmForm">
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="modelName" class="block text-sm font-medium text-slate-700">大模型名称</label>
+            <label for="modelName" class="block text-sm font-medium text-slate-700" data-i18n="form.modelName"></label>
             <select id="modelName" name="modelName"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
               <option value="DeepSeek-R1-W8A8">DeepSeek-R1-W8A8</option>
@@ -154,13 +161,13 @@
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="modelSize" class="block text-sm font-medium text-slate-700">模型尺寸</label>
-            <input id="modelSize" name="modelSize" type="text" value="284B" placeholder="例如：284B、1.6T、72"
+            <label for="modelSize" class="block text-sm font-medium text-slate-700" data-i18n="form.modelSize"></label>
+            <input id="modelSize" name="modelSize" type="text" value="284B" data-i18n-placeholder="form.modelSizePlaceholder" placeholder="例如：284B、1.6T、72"
               class="mt-2 box-border h-12 w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="npuModel" class="block text-sm font-medium text-slate-700">NPU 型号</label>
+            <label for="npuModel" class="block text-sm font-medium text-slate-700" data-i18n="form.npuModel"></label>
             <select id="npuModel" name="npuModel"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
               <option value="Ascend A2" selected>Ascend A2</option>
@@ -170,18 +177,18 @@
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="hbmCapacity" class="block text-sm font-medium text-slate-700">单卡 HBM 总容量（GB）</label>
+            <label for="hbmCapacity" class="block text-sm font-medium text-slate-700" data-i18n="form.hbmCapacity"></label>
             <input id="hbmCapacity" name="hbmCapacity" type="number" min="1" step="1" value="64" readonly
-              title="随「NPU 型号」自动填充，不可手动修改"
+              data-i18n-title="form.hbmCapacityTitle" title="随「NPU 型号」自动填充，不可手动修改"
               aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none [appearance:textfield] ring-slate-200 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col lg:col-span-2">
-            <label for="cardCount" class="block text-sm font-medium text-slate-700">卡数量</label>
+            <label for="cardCount" class="block text-sm font-medium text-slate-700" data-i18n="form.cardCount"></label>
             <input id="cardCount" name="cardCount" type="number" min="1" step="1" value="8"
               class="mt-2 box-border h-12 w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition [appearance:textfield] focus:border-blue-500 focus:ring-4 focus:ring-blue-100 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
-            <div class="mt-3 flex flex-wrap gap-2" aria-label="卡数量快捷选项">
+            <div class="mt-3 flex flex-wrap gap-2" data-i18n-aria-label="form.cardCountQuickAria" aria-label="卡数量快捷选项">
               <button type="button" data-card-count="8" class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">8</button>
               <button type="button" data-card-count="16" class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">16</button>
               <button type="button" data-card-count="32" class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">32</button>
@@ -195,15 +202,15 @@
             <div class="min-w-0 overflow-hidden rounded-3xl bg-slate-950 p-5 text-white sm:p-6 lg:p-8">
           <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
             <div class="min-w-0 flex-1">
-              <p class="text-sm text-slate-300">每张 NPU 估算 HBM</p>
+              <p class="text-sm text-slate-300" data-i18n="results.hbmPerNpu"></p>
               <div class="mt-2 flex flex-wrap items-baseline gap-x-6 gap-y-2 sm:gap-x-10">
                 <div class="flex min-w-0 items-baseline gap-2">
-                  <span class="shrink-0 text-xs font-medium text-slate-400">占用</span>
+                  <span class="shrink-0 text-xs font-medium text-slate-400" data-i18n="results.used"></span>
                   <span id="hbmUsed" class="text-3xl font-bold tracking-tight tabular-nums sm:text-4xl">26.40</span>
                   <span class="text-base font-semibold text-slate-300 sm:text-lg">GB</span>
                 </div>
                 <div class="flex min-w-0 items-baseline gap-2">
-                  <span class="shrink-0 text-xs font-medium text-slate-400">剩余</span>
+                  <span class="shrink-0 text-xs font-medium text-slate-400" data-i18n="results.remaining"></span>
                   <span id="hbmRemain" class="text-3xl font-bold tracking-tight tabular-nums text-emerald-300 sm:text-4xl">37.60</span>
                   <span class="text-base font-semibold text-slate-300 sm:text-lg">GB</span>
                 </div>
@@ -216,10 +223,10 @@
           </div>
 
           <div class="mt-5 flex flex-wrap gap-3 text-xs text-slate-300">
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>框架/运行开销</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-400"></span>模型文件占用</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>剩余容量</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span>超出容量</span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span><span data-i18n="results.legendFramework"></span></span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-400"></span><span data-i18n="results.legendModel"></span></span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span data-i18n="results.legendRemain"></span></span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span><span data-i18n="results.legendOverflow"></span></span>
           </div>
 
           <div id="hbmChart" class="mt-5 space-y-3"></div>
@@ -230,10 +237,7 @@
             </div>
           </div>
 
-        <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0">
-          <strong class="font-semibold">计算说明：</strong>
-          此结果为简化估算，模型量化方式参考模型名称描述；框架与运行时开销按<strong class="font-semibold">单卡 HBM 总容量的 10%</strong>单独预留。实际部署还会受推理框架实现影响。
-        </div>
+        <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0" data-i18n-html="notes.mixed"></div>
         </div>
       </div>
       </div>
@@ -243,7 +247,7 @@
         <div class="xl:grid xl:grid-cols-2 xl:items-start xl:gap-8">
           <form class="min-w-0 w-full max-w-full justify-self-start space-y-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5 lg:space-y-0 xl:max-w-xl" id="hbmFormSep">
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="modelNameSep" class="block text-sm font-medium text-slate-700">大模型名称</label>
+            <label for="modelNameSep" class="block text-sm font-medium text-slate-700" data-i18n="form.modelName"></label>
             <select id="modelNameSep" name="modelNameSep"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
               <option value="DeepSeek-R1-W8A8" selected>DeepSeek-R1-W8A8</option>
@@ -252,13 +256,13 @@
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="modelSizeSep" class="block text-sm font-medium text-slate-700">模型尺寸</label>
-            <input id="modelSizeSep" name="modelSizeSep" type="text" value="685B" placeholder="例如：284B、1.6T、72"
+            <label for="modelSizeSep" class="block text-sm font-medium text-slate-700" data-i18n="form.modelSize"></label>
+            <input id="modelSizeSep" name="modelSizeSep" type="text" value="685B" data-i18n-placeholder="form.modelSizePlaceholder" placeholder="例如：284B、1.6T、72"
               class="mt-2 box-border h-12 w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="npuModelSep" class="block text-sm font-medium text-slate-700">NPU 型号</label>
+            <label for="npuModelSep" class="block text-sm font-medium text-slate-700" data-i18n="form.npuModel"></label>
             <select id="npuModelSep" name="npuModelSep"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
               <option value="Ascend A2" selected>Ascend A2</option>
@@ -268,23 +272,21 @@
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="hbmCapacitySep" class="block text-sm font-medium text-slate-700">单卡 HBM 总容量（GB）</label>
+            <label for="hbmCapacitySep" class="block text-sm font-medium text-slate-700" data-i18n="form.hbmCapacity"></label>
             <input id="hbmCapacitySep" name="hbmCapacitySep" type="number" min="1" step="1" value="64" readonly
-              title="随「NPU 型号」自动填充，不可手动修改"
+              data-i18n-title="form.hbmCapacityTitle" title="随「NPU 型号」自动填充，不可手动修改"
               aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none [appearance:textfield] ring-slate-200 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col lg:col-span-2">
-            <label for="pdDeployMode" class="block text-sm font-medium text-slate-700">PD部署方式</label>
+            <label for="pdDeployMode" class="block text-sm font-medium text-slate-700" data-i18n="form.pdDeployMode"></label>
             <select id="pdDeployMode" name="pdDeployMode"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-              <option value="32-1p1d" selected>32卡-1P1D</option>
-              <option value="48-1p1d">48卡-1P1D</option>
+              <option value="32-1p1d" selected data-i18n="pd.layout32">32卡-1P1D</option>
+              <option value="48-1p1d" data-i18n="pd.layout48">48卡-1P1D</option>
             </select>
-            <p class="mt-2 text-xs leading-5 text-slate-500">
-              每种部署方式下，Prefill / Decode 各占一半总卡数，并按 P、D 组数拆分；<strong class="font-medium text-slate-600">每组独立部署一整份模型权重</strong>，再按组内卡数均摊到单卡。
-            </p>
+            <p class="mt-2 text-xs leading-5 text-slate-500" data-i18n-html="form.pdDeployHint"></p>
           </div>
         </form>
 
@@ -293,15 +295,15 @@
           <!-- xl 双列栅格下右侧栏较窄：此处在 xl 强制纵向堆叠，避免「副标题 + 右侧信息卡」横向并排挤压换行；2xl 再并排 -->
           <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-8 xl:flex-col xl:items-stretch 2xl:flex-row 2xl:items-start 2xl:justify-between">
             <div class="min-w-0 w-full flex-1">
-              <p id="hbmSubtitleSep" class="text-pretty text-sm leading-snug text-slate-300">每张 NPU 估算 HBM（瓶颈侧）</p>
+              <p id="hbmSubtitleSep" class="text-pretty text-sm leading-snug text-slate-300" data-i18n="results.hbmPerNpuBottleneck"></p>
               <div class="mt-2 flex flex-wrap items-baseline gap-x-6 gap-y-2 sm:gap-x-10">
                 <div class="flex min-w-0 items-baseline gap-2">
-                  <span class="shrink-0 text-xs font-medium text-slate-400">占用</span>
+                  <span class="shrink-0 text-xs font-medium text-slate-400" data-i18n="results.used"></span>
                   <span id="hbmUsedSep" class="text-3xl font-bold tracking-tight tabular-nums sm:text-4xl">--</span>
                   <span class="text-base font-semibold text-slate-300 sm:text-lg">GB</span>
                 </div>
                 <div class="flex min-w-0 items-baseline gap-2">
-                  <span class="shrink-0 text-xs font-medium text-slate-400">剩余</span>
+                  <span class="shrink-0 text-xs font-medium text-slate-400" data-i18n="results.remaining"></span>
                   <span id="hbmRemainSep" class="text-3xl font-bold tracking-tight tabular-nums text-slate-300 sm:text-4xl">--</span>
                   <span class="text-base font-semibold text-slate-300 sm:text-lg">GB</span>
                 </div>
@@ -314,24 +316,19 @@
           </div>
 
           <div class="mt-5 flex flex-wrap gap-3 text-xs text-slate-300">
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>框架/运行开销</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-400"></span>模型文件占用</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>剩余容量</span>
-            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span>超出容量</span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span><span data-i18n="results.legendFramework"></span></span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-blue-400"></span><span data-i18n="results.legendModel"></span></span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span data-i18n="results.legendRemain"></span></span>
+            <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span><span data-i18n="results.legendOverflow"></span></span>
           </div>
 
           <div id="hbmChartSep" class="mt-5 space-y-3"></div>
 
-          <p id="resultMessageSep" class="mt-4 text-sm leading-6 text-slate-300">
-            选择 PD 部署方式后，将按 P/D 分组展示每卡占用与瓶颈侧柱状图。
-          </p>
+          <p id="resultMessageSep" class="mt-4 text-sm leading-6 text-slate-300"></p>
             </div>
           </div>
 
-        <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0">
-          <strong class="font-semibold">计算说明（PD分离）：</strong>
-          权重总量与混部相同。总卡数按部署方式分为 Prefill 池与 Decode 池（各占一半），再按 <strong class="font-semibold">P 组数 / D 组数</strong>拆成若干组；<strong class="font-semibold">每一组各部署一整份模型权重</strong>，组内按卡数均摊。每组公式：<strong class="font-semibold">单卡模型占用 = 权重总量 GB ÷ 该组卡数</strong>；另加 <strong class="font-semibold">单卡 HBM 的 10%</strong> 作为框架/运行开销。主视图与柱状图为<strong class="font-semibold">Prefill 侧与 Decode 侧中单卡总占用更高的一侧（瓶颈侧）</strong>。
-        </div>
+        <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0" data-i18n-html="notes.separated"></div>
         </div>
       </div>
       </div>
@@ -341,7 +338,7 @@
         <div class="xl:grid xl:grid-cols-2 xl:items-start xl:gap-8">
           <form class="min-w-0 w-full max-w-full justify-self-start space-y-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5 lg:space-y-0 xl:max-w-xl" id="kvcForm">
           <div class="flex min-h-0 w-full min-w-0 flex-col lg:col-span-2">
-            <label for="modelNameKvc" class="block text-sm font-medium text-slate-700">大模型名称</label>
+            <label for="modelNameKvc" class="block text-sm font-medium text-slate-700" data-i18n="form.modelName"></label>
             <select id="modelNameKvc" name="modelNameKvc"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
               <option value="DeepSeek-R1-W8A8">DeepSeek-R1-W8A8</option>
@@ -354,58 +351,58 @@
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcModelSizeRo" class="block text-sm font-medium text-slate-700">模型尺寸（联动）</label>
+            <label for="kvcModelSizeRo" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcModelSizeRo"></label>
             <input id="kvcModelSizeRo" type="text" readonly aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcLayersRo" class="block text-sm font-medium text-slate-700">Transformer 层数 (L)</label>
+            <label for="kvcLayersRo" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcLayersRo"></label>
             <input id="kvcLayersRo" type="text" readonly aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcExpertsRo" class="block text-sm font-medium text-slate-700">MoE 专家数量（档案）</label>
-            <input id="kvcExpertsRo" type="text" readonly aria-readonly="true" title="KV 体积估算不乘专家数；路由激活专家数远小于总数"
+            <label for="kvcExpertsRo" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcExpertsRo"></label>
+            <input id="kvcExpertsRo" type="text" readonly aria-readonly="true" data-i18n-title="form.kvcExpertsRoTitle" title="KV 体积估算不乘专家数；路由激活专家数远小于总数"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcKvHeadsRo" class="block text-sm font-medium text-slate-700">KV 注意力头数 (num_key_value_heads)</label>
+            <label for="kvcKvHeadsRo" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcKvHeadsRo"></label>
             <input id="kvcKvHeadsRo" type="text" readonly aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcHeadDimRo" class="block text-sm font-medium text-slate-700">Head 维度 (head_dim)</label>
+            <label for="kvcHeadDimRo" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcHeadDimRo"></label>
             <input id="kvcHeadDimRo" type="text" readonly aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcQuantRo" class="block text-sm font-medium text-slate-700">KV 量化方式（由模型名称联动）</label>
+            <label for="kvcQuantRo" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcQuantRo"></label>
             <input id="kvcQuantRo" type="text" readonly aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcDtypeSizeRo" class="block text-sm font-medium text-slate-700">dtype_size（bytes / element）</label>
+            <label for="kvcDtypeSizeRo" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcDtypeSizeRo"></label>
             <input id="kvcDtypeSizeRo" type="text" readonly aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
-            <label for="kvcBatchSize" class="block text-sm font-medium text-slate-700">Batch 大小 (batch_size)</label>
+            <label for="kvcBatchSize" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcBatchSize"></label>
             <input id="kvcBatchSize" name="kvcBatchSize" type="number" min="1" step="1" value="1"
               class="mt-2 box-border h-12 w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition [appearance:textfield] focus:border-blue-500 focus:ring-4 focus:ring-blue-100 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col lg:col-span-2">
-            <label for="kvcTokenCount" class="block text-sm font-medium text-slate-700">序列长度 (seq_len)</label>
+            <label for="kvcTokenCount" class="block text-sm font-medium text-slate-700" data-i18n="form.kvcTokenCount"></label>
             <input id="kvcTokenCount" name="kvcTokenCount" type="number" min="1" step="1" value="1024"
               class="mt-2 box-border h-12 w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition [appearance:textfield] focus:border-blue-500 focus:ring-4 focus:ring-blue-100 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
-            <div class="mt-3 flex flex-wrap gap-2" aria-label="Tokens 快捷选项">
+            <div class="mt-3 flex flex-wrap gap-2" data-i18n-aria-label="form.kvcTokenQuickAria" aria-label="Tokens 快捷选项">
               <button type="button" data-kvc-tokens="1" class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">1</button>
               <button type="button" data-kvc-tokens="1024" class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">1K</button>
               <button type="button" data-kvc-tokens="131072" class="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-700">128K</button>
@@ -416,7 +413,7 @@
 
           <div class="mt-8 min-w-0 lg:mt-10 xl:mt-0 xl:min-w-0">
             <div class="min-w-0 overflow-hidden rounded-3xl bg-slate-950 p-5 text-white sm:p-6 lg:p-8">
-              <p id="kvcResultSubtitle" class="text-sm text-slate-300">KV Cache 估算体积（dtype_size 随模型量化方式联动）</p>
+              <p id="kvcResultSubtitle" class="text-sm text-slate-300" data-i18n="results.kvcSubtitleDefault"></p>
               <div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span id="kvcResultGb" class="text-3xl font-bold tracking-tight tabular-nums sm:text-4xl">--</span>
                 <span class="text-base font-semibold text-slate-300 sm:text-lg">GB</span>
@@ -426,10 +423,7 @@
             </div>
           </div>
 
-        <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0">
-          <strong class="font-semibold">计算说明（KV Cache）：</strong>
-          采用业界通用估算（见 <a href="https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing" class="font-semibold text-blue-800 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">KV Cache Sizing</a> 等资料）：标准 GQA 为 <strong class="font-semibold">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>。<strong class="font-semibold">Qwen3.6（混合注意力）</strong> 为 <strong class="font-semibold">L_full × 2 × H_kv × head_dim × seq_len × batch_size × dtype_size</strong>（FP16 @ 1M 约 <strong class="font-semibold">19.1 GiB</strong>；linear 层不计 KV）。<strong class="font-semibold">DeepSeek R1 / V3.1（MLA）</strong> 为 <strong class="font-semibold">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong>（W4A8 / W8A8 均按激活 A8 → INT8 KV，1 byte/元素；W4 仅影响权重）。<strong class="font-semibold">GLM-5.1（MLA + DSA）</strong> 为 <strong class="font-semibold">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong>（W8A8 @ 1M 约 <strong class="font-semibold">51.4 GiB</strong>；仅 MLA 约 41.8 GiB）。<strong class="font-semibold">DeepSeek V4（CSA/HCA）</strong> 按 <strong class="font-semibold">BF16 @ 1M 锚点 × (dtype_size / 2) × seq_len 比例</strong> 估算（V4-Flash W8A8 约 <strong class="font-semibold">4.81 GiB</strong>，BF16 基准 9.62 GiB ÷ 2）。
-        </div>
+        <div class="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900 lg:mt-6 xl:col-span-2 xl:mt-0" data-i18n-html="notes.kvcache"></div>
         </div>
       </div>
       </div>
@@ -438,82 +432,54 @@
 
     <section id="capacity" class="mt-16 border-t border-slate-200 pt-14 lg:mt-20 lg:pt-16" aria-labelledby="capacity-heading">
       <div class="max-w-3xl xl:max-w-4xl">
-        <h2 id="capacity-heading" class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-          容量规划
-        </h2>
-        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-          结合推理任务的模型占用与集群拓扑，评估算力与显存是否满足目标并发与延迟。可先使用
-          <a href="#inference" class="font-medium text-blue-700 underline-offset-2 hover:underline">上方 Agentic 推理 · HBM 估算</a>
-          得到单卡占用，再在下述维度做汇总。
-        </p>
+        <h2 id="capacity-heading" class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl" data-i18n="capacity.heading"></h2>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="capacity.intro"></p>
       </div>
 
       <div class="mt-10 grid gap-5 sm:grid-cols-2">
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
-          <h3 class="text-lg font-semibold text-slate-950">推理集群HBM占用情况</h3>
-          <p class="mt-2 text-sm leading-6 text-slate-600">
-            按卡数 × 单卡 HBM 容量汇总可用显存，并与模型切分后的每卡占用对比，判断是否留有余量给 KV、临时缓冲与多副本。
-          </p>
+          <h3 class="text-lg font-semibold text-slate-950" data-i18n="capacity.clusterTitle"></h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600" data-i18n="capacity.clusterBody"></p>
         </div>
         <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
-          <h3 class="text-lg font-semibold text-slate-950">扩展路径</h3>
-          <p class="mt-2 text-sm leading-6 text-slate-600">
-            HBM可用显存不足，会导致推理失败，优先考虑增加卡数，或调整模型量化策略；同时对于长序列，命中率高的场景，采用KV Cache多级缓存机制，可以有效提升推理吞吐性能并降低推理时延。
-          </p>
+          <h3 class="text-lg font-semibold text-slate-950" data-i18n="capacity.scaleTitle"></h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600" data-i18n="capacity.scaleBody"></p>
         </div>
       </div>
 
-      <div class="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900">
-        <strong class="font-semibold">提示：</strong>
-        本站推理页的估算为简化模型；正式容量规划请结合压测、框架版本与业务 SLO 复核。
-      </div>
+      <div class="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900" data-i18n-html="capacity.hint"></div>
     </section>
 
     <section id="docs" class="mt-16 border-t border-slate-200 pt-14 lg:mt-20 lg:pt-16" aria-labelledby="docs-heading">
       <div class="max-w-3xl xl:max-w-4xl">
-        <h2 id="docs-heading" class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-          说明文档
-        </h2>
-        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-          以下为推理页 HBM 估算的规则摘要，便于对齐口径；详细参数以线上推理框架与实测为准。
-        </p>
+        <h2 id="docs-heading" class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl" data-i18n="docs.heading"></h2>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n="docs.intro"></p>
       </div>
 
       <div class="mt-10 space-y-6">
         <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
-          <h3 class="text-lg font-semibold text-slate-950">计算说明</h3>
-          <p class="mt-3 text-sm leading-7 text-slate-600">
-            此结果为简化估算，模型量化方式参考<strong class="text-slate-800">模型名称</strong>描述；框架与运行时开销按<strong class="text-slate-800">单卡 HBM 总容量的 10%</strong>单独预留。实际部署还会受推理框架实现影响。
-          </p>
+          <h3 class="text-lg font-semibold text-slate-950" data-i18n="docs.calcTitle"></h3>
+          <p class="mt-3 text-sm leading-7 text-slate-600" data-i18n-html="docs.calcBody"></p>
         </section>
 
         <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
-          <h3 class="text-lg font-semibold text-slate-950">模型占用</h3>
-          <ul class="mt-3 list-inside list-disc space-y-2 text-sm leading-7 text-slate-600">
-            <li>部分型号在界面中选择后，使用<strong class="text-slate-800">固定权重文件总量（GB）</strong>除以<strong class="text-slate-800">卡数量</strong>得到每卡模型文件占用。</li>
-            <li>其余型号按<strong class="text-slate-800">模型尺寸 × 2 bytes ÷ 卡数量</strong>估算每卡权重占用（按 FP16/BF16 宽度简化）。</li>
-            <li><strong class="text-slate-800">单卡 HBM 总容量</strong>由所选 NPU 型号自动带出，与推理页联动。</li>
-          </ul>
+          <h3 class="text-lg font-semibold text-slate-950" data-i18n="docs.modelTitle"></h3>
+          <ul class="mt-3 list-inside list-disc space-y-2 text-sm leading-7 text-slate-600" data-i18n-html="docs.modelList"></ul>
         </section>
 
         <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
-          <h3 class="text-lg font-semibold text-slate-950">柱状图含义</h3>
-          <p class="mt-3 text-sm leading-7 text-slate-600">
-            每张 NPU 横向条从左到右依次为：<strong class="text-slate-800">框架/运行开销</strong>（琥珀色）、<strong class="text-slate-800">模型文件占用</strong>（蓝色）、<strong class="text-slate-800">剩余容量</strong>（绿色）、超出部分（红色）。条的总尺度随是否超出单卡容量而变化。
-          </p>
+          <h3 class="text-lg font-semibold text-slate-950" data-i18n="docs.chartTitle"></h3>
+          <p class="mt-3 text-sm leading-7 text-slate-600" data-i18n-html="docs.chartBody"></p>
         </section>
 
-        <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900">
-          <strong class="font-semibold">使用入口：</strong>
-          回到页面顶部 <a href="#inference" class="font-semibold text-blue-800 underline-offset-2 hover:underline">Agentic 推理 · HBM 估算</a> 开始试算。
-        </div>
+        <div class="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-blue-900" data-i18n-html="docs.entry"></div>
       </div>
     </section>
   </main>
 
   <footer class="border-t border-slate-200 bg-white py-6">
     <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
-      <span>工信部备案号：
+      <span><span data-i18n="footer.miit"></span>
         <a
           href="https://beian.miit.gov.cn/"
           target="_blank"
@@ -522,7 +488,7 @@
         >苏ICP备2026026790号-3</a>
       </span>
       <span class="hidden sm:inline" aria-hidden="true">|</span>
-      <span>公安备案号：
+      <span><span data-i18n="footer.publicSecurity"></span>
         <a
           href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455"
           target="_blank"
@@ -533,877 +499,32 @@
     </p>
   </footer>
 
+  <script src="js/i18n.js"></script>
+  <script src="js/lang-switch.js"></script>
+  <script src="js/index-page.js"></script>
   <script>
-    const tabMixed = document.getElementById('tab-mixed');
-    const tabSeparated = document.getElementById('tab-separated');
-    const tabKvcache = document.getElementById('tab-kvcache');
-    const panelMixed = document.getElementById('panel-mixed');
-    const panelSeparated = document.getElementById('panel-separated');
-    const panelKvcache = document.getElementById('panel-kvcache');
-
-    const modelNameInput = document.getElementById('modelName');
-    const modelSizeInput = document.getElementById('modelSize');
-    const npuModelInput = document.getElementById('npuModel');
-    const cardCountInput = document.getElementById('cardCount');
-    const hbmCapacityInput = document.getElementById('hbmCapacity');
-    const hbmUsed = document.getElementById('hbmUsed');
-    const hbmRemain = document.getElementById('hbmRemain');
-    const resultLabel = document.getElementById('resultLabel');
-    const capacityLabel = document.getElementById('capacityLabel');
-    const resultMessage = document.getElementById('resultMessage');
-    const hbmChart = document.getElementById('hbmChart');
-
-    const modelNameSep = document.getElementById('modelNameSep');
-    const modelSizeSep = document.getElementById('modelSizeSep');
-    const npuModelSep = document.getElementById('npuModelSep');
-    const pdDeployMode = document.getElementById('pdDeployMode');
-    const hbmCapacitySep = document.getElementById('hbmCapacitySep');
-    const hbmSubtitleSep = document.getElementById('hbmSubtitleSep');
-    const hbmUsedSep = document.getElementById('hbmUsedSep');
-    const hbmRemainSep = document.getElementById('hbmRemainSep');
-    const resultLabelSep = document.getElementById('resultLabelSep');
-    const capacityLabelSep = document.getElementById('capacityLabelSep');
-    const resultMessageSep = document.getElementById('resultMessageSep');
-    const hbmChartSep = document.getElementById('hbmChartSep');
-
-    const modelNameKvc = document.getElementById('modelNameKvc');
-    const kvcTokenCount = document.getElementById('kvcTokenCount');
-    const kvcBatchSize = document.getElementById('kvcBatchSize');
-    const kvcModelSizeRo = document.getElementById('kvcModelSizeRo');
-    const kvcLayersRo = document.getElementById('kvcLayersRo');
-    const kvcExpertsRo = document.getElementById('kvcExpertsRo');
-    const kvcKvHeadsRo = document.getElementById('kvcKvHeadsRo');
-    const kvcHeadDimRo = document.getElementById('kvcHeadDimRo');
-    const kvcQuantRo = document.getElementById('kvcQuantRo');
-    const kvcDtypeSizeRo = document.getElementById('kvcDtypeSizeRo');
-    const kvcResultSubtitle = document.getElementById('kvcResultSubtitle');
-    const kvcResultGb = document.getElementById('kvcResultGb');
-    const kvcResultMiB = document.getElementById('kvcResultMiB');
-    const kvcResultFormula = document.getElementById('kvcResultFormula');
-
-    const TAB_ACTIVE_CLASS =
-      'rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white';
-    const TAB_INACTIVE_CLASS =
-      'rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950';
-
-    const FRAMEWORK_OVERHEAD_OF_CAPACITY = 0.1;
-
-    const fixedW8A8WeightGbByModel = {
-      'DeepSeek-R1-W8A8': 689,
-      'DeepSeek-V3.1-Terminus-W4A8': 360,
-      'DeepSeek-V4-Flash-W8A8': 160,
-      'DeepSeek-V4-Pro-W8A8': 865,
-      'GLM-5.1-W8A8': 756,
-      'Qwen3.6-35B-A3B': 71.9,
-    };
-
-    const modelSizeMap = {
-      'DeepSeek-R1-W8A8': '685B',
-      'DeepSeek-V3.1-Terminus-W4A8': '685B',
-      'DeepSeek-V4-Flash-W8A8': '284B',
-      'DeepSeek-V4-Pro-W8A8': '1.6T',
-      'Qwen3.6-35B-A3B': '35B',
-      'GLM-5.1-W8A8': '744B',
-    };
-
-    const npuCapacityMap = {
-      'Ascend A2': 64,
-      'Ascend A3': 128,
-      'Ascend 950DT': 96,
-    };
-
-    /** Prefill / Decode 各占一半总卡数；每组独立部署一整份 modelGb，组内均摊。 */
-    const pdDeployLayouts = {
-      '32-1p1d': {
-        label: '32卡-1P1D',
-        totalCards: 32,
-        pCardTotal: 16,
-        pGroups: 1,
-        dCardTotal: 16,
-        dGroups: 1,
-      },
-      '48-1p1d': {
-        label: '48卡-1P1D',
-        totalCards: 48,
-        pCardTotal: 24,
-        pGroups: 1,
-        dCardTotal: 24,
-        dGroups: 1,
-      },
-    };
-
-    /**
-     * KV Cache 估算用模型画像（与混部下拉型号对齐）。
-     * 标准公式（tutorialQ / vLLM 等）：
-     * KV_bytes = 2 × L × H_kv × head_dim × seq_len × batch_size × dtype_size
-     * DeepSeek R1 / V3.1 使用 MLA 结构化公式（kv_lora_rank + qk_rope_head_dim，非标准 GQA）。
-     * GLM-5.1 使用 MLA + DSA（含 indexer key 与 FP32 scale）。
-     * Qwen3.6 混合注意力：仅 full attention 层保存完整 KV（linear 层不计入）。
-     * DeepSeek V4 另见 v4KvCompressedAnchors（CSA/HCA 架构压缩）。
-     */
-    const kvModelProfiles = {
-      'DeepSeek-R1-W8A8': {
-        layers: 61,
-        compressedKvDim: 512,
-        ropeHeadDim: 64,
-        experts: 256,
-        kvHeads: 128,
-        headDim: 128,
-        kvFormula: 'mla',
-      },
-      'DeepSeek-V3.1-Terminus-W4A8': {
-        layers: 61,
-        compressedKvDim: 512,
-        ropeHeadDim: 64,
-        experts: 256,
-        kvHeads: 128,
-        headDim: 128,
-        kvFormula: 'mla',
-      },
-      'DeepSeek-V4-Flash-W8A8': { layers: 43, experts: 128, kvHeads: 96, headDim: 128, kvFormula: 'v4-compressed' },
-      'DeepSeek-V4-Pro-W8A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128, kvFormula: 'v4-compressed' },
-      'Qwen3.6-35B-A3B': {
-        layers: 40,
-        fullAttentionLayers: 10,
-        linearAttentionLayers: 30,
-        kvHeads: 2,
-        headDim: 256,
-        experts: 128,
-        kvFormula: 'qwen-hybrid-attention',
-        kvQuant: {
-          label: 'FP16',
-          dtypeBytes: 2,
-          note: 'KV Cache 按 FP16（2 bytes/element）估算；linear attention 层不逐 token 保存完整 KV',
-        },
-      },
-      'GLM-5.1-W8A8': {
-        layers: 78,
-        compressedKvDim: 512,
-        ropeHeadDim: 64,
-        dsaIndexHeadDim: 128,
-        dsaIndexScaleBytes: 4,
-        experts: 384,
-        kvHeads: 96,
-        headDim: 128,
-        kvFormula: 'mla-dsa',
-      },
-    };
-
-    /**
-     * DeepSeek V4：混合注意力 CSA/HCA 在序列长度上压缩 KV，非 V3 MLA 逐层低秩方案。
-     * BF16 锚点：V4-Flash @ seq_len=1M、batch=1 ≈ 9.62 GiB；W8A8（FP8 KV，1 byte）≈ 9.62 ÷ 2 = 4.81 GiB。
-     * Pro 的 bf16AnchorGiB 按 Flash × (L×H_kv)_Pro / (L×H_kv)_Flash 外推，待官方实测校准。
-     */
-    const v4KvCompressedAnchors = {
-      'DeepSeek-V4-Flash-W8A8': {
-        anchorSeqLen: 1_000_000,
-        bf16AnchorGiB: 9.62,
-        note: 'CSA/HCA 序列压缩；BF16 @ 1M 约 9.62 GiB，W8A8 KV 减半约 4.81 GiB',
-      },
-      'DeepSeek-V4-Pro-W8A8': {
-        anchorSeqLen: 1_000_000,
-        bf16AnchorGiB: 9.62 * ((61 * 128) / (43 * 96)),
-        note: '同 V4 压缩族；BF16 锚点按 Flash × (L×H_kv)_Pro / (L×H_kv)_Flash 外推',
-      },
-    };
-
-    /** 从模型名称解析 KV Cache 存储精度；推理框架中 kv_cache_dtype 可单独配置，此处按名称后缀缺省推断。 */
-    function parseKvQuantFromModelName(modelName) {
-      const tag = modelName.trim().toUpperCase();
-
-      if (/W8A8/.test(tag)) {
-        return {
-          label: 'INT8（W8A8）',
-          dtypeBytes: 1,
-          note: 'W8A8 部署常见 INT8 KV（1 byte/element，约为 FP16 一半）',
-        };
+    (async function bootstrapIndexPage() {
+      const params = new URLSearchParams(window.location.search);
+      const lang = params.get('lang');
+      if (lang === 'zh' || lang === 'en') {
+        try {
+          localStorage.setItem('aidc-locale', lang);
+        } catch (_) {
+          /* ignore */
+        }
       }
-
-      if (/W4A8/.test(tag)) {
-        return {
-          label: 'INT8（W4A8 · A8）',
-          dtypeBytes: 1,
-          note: 'W4 仅影响权重；KV Cache 随激活 A8 按 INT8（1 byte/element）估算',
-        };
-      }
-
-      if (/W\d+A4|INT4|W4A4/.test(tag)) {
-        return {
-          label: 'INT4',
-          dtypeBytes: 0.5,
-          note: 'INT4 KV（0.5 byte/element）',
-        };
-      }
-
-      if (/FP8|W8A16/.test(tag)) {
-        return {
-          label: 'FP8',
-          dtypeBytes: 1,
-          note: 'FP8 KV（1 byte/element）',
-        };
-      }
-
-      if (/W\d+A16|BF16|FP16/.test(tag)) {
-        return {
-          label: 'BF16/FP16',
-          dtypeBytes: 2,
-          note: 'BF16/FP16 KV（2 bytes/element）',
-        };
-      }
-
-      return {
-        label: 'BF16/FP16（默认）',
-        dtypeBytes: 2,
-        note: '未识别量化后缀，按 BF16/FP16 KV（2 bytes/element）估算',
+      await AidcI18n.init({ page: 'index', common: true, basePath: 'i18n/' });
+      AidcI18n.applyDom();
+      window.__aidcI18nAfterLocaleChange = function () {
+        if (typeof window.refreshIndexPageI18n === 'function') {
+          window.refreshIndexPageI18n();
+        }
       };
-    }
-
-    function resolveKvQuant(modelKey, profile) {
-      if (profile?.kvQuant) {
-        return profile.kvQuant;
+      AidcLangSwitch.mount(document.getElementById('lang-switch-root'));
+      if (typeof window.initIndexPage === 'function') {
+        window.initIndexPage();
       }
-
-      return parseKvQuantFromModelName(modelKey);
-    }
-
-    function computeStandardKvCacheBytes(profile, quant, seqLen, batchSize) {
-      return (
-        2 *
-        profile.layers *
-        profile.kvHeads *
-        profile.headDim *
-        seqLen *
-        batchSize *
-        quant.dtypeBytes
-      );
-    }
-
-    function computeMlaKvCacheBytes(profile, quant, seqLen, batchSize) {
-      const perLayerPerToken = profile.compressedKvDim + profile.ropeHeadDim;
-      return profile.layers * perLayerPerToken * seqLen * batchSize * quant.dtypeBytes;
-    }
-
-    function computeMlaDsaKvCacheBytes(profile, quant, seqLen, batchSize) {
-      const mlaElements = profile.compressedKvDim + profile.ropeHeadDim;
-      const dsaIndexElements = profile.dsaIndexHeadDim;
-      const scaleBytes = profile.dsaIndexScaleBytes || 0;
-      const perLayerPerTokenBytes =
-        (mlaElements + dsaIndexElements) * quant.dtypeBytes + scaleBytes;
-      return profile.layers * perLayerPerTokenBytes * seqLen * batchSize;
-    }
-
-    function computeQwenHybridKvCacheBytes(profile, quant, seqLen, batchSize) {
-      const elementsPerLayer = 2 * profile.kvHeads * profile.headDim;
-      const bytesPerToken = elementsPerLayer * quant.dtypeBytes * profile.fullAttentionLayers;
-      return bytesPerToken * seqLen * batchSize;
-    }
-
-    function computeV4CompressedKvBytes(modelKey, quant, seqLen, batchSize) {
-      const anchor = v4KvCompressedAnchors[modelKey];
-      const bf16AnchorBytes = anchor.bf16AnchorGiB * 1024 ** 3;
-      const anchorKvBytes = bf16AnchorBytes * (quant.dtypeBytes / 2);
-      return (anchorKvBytes * seqLen * batchSize) / anchor.anchorSeqLen;
-    }
-
-    function computeKvCacheBytes(modelKey, profile, quant, seqLen, batchSize) {
-      if (profile.kvFormula === 'mla-dsa') {
-        return computeMlaDsaKvCacheBytes(profile, quant, seqLen, batchSize);
-      }
-
-      if (profile.kvFormula === 'mla') {
-        return computeMlaKvCacheBytes(profile, quant, seqLen, batchSize);
-      }
-
-      if (profile.kvFormula === 'qwen-hybrid-attention') {
-        return computeQwenHybridKvCacheBytes(profile, quant, seqLen, batchSize);
-      }
-
-      if (profile.kvFormula === 'v4-compressed' && v4KvCompressedAnchors[modelKey]) {
-        return computeV4CompressedKvBytes(modelKey, quant, seqLen, batchSize);
-      }
-
-      return computeStandardKvCacheBytes(profile, quant, seqLen, batchSize);
-    }
-
-    function syncNpuCapacityFromSelection() {
-      const model = npuModelInput.value;
-      const mapped = npuCapacityMap[model];
-
-      if (typeof mapped === 'number') {
-        hbmCapacityInput.value = String(mapped);
-      }
-    }
-
-    function syncNpuCapacitySepFromSelection() {
-      const model = npuModelSep.value;
-      const mapped = npuCapacityMap[model];
-
-      if (typeof mapped === 'number') {
-        hbmCapacitySep.value = String(mapped);
-      }
-    }
-
-    function attachSyncedInputs(inputs, fn) {
-      inputs.forEach((input) => {
-        input.addEventListener('input', fn);
-        input.addEventListener('change', fn);
-      });
-    }
-
-    function parseModelSize(value) {
-      const normalized = value.trim().toUpperCase().replace(/\s+/g, '');
-      const match = normalized.match(/^(\d+(?:\.\d+)?)(T|B|亿)?$/);
-
-      if (!match) {
-        return NaN;
-      }
-
-      const amount = Number(match[1]);
-      const unit = match[2] || 'B';
-
-      if (unit === '亿') {
-        return amount / 10;
-      }
-
-      if (unit === 'T') {
-        return amount * 1000;
-      }
-
-      return amount;
-    }
-
-    function formatModelParamBillions(modelSizeB) {
-      if (!Number.isFinite(modelSizeB) || modelSizeB <= 0) {
-        return '';
-      }
-
-      if (modelSizeB >= 1000) {
-        const t = modelSizeB / 1000;
-        const rounded = Math.round(t * 100) / 100;
-        const text = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2).replace(/\.?0+$/, '');
-        return `${text}T`;
-      }
-
-      if (Number.isInteger(modelSizeB)) {
-        return `${modelSizeB}B`;
-      }
-
-      return `${modelSizeB.toFixed(2)}B`;
-    }
-
-    function setHbmHeadline(usedEl, remainEl, usedText, remainText, remainTone) {
-      usedEl.textContent = usedText;
-      remainEl.textContent = remainText;
-      const base = 'text-3xl font-bold tracking-tight tabular-nums sm:text-4xl';
-      if (remainTone === 'good') {
-        remainEl.className = `${base} text-emerald-300`;
-      } else if (remainTone === 'bad') {
-        remainEl.className = `${base} text-rose-300`;
-      } else {
-        remainEl.className = `${base} text-slate-300`;
-      }
-    }
-
-    function clearSepOutputs() {
-      setHbmHeadline(hbmUsedSep, hbmRemainSep, '--', '--', 'neutral');
-      hbmChartSep.innerHTML = '';
-    }
-
-    function syncKvProfileFromModel() {
-      const key = modelNameKvc.value;
-      const prof = kvModelProfiles[key];
-      const quant = prof ? resolveKvQuant(key, prof) : parseKvQuantFromModelName(key);
-      kvcModelSizeRo.value = modelSizeMap[key] || '';
-      kvcQuantRo.value = quant.label;
-      kvcDtypeSizeRo.value = String(quant.dtypeBytes);
-
-      if (!prof) {
-        kvcLayersRo.value = '';
-        kvcExpertsRo.value = '';
-        kvcKvHeadsRo.value = '';
-        kvcHeadDimRo.value = '';
-        return;
-      }
-
-      kvcLayersRo.value = String(prof.layers);
-      kvcExpertsRo.value = prof.experts != null ? String(prof.experts) : '—';
-      if (prof.kvFormula === 'mla-dsa') {
-        kvcKvHeadsRo.value = `${prof.compressedKvDim} (kv_lora_rank)`;
-        kvcHeadDimRo.value = `${prof.ropeHeadDim} (qk_rope) + ${prof.dsaIndexHeadDim} (DSA index)`;
-        return;
-      }
-
-      if (prof.kvFormula === 'qwen-hybrid-attention') {
-        kvcLayersRo.value = `${prof.fullAttentionLayers}（full）+ ${prof.linearAttentionLayers}（linear）`;
-        kvcKvHeadsRo.value = String(prof.kvHeads);
-        kvcHeadDimRo.value = String(prof.headDim);
-        return;
-      }
-
-      if (prof.kvFormula === 'mla') {
-        kvcKvHeadsRo.value = `${prof.compressedKvDim} (kv_lora_rank)`;
-        kvcHeadDimRo.value = `${prof.ropeHeadDim} (qk_rope_head_dim)`;
-        return;
-      }
-
-      kvcKvHeadsRo.value = String(prof.kvHeads);
-      kvcHeadDimRo.value = String(prof.headDim);
-    }
-
-    function updateKvCacheEstimate() {
-      const key = modelNameKvc.value;
-      const prof = kvModelProfiles[key];
-      const quant = prof ? resolveKvQuant(key, prof) : parseKvQuantFromModelName(key);
-      const seqLen = Number(kvcTokenCount.value);
-      const batchSize = Number(kvcBatchSize.value);
-
-      if (!prof) {
-        kvcResultGb.textContent = '--';
-        kvcResultMiB.textContent = '';
-        kvcResultFormula.textContent = '未配置该型号的 KV 画像参数。';
-        kvcResultSubtitle.textContent = 'KV Cache 估算体积';
-        return;
-      }
-
-      kvcQuantRo.value = quant.label;
-      kvcDtypeSizeRo.value = String(quant.dtypeBytes);
-      kvcResultSubtitle.textContent = `KV Cache 估算体积（${quant.label}，${quant.dtypeBytes} byte/element）`;
-
-      if (!Number.isInteger(batchSize) || batchSize < 1) {
-        kvcResultGb.textContent = '--';
-        kvcResultMiB.textContent = '';
-        kvcResultFormula.textContent = 'batch_size 需为大于等于 1 的整数。';
-        return;
-      }
-
-      if (!Number.isInteger(seqLen) || seqLen < 1) {
-        kvcResultGb.textContent = '--';
-        kvcResultMiB.textContent = '';
-        kvcResultFormula.textContent = 'seq_len 需为大于等于 1 的整数。';
-        return;
-      }
-
-      const dtypeBytes = quant.dtypeBytes;
-      const bytes = computeKvCacheBytes(key, prof, quant, seqLen, batchSize);
-      const gib = bytes / 1024 ** 3;
-      const mib = bytes / 1024 ** 2;
-      const seqLabel = seqLen.toLocaleString('zh-CN');
-
-      kvcResultGb.textContent = gib.toFixed(4);
-      kvcResultMiB.textContent = `（≈ ${mib.toLocaleString('zh-CN', { maximumFractionDigits: 2 })} MiB）`;
-
-      if (prof.kvFormula === 'mla-dsa') {
-        const standardBytes = computeStandardKvCacheBytes(prof, quant, seqLen, batchSize);
-        const standardGib = standardBytes / 1024 ** 3;
-        const mlaOnlyBytes = computeMlaKvCacheBytes(prof, quant, seqLen, batchSize);
-        const mlaOnlyGib = mlaOnlyBytes / 1024 ** 3;
-        const mlaElements = prof.compressedKvDim + prof.ropeHeadDim;
-        const perLayerPerTokenBytes =
-          (mlaElements + prof.dsaIndexHeadDim) * dtypeBytes + (prof.dsaIndexScaleBytes || 0);
-        const bytesPerToken = perLayerPerTokenBytes * prof.layers;
-
-        kvcResultSubtitle.textContent = `KV Cache 估算（GLM MLA + DSA · ${quant.label}）`;
-        kvcResultFormula.textContent =
-          `MLA+DSA 展开：L ${prof.layers} × seq_len ${seqLabel} × batch_size ${batchSize} × [(${prof.compressedKvDim} + ${prof.ropeHeadDim} + ${prof.dsaIndexHeadDim}) × dtype_size ${dtypeBytes} + indexer_scale ${prof.dsaIndexScaleBytes}] = ${perLayerPerTokenBytes} bytes/token/layer ≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
-          ` 全模型每 token ${bytesPerToken.toLocaleString('zh-CN')} bytes（≈ ${(bytesPerToken / 1024).toFixed(1)} KiB）。` +
-          ` 仅 MLA 口径 ≈ ${mlaOnlyGib.toFixed(2)} GiB；对比标准 GQA 展开式 ≈ ${standardGib.toFixed(2)} GiB。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未乘入 KV。`;
-        return;
-      }
-
-      if (prof.kvFormula === 'mla') {
-        const standardBytes = computeStandardKvCacheBytes(prof, quant, seqLen, batchSize);
-        const standardGib = standardBytes / 1024 ** 3;
-        const perLayerPerToken = prof.compressedKvDim + prof.ropeHeadDim;
-        const bytesPerToken = perLayerPerToken * prof.layers * dtypeBytes;
-
-        kvcResultSubtitle.textContent = `KV Cache 估算（DeepSeek MLA · ${quant.label}）`;
-        kvcResultFormula.textContent =
-          `MLA 展开：L ${prof.layers} × (kv_lora_rank ${prof.compressedKvDim} + qk_rope_head_dim ${prof.ropeHeadDim}) × seq_len ${seqLabel} × batch_size ${batchSize} × dtype_size ${dtypeBytes}（${quant.label}）≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
-          ` 每层每 token ${perLayerPerToken} 元素，全模型每 token ${bytesPerToken.toLocaleString('zh-CN')} bytes（≈ ${(bytesPerToken / 1024).toFixed(1)} KiB）。` +
-          ` 对比标准 GQA 展开式 ≈ ${standardGib.toFixed(2)} GiB。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未乘入 MLA KV。`;
-        return;
-      }
-
-      if (prof.kvFormula === 'qwen-hybrid-attention') {
-        const totalLayers = prof.fullAttentionLayers + prof.linearAttentionLayers;
-        const elementsPerLayer = 2 * prof.kvHeads * prof.headDim;
-        const bytesPerLayer = elementsPerLayer * dtypeBytes;
-        const bytesPerToken = bytesPerLayer * prof.fullAttentionLayers;
-        const naiveFullGqaBytes =
-          2 * totalLayers * prof.kvHeads * prof.headDim * seqLen * batchSize * dtypeBytes;
-        const naiveFullGqaGib = naiveFullGqaBytes / 1024 ** 3;
-
-        kvcResultSubtitle.textContent = `KV Cache 估算（Qwen 混合注意力 · ${quant.label}）`;
-        kvcResultFormula.textContent =
-          `混合注意力：L_full ${prof.fullAttentionLayers} × 2(K/V) × H_kv ${prof.kvHeads} × head_dim ${prof.headDim} × seq_len ${seqLabel} × batch_size ${batchSize} × dtype_size ${dtypeBytes}（${quant.label}）≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
-          ` 每层每 token ${bytesPerLayer.toLocaleString('zh-CN')} bytes，全模型每 token ${bytesPerToken.toLocaleString('zh-CN')} bytes（${prof.linearAttentionLayers} 层 linear attention 未计入）。` +
-          ` 对比若 ${totalLayers} 层均为 full attention GQA ≈ ${naiveFullGqaGib.toFixed(2)} GiB。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未计入。`;
-        return;
-      }
-
-      if (prof.kvFormula === 'v4-compressed' && v4KvCompressedAnchors[key]) {
-        const anchor = v4KvCompressedAnchors[key];
-        const standardBytes = computeStandardKvCacheBytes(prof, quant, seqLen, batchSize);
-        const standardGib = standardBytes / 1024 ** 3;
-        const bytesPerToken = bytes / seqLen / batchSize;
-        const anchorKvGiB = anchor.bf16AnchorGiB * (quant.dtypeBytes / 2);
-
-        kvcResultSubtitle.textContent = `KV Cache 估算（V4 CSA/HCA 压缩 · ${quant.label}）`;
-        kvcResultFormula.textContent =
-          `V4 压缩估算：BF16 基准 ${anchor.bf16AnchorGiB.toFixed(2)} GiB @ seq_len ${anchor.anchorSeqLen.toLocaleString('zh-CN')} × (dtype_size ${dtypeBytes} / 2) ≈ ${anchorKvGiB.toFixed(2)} GiB @ 1M × (seq_len ${seqLabel} / ${anchor.anchorSeqLen.toLocaleString('zh-CN')}) × batch_size ${batchSize} ≈ ${bytes.toLocaleString('zh-CN')} bytes（≈ ${gib.toFixed(4)} GiB）。` +
-          ` 对比标准 GQA 展开式 ≈ ${standardGib.toFixed(2)} GiB。${anchor.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未计入；每 token 约 ${Math.round(bytesPerToken).toLocaleString('zh-CN')} bytes（含架构压缩）。`;
-        return;
-      }
-
-      const bytesPerToken =
-        2 * prof.layers * prof.kvHeads * prof.headDim * dtypeBytes;
-      kvcResultFormula.textContent =
-        `展开：2(K/V) × L ${prof.layers} × num_key_value_heads ${prof.kvHeads} × head_dim ${prof.headDim} × seq_len ${seqLabel} × batch_size ${batchSize} × dtype_size ${dtypeBytes}（${quant.label}）≈ ${bytes.toLocaleString('zh-CN')} bytes。` +
-        `每 token 约 ${Math.round(bytesPerToken).toLocaleString('zh-CN')} bytes（不含 batch）。${quant.note}。MoE 专家数 ${prof.experts != null ? prof.experts : '—'} 未计入。`;
-    }
-
-    function selectDeploymentTab(mode) {
-      tabMixed.setAttribute('aria-selected', mode === 'mixed' ? 'true' : 'false');
-      tabSeparated.setAttribute('aria-selected', mode === 'separated' ? 'true' : 'false');
-      tabKvcache.setAttribute('aria-selected', mode === 'kvcache' ? 'true' : 'false');
-
-      tabMixed.tabIndex = mode === 'mixed' ? 0 : -1;
-      tabSeparated.tabIndex = mode === 'separated' ? 0 : -1;
-      tabKvcache.tabIndex = mode === 'kvcache' ? 0 : -1;
-
-      tabMixed.className = mode === 'mixed' ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-      tabSeparated.className = mode === 'separated' ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-      tabKvcache.className = mode === 'kvcache' ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-
-      panelMixed.classList.toggle('hidden', mode !== 'mixed');
-      panelMixed.setAttribute('aria-hidden', mode === 'mixed' ? 'false' : 'true');
-      panelSeparated.classList.toggle('hidden', mode !== 'separated');
-      panelSeparated.setAttribute('aria-hidden', mode === 'separated' ? 'false' : 'true');
-      panelKvcache.classList.toggle('hidden', mode !== 'kvcache');
-      panelKvcache.setAttribute('aria-hidden', mode === 'kvcache' ? 'false' : 'true');
-
-      if (mode === 'mixed') {
-        updateEstimateMixed();
-      } else if (mode === 'separated') {
-        updateEstimateSeparated();
-      } else {
-        syncKvProfileFromModel();
-        updateKvCacheEstimate();
-      }
-    }
-
-    tabMixed.addEventListener('click', () => selectDeploymentTab('mixed'));
-    tabSeparated.addEventListener('click', () => selectDeploymentTab('separated'));
-    tabKvcache.addEventListener('click', () => selectDeploymentTab('kvcache'));
-
-    function updateEstimateMixed() {
-      const modelName = modelNameInput.value.trim() || '未命名模型';
-      const npuModel = npuModelInput.value.trim() || '未指定 NPU';
-      const modelSizeB = parseModelSize(modelSizeInput.value);
-      const cardCount = Number(cardCountInput.value);
-      const hbmCapacity = Number(hbmCapacityInput.value);
-      const fixedWeightGb = fixedW8A8WeightGbByModel[modelNameInput.value];
-      const usesFixedW8A8Weight = typeof fixedWeightGb === 'number';
-
-      resultLabel.textContent = `${modelName} · ${npuModel} · ${Number.isFinite(cardCount) ? cardCount : '-'} 卡`;
-      capacityLabel.textContent = `单卡总容量 ${Number.isFinite(hbmCapacity) ? hbmCapacity : '-'} GB`;
-
-      if (!Number.isInteger(cardCount) || cardCount < 1) {
-        setHbmHeadline(hbmUsed, hbmRemain, '--', '--', 'neutral');
-        resultMessage.textContent = '卡数量需为大于等于 1 的整数。';
-        hbmChart.innerHTML = '';
-        return;
-      }
-
-      if (!Number.isFinite(hbmCapacity) || hbmCapacity <= 0) {
-        setHbmHeadline(hbmUsed, hbmRemain, '--', '--', 'neutral');
-        resultMessage.textContent = '单卡 HBM 总容量需为大于 0 的数字。';
-        hbmChart.innerHTML = '';
-        return;
-      }
-
-      if (!usesFixedW8A8Weight && (!Number.isFinite(modelSizeB) || modelSizeB <= 0)) {
-        setHbmHeadline(hbmUsed, hbmRemain, '--', '--', 'neutral');
-        resultMessage.textContent = '请输入有效模型尺寸，例如 284B、1.6T、72。';
-        hbmChart.innerHTML = '';
-        return;
-      }
-
-      let modelUsage;
-
-      if (usesFixedW8A8Weight) {
-        modelUsage = fixedWeightGb / cardCount;
-      } else {
-        modelUsage = (modelSizeB * 2) / cardCount;
-      }
-
-      const frameworkUsage = hbmCapacity * FRAMEWORK_OVERHEAD_OF_CAPACITY;
-      let detailLine;
-
-      const hbmPerCard = modelUsage + frameworkUsage;
-      const remaining = Math.max(hbmCapacity - hbmPerCard, 0);
-      const signedRemain = hbmCapacity - hbmPerCard;
-      const overflow = Math.max(hbmPerCard - hbmCapacity, 0);
-      const remainText = signedRemain.toFixed(2);
-      setHbmHeadline(hbmUsed, hbmRemain, hbmPerCard.toFixed(2), remainText, signedRemain >= 0 ? 'good' : 'bad');
-
-      if (usesFixedW8A8Weight) {
-        const weightNote = modelNameInput.value.includes('W8A8')
-          ? '（W8A8）'
-          : modelNameInput.value.includes('W4A8')
-            ? '（W4A8）'
-            : '';
-        detailLine = `模型权重合计 ${fixedWeightGb} GB${weightNote} / ${cardCount} = ${modelUsage.toFixed(2)} GB/卡，框架/运行开销 ${frameworkUsage.toFixed(2)} GB（单卡容量 10%），剩余 ${remaining.toFixed(2)} GB/卡${overflow > 0 ? `，超出 ${overflow.toFixed(2)} GB/卡` : ''}。`;
-      } else {
-        const displayParam = formatModelParamBillions(modelSizeB);
-        detailLine = `${displayParam} × 2 bytes / ${cardCount} = ${modelUsage.toFixed(2)} GB 模型文件，框架/运行开销 ${frameworkUsage.toFixed(2)} GB（单卡容量 10%），剩余 ${remaining.toFixed(2)} GB/卡${overflow > 0 ? `，超出 ${overflow.toFixed(2)} GB/卡` : ''}。`;
-      }
-
-      resultMessage.textContent = detailLine;
-
-      renderHbmChartInto(hbmChart, cardCount, hbmCapacity, modelUsage, frameworkUsage, remaining, overflow);
-    }
-
-    function updateEstimateSeparated() {
-      const modelName = modelNameSep.value.trim() || '未命名模型';
-      const npuModel = npuModelSep.value.trim() || '未指定 NPU';
-      const modelSizeB = parseModelSize(modelSizeSep.value);
-      const hbmCapacity = Number(hbmCapacitySep.value);
-      const layout = pdDeployLayouts[pdDeployMode.value];
-      const fixedWeightGb = fixedW8A8WeightGbByModel[modelNameSep.value];
-      const usesFixedW8A8Weight = typeof fixedWeightGb === 'number';
-
-      let modelGb;
-      if (usesFixedW8A8Weight) {
-        modelGb = fixedWeightGb;
-      } else if (Number.isFinite(modelSizeB) && modelSizeB > 0) {
-        modelGb = modelSizeB * 2;
-      } else {
-        modelGb = NaN;
-      }
-
-      capacityLabelSep.textContent = `单卡总容量 ${Number.isFinite(hbmCapacity) ? hbmCapacity : '-'} GB`;
-
-      if (!layout) {
-        clearSepOutputs();
-        resultLabelSep.textContent = `${modelName} · ${npuModel}`;
-        resultMessageSep.textContent = '请选择有效的 PD 部署方式。';
-        hbmSubtitleSep.textContent = '每张 NPU 估算 HBM（瓶颈侧）';
-        return;
-      }
-
-      resultLabelSep.textContent = `${modelName} · ${npuModel} · ${layout.label}`;
-
-      if (!Number.isFinite(hbmCapacity) || hbmCapacity <= 0) {
-        clearSepOutputs();
-        resultMessageSep.textContent = '单卡 HBM 总容量需为大于 0 的数字。';
-        hbmSubtitleSep.textContent = '每张 NPU 估算 HBM（瓶颈侧）';
-        return;
-      }
-
-      if (!usesFixedW8A8Weight && (!Number.isFinite(modelGb) || modelGb <= 0)) {
-        clearSepOutputs();
-        resultMessageSep.textContent = '请输入有效模型尺寸，例如 284B、1.6T、72。';
-        hbmSubtitleSep.textContent = '每张 NPU 估算 HBM（瓶颈侧）';
-        return;
-      }
-
-      const cardsPerPGroup = layout.pCardTotal / layout.pGroups;
-      const cardsPerDGroup = layout.dCardTotal / layout.dGroups;
-
-      if (
-        !Number.isInteger(cardsPerPGroup) ||
-        cardsPerPGroup < 1 ||
-        !Number.isInteger(cardsPerDGroup) ||
-        cardsPerDGroup < 1
-      ) {
-        clearSepOutputs();
-        resultMessageSep.textContent = '当前 PD 部署方式的组内卡数无效，请检查配置。';
-        hbmSubtitleSep.textContent = '每张 NPU 估算 HBM（瓶颈侧）';
-        return;
-      }
-
-      const frameworkUsage = hbmCapacity * FRAMEWORK_OVERHEAD_OF_CAPACITY;
-      const modelUsageP = modelGb / cardsPerPGroup;
-      const modelUsageD = modelGb / cardsPerDGroup;
-      const usageP = modelUsageP + frameworkUsage;
-      const usageD = modelUsageD + frameworkUsage;
-
-      const bottleneckIsPrefill = usageP >= usageD;
-      const bottleneckSide = bottleneckIsPrefill ? 'Prefill' : 'Decode';
-      const usageB = bottleneckIsPrefill ? usageP : usageD;
-
-      const signedRemainP = hbmCapacity - usageP;
-      const signedRemainD = hbmCapacity - usageD;
-      const signedRemainB = hbmCapacity - usageB;
-
-      resultLabelSep.textContent = `${modelName} · ${npuModel} · ${layout.label} · 瓶颈：${bottleneckSide}`;
-      hbmSubtitleSep.textContent = `每张 NPU 估算 HBM（${bottleneckSide}，瓶颈侧）`;
-
-      setHbmHeadline(
-        hbmUsedSep,
-        hbmRemainSep,
-        usageB.toFixed(2),
-        signedRemainB.toFixed(2),
-        signedRemainB >= 0 ? 'good' : 'bad'
-      );
-
-      const lineP = `Prefill：${layout.pCardTotal} 卡 / ${layout.pGroups} 组 → 每组 ${cardsPerPGroup} 卡（组内均摊一整份权重），每卡占用 ${usageP.toFixed(2)} GB，剩余 ${signedRemainP.toFixed(2)} GB。`;
-      const lineD = `Decode：${layout.dCardTotal} 卡 / ${layout.dGroups} 组 → 每组 ${cardsPerDGroup} 卡（组内均摊一整份权重），每卡占用 ${usageD.toFixed(2)} GB，剩余 ${signedRemainD.toFixed(2)} GB。`;
-      const lineB = `瓶颈侧为 ${bottleneckSide}（单卡总占用更高）。柱状图按 Prefill / Decode 分组列出各组 NPU；每组多于 5 卡时显示前 4 条与末卡，中间省略。`;
-      resultMessageSep.textContent = `${lineP}\n${lineD}\n${lineB}`;
-
-      renderPdSepGroupedChart(hbmChartSep, layout, hbmCapacity, modelUsageP, modelUsageD, frameworkUsage);
-    }
-
-    function getSegmentWidth(value, total) {
-      if (total <= 0 || value <= 0) {
-        return 0;
-      }
-
-      return Math.max((value / total) * 100, 2);
-    }
-
-    /**
-     * 生成横向堆叠条列表 HTML（不含外层容器）。
-     * cardCount ≤ 5 时全部展示；否则展示前 4 条、中间省略、最后 1 条。
-     */
-    function buildBarChartRowsHtml(cardCount, hbmCapacity, modelUsage, frameworkUsage, rowLabelFn) {
-      const hbmPerCard = modelUsage + frameworkUsage;
-      const remaining = Math.max(hbmCapacity - hbmPerCard, 0);
-      const overflow = Math.max(hbmPerCard - hbmCapacity, 0);
-      const chartTotal = hbmCapacity + overflow;
-      const frameworkWithinCapacity = Math.min(frameworkUsage, hbmCapacity);
-      const modelWithinCapacity = Math.min(modelUsage, Math.max(hbmCapacity - frameworkWithinCapacity, 0));
-      const frameworkWidth = getSegmentWidth(frameworkWithinCapacity, chartTotal);
-      const modelWidth = getSegmentWidth(modelWithinCapacity, chartTotal);
-      const remainingWidth = getSegmentWidth(remaining, chartTotal);
-      const overflowWidth = getSegmentWidth(overflow, chartTotal);
-      const barTitle = `框架 ${frameworkUsage.toFixed(2)} GB，模型 ${modelUsage.toFixed(2)} GB，剩余 ${remaining.toFixed(2)} GB`;
-      const barHtml = `
-        <div class="h-8 overflow-hidden rounded-full bg-slate-800 ring-1 ring-white/10" title="${barTitle}">
-          <div class="flex h-full min-w-full">
-            <div class="bg-amber-400" style="width: ${frameworkWidth}%"></div>
-            <div class="bg-blue-400" style="width: ${modelWidth}%"></div>
-            ${remaining > 0 ? `<div class="bg-emerald-400" style="width: ${remainingWidth}%"></div>` : ''}
-            ${overflow > 0 ? `<div class="bg-rose-500" style="width: ${overflowWidth}%"></div>` : ''}
-          </div>
-        </div>
-      `;
-
-      function rowHtml(index) {
-        const cardName = rowLabelFn(index);
-        return `
-          <div class="grid gap-2 sm:grid-cols-[6rem_1fr] sm:items-center">
-            <div class="text-xs font-medium text-slate-400">${cardName}</div>
-            ${barHtml}
-          </div>
-        `;
-      }
-
-      if (cardCount <= 5) {
-        return Array.from({ length: cardCount }, (_, i) => rowHtml(i)).join('');
-      }
-
-      const lastIndex = cardCount - 1;
-      const ellipsisRow = `
-        <div class="grid gap-2 sm:grid-cols-[6rem_1fr] sm:items-center">
-          <div class="text-xs font-medium text-slate-500">···</div>
-          <div class="flex h-8 items-center rounded-full bg-slate-800/60 px-4 text-xs text-slate-500 ring-1 ring-white/5" title="本组中间 ${cardCount - 5} 张卡与首尾占用相同">中间省略</div>
-        </div>
-      `;
-      return [0, 1, 2, 3].map((i) => rowHtml(i)).join('') + ellipsisRow + rowHtml(lastIndex);
-    }
-
-    function renderHbmChartInto(chartEl, cardCount, hbmCapacity, modelUsage, frameworkUsage, remaining, overflow) {
-      chartEl.innerHTML = buildBarChartRowsHtml(cardCount, hbmCapacity, modelUsage, frameworkUsage, (i) =>
-        `NPU ${String(i + 1).padStart(2, '0')}`
-      );
-    }
-
-    /** PD分离：按 Prefill 组 / Decode 组分段展示，每组独立省略逻辑。 */
-    function renderPdSepGroupedChart(chartEl, layout, hbmCapacity, modelUsageP, modelUsageD, frameworkUsage) {
-      const cardsPerPGroup = layout.pCardTotal / layout.pGroups;
-      const cardsPerDGroup = layout.dCardTotal / layout.dGroups;
-      const sections = [];
-
-      for (let g = 1; g <= layout.pGroups; g += 1) {
-        const rows = buildBarChartRowsHtml(cardsPerPGroup, hbmCapacity, modelUsageP, frameworkUsage, (i) =>
-          `P${g}-${String(i + 1).padStart(2, '0')}`
-        );
-        sections.push(`
-          <div class="space-y-2">
-            <p class="text-xs font-semibold text-slate-300">Prefill · 组 ${g} · ${cardsPerPGroup} 卡</p>
-            <div class="space-y-3">${rows}</div>
-          </div>
-        `);
-      }
-
-      for (let g = 1; g <= layout.dGroups; g += 1) {
-        const rows = buildBarChartRowsHtml(cardsPerDGroup, hbmCapacity, modelUsageD, frameworkUsage, (i) =>
-          `D${g}-${String(i + 1).padStart(2, '0')}`
-        );
-        sections.push(`
-          <div class="space-y-2">
-            <p class="text-xs font-semibold text-slate-300">Decode · 组 ${g} · ${cardsPerDGroup} 卡</p>
-            <div class="space-y-3">${rows}</div>
-          </div>
-        `);
-      }
-
-      chartEl.innerHTML = `<div class="space-y-8">${sections.join('')}</div>`;
-    }
-
-    modelNameInput.addEventListener('change', () => {
-      modelSizeInput.value = modelSizeMap[modelNameInput.value] || '';
-      updateEstimateMixed();
-    });
-
-    attachSyncedInputs([modelSizeInput, cardCountInput], updateEstimateMixed);
-
-    npuModelInput.addEventListener('change', () => {
-      syncNpuCapacityFromSelection();
-      updateEstimateMixed();
-    });
-
-    panelMixed.querySelectorAll('[data-card-count]').forEach((button) => {
-      button.addEventListener('click', () => {
-        cardCountInput.value = button.dataset.cardCount;
-        updateEstimateMixed();
-      });
-    });
-
-    modelNameSep.addEventListener('change', () => {
-      modelSizeSep.value = modelSizeMap[modelNameSep.value] || '';
-      updateEstimateSeparated();
-    });
-
-    attachSyncedInputs([modelSizeSep, pdDeployMode], updateEstimateSeparated);
-
-    npuModelSep.addEventListener('change', () => {
-      syncNpuCapacitySepFromSelection();
-      updateEstimateSeparated();
-    });
-
-    modelNameKvc.addEventListener('change', () => {
-      syncKvProfileFromModel();
-      updateKvCacheEstimate();
-    });
-
-    attachSyncedInputs([kvcTokenCount, kvcBatchSize], updateKvCacheEstimate);
-
-    panelKvcache.querySelectorAll('[data-kvc-tokens]').forEach((button) => {
-      button.addEventListener('click', () => {
-        kvcTokenCount.value = button.dataset.kvcTokens;
-        updateKvCacheEstimate();
-      });
-    });
-
-    syncNpuCapacityFromSelection();
-    syncNpuCapacitySepFromSelection();
-    syncKvProfileFromModel();
-
-    selectDeploymentTab('mixed');
+    })();
   </script>
 </body>
 </html>

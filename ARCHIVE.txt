@@ -1,11 +1,66 @@
 aidc 静态站点归档
-版本：v2026.06.02
-日期：2026-06-02
+版本：v2026.06.19
+日期：2026-06-19
 
-包含：index.html、404.html、capacity.html、docs.html、preview-8011.sh
-      ai-dc-layout.html、aidc-calculation.html
-      datacenter-3d-case-b.html、datacenter-3d-v3 2.html
-      white-paper.html、white-paper-2.0.html、white-paper-2.0-draft.html
-      about-us.html、assets/（团队头像等）、data/ai-usage.json、data/dc3d-case-*.defaults.json
-说明：与本目录源码一致；解压即用或与服务器 wwwroot 同步。
-      3D 案例默认配置见 data/dc3d-case-a.defaults.json / dc3d-case-b.defaults.json。
+包含
+────
+【主导航页面】
+  index.html              首页（Agentic 推理 #inference、容量 #capacity、文档 #docs）
+  ai-dc-design.html       AI DC 规划（Tab 壳页，内嵌 iframe）
+  post-training.html      后训练
+  white-paper.html        白皮书
+  about-us.html           About US
+  404.html                404 页
+
+【AI DC 规划 · iframe 子页】
+  ai-dc-room-layout.html      Tab「机房布局」（?embed=1）
+  ai-dc-four-layer.html       机房布局 · 四层示意（嵌套 iframe）
+  ai-dc-floor-detail.html     机房布局 · 单层平面图（嵌套 iframe）
+  ai-dc-layout_37.html        Tab「机柜布局（风冷）」
+  datacenter-3d-case-b.html   Tab「案例 A（风冷）」
+  datacenter-3d-v3 2.html     Tab「案例 B（风冷）」
+  aidc-investment-roi.html    Tab「Investment ROI」
+
+【兼容重定向页（不在主导航，保留旧链接）】
+  ai-dc-layout.html       → ai-dc-design.html
+  capacity.html           → index.html#capacity
+  docs.html               → index.html#docs
+
+【资源与脚本】
+  preview-8011.sh
+  assets/（团队头像等）
+  css/embed.css
+  data/ai-usage.json、data/dc3d-case-*.defaults.json、data/config-seeds/
+  i18n/*.json
+  js/i18n.js、js/i18n-bootstrap.js、js/lang-switch.js、js/aidc-locale-bridge.js
+  js/embed-mode.js、js/redirect-page.js
+  js/index-page.js、js/ai-dc-design-page.js、js/ai-dc-room-layout-page.js
+  js/about-us-page.js、js/config-loader.js
+
+站点结构
+────────
+  主导航 5 页 + 404。
+  ai-dc-design.html 通过 js/ai-dc-design-page.js 加载上述 7 个子页 iframe；
+  ai-dc-room-layout.html 再通过 js/ai-dc-room-layout-page.js 加载四层示意与单层平面。
+
+  Tab 顺序（ai-dc-design）：机房布局 | 机柜布局（风冷）| 案例 A | 案例 B | Investment ROI
+
+说明
+────
+  与本目录源码一致；解压即用或与服务器 wwwroot 同步。
+  全站采用方案 B（单 HTML + i18n/*.json）；英文通过 ?lang=en 或页内语言切换。
+  例外：ai-dc-layout_37.html 仍使用页内 EN{} 与 AidcLocaleBridge，未完全迁到方案 B。
+  3D 案例默认配置见 data/dc3d-case-a.defaults.json / dc3d-case-b.defaults.json。
+  embed 模式：子页 URL 加 ?embed=1，样式见 css/embed.css、js/embed-mode.js。
+
+本地预览
+────────
+  ./preview-8011.sh
+  http://127.0.0.1:8011/aidc/index.html
+  AI DC 规划：http://127.0.0.1:8011/aidc/ai-dc-design.html
+
+已移除（勿再引用）
+──────────────────
+  en/ 目录（英文改 ?lang=en）
+  aidc-calculation.html、datacenter-hot-aisle-demo.html
+  white-paper-2.0.html、white-paper-2.0-draft.html、whitepaper2026-outline.html

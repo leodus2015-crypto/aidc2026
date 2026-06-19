@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="四层数据中心建筑示意：RF、3F、2F、1F 平面布局与层高标注。" />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>四层数据中心示意图 · AI Data Center</title>
+  <script src="js/embed-mode.js"></script>
+  <link rel="stylesheet" href="css/embed.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html, body { height: 100%; }
+    .building-stage { cursor: grab; perspective: 1400px; overflow: hidden; touch-action: none; }
+    .building-stage.dragging { cursor: grabbing; }
+    .building-rotator {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 50%;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform;
+    }
+    .zone-label { pointer-events: none; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #buildingSvg { display: block; width: 100%; height: 100%; }
+  </style>
+</head>
+<body class="flex min-h-screen flex-col bg-slate-50 text-slate-900" data-i18n-page="ai-dc-four-layer">
+  <header class="aidc-chrome shrink-0 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <nav class="mx-auto flex max-w-[100rem] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 sm:px-6" data-i18n-aria-label="nav.aria" aria-label="主导航">
+      <a href="index.html" class="flex shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
+        <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" class="h-7 w-auto object-contain sm:h-8" />
+      </a>
+      <p class="hidden text-sm font-semibold text-slate-800 sm:block" data-pt-i18n="四层数据中心示意图">四层数据中心示意图</p>
+      <ul class="flex flex-wrap items-center gap-4 text-xs font-semibold sm:gap-5 sm:text-sm">
+        <li><a href="ai-dc-design.html" class="text-blue-700" data-i18n="nav.aiDcLayout">AI DC规划</a></li>
+        <li><a href="index.html#inference" class="text-slate-600 hover:text-slate-950" data-i18n="nav.inference">Agentic推理</a></li>
+        <li><a href="post-training.html" class="text-slate-600 hover:text-slate-950" data-i18n="nav.postTraining">后训练</a></li>
+        <li><a href="white-paper.html" class="text-slate-600 hover:text-slate-950" data-i18n="nav.whitePaper">白皮书</a></li>
+      </ul>
+      <div id="lang-switch-root" class="ml-auto shrink-0"></div>
+    </nav>
+  </header>
+
+  <div class="building-stage relative min-h-0 flex-1">
+    <div class="building-rotator">
+      <svg id="buildingSvg" viewBox="0 0 1000 820" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Four-layer data center floor stack schematic">
+        <g id="dimLines" fill="#64748b" font-size="15" font-family="-apple-system,BlinkMacSystemFont,sans-serif"></g>
+        <g id="floorGroups"></g>
+      </svg>
+    </div>
+    <p class="pointer-events-none absolute bottom-2 right-3 text-[10px] text-slate-400 sm:bottom-3 sm:right-4 sm:text-xs" data-pt-i18n="左右拖动旋转 · 滚轮缩放 · 正面朝向旋转">左右拖动旋转 · 滚轮缩放 · 正面朝向旋转</p>
+  </div>
+
+  <script>
+    function L(s) {
+      if (!s || !window.AidcI18n) return s;
+      return AidcI18n.getLookupText(s);
+    }
+    function applyPtI18nEl(el) {
+      var key = el.getAttribute('data-pt-i18n');
+      if (!key) return;
+      var val = L(key);
+      var tspans = el.querySelectorAll('tspan');
+      if (tspans.length) {
+        val.split('\n').forEach(function (line, i) {
+          if (tspans[i]) tspans[i].textContent = line;
+        });
+      } else {
+        el.textContent = val;
+      }
+    }
+    function applyDemoStaticI18n() {
+      document.querySelectorAll('[data-pt-i18n]').forEach(applyPtI18nEl);
+    }
+
+    const ZONES = {
+      hvac: { label: '制冷', fill: '#e0f2fe', stroke: '#0284c7', text: '#0369a1' },
+      server: { label: '机房', fill: '#e2e8f0', stroke: '#475569', text: '#334155' },
+      electrical: { label: '配电', fill: '#fef3c7', stroke: '#d97706', text: '#92400e' },
+      hydraulic: { label: '水力', fill: '#ccfbf1', stroke: '#0d9488', text: '#115e59' },
+      battery: { label: '电池', fill: '#ede9fe', stroke: '#7c3aed', text: '#5b21b6' },
+      cooling: { label: '冷却塔', fill: '#dbeafe', stroke: '#2563eb', text: '#1d4ed8' },
+      tbd: { label: '待定', fill: '#f8fafc', stroke: '#94a3b8', text: '#64748b', dash: '6 4' },
+    };
+
+    const ISO = { ox: 280, oy: 720, sx: 92, sy: 53, zStep: 138 };
+
+    function iso(x, y, z) {
+      return {
+        x: ISO.ox + (x - y) * ISO.sx,
+        y: ISO.oy - z * ISO.zStep + (x + y) * ISO.sy,
+      };
+    }
+
+    function poly(points) {
+      return points.map((p) => `${p.x},${p.y}`).join(' ');
+    }
+
+    function centroid(points) {
+      return {
+        x: points.reduce((s, p) => s + p.x, 0) / points.length,
+        y: points.reduce((s, p) => s + p.y, 0) / points.length,
+      };
+    }
+
+    function edgeAngle(p1, p2) {
+      let deg = (Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180) / Math.PI;
+      if (deg > 90) deg -= 180;
+      if (deg < -90) deg += 180;
+      return deg;
+    }
+
+    function edgeLength(p1, p2) {
+      return Math.hypot(p2.x - p1.x, p2.y - p1.y);
+    }
+
+    function topFace(z, w, d) {
+      return [iso(0, 0, z), iso(w, 0, z), iso(w, d, z), iso(0, d, z)];
+    }
+
+    function addAlignedLabel(parent, pts, zoneKey, uncertain) {
+      const style = ZONES[zoneKey] || ZONES.tbd;
+      const lines = (L(style.label) + (uncertain ? '?' : '')).split('\n');
+      const c = centroid(pts);
+      const widthEdge = edgeLength(pts[0], pts[1]);
+      const depthEdge = edgeLength(pts[0], pts[3]);
+      const alongWidth = widthEdge >= depthEdge;
+      const angle = alongWidth ? edgeAngle(pts[0], pts[1]) : edgeAngle(pts[0], pts[3]);
+      const span = alongWidth ? widthEdge : depthEdge;
+      const lineCount = lines.length;
+      const fs = Math.min(Math.max(7, span * 0.085), 11);
+      const lineHeight = fs * 1.1;
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('transform', `translate(${c.x},${c.y}) rotate(${angle})`);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('dominant-baseline', 'middle');
+      text.setAttribute('fill', style.text);
+      text.setAttribute('font-size', fs);
+      text.setAttribute('font-weight', '600');
+      text.classList.add('zone-label');
+
+      lines.forEach((line, i) => {
+        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan.setAttribute('x', 0);
+        tspan.setAttribute('y', (i - (lineCount - 1) / 2) * lineHeight);
+        tspan.textContent = line;
+        text.appendChild(tspan);
+      });
+
+      parent.appendChild(text);
+    }
+
+    function addFloorLabel(parent, floor) {
+      const pt = iso(-0.18, D * 0.5, floor.z);
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', pt.x - 10);
+      text.setAttribute('y', pt.y);
+      text.setAttribute('text-anchor', 'end');
+      text.setAttribute('dominant-baseline', 'middle');
+      text.setAttribute('fill', '#0f172a');
+      text.setAttribute('font-size', '18');
+      text.setAttribute('font-weight', '700');
+      text.classList.add('zone-label');
+      text.textContent = floor.label;
+      parent.appendChild(text);
+    }
+
+    const STANDARD_FLOOR_ROWS = [
+      [{ t: 'hvac' }, { t: 'hvac' }],
+      [{ t: 'server' }, { t: 'server' }],
+      [{ t: 'electrical' }, { t: 'electrical', w: 0.5 }, { t: 'hydraulic', w: 0.5 }],
+      [{ t: 'server' }, { t: 'server' }],
+      [{ t: 'hvac' }, { t: 'hvac' }],
+    ];
+
+    const floors = [
+      {
+        id: '1f', label: '1F', z: 0, gapLabel: '8.0 m',
+        rows: STANDARD_FLOOR_ROWS,
+      },
+      {
+        id: '2f', label: '2F', z: 1, gapLabel: '7.0 m',
+        rows: STANDARD_FLOOR_ROWS,
+      },
+      {
+        id: '3f', label: '3F', z: 2, gapLabel: '7.0 m',
+        rows: STANDARD_FLOOR_ROWS,
+      },
+      {
+        id: 'rf', label: 'RF', z: 3, gapLabel: null,
+        rows: [
+          [{ t: 'battery', w: 1 }, null],
+          [{ t: 'cooling' }, { t: 'cooling' }],
+          [{ t: 'battery', w: 1 }, null],
+        ],
+      },
+    ];
+
+    const W = 2;
+    const D = 1.1;
+    const stage = document.querySelector('.building-stage');
+    const rotator = document.querySelector('.building-rotator');
+    const floorGroups = document.getElementById('floorGroups');
+    const dimLines = document.getElementById('dimLines');
+    const view = {
+      rotateY: 0,
+      targetRotateY: 0,
+      scale: 1.32,
+      targetScale: 1.32,
+      baseY: 0,
+      dragging: false,
+      lastX: 0,
+      lastInteraction: Date.now(),
+      autoPhase: 0,
+    };
+
+    function zonePolygon(z, x0, y0, w, h) {
+      return [
+        iso(x0, y0, z), iso(x0 + w, y0, z),
+        iso(x0 + w, y0 + h, z), iso(x0, y0 + h, z),
+      ];
+    }
+
+    function renderFloor(floor) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.dataset.floor = floor.id;
+
+      const outline = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      outline.setAttribute('points', poly(topFace(floor.z, W, D)));
+      outline.setAttribute('fill', floor.uncertain ? 'rgba(248,250,252,0.35)' : 'rgba(255,255,255,0.55)');
+      outline.setAttribute('stroke', floor.uncertain ? '#94a3b8' : '#cbd5e1');
+      outline.setAttribute('stroke-width', '1.5');
+      outline.setAttribute('stroke-dasharray', floor.uncertain ? '8 5' : 'none');
+      outline.setAttribute('pointer-events', 'none');
+      g.appendChild(outline);
+
+      const rowCount = floor.rows.length;
+      floor.rows.forEach((row, ri) => {
+        const y0 = (ri / rowCount) * D;
+        const y1 = ((ri + 1) / rowCount) * D;
+        const rh = y1 - y0;
+        let xCursor = 0;
+
+        row.forEach((cell) => {
+          if (!cell) return;
+          const cw = (cell.w || 0.5) * W;
+          if (xCursor + cw > W + 0.001) return;
+          const pts = zonePolygon(floor.z, xCursor + 0.03, y0 + 0.03, cw - 0.06, rh - 0.06);
+          const zoneKey = cell.u ? 'tbd' : cell.t;
+          const style = ZONES[zoneKey] || ZONES.tbd;
+
+          const pg = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          pg.setAttribute('points', poly(pts));
+          pg.setAttribute('fill', style.fill);
+          pg.setAttribute('stroke', style.stroke);
+          pg.setAttribute('stroke-width', '1.5');
+          if (style.dash || floor.uncertain) pg.setAttribute('stroke-dasharray', style.dash || '5 3');
+          g.appendChild(pg);
+
+          addAlignedLabel(g, pts, zoneKey, cell.u || floor.uncertain);
+          xCursor += cw;
+        });
+      });
+
+      addFloorLabel(g, floor);
+      floorGroups.appendChild(g);
+    }
+
+    floors.forEach(renderFloor);
+
+    function fitViewBox() {
+      const svg = document.getElementById('buildingSvg');
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      [floorGroups, dimLines].forEach((group) => {
+        try {
+          const b = group.getBBox();
+          minX = Math.min(minX, b.x);
+          minY = Math.min(minY, b.y);
+          maxX = Math.max(maxX, b.x + b.width);
+          maxY = Math.max(maxY, b.y + b.height);
+        } catch (_) { /* empty group */ }
+      });
+      const pad = 90;
+      minX -= pad; minY -= pad; maxX += pad; maxY += pad;
+      const contentW = maxX - minX;
+      const contentH = maxY - minY;
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      const cw = svg.clientWidth || window.innerWidth;
+      const ch = svg.clientHeight || window.innerHeight;
+      const scale = Math.min(cw / contentW, ch / contentH);
+      const vbW = cw / scale;
+      const vbH = ch / scale;
+      svg.setAttribute('viewBox', `${cx - vbW / 2} ${cy - vbH / 2} ${vbW} ${vbH}`);
+    }
+
+    function renderDims() {
+      const xDim = ISO.ox + (W - D) * ISO.sx + 120;
+      floors.forEach((f) => {
+        if (!f.gapLabel) return;
+        const lower = iso(W + 0.08, D * 0.5, f.z);
+        const upper = iso(W + 0.08, D * 0.5, f.z + 1);
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', xDim);
+        line.setAttribute('y1', lower.y);
+        line.setAttribute('x2', xDim);
+        line.setAttribute('y2', upper.y);
+        line.setAttribute('stroke', '#64748b');
+        line.setAttribute('stroke-width', '1.5');
+        dimLines.appendChild(line);
+
+        [lower.y, upper.y].forEach((y) => {
+          const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          tick.setAttribute('x1', xDim - 10);
+          tick.setAttribute('y1', y);
+          tick.setAttribute('x2', xDim + 10);
+          tick.setAttribute('y2', y);
+          tick.setAttribute('stroke', '#64748b');
+          dimLines.appendChild(tick);
+        });
+
+        const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t.setAttribute('x', xDim + 16);
+        t.setAttribute('y', (lower.y + upper.y) / 2 + 5);
+        t.textContent = f.gapLabel;
+        dimLines.appendChild(t);
+      });
+    }
+    renderDims();
+    fitViewBox();
+    window.addEventListener('resize', fitViewBox);
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function updateTransform() {
+      rotator.style.transform = `translateY(${view.baseY}px) rotateY(${view.rotateY}deg) scale(${view.scale})`;
+    }
+
+    stage.addEventListener('pointerdown', (e) => {
+      view.dragging = true;
+      view.lastX = e.clientX;
+      view.lastInteraction = Date.now();
+      stage.classList.add('dragging');
+      stage.setPointerCapture(e.pointerId);
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+      if (!view.dragging) return;
+      const dx = e.clientX - view.lastX;
+      view.lastX = e.clientX;
+      view.targetRotateY = clamp(view.targetRotateY + dx * 0.24, -58, 58);
+      view.lastInteraction = Date.now();
+    });
+
+    function endDrag(e) {
+      if (!view.dragging) return;
+      view.dragging = false;
+      view.lastInteraction = Date.now();
+      stage.classList.remove('dragging');
+      if (e.pointerId !== undefined && stage.hasPointerCapture(e.pointerId)) {
+        stage.releasePointerCapture(e.pointerId);
+      }
+    }
+
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+    stage.addEventListener('pointerleave', endDrag);
+
+    stage.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const nextScale = view.targetScale * (e.deltaY > 0 ? 0.9 : 1.1);
+      view.targetScale = clamp(nextScale, 0.45, 2.2);
+      view.lastInteraction = Date.now();
+    }, { passive: false });
+
+    function animate() {
+      if (!view.dragging && Date.now() - view.lastInteraction > 2400) {
+        view.autoPhase += 0.01;
+        view.targetRotateY = Math.sin(view.autoPhase) * 18;
+      }
+      view.rotateY += (view.targetRotateY - view.rotateY) * 0.08;
+      view.scale += (view.targetScale - view.scale) * 0.12;
+      updateTransform();
+      requestAnimationFrame(animate);
+    }
+
+    updateTransform();
+    animate();
+    function refreshFourLayerI18n() {
+      applyDemoStaticI18n();
+      floorGroups.innerHTML = '';
+      dimLines.innerHTML = '';
+      floors.forEach(renderFloor);
+      renderDims();
+      fitViewBox();
+    }
+
+  </script>
+
+  <script src="js/aidc-locale-bridge.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/lang-switch.js"></script>
+  <script src="js/i18n-bootstrap.js"></script>
+  <script>
+    AidcI18nBootstrap.bootstrap('ai-dc-four-layer', {
+      onReady: function () { if (typeof refreshFourLayerI18n === 'function') refreshFourLayerI18n(); },
+      onLocaleChange: function () { if (typeof refreshFourLayerI18n === 'function') refreshFourLayerI18n(); },
+    });
+    if (window.AidcLocaleBridge) {
+      AidcLocaleBridge.initIframeListener(function (locale) {
+        if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+          AidcI18n.setLocale(locale, { page: 'ai-dc-four-layer', common: true, basePath: 'i18n/' });
+        }
+      }, { selfSource: 'ai-dc-four-layer' });
+    }
+  </script>
+</body>
+</html>

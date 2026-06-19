@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "title": "机房布局 · AI Data Center",
+    "description": "机房布局：四层建筑示意与单层详细平面图。"
+  },
+  "cards": {
+    "fourLayer": "四层数据中心示意图",
+    "floorDetail": "单层详细平面图"
+  },
+  "iframe": {
+    "fourLayer": "四层数据中心示意图",
+    "floorDetail": "单层详细平面图"
+  }
+}

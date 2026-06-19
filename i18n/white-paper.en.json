@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "title": "White Paper · AI Data Center",
+    "description": "AI DC White Paper: online preview and download of version 1.0."
+  },
+  "page": {
+    "h1": "AI DC White Paper",
+    "intro1": "AI data centers (AI DC) have become a focal point across the industry. Planning and construction urgently need a comprehensive, systematic framework. Working with the industry, we have drawn on years of in-depth research, innovations in key products and solutions, and extensive exploration and build-out practice. More than twenty experts contributed their expertise; we integrated statistics from international organizations and findings from industry research institutions, and continued to refine the work through a dozen workshops and exchanges. The result is this white paper with significant reference value.",
+    "intro2": "We hope this white paper helps the industry move steadily forward on the path of digital and intelligent transformation—building powerful, solid intelligent computing data centers that enable every sector to reach a more efficient, more intelligent future."
+  },
+  "edition": {
+    "title": "2024 Edition",
+    "desc": "AI DC White Paper (Chinese edition), available for online preview and download.",
+    "openNew": "Open in new window",
+    "download": "Download PDF",
+    "downloadName": "AI DC White Paper_Chinese Edition.pdf",
+    "iframeTitle": "AI DC White Paper 2024 · Chinese Edition",
+    "fallbackHint": "If the preview fails to load, use “Open in new window” or “Download PDF”."
+  }
+}

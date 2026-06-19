@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "title": "AI DC Layout · AI Data Center",
+    "description": "AI DC Layout: 3D rack and data hall layout design demos for AI data centers."
+  },
+  "tabs": {
+    "aria": "Layout & planning",
+    "roomLayout": "Data Hall Layout",
+    "caseA": "Case A (Air-Cooled)",
+    "caseB": "Case B (Air-Cooled)",
+    "plan": "Cabinet Layout (Air-Cooled)",
+    "roi": "Investment ROI"
+  },
+  "iframe": {
+    "roomLayout": "AI DC Layout · Data Hall Layout",
+    "caseA": "AI DC Layout · Case A (Air-Cooled)",
+    "caseB": "AI DC Layout · Case B (Air-Cooled)",
+    "plan": "AI DC Layout · Cabinet Layout (Air-Cooled)",
+    "roi": "AI DC Layout · Investment ROI"
+  }
+}

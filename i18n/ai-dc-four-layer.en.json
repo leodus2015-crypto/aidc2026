@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "title": "Four-Layer Data Center · AI Data Center",
+    "description": "Four-layer data center building schematic: RF, 3F, 2F, 1F floor layouts and height annotations."
+  },
+  "lookup": {
+    "四层数据中心示意图": "Four-Layer Data Center Schematic",
+    "左右拖动旋转 · 滚轮缩放 · 正面朝向旋转": "Drag horizontally to turn · Scroll to zoom · Front-facing rotation",
+    "制冷": "Cooling",
+    "机房": "Server Hall",
+    "配电": "Electrical",
+    "水力": "Hydraulic",
+    "电池": "Battery",
+    "冷却塔": "Cooling\nTower",
+    "待定": "TBD"
+  }
+}

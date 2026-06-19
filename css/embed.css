@@ -1,0 +1,104 @@
+html.aidc-embed,
+html.aidc-embed body {
+  height: 100%;
+  margin: 0;
+  min-height: 0;
+}
+
+html.aidc-embed header,
+html.aidc-embed footer,
+html.aidc-embed .aidc-chrome {
+  display: none !important;
+}
+
+html.aidc-embed body.flex.min-h-screen {
+  min-height: 0;
+}
+
+html.aidc-embed .building-stage {
+  flex: 1;
+  min-height: 18rem;
+  height: 100%;
+}
+
+html.aidc-embed .floor-detail-intro {
+  display: none;
+}
+
+html.aidc-embed body.min-h-screen {
+  display: flex;
+  flex-direction: column;
+}
+
+html.aidc-embed .floor-detail-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  max-width: none;
+  width: 100%;
+}
+
+html.aidc-embed .floor-detail-main > section.floor-plan-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  overflow: hidden;
+}
+
+html.aidc-embed .floor-plan-svg {
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  flex: 0 0 auto;
+  align-self: stretch;
+}
+
+html.aidc-embed .room-layout-main {
+  padding: 0.5rem;
+  gap: 0.75rem;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) and (orientation: landscape) {
+  .room-layout-main {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  html.aidc-embed .room-layout-main {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  html.aidc-embed .room-layout-card iframe,
+  html.aidc-embed .room-layout-iframe {
+    min-height: 0;
+  }
+}
+
+html.aidc-embed .room-layout-card {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+html.aidc-embed .room-layout-card iframe,
+html.aidc-embed .room-layout-iframe {
+  flex: 1;
+  min-height: 16rem;
+  height: auto !important;
+}

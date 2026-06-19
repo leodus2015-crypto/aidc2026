@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Agentic Inference · AI Data Center",
+    "description": "Agentic inference: HBM estimation, capacity planning dimensions, and documentation (calculation methodology, model usage, and bar chart legend)."
+  },
+  "nav": {
+    "aria": "Main navigation",
+    "homeAria": "AIDC 2026 · Home",
+    "inference": "Agentic Inference",
+    "postTraining": "Post-Training",
+    "aiDcLayout": "AI DC Design",
+    "whitePaper": "White Paper",
+    "aboutUs": "About US"
+  },
+  "footer": {
+    "miit": "MIIT ICP filing:",
+    "publicSecurity": "Public security filing:"
+  },
+  "lang": {
+    "switchAria": "Language",
+    "zh": "中文",
+    "en": "EN"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Agentic 推理 · AI Data Center",
+    "description": "Agentic 推理：HBM 估算、容量规划维度与说明文档（计算口径、模型占用与柱状图含义）。"
+  },
+  "nav": {
+    "aria": "主导航",
+    "homeAria": "AIDC 2026 · 首页",
+    "inference": "Agentic推理",
+    "postTraining": "后训练",
+    "aiDcLayout": "AI DC规划",
+    "whitePaper": "白皮书",
+    "aboutUs": "About US"
+  },
+  "footer": {
+    "miit": "工信部备案号：",
+    "publicSecurity": "公安备案号："
+  },
+  "lang": {
+    "switchAria": "语言",
+    "zh": "中文",
+    "en": "EN"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "Single Floor Plan · AI Data Center",
+    "description": "Single-floor AI data center plan: EHU HVAC rooms, air/liquid-cooled halls, power and hydraulic modules."
+  },
+  "lookup": {
+    "单层详细平面图 · AI Data Center": "Single Floor Plan · AI Data Center",
+    "Agentic推理": "Agentic Inference",
+    "后训练": "Post-Training",
+    "AI DC布局": "AI DC Layout",
+    "白皮书": "White Paper",
+    "单层详细平面图": "Single Floor Plan",
+    "根据手绘草图整理为结构化示意图，非施工比例图；房间名称与尺寸按图中可识别信息保留。": "Structured schematic from a hand sketch; not to construction scale. Room names and dimensions follow identifiable labels in the source drawing.",
+    "EHU 空调机房": "EHU HVAC Room",
+    "风冷 / 液冷机房": "Air / Liquid Cooled Hall",
+    "液冷": "Liquid",
+    "水力": "Hydraulic",
+    "模块间": "Module Room",
+    "低压": "LV",
+    "配电": "Power",
+    "电气": "Electrical",
+    "室": "Room",
+    "中压": "MV",
+    "预留": "Reserved",
+    "低压配电": "LV Power Distribution",
+    "中压室": "MV Room",
+    "水力模块间": "Hydraulic Module Room",
+    "示意图 · 非施工图": "Schematic · Not for construction",
+    "液冷\n水力\n模块间": "Liquid\nHydraulic\nModule Room",
+    "低压\n配电": "LV\nPower",
+    "电气\n室": "Electrical\nRoom",
+    "中压\n室": "MV\nRoom"
+  }
+}
