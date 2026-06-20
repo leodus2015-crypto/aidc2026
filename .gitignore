@@ -2,5 +2,6 @@
 assets/*.pdf
 data/ai-usage.json.lock
 .env
+deploy.env
 api/__pycache__/
 api/**/__pycache__/

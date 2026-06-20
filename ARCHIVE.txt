@@ -61,6 +61,13 @@ aidc 静态站点归档
   http://127.0.0.1:8011/aidc/index.html
   AI DC 规划：http://127.0.0.1:8011/aidc/ai-dc-design.html
 
+部署（GitHub → 云服务器 aidc2026.cn）
+────────────────────────────────────
+  cp deploy.env.example deploy.env   # 填写 SSH，勿提交
+  ./scripts/deploy.sh --full-reset "全量同步"   # 首次：清空服务器再 rsync
+  ./scripts/deploy.sh "说明"                    # 日常：commit + push + rsync
+  push 到 main 且配置 GitHub Secrets 后，Actions 自动部署（.github/workflows/deploy.yml）
+
 已移除（勿再引用）
 ──────────────────
   en/ 目录（英文改 ?lang=en）

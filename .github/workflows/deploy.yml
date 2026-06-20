@@ -1,0 +1,70 @@
+# push 到 main 后自动 rsync 到云服务器（需在 GitHub 仓库 Settings → Secrets 配置）
+name: Deploy to aidc2026.cn
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-aidc2026
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.DEPLOY_PORT || 22 }}" "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Rsync to server
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          PORT="${DEPLOY_PORT:-22}"
+          rsync -avz --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.env' \
+            --exclude 'deploy.env' \
+            --exclude '.DS_Store' \
+            --exclude 'api/__pycache__/' \
+            --exclude '**/__pycache__/' \
+            --exclude '*.pyc' \
+            -e "ssh -p ${PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+
+      - name: Fix ownership
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_OWNER: ${{ secrets.DEPLOY_OWNER }}
+        run: |
+          PORT="${DEPLOY_PORT:-22}"
+          OWNER="${DEPLOY_OWNER:-www:www}"
+          ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "chown -R ${OWNER} '${DEPLOY_PATH}'"
+
+      - name: Verify lang-switch.js
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          PORT="${DEPLOY_PORT:-22}"
+          ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "test -f '${DEPLOY_PATH}/js/lang-switch.js'"
