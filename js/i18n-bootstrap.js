@@ -23,7 +23,12 @@
       if (typeof opts.onLocaleChange === 'function') opts.onLocaleChange();
       else if (typeof global.__aidcPageRefreshI18n === 'function') global.__aidcPageRefreshI18n();
     };
-    global.AidcLangSwitch.mount(document.getElementById('lang-switch-root'));
+    const langRoot = document.getElementById('lang-switch-root');
+    if (global.AidcLangSwitch?.mount && langRoot) {
+      global.AidcLangSwitch.mount(langRoot);
+    } else if (langRoot) {
+      console.warn('[AidcI18n] lang-switch.js 未加载，语言切换不可用');
+    }
     if (typeof opts.onReady === 'function') opts.onReady();
   }
 

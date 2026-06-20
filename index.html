@@ -520,7 +520,7 @@
           window.refreshIndexPageI18n();
         }
       };
-      AidcLangSwitch.mount(document.getElementById('lang-switch-root'));
+      AidcLangSwitch?.mount?.(document.getElementById('lang-switch-root'));
       if (typeof window.initIndexPage === 'function') {
         window.initIndexPage();
       }
