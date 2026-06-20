@@ -1751,7 +1751,7 @@
 
                     <!-- 优化点1：替换为用例集选择 -->
                     <div class="form-group">
-                        <label class="form-label">用例集选择
+                        <label class="form-label"><span data-pt-i18n="用例集选择">用例集选择</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="选择特定行业的训练数据集，用于微调模型以适应特定领域的问答和任务。">选择特定行业的训练数据集，用于微调模型以适应特定领域的问答和任务。</span>
@@ -1822,7 +1822,7 @@
             </div>
 
             <div class="nav-buttons">
-                <button class="btn-secondary" onclick="goHome()">返回首页</button>
+                <button class="btn-secondary" onclick="goHome()" data-pt-i18n="返回首页">返回首页</button>
                 <button class="btn-primary" onclick="goToPage('model')" data-pt-i18n="下一步">下一步</button>
             </div>
         </div>
@@ -1831,14 +1831,14 @@
         <div id="model-page" class="sub-page">
             <div class="sub-page-header">
                 <h2 class="sub-page-title" data-pt-i18n="🧠 模型准备">🧠 模型准备</h2>
-                <button class="back-btn" onclick="goHome()">返回首页</button>
+                <button class="back-btn" onclick="goHome()" data-pt-i18n="返回首页">返回首页</button>
             </div>
 
             <div class="content-grid">
                 <div class="content-card">
                     <h3 class="card-title" data-pt-i18n="模型选择">模型选择</h3>
                     <div class="form-group">
-                        <label class="form-label">基础模型
+                        <label class="form-label"><span data-pt-i18n="基础模型">基础模型</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="选择预训练大语言模型：8B适合快速实验，14B平衡性能与成本，32B提供最强性能">选择预训练大语言模型：8B适合快速实验，14B平衡性能与成本，32B提供最强性能</span>
@@ -1852,20 +1852,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">NPU卡数量
+                        <label class="form-label"><span data-pt-i18n="NPU卡数量">NPU卡数量</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="NPU卡数量决定可用显存，当前使用64GB显存版本：8B建议8卡，14B建议16卡，32B建议32卡">NPU卡数量决定可用显存，当前使用64GB显存版本：8B建议8卡，14B建议16卡，32B建议32卡</span>
                             </span>
                         </label>
                         <select class="form-select" id="npu-count">
-                            <option value="8">8 *910B（64G）</option>
-                            <option value="16">16 *910B（64G）</option>
-                            <option value="32">32 *910B（64G）</option>
+                            <option value="8" data-pt-i18n="8 *910B（64G）">8 *910B（64G）</option>
+                            <option value="16" data-pt-i18n="16 *910B（64G）">16 *910B（64G）</option>
+                            <option value="32" data-pt-i18n="32 *910B（64G）">32 *910B（64G）</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">硬件型号
+                        <label class="form-label"><span data-pt-i18n="硬件型号">硬件型号</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="训练硬件款型">训练硬件款型</span>
@@ -1880,7 +1880,7 @@
 
             <div class="nav-buttons">
                 <button class="btn-secondary" onclick="goToPage('data')" data-pt-i18n="上一步">上一步</button>
-                <button class="btn-primary" onclick="goToPage('config')">下一步</button>
+                <button class="btn-primary" onclick="goToPage('config')" data-pt-i18n="下一步">下一步</button>
             </div>
         </div>
 
@@ -1888,7 +1888,7 @@
         <div id="config-page" class="sub-page">
             <div class="sub-page-header">
                 <h2 class="sub-page-title" data-pt-i18n="⚙️ 参数配置">⚙️ 参数配置</h2>
-                <button class="back-btn" onclick="goHome()">返回首页</button>
+                <button class="back-btn" onclick="goHome()" data-pt-i18n="返回首页">返回首页</button>
             </div>
 
             <div class="content-grid">
@@ -1897,27 +1897,27 @@
                     <h3 class="card-title" data-pt-i18n="算法选择">算法选择</h3>
 
                     <div class="form-group">
-                        <label class="form-label">训练框架
+                        <label class="form-label"><span data-pt-i18n="训练框架">训练框架</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="verl 是一个灵活、高效且可用于生产环境的强化学习（RL）训练框架，专为大型语言模型（LLMs）的后训练设计">verl 是一个灵活、高效且可用于生产环境的强化学习（RL）训练框架，专为大型语言模型（LLMs）的后训练设计</span>
                             </span>
                         </label>
-                        <select class="form-select" id="algorithm">
-                            <option value="verl">verl(Volcano Engine Reinforcement Learning for LLMs)</option>
+                        <select class="form-select" id="training-framework">
+                            <option value="verl" data-pt-i18n="verl(Volcano Engine Reinforcement Learning for LLMs)">verl(Volcano Engine Reinforcement Learning for LLMs)</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label class="form-label">RL训练算法
+                        <label class="form-label"><span data-pt-i18n="RL训练算法">RL训练算法</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="选择强化学习算法：PPO稳定高效，GPRO结合策略梯度和进化算法">选择强化学习算法：PPO稳定高效，GPRO结合策略梯度和进化算法</span>
                             </span>
                         </label>
-                        <select class="form-select" id="algorithm">
-                            <option value="ppo">PPO (Proximal Policy Optimization)</option>
-                            <option value="GPRO">GPRO (Gradient-based Policy Optimization)</option>
+                        <select class="form-select" id="rl-algorithm">
+                            <option value="ppo" data-pt-i18n="PPO (Proximal Policy Optimization)">PPO (Proximal Policy Optimization)</option>
+                            <option value="GPRO" data-pt-i18n="GPRO (Gradient-based Policy Optimization)">GPRO (Gradient-based Policy Optimization)</option>
                         </select>
                     </div>
 
@@ -1935,7 +1935,7 @@
                 <div class="content-card">
                     <h3 class="card-title" data-pt-i18n="训练参数">训练参数</h3>                                        
                     <div class="form-group">
-                        <label class="form-label">学习率(actor_rollout_ref.actor.optim.lr)
+                        <label class="form-label"><span data-pt-i18n="学习率(actor_rollout_ref.actor.optim.lr)">学习率(actor_rollout_ref.actor.optim.lr)</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="典型 RLHF lr: 1e-6 ~ 5e-6，过低导致学习缓慢, 过大导致震荡">典型 RLHF lr: 1e-6 ~ 5e-6，过低导致学习缓慢, 过大导致震荡</span>
@@ -1945,7 +1945,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">单次训练Batch size(data.train_batch_size)
+                        <label class="form-label"><span data-pt-i18n="单次训练Batch size(data.train_batch_size)">单次训练Batch size(data.train_batch_size)</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="每次训练使用的样本数量：32-128常用，大批次训练稳定，小批次更新频繁">每次训练使用的样本数量：32-128常用，大批次训练稳定，小批次更新频繁</span>
@@ -1955,7 +1955,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">训练总轮数(trainer.total_epochs)
+                        <label class="form-label"><span data-pt-i18n="训练总轮数(trainer.total_epochs)">训练总轮数(trainer.total_epochs)</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="总训练轮数">总训练轮数</span>
@@ -1965,7 +1965,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">模型权重保存频率(trainer.save_freq)
+                        <label class="form-label"><span data-pt-i18n="模型权重保存频率(trainer.save_freq)">模型权重保存频率(trainer.save_freq)</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="设置完成多少个step后保存一次模型权重">设置完成多少个step后保存一次模型权重</span>
@@ -1975,7 +1975,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">每问题推理生成答案数量(actor_rollout_ref.rollout.n)
+                        <label class="form-label"><span data-pt-i18n="每问题推理生成答案数量(actor_rollout_ref.rollout.n)">每问题推理生成答案数量(actor_rollout_ref.rollout.n)</span>
                             <span class="tooltip-container">
                                 <span class="tooltip-icon">!</span>
                                 <span class="tooltip" data-pt-i18n="为每个 prompt 生成的 response 数量，也即 GRPO 中的 group size。">为每个 prompt 生成的 response 数量，也即 GRPO 中的 group size。</span>
@@ -1987,8 +1987,8 @@
             </div>
 
             <div class="nav-buttons">
-                <button class="btn-secondary" onclick="goToPage('model')">上一步</button>
-                <button class="btn-primary" onclick="startTraininGPROcess()">开始训练</button>
+                <button class="btn-secondary" onclick="goToPage('model')" data-pt-i18n="上一步">上一步</button>
+                <button class="btn-primary" onclick="startTraininGPROcess()" data-pt-i18n="开始训练">开始训练</button>
             </div>
         </div>
 
@@ -1996,7 +1996,7 @@
         <div id="training-page" class="sub-page">
             <div class="sub-page-header">
                 <h2 class="sub-page-title" data-pt-i18n="🎯 训练过程">🎯 训练过程</h2>
-                <button class="back-btn" onclick="goHome()">返回首页</button>
+                <button class="back-btn" onclick="goHome()" data-pt-i18n="返回首页">返回首页</button>
             </div>
 
             <div class="progress-container">
@@ -2036,7 +2036,7 @@
         <div id="results-page" class="sub-page">
             <div class="sub-page-header">
                 <h2 class="sub-page-title" data-pt-i18n="📈 训练结果">📈 训练结果</h2>
-                <button class="back-btn" onclick="goHome()">返回首页</button>
+                <button class="back-btn" onclick="goHome()" data-pt-i18n="返回首页">返回首页</button>
             </div>
 
             <div class="stats-summary">
@@ -2077,7 +2077,7 @@
 
             <div class="nav-buttons">
                 <button class="btn-secondary" onclick="resetDemo()" data-pt-i18n="重新训练">重新训练</button>
-                <button class="btn-primary" onclick="goToPage('experience')">效果体验</button>
+                <button class="btn-primary" onclick="goToPage('experience')" data-pt-i18n="效果体验">效果体验</button>
             </div>
         </div>
 
@@ -2085,7 +2085,7 @@
         <div id="experience-page" class="sub-page">
             <div class="sub-page-header">
                 <h2 class="sub-page-title" data-pt-i18n="🎭 效果体验">🎭 效果体验</h2>
-                <button class="back-btn" onclick="goHome()">返回首页</button>
+                <button class="back-btn" onclick="goHome()" data-pt-i18n="返回首页">返回首页</button>
             </div>
 
             <div class="question-selector">
@@ -2121,7 +2121,7 @@
                         </div>
                     </div>
                     <div class="chat-box" id="enhanced-chat-box">
-                        <p style="text-align: center; color: #95a5a6; padding: 40px;">请选择一个问题开始体验</p>
+                        <p style="text-align: center; color: #95a5a6; padding: 40px;" data-pt-i18n="请选择一个问题开始体验">请选择一个问题开始体验</p>
                     </div>
                 </div>
             </div>
@@ -2137,6 +2137,25 @@
     function L(s) {
       if (!s || !window.AidcI18n) return s;
       return AidcI18n.getLookupText(s);
+    }
+    function pt(key, params) {
+      var text = L(key);
+      if (!params) return text;
+      Object.keys(params).forEach(function (name) {
+        text = text.split('{' + name + '}').join(String(params[name]));
+      });
+      return text;
+    }
+    function selectedOptionLabel(selectEl) {
+      if (!selectEl || selectEl.selectedIndex < 0) return '';
+      var opt = selectEl.options[selectEl.selectedIndex];
+      var key = opt.getAttribute('data-pt-i18n');
+      return key ? L(key) : opt.textContent;
+    }
+    function algorithmLabel() {
+      var rlSelect = document.getElementById('rl-algorithm');
+      if (rlSelect) return selectedOptionLabel(rlSelect);
+      return '';
     }
     function localeTag() {
       return AidcI18n && AidcI18n.getLocale() === 'en' ? 'en-US' : 'zh-CN';
@@ -2155,6 +2174,19 @@
       applyPostTrainingStaticI18n();
       if (typeof generateQuestionButtons === 'function') generateQuestionButtons();
       if (typeof updateFlowNodes === 'function') updateFlowNodes();
+      if (trainingData.episodes.length > 0 && typeof showResults === 'function') {
+        showResults();
+      }
+      if (typeof currentQuestionIndex !== 'undefined' && currentQuestionIndex >= 0) {
+        var baseModelSelect = document.getElementById('base-model');
+        if (baseModelSelect) {
+          var baseModelName = selectedOptionLabel(baseModelSelect);
+          document.querySelector('.model-header .model-info h3').textContent = L('基础模型');
+          document.querySelector('.model-header .model-info p').textContent = baseModelName + ' - ' + L('训练前');
+          document.querySelectorAll('.model-header')[1].querySelector('h3').textContent = L('增强模型');
+          document.querySelectorAll('.model-header')[1].querySelector('p').textContent = baseModelName + ' - ' + L('训练后');
+        }
+      }
     }
 
         // 全局状态
@@ -2269,7 +2301,7 @@
         function viewDatasetDetails() {
             const select = document.getElementById('dataset-select');
             const datasetType = select.value;
-            const datasetName = select.options[select.selectedIndex].text;
+            const datasetName = selectedOptionLabel(select);
             const data = mockDatasets[datasetType];
 
             if (!data) return;
@@ -2323,14 +2355,18 @@
             
             // 修改：获取新的数据集选择
             const datasetSelect = document.getElementById('dataset-select');
-            const datasetName = datasetSelect.options[datasetSelect.selectedIndex].text;
+            const datasetName = selectedOptionLabel(datasetSelect);
 
             // 添加日志
             const totalSteps = totalEpisodes * STEPS_PER_EPISODE;
-            addLog('info', `开始训练，总轮数: ${totalEpisodes}, 每轮包含 ${STEPS_PER_EPISODE} 个step, 总训练次数: ${totalSteps}`);
-            addLog('info', `学习率: ${learningRate}`);
-            addLog('info', `数据集: ${datasetName}`);
-            addLog('info', `算法: ${document.getElementById('algorithm').value}`);
+            addLog('info', pt('开始训练，总轮数: {episodes}, 每轮包含 {stepsPerEpisode} 个step, 总训练次数: {totalSteps}', {
+              episodes: totalEpisodes,
+              stepsPerEpisode: STEPS_PER_EPISODE,
+              totalSteps: totalSteps,
+            }));
+            addLog('info', pt('学习率: {lr}', { lr: learningRate }));
+            addLog('info', pt('数据集: {dataset}', { dataset: datasetName }));
+            addLog('info', pt('算法: {algorithm}', { algorithm: algorithmLabel() }));
 
             // 模拟训练过程
             let currentEpisode = 0;
@@ -2363,14 +2399,22 @@
                     updateStats(currentEpisode, episodeReward, episodeLoss, avgReward);
 
                     // 每完成1轮,打印训练得分和loss
-                    addLog('info', `轮次 ${currentEpisode}/${totalEpisodes}: 得分=${episodeReward.toFixed(2)}, Loss=${episodeLoss.toFixed(4)}`);
+                    addLog('info', pt('轮次 {current}/{total}: 得分={reward}, Loss={loss}', {
+                      current: currentEpisode,
+                      total: totalEpisodes,
+                      reward: episodeReward.toFixed(2),
+                      loss: episodeLoss.toFixed(4),
+                    }));
                 }
 
                 // 训练完成
                 if (currentEpisode >= totalEpisodes) {
                     clearInterval(trainingTimer);
                     trainingInProgress = false;
-                    addLog('success', `训练完成！共完成 ${totalEpisodes} 轮训练, 总计 ${totalSteps} 次迭代`);
+                    addLog('success', pt('训练完成！共完成 {episodes} 轮训练, 总计 {totalSteps} 次迭代', {
+                      episodes: totalEpisodes,
+                      totalSteps: totalSteps,
+                    }));
                     setTimeout(() => {
                         goToPage('results');
                         showResults();
@@ -2449,15 +2493,16 @@
 
             // 更新训练总结
             const summary = document.getElementById('training-summary');
+            const avgFinal = (trainingData.avgRewards[trainingData.avgRewards.length - 1] || 0).toFixed(2);
             summary.innerHTML = `
-                <p><strong>训练完成！</strong></p>
-                <p>模型经过 ${trainingData.episodes.length} 轮训练，性能显著提升：</p>
+                <p><strong>${L('训练完成！')}</strong></p>
+                <p>${pt('模型经过 {episodes} 轮训练，性能显著提升：', { episodes: trainingData.episodes.length })}</p>
                 <ul>
-                    <li>奖励从 ${initialReward.toFixed(2)} 提升到 ${finalReward.toFixed(2)}，提升了 ${rewardImprovement}%</li>
-                    <li>损失从 ${initialLoss.toFixed(4)} 降低到 ${finalLoss.toFixed(4)}，降低了 ${lossReduction}%</li>
-                    <li>平均最终奖励: ${(trainingData.avgRewards[trainingData.avgRewards.length - 1] || 0).toFixed(2)}</li>
+                    <li>${pt('奖励从 {initial} 提升到 {final}，提升了 {pct}%', { initial: initialReward.toFixed(2), final: finalReward.toFixed(2), pct: rewardImprovement })}</li>
+                    <li>${pt('损失从 {initial} 降低到 {final}，降低了 {pct}%', { initial: initialLoss.toFixed(4), final: finalLoss.toFixed(4), pct: lossReduction })}</li>
+                    <li>${pt('平均最终奖励: {avg}', { avg: avgFinal })}</li>
                 </ul>
-                <p>模型训练成功，可以部署使用。</p>
+                <p>${L('模型训练成功，可以部署使用。')}</p>
             `;
 
             // 绘制图表
@@ -2495,12 +2540,12 @@
             ctx.fillStyle = '#7f8c8d';
             ctx.font = '14px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('Episode', width / 2, height - 10);
+            ctx.fillText(L('Episode'), width / 2, height - 10);
 
             ctx.save();
             ctx.translate(15, height / 2);
             ctx.rotate(-Math.PI / 2);
-            ctx.fillText('Reward', 0, 0);
+            ctx.fillText(L('Reward'), 0, 0);
             ctx.restore();
 
             // 计算数据范围
@@ -2553,12 +2598,12 @@
             ctx.fillRect(width - 150, 20, 20, 10);
             ctx.fillStyle = '#2c3e50';
             ctx.textAlign = 'left';
-            ctx.fillText('Reward', width - 120, 28);
+            ctx.fillText(L('Reward'), width - 120, 28);
 
             ctx.fillStyle = '#e74c3c';
             ctx.fillRect(width - 150, 40, 20, 10);
             ctx.fillStyle = '#2c3e50';
-            ctx.fillText('Avg Reward', width - 120, 48);
+            ctx.fillText(L('Avg Reward'), width - 120, 48);
         }
 
         // 绘制Loss曲线
@@ -2591,12 +2636,12 @@
             ctx.fillStyle = '#7f8c8d';
             ctx.font = '14px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('Episode', width / 2, height - 10);
+            ctx.fillText(L('Episode'), width / 2, height - 10);
 
             ctx.save();
             ctx.translate(15, height / 2);
             ctx.rotate(-Math.PI / 2);
-            ctx.fillText('Loss', 0, 0);
+            ctx.fillText(L('Loss'), 0, 0);
             ctx.restore();
 
             // 计算数据范围
@@ -2671,7 +2716,7 @@
             const data = {
                 config: {
                     dataset: document.getElementById('dataset-select').value,
-                    algorithm: document.getElementById('algorithm').value,
+                    algorithm: document.getElementById('rl-algorithm')?.value,
                     learningRate: document.getElementById('learning-rate').value,
                     batchSize: document.getElementById('batch-size').value,
                     totalEpisodes: document.getElementById('total-episodes').value,
@@ -2841,7 +2886,7 @@
 
             // 获取基础模型名称
             const baseModelSelect = document.getElementById('base-model');
-            const baseModelName = baseModelSelect.options[baseModelSelect.selectedIndex].text;
+            const baseModelName = selectedOptionLabel(baseModelSelect);
 
             // 更新模型标题
             document.querySelector('.model-header .model-info h3').textContent = L('基础模型');

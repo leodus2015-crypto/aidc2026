@@ -4,6 +4,8 @@
 (function (global) {
   const STORAGE_KEY = 'aidc-locale';
   const DEFAULT_LOCALE = 'zh';
+  /** Bump when i18n JSON content changes to avoid stale browser cache. */
+  const BUNDLE_VERSION = '4';
 
   let locale = DEFAULT_LOCALE;
   let messages = {};
@@ -40,7 +42,8 @@
   }
 
   async function loadJson(url) {
-    const res = await fetch(url);
+    const sep = url.includes('?') ? '&' : '?';
+    const res = await fetch(`${url}${sep}v=${BUNDLE_VERSION}`);
     if (!res.ok) throw new Error(`i18n load failed: ${url} (${res.status})`);
     return res.json();
   }

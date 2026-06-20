@@ -219,7 +219,7 @@
         AidcAiDcDesignPage.init();
       },
       onLocaleChange: function () {
-        AidcAiDcDesignPage.syncIframes();
+        AidcAiDcDesignPage.syncIframes({ reload: true });
       },
     });
     if (window.AidcLocaleBridge) {

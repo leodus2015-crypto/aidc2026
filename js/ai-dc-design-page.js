@@ -15,12 +15,19 @@
     roi: 'aidc-investment-roi.html',
   };
 
-  function withLocale(src) {
-    if (!src || global.AidcI18n?.getLocale?.() !== 'en') return src;
+  /** Bump when embedded iframe pages change (i18n / logic) to avoid stale browser cache. */
+  const IFRAME_ASSET_VERSION = '3';
+
+  function withLocale(src, options) {
+    if (!src) return src;
+    const opts = options || {};
     const q = src.indexOf('?');
     const path = q >= 0 ? src.slice(0, q) : src;
     const params = new URLSearchParams(q >= 0 ? src.slice(q + 1) : '');
-    params.set('lang', 'en');
+    if (global.AidcI18n?.getLocale?.() === 'en') params.set('lang', 'en');
+    else params.delete('lang');
+    params.set('v', IFRAME_ASSET_VERSION);
+    if (opts.bust) params.set('_', String(opts.bust));
     return `${path}?${params.toString()}`;
   }
 
@@ -31,13 +38,15 @@
     }
   }
 
-  function syncIframes() {
+  function syncIframes(options) {
+    const opts = options || {};
+    const bust = opts.reload ? Date.now() : null;
     Object.keys(IFRAME_BASE).forEach((key) => {
       const iframe = document.querySelector(`iframe[data-iframe-key="${key}"]`);
       if (!iframe) return;
-      const nextSrc = withLocale(IFRAME_BASE[key]);
+      const nextSrc = withLocale(IFRAME_BASE[key], { bust });
       const current = iframe.getAttribute('src') || '';
-      if (!current || current.split('?')[0] !== nextSrc.split('?')[0]) {
+      if (!current || current !== nextSrc || opts.reload) {
         iframe.src = nextSrc;
       }
     });

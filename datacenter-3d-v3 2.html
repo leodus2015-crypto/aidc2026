@@ -311,16 +311,16 @@
 
 <!-- ===== Top Bar ===== -->
 <div id="topbar">
-  <div class="logo">⚡ DC Designer <small>案例B（风冷超节点） · 数据中心 3D 设计器</small></div>
+  <div class="logo">⚡ DC Designer <small id="logo-subtitle" data-dc-i18n="案例B（风冷超节点） · 数据中心 3D 设计器">案例B（风冷超节点） · 数据中心 3D 设计器</small></div>
   <div class="tb-group">
-    <button class="tb-btn active" data-view="top">俯视</button>
-    <button class="tb-btn" data-view="horiz">水平</button>
-    <button class="tb-btn" data-view="angle">透视</button>
+    <button class="tb-btn active" data-view="top" data-dc-i18n="俯视">俯视</button>
+    <button class="tb-btn" data-view="horiz" data-dc-i18n="水平">水平</button>
+    <button class="tb-btn" data-view="angle" data-dc-i18n="透视">透视</button>
     <button class="tb-btn" data-view="cooling">Cooling</button>
   </div>
   <div class="color-group">
-    <button class="color-btn active" data-mode="type">类型</button>
-    <button class="color-btn" data-mode="power">功率</button>
+    <button class="color-btn active" data-mode="type" data-dc-i18n="类型">类型</button>
+    <button class="color-btn" data-mode="power" data-dc-i18n="功率">功率</button>
   </div>
   <button id="sidebar-toggle">☰</button>
 </div>
@@ -328,57 +328,57 @@
 <!-- ===== Sidebar ===== -->
 <div id="sidebar">
   <div class="sb-tabs">
-    <button class="sb-tab active" data-tab="layout">📐 布局</button>
-    <button class="sb-tab" data-tab="rules">📋 规则</button>
-    <button class="sb-tab" data-tab="views">👁 视图</button>
+    <button class="sb-tab active" data-tab="layout" data-dc-i18n="📐 布局">📐 布局</button>
+    <button class="sb-tab" data-tab="rules" data-dc-i18n="📋 规则">📋 规则</button>
+    <button class="sb-tab" data-tab="views" data-dc-i18n="👁 视图">👁 视图</button>
   </div>
-  <p id="configSourceBadge" class="config-source-badge local" aria-live="polite">配置来源：加载中…</p>
+  <p id="configSourceBadge" class="config-source-badge local" aria-live="polite" data-dc-i18n="配置来源：加载中…">配置来源：加载中…</p>
   <div class="sb-content">
 
     <!-- LAYOUT -->
     <div class="sb-panel active" id="panel-layout">
       <div class="sbf-group">
-        <div class="sbf-label">机房结构</div>
+        <div class="sbf-label" data-dc-i18n="机房结构">机房结构</div>
         <div class="sbf-row c2" style="margin-bottom:6px">
-          <div><label class="sbf-label" style="font-size:9px;">排数</label><input class="sbf-input" id="cfg-rows" type="number" value="12" min="1"></div>
-          <div><label class="sbf-label" style="font-size:9px;">每排机柜数</label><input class="sbf-input" id="cfg-cols" type="number" value="14" min="1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="排数">排数</label><input class="sbf-input" id="cfg-rows" type="number" value="12" min="1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="每排机柜数">每排机柜数</label><input class="sbf-input" id="cfg-cols" type="number" value="14" min="1"></div>
         </div>
         <div class="sbf-row c2" style="margin-bottom:6px">
-          <div><label class="sbf-label" style="font-size:9px;">冷通道 (m)</label><input class="sbf-input" id="cfg-cold-aisle" type="number" value="1.6" min="0.1" step="0.1"></div>
-          <div><label class="sbf-label" style="font-size:9px;">热通道 (m)</label><input class="sbf-input" id="cfg-hot-aisle" type="number" value="1.2" min="0.1" step="0.1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="冷通道 (m)">冷通道 (m)</label><input class="sbf-input" id="cfg-cold-aisle" type="number" value="1.6" min="0.1" step="0.1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="热通道 (m)">热通道 (m)</label><input class="sbf-input" id="cfg-hot-aisle" type="number" value="1.2" min="0.1" step="0.1"></div>
         </div>
         <div class="sbf-row c2">
-          <div><label class="sbf-label" style="font-size:9px;">机柜深度 (m)</label><input class="sbf-input" id="cfg-depth" type="number" value="1.0" min="0.1" step="0.1"></div>
-          <div><label class="sbf-label" style="font-size:9px;">机柜高度 (U)</label><input class="sbf-input" id="cfg-u" type="number" value="42" min="1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="机柜深度 (m)">机柜深度 (m)</label><input class="sbf-input" id="cfg-depth" type="number" value="1.0" min="0.1" step="0.1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="机柜高度 (U)">机柜高度 (U)</label><input class="sbf-input" id="cfg-u" type="number" value="42" min="1"></div>
         </div>
       </div>
       <div class="sbf-group">
-        <div class="sbf-label">机柜尺寸</div>
+        <div class="sbf-label" data-dc-i18n="机柜尺寸">机柜尺寸</div>
         <div class="sbf-row c3">
-          <div><label class="sbf-label" style="font-size:9px;">宽度 (m)</label><input class="sbf-input" id="cfg-width" type="number" value="0.6" min="0.1" step="0.05"></div>
-          <div><label class="sbf-label" style="font-size:9px;">深度 (m)</label><input class="sbf-input" id="cfg-depth2" type="number" value="1.0" min="0.1" step="0.1"></div>
-          <div><label class="sbf-label" style="font-size:9px;">1U 高 (mm)</label><input class="sbf-input" id="cfg-umm" type="number" value="44.45" min="1" step="0.1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="宽度 (m)">宽度 (m)</label><input class="sbf-input" id="cfg-width" type="number" value="0.6" min="0.1" step="0.05"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="深度 (m)">深度 (m)</label><input class="sbf-input" id="cfg-depth2" type="number" value="1.0" min="0.1" step="0.1"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="1U 高 (mm)">1U 高 (mm)</label><input class="sbf-input" id="cfg-umm" type="number" value="44.45" min="1" step="0.1"></div>
         </div>
       </div>
       <div class="sbf-group">
-        <div class="sbf-label">机柜功耗</div>
+        <div class="sbf-label" data-dc-i18n="机柜功耗">机柜功耗</div>
         <div class="sbf-row c4">
           <div><label class="sbf-label" style="font-size:9px;">AI (W)</label><input class="sbf-input" id="cfg-w-ai" type="number" value="14600" step="100"></div>
-          <div><label class="sbf-label" style="font-size:9px;">总线 (W)</label><input class="sbf-input" id="cfg-w-bus" type="number" value="16800" step="50"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="总线 (W)">总线 (W)</label><input class="sbf-input" id="cfg-w-bus" type="number" value="16800" step="50"></div>
           <div><label class="sbf-label" style="font-size:9px;">Leaf (W)</label><input class="sbf-input" id="cfg-w-norm" type="number" value="250" step="50"></div>
-          <div><label class="sbf-label" style="font-size:9px;">空机柜 (W)</label><input class="sbf-input" id="cfg-w-empty" type="number" value="0" step="50"></div>
+          <div><label class="sbf-label" style="font-size:9px;" data-dc-i18n="空机柜 (W)">空机柜 (W)</label><input class="sbf-input" id="cfg-w-empty" type="number" value="0" step="50"></div>
         </div>
       </div>
       <div class="layout-actions">
-        <button class="btn-outline" id="btn-unlock-layout">解锁</button>
-        <button class="btn-primary" id="btn-apply-layout">✓ 更新布局</button>
+        <button class="btn-outline" id="btn-unlock-layout" data-dc-i18n="解锁">解锁</button>
+        <button class="btn-primary" id="btn-apply-layout" data-dc-i18n="✓ 更新布局">✓ 更新布局</button>
       </div>
     </div>
 
     <!-- RULES -->
     <div class="sb-panel" id="panel-rules">
-      <div style="font-size:12px;font-weight:600;margin-bottom:4px;">机柜类型分配规则</div>
-      <div style="font-size:10px;color:#64748b;margin-bottom:10px;line-height:1.4;">
+      <div style="font-size:12px;font-weight:600;margin-bottom:4px;" data-dc-i18n="机柜类型分配规则">机柜类型分配规则</div>
+      <div style="font-size:10px;color:#64748b;margin-bottom:10px;line-height:1.4;" data-dc-i18n-html="规则按顺序执行（从上到下），后执行的覆盖前面的冲突。<br>规则中的行列号从 <strong>1</strong> 开始计数。">
         规则按顺序执行（从上到下），后执行的覆盖前面的冲突。<br>
         规则中的行列号从 <strong>1</strong> 开始计数。
       </div>
@@ -386,19 +386,19 @@
       <div class="rule-form" id="rule-form">
         <div class="sbf-row c2" style="margin-bottom:6px">
           <div>
-            <label class="sbf-label" style="font-size:9px;">行号范围</label>
-            <input class="sbf-input" id="rule-rows" placeholder='例: "3-6" 或 "1-7:2" 或 "1,3,5,7"'>
-            <div class="sbf-hint">行号从 1 开始，如 "3-6" 表示第 3~6 排</div>
+            <label class="sbf-label" style="font-size:9px;" data-dc-i18n="行号范围">行号范围</label>
+            <input class="sbf-input" id="rule-rows" data-dc-i18n-placeholder='例: "3-6" 或 "1-7:2" 或 "1,3,5,7"' placeholder='例: "3-6" 或 "1-7:2" 或 "1,3,5,7"'>
+            <div class="sbf-hint" data-dc-i18n="行号从 1 开始，如 &quot;3-6&quot; 表示第 3~6 排">行号从 1 开始，如 "3-6" 表示第 3~6 排</div>
           </div>
           <div>
-            <label class="sbf-label" style="font-size:9px;">列号范围</label>
-            <input class="sbf-input" id="rule-cols" placeholder='例: "1" 或 "4,7,10"'>
-            <div class="sbf-hint">列号从 1 开始，如 "1" 表示第 1 柜</div>
+            <label class="sbf-label" style="font-size:9px;" data-dc-i18n="列号范围">列号范围</label>
+            <input class="sbf-input" id="rule-cols" data-dc-i18n-placeholder='例: "1" 或 "4,7,10"' placeholder='例: "1" 或 "4,7,10"'>
+            <div class="sbf-hint" data-dc-i18n="列号从 1 开始，如 &quot;1&quot; 表示第 1 柜">列号从 1 开始，如 "1" 表示第 1 柜</div>
           </div>
         </div>
         <div class="sbf-row c3" style="margin-bottom:8px">
           <div>
-            <label class="sbf-label" style="font-size:9px;">类型</label>
+            <label class="sbf-label" style="font-size:9px;" data-dc-i18n="类型">类型</label>
             <select class="sbf-input" id="rule-type">
               <option value="ai">AI 设备柜</option>
               <option value="bus">总线交换机柜</option>
@@ -406,52 +406,52 @@
             </select>
           </div>
           <div>
-            <label class="sbf-label" style="font-size:9px;">名称</label>
-            <input class="sbf-input" id="rule-name" placeholder="规则名称">
+            <label class="sbf-label" style="font-size:9px;" data-dc-i18n="名称">名称</label>
+            <input class="sbf-input" id="rule-name" data-dc-i18n-placeholder="规则名称" placeholder="规则名称">
           </div>
           <div style="display:flex;align-items:flex-end;gap:4px;">
             <button class="btn-sm btn-primary" id="rule-save" style="flex:1;">✓</button>
             <button class="btn-sm btn-outline" id="rule-cancel">✕</button>
           </div>
         </div>
-        <div style="font-size:10px;color:#475569;line-height:1.4;">
+        <div style="font-size:10px;color:#475569;line-height:1.4;" data-dc-i18n-html="支持格式: <code>开始-结束</code>、<code>开始-结束:步长</code> 或 <code>值1,值2,值3</code>">
           支持格式: <code>开始-结束</code>、<code>开始-结束:步长</code> 或 <code>值1,值2,值3</code>
         </div>
       </div>
       <div class="rule-actions">
-        <button class="btn-sm btn-outline" id="rule-add-btn">+ 添加规则</button>
-        <button class="btn-sm btn-outline" id="btn-unlock-rules">解锁</button>
+        <button class="btn-sm btn-outline" id="rule-add-btn" data-dc-i18n="+ 添加规则">+ 添加规则</button>
+        <button class="btn-sm btn-outline" id="btn-unlock-rules" data-dc-i18n="解锁">解锁</button>
       </div>
     </div>
 
     <!-- VIEWS -->
     <div class="sb-panel" id="panel-views">
       <div class="sbf-group">
-        <div class="sbf-label">已保存视角</div>
+        <div class="sbf-label" data-dc-i18n="已保存视角">已保存视角</div>
         <div class="view-list" id="view-list"></div>
         <div class="save-view-form">
-          <input class="sbf-input" id="view-name" placeholder="视角名称">
-          <button class="btn-sm btn-primary" id="view-save-btn">保存</button>
+          <input class="sbf-input" id="view-name" data-dc-i18n-placeholder="视角名称" placeholder="视角名称">
+          <button class="btn-sm btn-primary" id="view-save-btn" data-dc-i18n="保存">保存</button>
         </div>
       </div>
       <div class="row-filter">
-        <div class="sbf-label">排过滤器</div>
+        <div class="sbf-label" data-dc-i18n="排过滤器">排过滤器</div>
         <div class="sbf-row c2" style="margin-bottom:6px">
           <div>
-            <label class="sbf-label" style="font-size:9px;">只显示</label>
+            <label class="sbf-label" style="font-size:9px;" data-dc-i18n="只显示">只显示</label>
             <select class="sbf-input" id="row-filter-select">
-              <option value="-1">全部显示</option>
+              <option value="-1" data-dc-i18n="全部显示">全部显示</option>
             </select>
           </div>
           <div>
-            <label class="sbf-label" style="font-size:9px;">操作</label>
+            <label class="sbf-label" style="font-size:9px;" data-dc-i18n="操作">操作</label>
             <div style="display:flex;gap:4px;">
-              <button class="btn-sm btn-outline" id="row-filter-btn" style="flex:1;">聚焦</button>
-              <button class="btn-sm btn-outline" id="row-filter-clear">清除</button>
+              <button class="btn-sm btn-outline" id="row-filter-btn" style="flex:1;" data-dc-i18n="聚焦">聚焦</button>
+              <button class="btn-sm btn-outline" id="row-filter-clear" data-dc-i18n="清除">清除</button>
             </div>
           </div>
         </div>
-        <button class="btn-sm btn-outline" id="reset-camera-btn" style="width:100%;">↺ 重置相机</button>
+        <button class="btn-sm btn-outline" id="reset-camera-btn" style="width:100%;" data-dc-i18n="↺ 重置相机">↺ 重置相机</button>
       </div>
     </div>
 
@@ -473,11 +473,11 @@
 <!-- ===== Confirm Dialog ===== -->
 <div id="confirm-overlay">
   <div id="confirm-box">
-    <h4 id="confirm-title">确认</h4>
-    <p id="confirm-msg">确定要执行此操作吗？</p>
+    <h4 id="confirm-title" data-dc-i18n="确认">确认</h4>
+    <p id="confirm-msg" data-dc-i18n="确定要执行此操作吗？">确定要执行此操作吗？</p>
     <div class="cf-actions">
-      <button class="btn-sm btn-outline" id="confirm-cancel">取消</button>
-      <button class="btn-sm btn-danger" id="confirm-ok">确定</button>
+      <button class="btn-sm btn-outline" id="confirm-cancel" data-dc-i18n="取消">取消</button>
+      <button class="btn-sm btn-danger" id="confirm-ok" data-dc-i18n="确定">确定</button>
     </div>
   </div>
 </div>
@@ -485,13 +485,13 @@
 <!-- ===== Password Dialog ===== -->
 <div id="pwd-overlay">
   <div id="pwd-box">
-    <h4>输入访问密码</h4>
-    <p>解锁布局或规则需验证身份（不区分大小写）。</p>
-    <input id="pwd-input" type="password" autocomplete="off" placeholder="密码" class="sbf-input" />
-    <p id="pwd-error" class="pwd-error">密码错误，请重试。</p>
+    <h4 data-dc-i18n="输入访问密码">输入访问密码</h4>
+    <p data-dc-i18n="解锁布局或规则需验证身份（不区分大小写）。">解锁布局或规则需验证身份（不区分大小写）。</p>
+    <input id="pwd-input" type="password" autocomplete="off" data-dc-i18n-placeholder="密码" placeholder="密码" class="sbf-input" />
+    <p id="pwd-error" class="pwd-error" data-dc-i18n="密码错误，请重试。">密码错误，请重试。</p>
     <div class="cf-actions">
-      <button class="btn-sm btn-outline" id="pwd-cancel">取消</button>
-      <button class="btn-sm btn-primary" id="pwd-ok">确认</button>
+      <button class="btn-sm btn-outline" id="pwd-cancel" data-dc-i18n="取消">取消</button>
+      <button class="btn-sm btn-primary" id="pwd-ok" data-dc-i18n="确认">确认</button>
     </div>
   </div>
 </div>
@@ -520,14 +520,53 @@
 
 <script type="module">
 const L = (s) => (globalThis.AidcI18n?.getLookupText?.(s) ?? s);
+const Lp = (key, params) => {
+  let text = L(key);
+  if (params) Object.entries(params).forEach(([k, v]) => { text = text.replaceAll(`{${k}}`, String(v)); });
+  return text;
+};
 const localeTag = () => (globalThis.AidcI18n?.getLocale?.() === 'en' ? 'en-US' : 'zh-CN');
+
+function applyDatacenterStaticI18n() {
+  document.querySelectorAll('[data-dc-i18n]').forEach((el) => {
+    const key = el.getAttribute('data-dc-i18n');
+    if (key) el.textContent = L(key);
+  });
+  document.querySelectorAll('[data-dc-i18n-html]').forEach((el) => {
+    const key = el.getAttribute('data-dc-i18n-html');
+    if (key) el.innerHTML = L(key);
+  });
+  document.querySelectorAll('[data-dc-i18n-placeholder]').forEach((el) => {
+    const key = el.getAttribute('data-dc-i18n-placeholder');
+    if (key) el.setAttribute('placeholder', L(key));
+  });
+  const ruleType = document.getElementById('rule-type');
+  if (ruleType) {
+    const aiOpt = ruleType.querySelector('option[value="ai"]');
+    const busOpt = ruleType.querySelector('option[value="bus"]');
+    const normOpt = ruleType.querySelector('option[value="normal"]');
+    if (aiOpt) aiOpt.textContent = L('AI 设备柜');
+    if (busOpt) busOpt.textContent = L('总线交换机柜');
+    if (normOpt) normOpt.textContent = L('Leaf交换机');
+  }
+}
+
 function refreshDatacenterI18n() {
+  applyDatacenterStaticI18n();
+  if (typeof rebuildI18nLabels === 'function') rebuildI18nLabels();
   if (typeof renderRules === 'function') renderRules();
   if (typeof updateViewList === 'function') updateViewList();
   if (typeof updateConfigSourceBadge === 'function') updateConfigSourceBadge();
   if (typeof updateStats === 'function') updateStats();
   if (typeof updateRowFilter === 'function') updateRowFilter();
+  if (typeof setLayoutInputsLocked === 'function') {
+    const btn = document.getElementById('btn-unlock-layout');
+    const locked = btn?.getAttribute('aria-pressed') !== 'true';
+    setLayoutInputsLocked(locked);
+  }
+  if (typeof setRulesLocked === 'function' && typeof rulesLocked !== 'undefined') setRulesLocked(rulesLocked);
 }
+globalThis.__aidcPageRefreshI18n = refreshDatacenterI18n;
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -1186,22 +1225,7 @@ function buildHotAisles() {
 }
 
 function createHotAisleLabel(zCenter) {
-  const { rackH, hotAisleSpacing } = C;
-  const group = new THREE.Group();
-
-  const floatEl = document.createElement('div');
-  floatEl.textContent = `热通道=${hotAisleSpacing}m`;
-  floatEl.style.color = '#2563eb';
-  floatEl.style.fontSize = '12px';
-  floatEl.style.fontWeight = '700';
-  floatEl.style.fontFamily = 'monospace';
-  floatEl.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
-  floatEl.style.whiteSpace = 'nowrap';
-  const floatLb = new CSS2DObject(floatEl);
-  floatLb.position.set(0, getRackBaseY() + rackH * 0.34, zCenter);
-  labelGroup.add(floatLb);
-
-  return group;
+  return new THREE.Group();
 }
 
 function buildColdAisles() {
@@ -1249,22 +1273,7 @@ function buildColdAisles() {
 }
 
 function createColdAisleLabel(zCenter) {
-  const { rackH, coldAisleSpacing } = C;
-  const group = new THREE.Group();
-
-  const floatEl = document.createElement('div');
-  floatEl.textContent = `冷通道=${coldAisleSpacing}m`;
-  floatEl.style.color = '#2563eb';
-  floatEl.style.fontSize = '12px';
-  floatEl.style.fontWeight = '700';
-  floatEl.style.fontFamily = 'monospace';
-  floatEl.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
-  floatEl.style.whiteSpace = 'nowrap';
-  const floatLb = new CSS2DObject(floatEl);
-  floatLb.position.set(0, getRackBaseY() + rackH * 0.34, zCenter);
-  labelGroup.add(floatLb);
-
-  return group;
+  return new THREE.Group();
 }
 
 function createUnifiedAirConditionerWall() {
@@ -1665,7 +1674,7 @@ function computeTotalDepth() {
 }
 
 function formatTotalDepthLabel(totalD) {
-  return `总长度=${totalD.toFixed(1)}m`;
+  return Lp('总长度={v}m', { v: totalD.toFixed(1) });
 }
 
 function createDepthDimensionLabel(text, x, y, z) {
@@ -1755,9 +1764,15 @@ function showRackTooltip(ud, clientX, clientY) {
   const displayType = isEmptyNormalRack(ud.row, ud.col, ud.type) ? 'empty' : ud.type;
 
   document.getElementById('tt-name').textContent =
-    `排 ${ud.row + 1} · 第 ${ud.col + 1} 柜`;
+    Lp('排 {row} · 第 {col} 柜', { row: ud.row + 1, col: ud.col + 1 });
   document.getElementById('tt-pos').textContent =
-    `Row ${ud.row + 1}, Col ${ud.col + 1} · 合计 ${(ud.power || 0).toLocaleString()} W · ${(ud.usedU || 0)}/${C.rackU} U`;
+    Lp('Row {row}, Col {col} · 合计 {pwr} W · {used}/{total} U', {
+      row: ud.row + 1,
+      col: ud.col + 1,
+      pwr: (ud.power || 0).toLocaleString(localeTag()),
+      used: ud.usedU || 0,
+      total: C.rackU,
+    });
 
   const singleTagWrap = document.getElementById('tt-single-tag');
   const sectionsEl = document.getElementById('tt-sections');
@@ -1832,6 +1847,7 @@ function buildScene() {
   buildACUnits();
   buildMeasurements();
   buildRowLabels();
+  buildAisleFloatLabels();
   applyRowFilter();
   updateStats();
   updateViewList();
@@ -1853,8 +1869,86 @@ function clearLabelRendererDom() {
 }
 
 // ======================================================================
-// Measurements
+// Measurements & CSS2D labels
 // ======================================================================
+
+function mkCss2dLabel(text, x, y, z, style = '') {
+  const d = document.createElement('div');
+  d.textContent = text;
+  d.style.color = style === 'hl' ? '#2563eb' : style === 'val' ? '#3b82f6' : '#78716c';
+  d.style.fontSize = style === 'hl' || style === 'val' ? '12px' : '10px';
+  d.style.fontWeight = style === 'hl' || style === 'val' ? '700' : '500';
+  d.style.fontFamily = 'monospace';
+  d.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
+  const lb = new CSS2DObject(d);
+  lb.position.set(x, y, z);
+  labelGroup.add(lb);
+  return lb;
+}
+
+function clearLabelGroup() {
+  if (!labelGroup) return;
+  while (labelGroup.children.length > 0) {
+    const c = labelGroup.children[0];
+    labelGroup.remove(c);
+    if (c.element instanceof HTMLElement) c.element.remove();
+  }
+}
+
+function addAisleFloatLabel(text, zCenter) {
+  const floatEl = document.createElement('div');
+  floatEl.textContent = text;
+  floatEl.style.color = '#2563eb';
+  floatEl.style.fontSize = '12px';
+  floatEl.style.fontWeight = '700';
+  floatEl.style.fontFamily = 'monospace';
+  floatEl.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
+  floatEl.style.whiteSpace = 'nowrap';
+  const floatLb = new CSS2DObject(floatEl);
+  floatLb.position.set(0, getRackBaseY() + C.rackH * 0.34, zCenter);
+  labelGroup.add(floatLb);
+}
+
+function buildMeasurementLabels() {
+  const { totalW, totalD, rackW, cols } = C;
+  const halfD = totalD / 2;
+  const off = 1.6, Y = 0.015;
+  const tz = -halfD - off;
+  mkCss2dLabel(Lp('总宽度 = {cols}柜 × {w}m = {total}m', { cols, w: rackW, total: totalW.toFixed(1) }), 0, Y + 0.8, tz, 'hl');
+  createDepthDimensionLabel(
+    Lp('总长度={v}m', { v: totalD.toFixed(1) }),
+    getAcRackAisleCenterX(),
+    getRackBaseY() + C.rackH * 0.34,
+    0
+  );
+}
+
+function buildAisleFloatLabels() {
+  if (C.rows < 2) return;
+  const { rackD, hotAisleSpacing, coldAisleSpacing } = C;
+  for (let r = 0; r < C.rows - 1; r++) {
+    if (r % 2 === 1) continue;
+    const zBack = getRackPos(r, 0).z + rackD / 2;
+    const zFront = getRackPos(r + 1, 0).z - rackD / 2;
+    const zCenter = (zBack + zFront) / 2;
+    addAisleFloatLabel(Lp('热通道={v}m', { v: hotAisleSpacing }), zCenter);
+  }
+  for (let r = 0; r < C.rows - 1; r++) {
+    if (r % 2 === 0) continue;
+    const zBack = getRackPos(r, 0).z + rackD / 2;
+    const zFront = getRackPos(r + 1, 0).z - rackD / 2;
+    const zCenter = (zBack + zFront) / 2;
+    addAisleFloatLabel(Lp('冷通道={v}m', { v: coldAisleSpacing }), zCenter);
+  }
+}
+
+function rebuildI18nLabels() {
+  clearLabelGroup();
+  buildMeasurementLabels();
+  buildRowLabels();
+  buildAisleFloatLabels();
+}
+
 function buildMeasurements() {
   const mg = measureGroup;
   const { totalW, totalD, rackW, rackD, coldAisleSpacing, hotAisleSpacing, rows, cols } = C;
@@ -1867,18 +1961,6 @@ function buildMeasurements() {
 
   function line(a, b, mat) { const g = new THREE.BufferGeometry().setFromPoints([a, b]); mg.add(new THREE.Line(g, mat)); }
   function tickAt(pos, dir, sz = 0.15) { const p1 = pos.clone().add(dir.clone().multiplyScalar(-sz)); const p2 = pos.clone().add(dir.clone().multiplyScalar(sz)); line(p1, p2, tkm); }
-  function mkLabel(text, x, y, z, style = '') {
-    const d = document.createElement('div');
-    d.textContent = text;
-    d.style.color = style === 'hl' ? '#2563eb' : style === 'val' ? '#3b82f6' : '#78716c';
-    d.style.fontSize = style === 'hl' || style === 'val' ? '12px' : '10px';
-    d.style.fontWeight = style === 'hl' || style === 'val' ? '700' : '500';
-    d.style.fontFamily = 'monospace';
-    d.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
-    const lb = new CSS2DObject(d);
-    lb.position.set(x, y, z);
-    labelGroup.add(lb);
-  }
 
   const tz = -halfD - off;
   line(new THREE.Vector3(-halfW, Y, tz), new THREE.Vector3(halfW, Y, tz), dm);
@@ -1886,8 +1968,6 @@ function buildMeasurements() {
   tickAt(new THREE.Vector3(halfW, Y, tz), new THREE.Vector3(0, 0, 1));
   line(new THREE.Vector3(-halfW + rackW / 2, Y, -halfD), new THREE.Vector3(-halfW, Y, tz), gdm);
   line(new THREE.Vector3(halfW - rackW / 2, Y, -halfD), new THREE.Vector3(halfW, Y, tz), gdm);
-  mkLabel(`总宽度 = ${cols}柜 × ${rackW}m = ${totalW.toFixed(1)}m`, 0, Y + 0.8, tz, 'hl');
-
   const rx = halfW + off;
   const r0z = getRackPos(0, 0).z;
   const r1z = getRackPos(1, 0).z;
@@ -1903,13 +1983,6 @@ function buildMeasurements() {
   tickAt(new THREE.Vector3(rx2, Y, halfD), new THREE.Vector3(-1, 0, 0), 0.2);
   line(new THREE.Vector3(halfW - rackW / 2, Y, -halfD + rackD / 2), new THREE.Vector3(rx2, Y, -halfD), gdm);
   line(new THREE.Vector3(halfW - rackW / 2, Y, halfD - rackD / 2), new THREE.Vector3(rx2, Y, halfD), gdm);
-  createDepthDimensionLabel(
-    formatTotalDepthLabel(totalD),
-    getAcRackAisleCenterX(),
-    getRackBaseY() + C.rackH * 0.34,
-    0
-  );
-
   const m = 0.3;
   const pts = [
     new THREE.Vector3(-halfW - m, Y, -halfD - m),
@@ -1922,6 +1995,7 @@ function buildMeasurements() {
   const pl = new THREE.Line(pg, gdm);
   pl.computeLineDistances();
   mg.add(pl);
+  buildMeasurementLabels();
 }
 
 function buildRowLabels() {
@@ -1929,7 +2003,7 @@ function buildRowLabels() {
   for (let r = 0; r < C.rows; r++) {
     const pos = getRackPos(r, 0);
     const d = document.createElement('div');
-    d.textContent = `排 ${r + 1}`;
+    d.textContent = Lp('排 {n}', { n: r + 1 });
     d.style.color = '#57534e';
     d.style.fontSize = '11px';
     d.style.fontWeight = '500';
@@ -2024,7 +2098,7 @@ function renderRules() {
       <span class="r-dot" style="background:${dots[rule.type] || '#6b7280'}"></span>
       <div class="r-info">
         <div class="r-title">${rule.name || L('未命名规则')}</div>
-        <div class="r-desc">第 ${rule.rows} 排 → 第 ${rule.cols} 柜 → ${types[rule.type]}</div>
+        <div class="r-desc">${Lp('第 {rows} 排 → 第 {cols} 柜 → {type}', { rows: rule.rows, cols: rule.cols, type: types[rule.type] })}</div>
       </div>
       <div class="r-actions">
         <button class="btn-sm btn-outline" data-ri="${i}" data-action="edit" ${rulesLocked ? 'disabled' : ''} style="font-size:9px;padding:2px 5px;">✏️</button>
@@ -2106,7 +2180,7 @@ function updateViewList() {
     <div class="view-item">
       <span class="v-name">👁 ${v.name}</span>
       <div class="v-actions">
-        <button class="btn-sm btn-outline" data-vi="${i}" data-action="restore" style="font-size:9px;padding:2px 5px;">恢复</button>
+        <button class="btn-sm btn-outline" data-vi="${i}" data-action="restore" style="font-size:9px;padding:2px 5px;">${L('恢复')}</button>
         <button class="btn-sm btn-danger" data-vi="${i}" data-action="delview" style="font-size:9px;padding:2px 5px;">✕</button>
       </div>
     </div>
@@ -2119,7 +2193,7 @@ function updateViewList() {
         camera.position.set(v.px, v.py, v.pz);
         controls.target.set(v.tx, v.ty, v.tz);
         controls.update();
-        toast(`已恢复视角「${v.name}」`);
+        toast(Lp('已恢复视角「{name}」', { name: v.name }));
       } else {
         store.savedViews.splice(i, 1);
         updateViewList();
@@ -2261,9 +2335,19 @@ function initUI(fromLocalStorage, configSource) {
   if (fromLocalStorage) toast(L('已恢复上次的配置'));
   else if (configSource === 'database') toast(L('已加载云端配置'));
   updateConfigSourceBadge();
+  refreshDatacenterI18n();
+}
+
+async function waitForI18n(maxMs = 5000) {
+  const start = Date.now();
+  while (!globalThis.AidcI18n?.isActive?.()) {
+    if (Date.now() - start > maxMs) break;
+    await new Promise((r) => setTimeout(r, 20));
+  }
 }
 
 async function boot() {
+  await waitForI18n();
   const loaded = loadState();
   let configSource = 'local';
   let configVersion = null;
@@ -2404,7 +2488,7 @@ document.getElementById('rule-save').addEventListener('click', () => {
   const rows = document.getElementById('rule-rows').value.trim();
   const cols = document.getElementById('rule-cols').value.trim();
   const type = document.getElementById('rule-type').value;
-  const name = document.getElementById('rule-name').value.trim() || `规则 ${store.rules.length + 1}`;
+  const name = document.getElementById('rule-name').value.trim() || Lp('规则 {n}', { n: store.rules.length + 1 });
   if (!rows || !cols) { alert(L('请填写行和列范围')); return; }
 
   if (editingRuleIndex >= 0 && editingRuleIndex < store.rules.length) {
@@ -2429,7 +2513,7 @@ document.getElementById('rule-cancel').addEventListener('click', () => {
 });
 
 document.getElementById('view-save-btn').addEventListener('click', () => {
-  const name = document.getElementById('view-name').value.trim() || `视角 ${store.savedViews.length + 1}`;
+  const name = document.getElementById('view-name').value.trim() || Lp('视角 {n}', { n: store.savedViews.length + 1 });
   store.savedViews.push({
     id: ++store.viewIdx, name,
     px: camera.position.x, py: camera.position.y, pz: camera.position.z,
@@ -2438,7 +2522,7 @@ document.getElementById('view-save-btn').addEventListener('click', () => {
   document.getElementById('view-name').value = '';
   updateViewList();
   saveState();
-  toast(`视角「${name}」已保存`);
+  toast(Lp('视角「{name}」已保存', { name }));
 });
 
 document.getElementById('row-filter-btn').addEventListener('click', () => {
@@ -2473,8 +2557,10 @@ new ResizeObserver(onResize).observe(container);
 // Row filter population
 function updateRowFilter() {
   const sel = document.getElementById('row-filter-select');
-  sel.innerHTML = L('<option value="-1">全部显示</option>');
-  for (let i = 0; i < C.rows; i++) sel.innerHTML += `<option value="${i}">排 ${i + 1}</option>`;
+  const prev = sel.value;
+  sel.innerHTML = `<option value="-1">${L('全部显示')}</option>`;
+  for (let i = 0; i < C.rows; i++) sel.innerHTML += `<option value="${i}">${Lp('排 {n}', { n: i + 1 })}</option>`;
+  if (prev && sel.querySelector(`option[value="${prev}"]`)) sel.value = prev;
 }
 const origBuild = buildScene;
 buildScene = function() { origBuild(); updateRowFilter(); };
@@ -2497,8 +2583,8 @@ console.log(L('• 配置自动保存到 localStorage'));
   <script src="js/i18n-bootstrap.js"></script>
   <script>
     AidcI18nBootstrap.bootstrap('datacenter-3d-v3-2', {
-      onReady: function () { refreshDatacenterI18n(); },
-      onLocaleChange: function () { refreshDatacenterI18n(); },
+      onReady: function () { globalThis.__aidcPageRefreshI18n?.(); },
+      onLocaleChange: function () { globalThis.__aidcPageRefreshI18n?.(); },
     });
     if (window.AidcLocaleBridge) {
       AidcLocaleBridge.initIframeListener(function (locale) {
