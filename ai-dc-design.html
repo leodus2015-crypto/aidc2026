@@ -82,11 +82,10 @@
             type="button"
             id="tab-room-layout"
             role="tab"
-            aria-selected="false"
+            aria-selected="true"
             aria-controls="panel-room-layout"
             data-layout-tab="roomLayout"
-            tabindex="-1"
-            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white"
             data-i18n="tabs.roomLayout"
           >机房布局</button>
           <button
@@ -104,10 +103,11 @@
             type="button"
             id="tab-case-a"
             role="tab"
-            aria-selected="true"
+            aria-selected="false"
             aria-controls="panel-case-a"
             data-layout-tab="a"
-            class="rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
             data-i18n="tabs.caseA"
           >案例A（风冷）</button>
           <button
@@ -135,7 +135,7 @@
         </div>
       </div>
 
-      <div id="panel-room-layout" role="tabpanel" aria-labelledby="tab-room-layout" aria-hidden="true" class="hidden min-w-0 w-full">
+      <div id="panel-room-layout" role="tabpanel" aria-labelledby="tab-room-layout" class="min-w-0 w-full">
         <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
           <iframe
             data-iframe-key="roomLayout"
@@ -147,7 +147,7 @@
         </div>
       </div>
 
-      <div id="panel-case-a" role="tabpanel" aria-labelledby="tab-case-a" class="min-w-0 w-full">
+      <div id="panel-case-a" role="tabpanel" aria-labelledby="tab-case-a" aria-hidden="true" class="hidden min-w-0 w-full">
         <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
           <iframe
             data-iframe-key="caseA"

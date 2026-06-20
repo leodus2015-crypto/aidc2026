@@ -44,6 +44,8 @@ aidc 静态站点归档
   ai-dc-room-layout.html 再通过 js/ai-dc-room-layout-page.js 加载四层示意与单层平面。
 
   Tab 顺序（ai-dc-design）：机房布局 | 机柜布局（风冷）| 案例 A | 案例 B | Investment ROI
+  默认 Tab：机房布局（roomLayout）；单层平面图含功能区面积标注（EHU 750 m²、风冷/液冷 820 m²、
+  配电功能区 420 m² 标于左侧两块低压配电合计区域）；中间配电区高度为原 70%，上下机房等比加高。
 
 说明
 ────

@@ -65,11 +65,14 @@
     layoutTabs.forEach(({ id, tab }) => {
       tab.addEventListener('click', () => selectLayoutTab(id));
     });
+
+    return selectLayoutTab;
   }
 
   global.AidcAiDcDesignPage = {
     init() {
-      initTabs();
+      const selectLayoutTab = initTabs();
+      selectLayoutTab('roomLayout');
       syncIframes();
     },
     syncIframes,
