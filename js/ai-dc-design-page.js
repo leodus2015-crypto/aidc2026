@@ -13,10 +13,16 @@
     caseB: 'datacenter-3d-v3-2.html',
     plan: 'ai-dc-layout_37.html',
     roi: 'aidc-investment-roi.html',
+    roiEn: 'aidc-investment-roi.en.html',
   };
 
   /** Bump when embedded iframe pages change (i18n / logic) to avoid stale browser cache. */
-  const IFRAME_ASSET_VERSION = '3';
+  const IFRAME_ASSET_VERSION = '4';
+
+  function iframeSrc(key) {
+    if (key === 'roi' && global.AidcI18n?.getLocale?.() === 'en') return IFRAME_BASE.roiEn;
+    return IFRAME_BASE[key];
+  }
 
   function withLocale(src, options) {
     if (!src) return src;
@@ -42,9 +48,10 @@
     const opts = options || {};
     const bust = opts.reload ? Date.now() : null;
     Object.keys(IFRAME_BASE).forEach((key) => {
+      if (key === 'roiEn') return;
       const iframe = document.querySelector(`iframe[data-iframe-key="${key}"]`);
       if (!iframe) return;
-      const nextSrc = withLocale(IFRAME_BASE[key], { bust });
+      const nextSrc = withLocale(iframeSrc(key), { bust });
       const current = iframe.getAttribute('src') || '';
       if (!current || current !== nextSrc || opts.reload) {
         iframe.src = nextSrc;

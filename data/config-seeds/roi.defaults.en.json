@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "computeP": 512,
+  "clusterMw": 1.0,
+  "pctItDevice": 65,
+  "pctPowerCool": 25,
+  "pctLandBuild": 10,
+  "npuUnitPrice": 7,
+  "ascendInItPct": 85,
+  "deprecYears": 5,
+  "pue": 1.25,
+  "elecPrice": 0.09,
+  "utilization": 75,
+  "tpsInputMiss": 900,
+  "tpsInputHit": 3600,
+  "tpsOutput": 28,
+  "annualFixedOpex": 110,
+  "capexOpexPct": 3,
+  "serviceModel": "ds-v4"
+}

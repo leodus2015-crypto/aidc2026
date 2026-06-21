@@ -27,7 +27,9 @@ CORS_ORIGINS = [
 ALLOWED_CONFIG_KEYS = frozenset(
     {
         "roi.defaults",
+        "roi.defaults.en",
         "roi.cloud_compare",
+        "roi.cloud_compare.en",
         "inference.defaults",
         "aidc_calc.cfg",
         "dc3d.case_a",

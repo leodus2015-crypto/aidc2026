@@ -29,31 +29,28 @@
     }
   </script>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="aidc-investment-roi">
+<body class="min-h-screen bg-slate-50 text-slate-900">
   <header id="site-header" class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
-    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl" data-i18n-aria-label="nav.aria" aria-label="主导航">
-      <a href="index.html" class="flex min-w-0 shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
+    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl" aria-label="主导航">
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center" aria-label="AIDC 2026 · 首页">
         <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10" />
       </a>
-      <div class="ml-auto flex flex-wrap items-center gap-4">
-        <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
-        <li><a href="ai-dc-design.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.aiDcLayout">AI DC规划</a></li>
-        <li><a href="index.html#inference" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.inference">Agentic推理</a></li>
-        <li><a href="post-training.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.postTraining">后训练</a></li>
-        <li><a href="white-paper.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.whitePaper">白皮书</a></li>
-        <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.aboutUs">About US</a></li>
-        </ul>
-        <div id="lang-switch-root" class="shrink-0"></div>
-      </div>
+      <ul class="ml-auto flex flex-wrap items-center gap-6 text-sm font-semibold">
+        <li><a href="ai-dc-design.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">AI DC规划</a></li>
+        <li><a href="index.html#inference" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">Agentic推理</a></li>
+        <li><a href="post-training.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">后训练</a></li>
+        <li><a href="white-paper.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">白皮书</a></li>
+        <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">About US</a></li>
+      </ul>
     </nav>
   </header>
 
   <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
     <section class="flex flex-col gap-8 lg:gap-10">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="page.eyebrow">Investment ROI</p>
-        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1"></h1>
-        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="page.introHtml"></p>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Investment ROI</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">Token 服务投资收益分析</h1>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">以<strong class="font-semibold text-slate-800">算力规模（P）</strong>与<strong class="font-semibold text-slate-800">集群功率（MW）</strong>联动建模，左侧 CAPEX、右侧 OPEX，中部比价图实时反映竞争力。</p>
         <p id="configSourceBadge" class="mt-2 text-xs font-medium text-slate-500" aria-live="polite"></p>
       </div>
 
@@ -62,38 +59,38 @@
         <div class="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
           <div>
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">CAPEX</p>
-            <h2 class="mt-1 text-xl font-bold text-slate-950" data-roi-i18n="投资建设 · 关键参数">投资建设 · 关键参数</h2>
+            <h2 class="mt-1 text-xl font-bold text-slate-950">投资建设 · 关键参数</h2>
           </div>
           <div class="space-y-4 lg:flex-1">
             <div class="space-y-4">
               <div>
-                <label for="computeP" class="block text-sm font-medium text-slate-700" data-roi-i18n="算力规模（P）">算力规模（P）</label>
+                <label for="computeP" class="block text-sm font-medium text-slate-700">算力规模（P）</label>
                 <input id="computeP" type="number" min="0.01" step="0.01" value="512"
                   class="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
-                <p class="mt-1 text-xs text-slate-500" data-roi-i18n="2026H2：1 卡 = 1P">2026H2：1 卡 = 1P</p>
+                <p class="mt-1 text-xs text-slate-500">2026H2：1 卡 = 1P</p>
               </div>
               <div>
-                <label for="clusterMw" class="block text-sm font-medium text-slate-700" data-roi-i18n="集群 IT 功率（MW）">集群 IT 功率（MW）</label>
+                <label for="clusterMw" class="block text-sm font-medium text-slate-700">集群 IT 功率（MW）</label>
                 <input id="clusterMw" type="number" min="0.001" step="0.001" value="1"
                   class="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
-                <p class="mt-1 text-xs text-slate-500" data-roi-i18n="规格：64 卡 = 125kW">规格：64 卡 = 125kW</p>
+                <p class="mt-1 text-xs text-slate-500">规格：64 卡 = 125kW</p>
               </div>
             </div>
             <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <p class="text-xs font-semibold text-slate-700" data-roi-i18n="工程投资结构（合计 100%）">工程投资结构（合计 100%）</p>
+              <p class="text-xs font-semibold text-slate-700">工程投资结构（合计 100%）</p>
               <div class="mt-3 grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label for="pctItDevice" class="block text-xs font-medium text-slate-600" data-roi-i18n="IT 设备投资（%）">IT 设备投资（%）</label>
+                  <label for="pctItDevice" class="block text-xs font-medium text-slate-600">IT 设备投资（%）</label>
                   <input id="pctItDevice" type="number" min="0" max="100" step="1" value="65"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label for="pctPowerCool" class="block text-xs font-medium text-slate-600" data-roi-i18n="供电 / 散热（%）">供电 / 散热（%）</label>
+                  <label for="pctPowerCool" class="block text-xs font-medium text-slate-600">供电 / 散热（%）</label>
                   <input id="pctPowerCool" type="number" min="0" max="100" step="1" value="25"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label for="pctLandBuild" class="block text-xs font-medium text-slate-600" data-roi-i18n="土地 / 建筑（%）">土地 / 建筑（%）</label>
+                  <label for="pctLandBuild" class="block text-xs font-medium text-slate-600">土地 / 建筑（%）</label>
                   <input id="pctLandBuild" type="number" min="0" max="100" step="1" value="10"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
@@ -102,19 +99,19 @@
             </div>
           </div>
           <div class="mt-auto flex min-h-[11.75rem] flex-col rounded-2xl bg-slate-950 p-5 text-white">
-            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400" data-roi-i18n="CAPEX 结果">CAPEX 结果</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">CAPEX 结果</p>
             <dl class="mt-3 flex flex-1 flex-col">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <dt class="text-xs text-slate-400" data-roi-i18n="总投资">总投资</dt>
+                  <dt class="text-xs text-slate-400">总投资</dt>
                   <dd id="keyTotalCapex" class="mt-0.5 text-lg font-bold tabular-nums text-blue-300">—</dd>
                 </div>
                 <div>
-                  <dt class="text-xs text-slate-400" data-roi-i18n="IT 设备投资">IT 设备投资</dt>
+                  <dt class="text-xs text-slate-400">IT 设备投资</dt>
                   <dd id="keyItCapex" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
                 </div>
                 <div>
-                  <dt class="text-xs text-slate-400" data-roi-i18n="年折旧">年折旧</dt>
+                  <dt class="text-xs text-slate-400">年折旧</dt>
                   <dd id="keyAnnualDep" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
                 </div>
                 <div aria-hidden="true" class="invisible">
@@ -123,7 +120,7 @@
                 </div>
               </div>
               <div class="mt-auto border-t border-white/10 pt-3">
-                <dt class="text-xs text-slate-400" data-roi-i18n="CAPEX 摊销（元/百万输出 Token）">CAPEX 摊销（元/百万输出 Token）</dt>
+                <dt class="text-xs text-slate-400">CAPEX 摊销（元/百万输出 Token）</dt>
                 <dd id="keyCapexPerM" class="mt-0.5 text-2xl font-bold tabular-nums text-amber-300">—</dd>
               </div>
             </dl>
@@ -134,16 +131,16 @@
         <div class="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
           <div>
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-600">OPEX</p>
-            <h2 class="mt-1 text-xl font-bold text-slate-950" data-roi-i18n="运行成本 · 关键参数">运行成本 · 关键参数</h2>
+            <h2 class="mt-1 text-xl font-bold text-slate-950">运行成本 · 关键参数</h2>
           </div>
           <div class="space-y-4 lg:flex-1">
             <div>
-              <label for="deprecYears" class="block text-sm font-medium text-slate-700" data-roi-i18n="设备折旧年限（年）">设备折旧年限（年）</label>
+              <label for="deprecYears" class="block text-sm font-medium text-slate-700">设备折旧年限（年）</label>
               <input id="deprecYears" type="number" min="1" step="1" value="5"
                 class="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
             </div>
             <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <p class="text-xs font-semibold text-slate-700" data-roi-i18n="运行环境">运行环境</p>
+              <p class="text-xs font-semibold text-slate-700">运行环境</p>
               <div class="mt-3 grid gap-3 sm:grid-cols-3">
                 <div>
                   <label for="pue" class="block text-xs font-medium text-slate-600">PUE</label>
@@ -151,53 +148,53 @@
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label for="elecPrice" class="block text-xs font-medium text-slate-600" data-roi-i18n="工业电价（元/kWh）">工业电价（元/kWh）</label>
+                  <label for="elecPrice" class="block text-xs font-medium text-slate-600">工业电价（元/kWh）</label>
                   <input id="elecPrice" type="number" min="0.01" step="0.01" value="0.65"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label for="utilization" class="block text-xs font-medium text-slate-600" data-roi-i18n="平均利用率（%）">平均利用率（%）</label>
+                  <label for="utilization" class="block text-xs font-medium text-slate-600">平均利用率（%）</label>
                   <input id="utilization" type="number" min="1" max="100" step="1" value="75"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
               </div>
             </div>
             <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <p class="text-xs font-semibold text-slate-700" data-roi-i18n="单卡吞吐（tokens/s）">单卡吞吐（tokens/s）</p>
+              <p class="text-xs font-semibold text-slate-700">单卡吞吐（tokens/s）</p>
               <div class="mt-3 grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label for="tpsInputMiss" class="block text-xs font-medium text-slate-600" data-roi-i18n="输入·未命中">输入·未命中</label>
+                  <label for="tpsInputMiss" class="block text-xs font-medium text-slate-600">输入·未命中</label>
                   <input id="tpsInputMiss" type="number" min="0" step="1" value="900"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label for="tpsInputHit" class="block text-xs font-medium text-slate-600" data-roi-i18n="输入·命中">输入·命中</label>
+                  <label for="tpsInputHit" class="block text-xs font-medium text-slate-600">输入·命中</label>
                   <input id="tpsInputHit" type="number" min="0" step="1" value="3600"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label for="tpsOutput" class="block text-xs font-medium text-slate-600" data-roi-i18n="输出">输出</label>
+                  <label for="tpsOutput" class="block text-xs font-medium text-slate-600">输出</label>
                   <input id="tpsOutput" type="number" min="0.1" step="0.1" value="28"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
               </div>
             </div>
-            <p class="text-xs leading-5 text-slate-500" data-roi-i18n="集群 IT 功率由左侧 P/MW 联动；电费按 MW × PUE × 利用率估算。比价按三类 Token 总量均摊全成本。">集群 IT 功率由左侧 P/MW 联动；电费按 MW × PUE × 利用率估算。比价按三类 Token 总量均摊全成本。</p>
+            <p class="text-xs leading-5 text-slate-500">集群 IT 功率由左侧 P/MW 联动；电费按 MW × PUE × 利用率估算。比价按三类 Token 总量均摊全成本。</p>
           </div>
           <div class="mt-auto flex min-h-[11.75rem] flex-col rounded-2xl bg-slate-950 p-5 text-white">
-            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400" data-roi-i18n="OPEX 结果">OPEX 结果</p>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">OPEX 结果</p>
             <dl class="mt-3 flex flex-1 flex-col">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <dt class="text-xs text-slate-400" data-roi-i18n="年电费">年电费</dt>
+                  <dt class="text-xs text-slate-400">年电费</dt>
                   <dd id="keyAnnualPower" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-300">—</dd>
                 </div>
                 <div>
-                  <dt class="text-xs text-slate-400" data-roi-i18n="年运维（固定+维保）">年运维（固定+维保）</dt>
+                  <dt class="text-xs text-slate-400">年运维（固定+维保）</dt>
                   <dd id="keyAnnualOps" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
                 </div>
                 <div>
-                  <dt class="text-xs text-slate-400" data-roi-i18n="年 OPEX 合计">年 OPEX 合计</dt>
+                  <dt class="text-xs text-slate-400">年 OPEX 合计</dt>
                   <dd id="keyAnnualOpexTotal" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-200">—</dd>
                 </div>
                 <div aria-hidden="true" class="invisible">
@@ -206,7 +203,7 @@
                 </div>
               </div>
               <div class="mt-auto border-t border-white/10 pt-3">
-                <dt class="text-xs text-slate-400" data-roi-i18n="OPEX 合计（元/百万输出 Token）">OPEX 合计（元/百万输出 Token）</dt>
+                <dt class="text-xs text-slate-400">OPEX 合计（元/百万输出 Token）</dt>
                 <dd id="keyOpexPerM" class="mt-0.5 text-2xl font-bold tabular-nums text-emerald-300">—</dd>
               </div>
             </dl>
@@ -223,7 +220,7 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-violet-600">Price Compare</p>
-            <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl" data-roi-i18n="公有云公开价 vs 自建全成本">公有云公开价 vs 自建全成本</h2>
+            <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl">公有云公开价 vs 自建全成本</h2>
           </div>
           <div class="inline-flex gap-1 rounded-2xl bg-slate-100 p-1" role="tablist">
             <button type="button" data-scenario="ds-v4" class="cmp-tab rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm bg-white">DeepSeek V4</button>
@@ -232,14 +229,14 @@
         </div>
         <div class="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
           <div>
-            <span class="text-xs text-slate-500" data-roi-i18n="自建均摊价">自建均摊价</span>
+            <span class="text-xs text-slate-500">自建均摊价</span>
             <span id="cmpSelfCost" class="ml-2 text-xl font-bold tabular-nums text-amber-600">—</span>
-            <span class="text-sm text-slate-500" data-roi-i18n="元/百万 Token（三类合计）">元/百万 Token（三类合计）</span>
+            <span class="text-sm text-slate-500">元/百万 Token（三类合计）</span>
           </div>
           <div>
-            <span class="text-xs text-slate-500" data-roi-i18n="对标均摊价">对标均摊价</span>
+            <span class="text-xs text-slate-500">对标均摊价</span>
             <span id="cmpRefEff" class="ml-2 text-lg font-semibold tabular-nums text-blue-700">—</span>
-            <span class="text-sm text-slate-500" data-roi-i18n="元/M（按吞吐加权）">元/M（按吞吐加权）</span>
+            <span class="text-sm text-slate-500">元/M（按吞吐加权）</span>
           </div>
           <div id="cmpVerdict" class="w-full text-sm font-semibold text-slate-700 sm:w-auto">—</div>
         </div>
@@ -249,101 +246,101 @@
       <!-- 全量参数 -->
       <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6 lg:p-8">
         <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Full Model</p>
-        <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl" data-roi-i18n="全部参数与计算公式">全部参数与计算公式</h2>
+        <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl">全部参数与计算公式</h2>
 
         <div class="mt-6 grid gap-6 lg:grid-cols-2">
           <fieldset class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <legend class="px-2 text-sm font-bold text-slate-900" data-roi-i18n="CAPEX 全部参数">CAPEX 全部参数</legend>
+            <legend class="px-2 text-sm font-bold text-slate-900">CAPEX 全部参数</legend>
             <div class="grid gap-3 sm:grid-cols-2">
               <div class="sm:col-span-2">
-                <label class="block text-xs font-medium text-slate-600" data-roi-i18n="昇腾 NPU 型号">昇腾 NPU 型号</label>
+                <label class="block text-xs font-medium text-slate-600">昇腾 NPU 型号</label>
                 <input id="npuModelReadonly" type="text" readonly value="2026H2型号（1P/卡 · 64卡=125kW · 默认50万/卡）"
                   class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700" />
               </div>
               <div>
-                <label for="fullNpuCount" class="block text-xs font-medium text-slate-600" data-roi-i18n="NPU 数量（= P）">NPU 数量（= P）</label>
+                <label for="fullNpuCount" class="block text-xs font-medium text-slate-600">NPU 数量（= P）</label>
                 <input id="fullNpuCount" type="number" readonly class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm" />
               </div>
               <div>
-                <label for="fullClusterMw" class="block text-xs font-medium text-slate-600" data-roi-i18n="集群 IT 功率（MW）">集群 IT 功率（MW）</label>
+                <label for="fullClusterMw" class="block text-xs font-medium text-slate-600">集群 IT 功率（MW）</label>
                 <input id="fullClusterMw" type="number" step="0.001" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullComputeP" class="block text-xs font-medium text-slate-600" data-roi-i18n="算力规模（P）">算力规模（P）</label>
+                <label for="fullComputeP" class="block text-xs font-medium text-slate-600">算力规模（P）</label>
                 <input id="fullComputeP" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullNpuPrice" class="block text-xs font-medium text-slate-600" data-roi-i18n="单卡价（万元）">单卡价（万元）</label>
+                <label for="fullNpuPrice" class="block text-xs font-medium text-slate-600">单卡价（万元）</label>
                 <input id="fullNpuPrice" type="number" step="0.1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullAscendItPct" class="block text-xs font-medium text-slate-600" data-roi-i18n="IT 内昇腾（%）">IT 内昇腾（%）</label>
+                <label for="fullAscendItPct" class="block text-xs font-medium text-slate-600">IT 内昇腾（%）</label>
                 <input id="fullAscendItPct" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullNetItPct" class="block text-xs font-medium text-slate-600" data-roi-i18n="IT 内网络/存储（%）">IT 内网络/存储（%）</label>
+                <label for="fullNetItPct" class="block text-xs font-medium text-slate-600">IT 内网络/存储（%）</label>
                 <input id="fullNetItPct" type="number" readonly class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm" />
               </div>
               <div>
-                <label for="fullPctIt" class="block text-xs font-medium text-slate-600" data-roi-i18n="IT 设备占比（%）">IT 设备占比（%）</label>
+                <label for="fullPctIt" class="block text-xs font-medium text-slate-600">IT 设备占比（%）</label>
                 <input id="fullPctIt" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullPctPower" class="block text-xs font-medium text-slate-600" data-roi-i18n="供电/散热占比（%）">供电/散热占比（%）</label>
+                <label for="fullPctPower" class="block text-xs font-medium text-slate-600">供电/散热占比（%）</label>
                 <input id="fullPctPower" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullPctLand" class="block text-xs font-medium text-slate-600" data-roi-i18n="土地/建筑占比（%）">土地/建筑占比（%）</label>
+                <label for="fullPctLand" class="block text-xs font-medium text-slate-600">土地/建筑占比（%）</label>
                 <input id="fullPctLand" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullDeprecYears" class="block text-xs font-medium text-slate-600" data-roi-i18n="折旧年限（年）">折旧年限（年）</label>
+                <label for="fullDeprecYears" class="block text-xs font-medium text-slate-600">折旧年限（年）</label>
                 <input id="fullDeprecYears" type="number" min="1" value="5" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
             </div>
           </fieldset>
 
           <fieldset class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
-            <legend class="px-2 text-sm font-bold text-slate-900" data-roi-i18n="OPEX 全部参数">OPEX 全部参数</legend>
+            <legend class="px-2 text-sm font-bold text-slate-900">OPEX 全部参数</legend>
             <div class="grid gap-3 sm:grid-cols-2">
               <div>
                 <label for="fullPue" class="block text-xs font-medium text-slate-600">PUE</label>
                 <input id="fullPue" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullElecPrice" class="block text-xs font-medium text-slate-600" data-roi-i18n="电价（元/kWh）">电价（元/kWh）</label>
+                <label for="fullElecPrice" class="block text-xs font-medium text-slate-600">电价（元/kWh）</label>
                 <input id="fullElecPrice" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullUtil" class="block text-xs font-medium text-slate-600" data-roi-i18n="利用率（%）">利用率（%）</label>
+                <label for="fullUtil" class="block text-xs font-medium text-slate-600">利用率（%）</label>
                 <input id="fullUtil" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullFixedOpex" class="block text-xs font-medium text-slate-600" data-roi-i18n="固定运维（万元/年）">固定运维（万元/年）</label>
+                <label for="fullFixedOpex" class="block text-xs font-medium text-slate-600">固定运维（万元/年）</label>
                 <input id="fullFixedOpex" type="number" value="800" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullCapexOpexPct" class="block text-xs font-medium text-slate-600" data-roi-i18n="CAPEX 年维保（%）">CAPEX 年维保（%）</label>
+                <label for="fullCapexOpexPct" class="block text-xs font-medium text-slate-600">CAPEX 年维保（%）</label>
                 <input id="fullCapexOpexPct" type="number" step="0.5" value="3" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div class="sm:col-span-2">
-                <label for="serviceModel" class="block text-xs font-medium text-slate-600" data-roi-i18n="服务模型档位">服务模型档位</label>
+                <label for="serviceModel" class="block text-xs font-medium text-slate-600">服务模型档位</label>
                 <select id="serviceModel" class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-9 text-sm">
-                  <option value="ds-v4" selected data-roi-i18n="DeepSeek V4-Flash 级">DeepSeek V4-Flash 级</option>
-                  <option value="glm-51" data-roi-i18n="GLM-5.1 级">GLM-5.1 级</option>
-                  <option value="custom" data-roi-i18n="自定义吞吐">自定义吞吐</option>
+                  <option value="ds-v4" selected>DeepSeek V4-Flash 级</option>
+                  <option value="glm-51">GLM-5.1 级</option>
+                  <option value="custom">自定义吞吐</option>
                 </select>
               </div>
               <div>
-                <label for="fullTpsInputMiss" class="block text-xs font-medium text-slate-600" data-roi-i18n="单卡输入·未命中（t/s）">单卡输入·未命中（t/s）</label>
+                <label for="fullTpsInputMiss" class="block text-xs font-medium text-slate-600">单卡输入·未命中（t/s）</label>
                 <input id="fullTpsInputMiss" type="number" step="1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullTpsInputHit" class="block text-xs font-medium text-slate-600" data-roi-i18n="单卡输入·命中（t/s）">单卡输入·命中（t/s）</label>
+                <label for="fullTpsInputHit" class="block text-xs font-medium text-slate-600">单卡输入·命中（t/s）</label>
                 <input id="fullTpsInputHit" type="number" step="1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
               <div>
-                <label for="fullTpsOutput" class="block text-xs font-medium text-slate-600" data-roi-i18n="单卡输出（t/s）">单卡输出（t/s）</label>
+                <label for="fullTpsOutput" class="block text-xs font-medium text-slate-600">单卡输出（t/s）</label>
                 <input id="fullTpsOutput" type="number" step="0.1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
               </div>
             </div>
@@ -351,18 +348,18 @@
         </div>
 
         <div class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-7 text-blue-900">
-          <strong class="font-semibold" data-roi-i18n="公式：">公式：</strong>
+          <strong class="font-semibold">公式：</strong>
           <ul class="mt-2 list-inside list-disc space-y-1">
-            <li data-roi-i18n-html="formulaMw"><code class="rounded bg-white/70 px-1">MW</code> = P × 125 ÷ 64000（64 卡 = 125kW）</li>
-            <li data-roi-i18n-html="formulaAscendIt"><code class="rounded bg-white/70 px-1">昇腾采购</code> = P × 单卡价；<code class="rounded bg-white/70 px-1">IT 设备投资</code> = 昇腾采购 ÷ IT 内昇腾占比</li>
-            <li data-roi-i18n-html="formulaTotalCapex"><code class="rounded bg-white/70 px-1">总投资 CAPEX</code> = IT 设备投资 ÷ IT 设备工程占比</li>
-            <li data-roi-i18n-html="formulaAnnualPower"><code class="rounded bg-white/70 px-1">年电费</code> = MW × 1000 × 8760 × PUE × 利用率 × 电价</li>
-            <li data-roi-i18n-html="formulaAnnualTokens"><code class="rounded bg-white/70 px-1">年 Token 合计</code> = 年输入未命中 + 年输入命中 + 年输出</li>
-            <li data-roi-i18n-html="formulaSelfBlended"><code class="rounded bg-white/70 px-1">自建均摊价/M</code> = (年折旧 + 年电费 + 年运维) ÷ (年 Token 合计 / 10⁶)</li>
-            <li data-roi-i18n-html="formulaCloudBlended"><code class="rounded bg-white/70 px-1">云均摊价/M</code> = 入未命中价 × 占比 + 入命中价 × 占比 + 出价 × 占比（占比 = 各 t/s ÷ 三类 t/s 合计）</li>
-            <li data-roi-i18n-html="formulaAmortPerM"><code class="rounded bg-white/70 px-1">CAPEX/OPEX 摊销/M</code> = 分项成本 ÷ (年输出 Token / 10⁶)（结果区仍按输出 Token 口径）</li>
+            <li><code class="rounded bg-white/70 px-1">MW</code> = P × 125 ÷ 64000（64 卡 = 125kW）</li>
+            <li><code class="rounded bg-white/70 px-1">昇腾采购</code> = P × 单卡价；<code class="rounded bg-white/70 px-1">IT 设备投资</code> = 昇腾采购 ÷ IT 内昇腾占比</li>
+            <li><code class="rounded bg-white/70 px-1">总投资 CAPEX</code> = IT 设备投资 ÷ IT 设备工程占比</li>
+            <li><code class="rounded bg-white/70 px-1">年电费</code> = MW × 1000 × 8760 × PUE × 利用率 × 电价</li>
+            <li><code class="rounded bg-white/70 px-1">年 Token 合计</code> = 年输入未命中 + 年输入命中 + 年输出</li>
+            <li><code class="rounded bg-white/70 px-1">自建均摊价/M</code> = (年折旧 + 年电费 + 年运维) ÷ (年 Token 合计 / 10⁶)</li>
+            <li><code class="rounded bg-white/70 px-1">云均摊价/M</code> = 入未命中价 × 占比 + 入命中价 × 占比 + 出价 × 占比（占比 = 各 t/s ÷ 三类 t/s 合计）</li>
+            <li><code class="rounded bg-white/70 px-1">CAPEX/OPEX 摊销/M</code> = 分项成本 ÷ (年输出 Token / 10⁶)（结果区仍按输出 Token 口径）</li>
           </ul>
-          <p class="mt-3 text-xs text-blue-800/80" data-roi-i18n="逐步计算明细见页面底部「关键参数」解锁后的计算过程表。">逐步计算明细见页面底部「关键参数」解锁后的计算过程表。</p>
+          <p class="mt-3 text-xs text-blue-800/80">逐步计算明细见页面底部「关键参数」解锁后的计算过程表。</p>
         </div>
       </div>
 
@@ -371,11 +368,11 @@
         <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:px-5">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p class="text-sm font-semibold text-slate-900" data-roi-i18n="关键参数">关键参数</p>
-              <p class="text-xs text-slate-500" data-roi-i18n="默认隐藏；开启后同时展示下方计算过程与单卡价格等敏感项">默认隐藏；开启后同时展示下方计算过程与单卡价格等敏感项</p>
+              <p class="text-sm font-semibold text-slate-900">关键参数</p>
+              <p class="text-xs text-slate-500">默认隐藏；开启后同时展示下方计算过程与单卡价格等敏感项</p>
             </div>
             <label class="inline-flex cursor-pointer items-center gap-2">
-              <span class="text-sm text-slate-600" data-roi-i18n="显示关键参数">显示关键参数</span>
+              <span class="text-sm text-slate-600">显示关键参数</span>
               <input id="keyParamsToggle" type="checkbox" class="peer sr-only" />
               <span class="relative h-7 w-12 rounded-full bg-slate-200 transition peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-6 after:w-6 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
             </label>
@@ -383,25 +380,24 @@
           <div id="keyParamsPanel" class="hidden mt-4 border-t border-slate-100 pt-4">
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div>
-                <label for="npuUnitPrice" class="block text-sm font-medium text-slate-700" data-roi-i18n="单卡价格（万元/卡）">单卡价格（万元/卡）</label>
+                <label for="npuUnitPrice" class="block text-sm font-medium text-slate-700">单卡价格（万元/卡）</label>
                 <input id="npuUnitPrice" type="number" min="0" step="0.1" value="50"
                   class="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
               </div>
               <div>
-                <label for="ascendInItPct" class="block text-sm font-medium text-slate-700" data-roi-i18n="IT 内 · 昇腾占比（%）">IT 内 · 昇腾占比（%）</label>
+                <label for="ascendInItPct" class="block text-sm font-medium text-slate-700">IT 内 · 昇腾占比（%）</label>
                 <input id="ascendInItPct" type="number" min="0" max="100" step="1" value="85"
                   class="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
               </div>
               <div>
-                <label for="netStorageInItPct" class="block text-sm font-medium text-slate-700" data-roi-i18n="IT 内 · 网络/存储占比（%）">IT 内 · 网络/存储占比（%）</label>
+                <label for="netStorageInItPct" class="block text-sm font-medium text-slate-700">IT 内 · 网络/存储占比（%）</label>
                 <input id="netStorageInItPct" type="number" min="0" max="100" step="1" value="15" readonly
                   class="mt-2 h-11 w-full cursor-default rounded-xl border border-slate-200 bg-slate-50 px-3 text-base text-slate-600" />
               </div>
             </div>
             <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4">
               <button type="button" id="syncConfigBtn"
-                class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
-                data-roi-i18n="同步当前参数到云端">
+                class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">
                 同步当前参数到云端
               </button>
               <span id="syncConfigHint" class="text-xs text-slate-500"></span>
@@ -412,12 +408,12 @@
         <div id="calcProcessPanel" class="hidden overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
           <div class="border-b border-slate-100 px-5 py-3 sm:px-6">
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Calculation</p>
-            <h2 class="mt-0.5 text-base font-bold text-slate-950" data-roi-i18n="CAPEX / OPEX 计算过程">CAPEX / OPEX 计算过程</h2>
-            <p class="mt-1 text-xs text-slate-500" data-roi-i18n="随页面输入与关键参数实时更新">随页面输入与关键参数实时更新</p>
+            <h2 class="mt-0.5 text-base font-bold text-slate-950">CAPEX / OPEX 计算过程</h2>
+            <p class="mt-1 text-xs text-slate-500">随页面输入与关键参数实时更新</p>
           </div>
           <table class="min-w-full text-left text-sm">
             <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
-              <tr><th class="px-4 py-3 sm:px-6" data-roi-i18n="指标">指标</th><th class="px-4 py-3" data-roi-i18n="数值">数值</th><th class="px-4 py-3 hidden md:table-cell" data-roi-i18n="说明">说明</th></tr>
+              <tr><th class="px-4 py-3 sm:px-6">指标</th><th class="px-4 py-3">数值</th><th class="px-4 py-3 hidden md:table-cell">说明</th></tr>
             </thead>
             <tbody id="fullMetricsBody" class="divide-y divide-slate-100"></tbody>
           </table>
@@ -428,820 +424,67 @@
 
   <footer id="site-footer" class="border-t border-slate-200 bg-white py-6">
     <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
-      <span><span data-i18n="footer.miit"></span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a></span>
+      <span><span>工信部备案号：</span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a></span>
       <span class="hidden sm:inline" aria-hidden="true">|</span>
-      <span><span data-i18n="footer.publicSecurity"></span><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a></span>
+      <span><span>公安备案号：</span><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a></span>
     </p>
   </footer>
 
   <!-- 密码弹层 -->
   <div id="pwdOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
     <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-labelledby="pwdTitle">
-      <h3 id="pwdTitle" class="text-lg font-bold text-slate-950" data-roi-i18n="输入访问密码">输入访问密码</h3>
-      <p class="mt-2 text-sm text-slate-600" data-roi-i18n="开启「关键参数」需验证身份（不区分大小写）。">开启「关键参数」需验证身份（不区分大小写）。</p>
-      <input id="pwdInput" type="password" autocomplete="off" data-roi-i18n-placeholder="密码" placeholder="密码"
+      <h3 id="pwdTitle" class="text-lg font-bold text-slate-950">输入访问密码</h3>
+      <p class="mt-2 text-sm text-slate-600">开启「关键参数」需验证身份（不区分大小写）。</p>
+      <input id="pwdInput" type="password" autocomplete="off" placeholder="密码"
         class="mt-4 h-11 w-full rounded-xl border border-slate-200 px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
-      <p id="pwdError" class="mt-2 hidden text-sm text-rose-600" data-roi-i18n="密码错误，请重试。">密码错误，请重试。</p>
+      <p id="pwdError" class="mt-2 hidden text-sm text-rose-600">密码错误，请重试。</p>
       <div class="mt-4 flex justify-end gap-2">
-        <button type="button" id="pwdCancel" class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" data-roi-i18n="取消">取消</button>
-        <button type="button" id="pwdOk" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700" data-roi-i18n="确认">确认</button>
+        <button type="button" id="pwdCancel" class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">取消</button>
+        <button type="button" id="pwdOk" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">确认</button>
       </div>
     </div>
   </div>
 
   <script src="js/config-loader.js"></script>
   <script>
-
-    function L(s) {
-      if (!s || !window.AidcI18n) return s;
-      if (AidcI18n.getLocale() === 'en') {
-        const v = AidcI18n.getLookupText(s);
-        return v != null ? v : s;
-      }
-      return s;
-    }
-    function Lp(key, params) {
-      let text = L(key);
-      if (params) Object.entries(params).forEach(([k, v]) => { text = text.replaceAll(`{${k}}`, String(v)); });
-      return text;
-    }
-    function localeTag() {
-      return AidcI18n && AidcI18n.getLocale() === 'en' ? 'en-US' : 'zh-CN';
-    }
-
-    const $ = (id) => document.getElementById(id);
-
-    /** label[for] → lookup key (fallback when cached HTML lacks data-roi-i18n) */
-    const ROI_LABEL_FOR_KEYS = {
-      computeP: '算力规模（P）',
-      clusterMw: '集群 IT 功率（MW）',
-      pctItDevice: 'IT 设备投资（%）',
-      pctPowerCool: '供电 / 散热（%）',
-      pctLandBuild: '土地 / 建筑（%）',
-      deprecYears: '设备折旧年限（年）',
-      pue: 'PUE',
-      elecPrice: '工业电价（元/kWh）',
-      utilization: '平均利用率（%）',
-      tpsInputMiss: '输入·未命中',
-      tpsInputHit: '输入·命中',
-      tpsOutput: '输出',
-      fullNpuCount: 'NPU 数量（= P）',
-      fullClusterMw: '集群 IT 功率（MW）',
-      fullComputeP: '算力规模（P）',
-      fullNpuPrice: '单卡价（万元）',
-      fullAscendItPct: 'IT 内昇腾（%）',
-      fullNetItPct: 'IT 内网络/存储（%）',
-      fullPctIt: 'IT 设备占比（%）',
-      fullPctPower: '供电/散热占比（%）',
-      fullPctLand: '土地/建筑占比（%）',
-      fullDeprecYears: '折旧年限（年）',
-      fullPue: 'PUE',
-      fullElecPrice: '电价（元/kWh）',
-      fullUtil: '利用率（%）',
-      fullFixedOpex: '固定运维（万元/年）',
-      fullCapexOpexPct: 'CAPEX 年维保（%）',
-      serviceModel: '服务模型档位',
-      fullTpsInputMiss: '单卡输入·未命中（t/s）',
-      fullTpsInputHit: '单卡输入·命中（t/s）',
-      fullTpsOutput: '单卡输出（t/s）',
-      npuUnitPrice: '单卡价格（万元/卡）',
-      ascendInItPct: 'IT 内 · 昇腾占比（%）',
-      netStorageInItPct: 'IT 内 · 网络/存储占比（%）',
-    };
-
-    const ROI_STATIC_FALLBACK = [
-      ['#roiForm > div:nth-of-type(1) h2', '投资建设 · 关键参数'],
-      ['#roiForm > div:nth-of-type(2) h2', '运行成本 · 关键参数'],
-      ['#roiForm > div:nth-of-type(1) .text-xs.text-slate-500', '2026H2：1 卡 = 1P', 0],
-      ['#roiForm > div:nth-of-type(1) .text-xs.text-slate-500', '规格：64 卡 = 125kW', 1],
-      ['#roiForm > div:nth-of-type(1) .rounded-xl p.text-xs.font-semibold', '工程投资结构（合计 100%）'],
-      ['#roiForm > div:nth-of-type(1) .bg-slate-950 p.text-xs', 'CAPEX 结果'],
-      ['#roiForm > div:nth-of-type(2) .rounded-xl p.text-xs.font-semibold', '运行环境'],
-      ['#roiForm > div:nth-of-type(2) .rounded-xl p.text-xs.font-semibold + div p', '单卡吞吐（tokens/s）'],
-      ['#roiForm > div:nth-of-type(2) > div.space-y-4 > p.text-xs.leading-5', '集群 IT 功率由左侧 P/MW 联动；电费按 MW × PUE × 利用率估算。比价按三类 Token 总量均摊全成本。'],
-      ['#roiForm > div:nth-of-type(2) .bg-slate-950 p.text-xs', 'OPEX 结果'],
-      ['section > div:nth-of-type(3) h2', '公有云公开价 vs 自建全成本'],
-      ['section > div:nth-of-type(3) .text-xs.text-slate-500', '自建均摊价', 0],
-      ['section > div:nth-of-type(3) .text-sm.text-slate-500', '元/百万 Token（三类合计）', 0],
-      ['section > div:nth-of-type(3) .text-xs.text-slate-500', '对标均摊价', 1],
-      ['section > div:nth-of-type(3) .text-sm.text-slate-500', '元/M（按吞吐加权）', 1],
-      ['section > div:nth-of-type(4) h2', '全部参数与计算公式'],
-    ];
-
-    function applyRoiStaticI18n() {
-      if (AidcI18n?.getLocale?.() !== 'en') return;
-
-      document.querySelectorAll('[data-roi-i18n]').forEach((el) => {
-        const key = el.getAttribute('data-roi-i18n');
-        if (key) el.textContent = L(key);
-      });
-      document.querySelectorAll('[data-roi-i18n-html]').forEach((el) => {
-        const key = el.getAttribute('data-roi-i18n-html');
-        if (!key) return;
-        const html = L(key);
-        if (html && html !== key) el.innerHTML = html;
-      });
-      document.querySelectorAll('[data-roi-i18n-placeholder]').forEach((el) => {
-        const key = el.getAttribute('data-roi-i18n-placeholder');
-        if (key) el.setAttribute('placeholder', L(key));
-      });
-      document.querySelectorAll('option[data-roi-i18n]').forEach((el) => {
-        const key = el.getAttribute('data-roi-i18n');
-        if (key) el.textContent = L(key);
-      });
-      Object.entries(ROI_LABEL_FOR_KEYS).forEach(([id, key]) => {
-        const lab = document.querySelector(`label[for="${id}"]`);
-        if (lab && !lab.hasAttribute('data-roi-i18n')) lab.textContent = L(key);
-      });
-      ROI_STATIC_FALLBACK.forEach((entry) => {
-        const [sel, key, idx = 0] = entry;
-        const nodes = document.querySelectorAll(sel);
-        const el = nodes[idx];
-        if (el && !el.hasAttribute('data-roi-i18n') && !el.hasAttribute('data-roi-i18n-html')) {
-          el.textContent = L(key);
-        }
-      });
-      document.querySelectorAll('#roiForm dt[data-roi-i18n], #roiForm dt:not([data-roi-i18n])').forEach((dt) => {
-        const key = dt.getAttribute('data-roi-i18n') || dt.textContent.trim();
-        if (key) dt.textContent = L(key);
-      });
-      const npuModel = $('npuModelReadonly');
-      if (npuModel) npuModel.value = L('2026H2型号（1P/卡 · 64卡=125kW · 默认50万/卡）');
-      const pwdTitle = $('pwdTitle');
-      if (pwdTitle && !pwdTitle.hasAttribute('data-roi-i18n')) pwdTitle.textContent = L('输入访问密码');
-    }
-
-    function refreshRoiI18n() {
-      applyRoiStaticI18n();
-      if (typeof updatePctSumHint === 'function') updatePctSumHint();
-      if (typeof updateConfigSourceBadge === 'function') updateConfigSourceBadge();
-      if (typeof renderAll === 'function') renderAll();
-    }
-    globalThis.__aidcPageRefreshI18n = refreshRoiI18n;
-
-    async function waitForI18n(maxMs = 5000) {
-      const start = Date.now();
-      while (!window.AidcI18n?.isActive?.()) {
-        if (Date.now() - start > maxMs) break;
-        await new Promise((r) => setTimeout(r, 20));
-      }
-    }
-    const SPEC = {
-      kwPer64Cards: 125,
-      cardsPer64Kw: 64,
-      pPerCard: 1,
-      defaultUnitPriceWan: 50,
-      presets: {
-        'ds-v4': { tpsInputMiss: 900, tpsInputHit: 3600, tpsOutput: 28 },
-        'glm-51': { tpsInputMiss: 400, tpsInputHit: 1600, tpsOutput: 12 },
+    window.ROI_PAGE_CONFIG = {
+      locale: 'zh',
+      localeTag: 'zh-CN',
+      configKeys: { defaults: 'roi.defaults', cloudCompare: 'roi.cloud_compare' },
+      localDefaults: {
+        computeP: 512, clusterMw: 1.0, pctItDevice: 65, pctPowerCool: 25, pctLandBuild: 10,
+        npuUnitPrice: 50, ascendInItPct: 85, deprecYears: 5, pue: 1.25, elecPrice: 0.65,
+        utilization: 75, tpsInputMiss: 900, tpsInputHit: 3600, tpsOutput: 28,
+        annualFixedOpex: 800, capexOpexPct: 3, serviceModel: 'ds-v4',
+      },
+      localCloudCompare: {
+        'ds-v4': {
+          title: 'DeepSeek V4 档',
+          refInputMiss: 0.5, refInputHit: 0.125, refOutput: 2.0,
+          clouds: [
+            { name: 'DeepSeek 官方', inputMiss: 0.5, inputHit: 0.125, output: 1.6 },
+            { name: '硅基流动', inputMiss: 1.0, inputHit: 0.25, output: 2.0 },
+            { name: '阿里云百炼', inputMiss: 0.6, inputHit: 0.15, output: 2.4 },
+            { name: '火山引擎', inputMiss: 0.5, inputHit: 0.125, output: 2.0 },
+            { name: '腾讯云', inputMiss: 0.8, inputHit: 0.2, output: 3.2 },
+            { name: '天翼云', inputMiss: 0.9, inputHit: 0.225, output: 3.5 },
+          ],
+        },
+        'glm-51': {
+          title: 'GLM-5.1 档',
+          refInputMiss: 3.0, refInputHit: 0.75, refOutput: 15.0,
+          clouds: [
+            { name: '智谱 AI 官方', inputMiss: 3.0, inputHit: 0.75, output: 12.0 },
+            { name: '硅基流动', inputMiss: 6.0, inputHit: 1.5, output: 28.0 },
+            { name: '阿里云百炼', inputMiss: 3.5, inputHit: 0.875, output: 15.0 },
+            { name: '火山引擎', inputMiss: 4.0, inputHit: 1.0, output: 18.0 },
+            { name: '腾讯云', inputMiss: 4.5, inputHit: 1.125, output: 20.0 },
+            { name: '京东云', inputMiss: 4.2, inputHit: 1.05, output: 19.0 },
+          ],
+        },
       },
     };
-    const MW_PER_P = SPEC.kwPer64Cards / SPEC.cardsPer64Kw / 1000;
-    const KEY_PASSWORD = 'aidc2026';
-
-    const LOCAL_ROI_DEFAULTS = {
-      computeP: 512,
-      clusterMw: 1.0,
-      pctItDevice: 65,
-      pctPowerCool: 25,
-      pctLandBuild: 10,
-      npuUnitPrice: 50,
-      ascendInItPct: 85,
-      deprecYears: 5,
-      pue: 1.25,
-      elecPrice: 0.65,
-      utilization: 75,
-      tpsInputMiss: 900,
-      tpsInputHit: 3600,
-      tpsOutput: 28,
-      annualFixedOpex: 800,
-      capexOpexPct: 3,
-      serviceModel: 'ds-v4',
-    };
-
-    const LOCAL_CLOUD_COMPARE = {
-      'ds-v4': {
-        title: 'DeepSeek V4 档',
-        refInputMiss: 0.5,
-        refInputHit: 0.125,
-        refOutput: 2.0,
-        clouds: [
-          { name: 'DeepSeek 官方', inputMiss: 0.5, inputHit: 0.125, output: 1.6 },
-          { name: '硅基流动', inputMiss: 1.0, inputHit: 0.25, output: 2.0 },
-          { name: '阿里云百炼', inputMiss: 0.6, inputHit: 0.15, output: 2.4 },
-          { name: '火山引擎', inputMiss: 0.5, inputHit: 0.125, output: 2.0 },
-          { name: '腾讯云', inputMiss: 0.8, inputHit: 0.2, output: 3.2 },
-          { name: '天翼云', inputMiss: 0.9, inputHit: 0.225, output: 3.5 },
-        ],
-      },
-      'glm-51': {
-        title: 'GLM-5.1 档',
-        refInputMiss: 3.0,
-        refInputHit: 0.75,
-        refOutput: 15.0,
-        clouds: [
-          { name: '智谱 AI 官方', inputMiss: 3.0, inputHit: 0.75, output: 12.0 },
-          { name: '硅基流动', inputMiss: 6.0, inputHit: 1.5, output: 28.0 },
-          { name: '阿里云百炼', inputMiss: 3.5, inputHit: 0.875, output: 15.0 },
-          { name: '火山引擎', inputMiss: 4.0, inputHit: 1.0, output: 18.0 },
-          { name: '腾讯云', inputMiss: 4.5, inputHit: 1.125, output: 20.0 },
-          { name: '京东云', inputMiss: 4.2, inputHit: 1.05, output: 19.0 },
-        ],
-      },
-    };
-
-    let CLOUD_COMPARE = JSON.parse(JSON.stringify(LOCAL_CLOUD_COMPARE));
-    let configLoadMeta = { defaults: 'local', cloud: 'local' };
-
-    let activeScenario = 'ds-v4';
-    let syncLock = false;
-    let linkFrom = null;
-    let keyParamsUnlocked = false;
-
-    const fmtWan = (y) => (y / 10000).toLocaleString(localeTag(), { maximumFractionDigits: 1 }) + ' ' + L('万元');
-    const fmtNum = (n, d = 2) => Number(n).toLocaleString(localeTag(), { minimumFractionDigits: d, maximumFractionDigits: d });
-    const fmtTokens = (n) => {
-      if (n >= 1e12) return fmtNum(n / 1e12, 2) + ' T';
-      if (n >= 1e9) return fmtNum(n / 1e9, 2) + ' B';
-      if (n >= 1e6) return fmtNum(n / 1e6, 2) + ' M';
-      return fmtNum(n, 0);
-    };
-
-    function pToMw(p) { return p * MW_PER_P; }
-    function mwToP(mw) { return mw / MW_PER_P; }
-
-    function tokenMix(tpsMiss, tpsHit, tpsOut) {
-      const total = tpsMiss + tpsHit + tpsOut;
-      if (total <= 0) return { miss: 0, hit: 0, out: 0 };
-      return { miss: tpsMiss / total, hit: tpsHit / total, out: tpsOut / total };
-    }
-
-    function blendedCloudPrice(cloud, mix) {
-      return mix.miss * cloud.inputMiss + mix.hit * cloud.inputHit + mix.out * cloud.output;
-    }
-
-    function blendedRefPrice(sc, mix) {
-      return mix.miss * sc.refInputMiss + mix.hit * sc.refInputHit + mix.out * sc.refOutput;
-    }
-
-    function cloudPriceByType(cloud, type) {
-      if (type === 'miss') return cloud.inputMiss;
-      if (type === 'hit') return cloud.inputHit;
-      return cloud.output;
-    }
-
-    function applyRoiConfig(cfg) {
-      if (!cfg) return;
-      const setNum = (id, val) => {
-        if (val == null || val === '' || !$(id)) return;
-        $(id).value = val;
-      };
-      setNum('computeP', cfg.computeP);
-      setNum('clusterMw', cfg.clusterMw != null ? fmtNum(Number(cfg.clusterMw), 4) : null);
-      setNum('pctItDevice', cfg.pctItDevice);
-      setNum('pctPowerCool', cfg.pctPowerCool);
-      setNum('pctLandBuild', cfg.pctLandBuild);
-      setNum('npuUnitPrice', cfg.npuUnitPrice);
-      setNum('ascendInItPct', cfg.ascendInItPct);
-      setNum('deprecYears', cfg.deprecYears);
-      setNum('pue', cfg.pue);
-      setNum('elecPrice', cfg.elecPrice);
-      setNum('utilization', cfg.utilization);
-      setNum('tpsInputMiss', cfg.tpsInputMiss);
-      setNum('tpsInputHit', cfg.tpsInputHit);
-      setNum('tpsOutput', cfg.tpsOutput);
-      if (cfg.annualFixedOpex != null) $('annualFixedOpex').value = cfg.annualFixedOpex;
-      if (cfg.capexOpexPct != null) $('capexOpexPct').value = cfg.capexOpexPct;
-      if (cfg.serviceModel) $('serviceModel').value = cfg.serviceModel;
-    }
-
-    function collectRoiConfigForSave() {
-      return {
-        schemaVersion: 1,
-        computeP: Number($('computeP').value),
-        clusterMw: Number($('clusterMw').value),
-        pctItDevice: Number($('pctItDevice').value),
-        pctPowerCool: Number($('pctPowerCool').value),
-        pctLandBuild: Number($('pctLandBuild').value),
-        npuUnitPrice: Number($('npuUnitPrice').value),
-        ascendInItPct: Number($('ascendInItPct').value),
-        deprecYears: Number($('deprecYears').value),
-        pue: Number($('pue').value),
-        elecPrice: Number($('elecPrice').value),
-        utilization: Number($('utilization').value),
-        tpsInputMiss: Number($('tpsInputMiss').value),
-        tpsInputHit: Number($('tpsInputHit').value),
-        tpsOutput: Number($('tpsOutput').value),
-        annualFixedOpex: Number($('annualFixedOpex').value),
-        capexOpexPct: Number($('capexOpexPct').value),
-        serviceModel: $('serviceModel').value,
-      };
-    }
-
-    function mergeCloudCompare(remote) {
-      if (!remote || typeof remote !== 'object') return;
-      CLOUD_COMPARE = JSON.parse(JSON.stringify(LOCAL_CLOUD_COMPARE));
-      Object.keys(remote).forEach((k) => {
-        if (k === 'schemaVersion') return;
-        if (remote[k] && typeof remote[k] === 'object') {
-          CLOUD_COMPARE[k] = { ...CLOUD_COMPARE[k], ...remote[k] };
-        }
-      });
-    }
-
-    function updateConfigSourceBadge() {
-      const el = $('configSourceBadge');
-      if (!el) return;
-      const d = configLoadMeta.defaults;
-      const c = configLoadMeta.cloud;
-      if (d === 'database' && c === 'database') {
-        el.textContent = L('配置来源：云端数据库（全量同步）');
-        el.className = 'mt-2 text-xs font-medium text-emerald-700';
-      } else if (d === 'database' || c === 'database') {
-        el.textContent = L('配置来源：部分云端 + 部分本地默认');
-        el.className = 'mt-2 text-xs font-medium text-amber-700';
-      } else {
-        el.textContent = L('配置来源：本地默认（数据库不可用或未配置）');
-        el.className = 'mt-2 text-xs font-medium text-slate-500';
-      }
-    }
-
-    async function syncConfigToCloud() {
-      const hint = $('syncConfigHint');
-      if (!keyParamsUnlocked) {
-        hint.textContent = L('请先开启并解锁关键参数');
-        hint.className = 'text-xs text-rose-600';
-        return;
-      }
-      hint.textContent = L('同步中…');
-      hint.className = 'text-xs text-slate-500';
-      try {
-        const token = KEY_PASSWORD;
-        await AidcConfig.save('roi.defaults', collectRoiConfigForSave(), token);
-        await AidcConfig.save('roi.cloud_compare', { schemaVersion: 1, ...CLOUD_COMPARE }, token);
-        hint.textContent = L('已同步到云端');
-        hint.className = 'text-xs text-emerald-700';
-        configLoadMeta = { defaults: 'database', cloud: 'database' };
-        updateConfigSourceBadge();
-      } catch (err) {
-        hint.textContent = Lp('同步失败：{msg}', { msg: err.message || err });
-        hint.className = 'text-xs text-rose-600';
-      }
-    }
-
-    function readState() {
-      const computeP = Number($('computeP').value);
-      const clusterMw = Number($('clusterMw').value);
-      const npuCount = Math.round(computeP);
-      $('npuCount').value = npuCount;
-
-      const unitPriceWan = Number($('npuUnitPrice').value);
-      const ascendPct = Number($('ascendInItPct').value) / 100;
-      const itPct = Number($('pctItDevice').value) / 100;
-      const powerPct = Number($('pctPowerCool').value) / 100;
-      const landPct = Number($('pctLandBuild').value) / 100;
-
-      const ascendCost = npuCount * unitPriceWan * 10000;
-      const itEquipment = ascendPct > 0 ? ascendCost / ascendPct : NaN;
-      const totalCapex = itPct > 0 ? itEquipment / itPct : NaN;
-
-      const deprecYears = Number($('deprecYears').value);
-      const pue = Number($('pue').value);
-      const elecPrice = Number($('elecPrice').value);
-      const utilization = Number($('utilization').value) / 100;
-      const annualFixedOpexYuan = Number($('annualFixedOpex').value) * 10000;
-      const capexOpexPct = Number($('capexOpexPct').value) / 100;
-      const tpsInputMiss = Number($('tpsInputMiss').value);
-      const tpsInputHit = Number($('tpsInputHit').value);
-      const tpsOutput = Number($('tpsOutput').value);
-
-      const annualMissTokens = npuCount * tpsInputMiss * 86400 * 365 * utilization;
-      const annualHitTokens = npuCount * tpsInputHit * 86400 * 365 * utilization;
-      const annualOutputTokens = npuCount * tpsOutput * 86400 * 365 * utilization;
-      const annualTotalTokens = annualMissTokens + annualHitTokens + annualOutputTokens;
-      const annualDep = totalCapex / deprecYears;
-      const annualPower = clusterMw * 1000 * 8760 * pue * utilization * elecPrice;
-      const annualMaint = totalCapex * capexOpexPct;
-      const annualOps = annualFixedOpexYuan + annualMaint;
-      const annualCost = annualDep + annualPower + annualOps;
-
-      const outputTokensM = annualOutputTokens / 1e6;
-      const totalTokensM = annualTotalTokens / 1e6;
-      const capexPerM = outputTokensM > 0 ? annualDep / outputTokensM : NaN;
-      const opexPerM = outputTokensM > 0 ? (annualPower + annualOps) / outputTokensM : NaN;
-      const costPerM = outputTokensM > 0 ? annualCost / outputTokensM : NaN;
-      const costPerMBlended = totalTokensM > 0 ? annualCost / totalTokensM : NaN;
-
-      const mix = tokenMix(tpsInputMiss, tpsInputHit, tpsOutput);
-      const sc = CLOUD_COMPARE[activeScenario];
-      const refBlended = blendedRefPrice(sc, mix);
-      const revenue = totalTokensM * refBlended;
-      const profit = revenue - annualCost;
-      const revFull = totalTokensM * refBlended;
-      const powerFull = clusterMw * 1000 * 8760 * pue * elecPrice;
-      const fixed = annualDep + annualOps;
-      const breakeven = revFull > powerFull ? fixed / (revFull - powerFull) : NaN;
-      const payback = profit > 0 ? totalCapex / profit : NaN;
-
-      return {
-        computeP, clusterMw, npuCount, ascendCost, itEquipment, totalCapex,
-        powerCapex: totalCapex * powerPct, landCapex: totalCapex * landPct,
-        annualDep, annualPower, annualOps, annualCost,
-        annualMissTokens, annualHitTokens, annualTokens: annualOutputTokens, annualTotalTokens,
-        capexPerM, opexPerM, costPerM, costPerMBlended, refBlended, tokenMix: mix,
-        refInputMiss: sc.refInputMiss, refInputHit: sc.refInputHit, refOutput: sc.refOutput,
-        revenue, profit, breakeven, payback,
-        deprecYears, utilization, pue, elecPrice, tpsInputMiss, tpsInputHit, tpsOutput,
-        annualFixedOpexYuan, annualMaint, itPct, powerPct, landPct, ascendPct,
-      };
-    }
-
-    function updatePctSumHint() {
-      const sum = Number($('pctItDevice').value) + Number($('pctPowerCool').value) + Number($('pctLandBuild').value);
-      const el = $('pctSumHint');
-      if (Math.abs(sum - 100) < 0.01) {
-        el.textContent = L('三项合计 100%');
-        el.className = 'mt-2 text-xs text-emerald-600';
-      } else {
-        el.textContent = Lp('三项合计 {sum}%（应为 100%）', { sum: fmtNum(sum, 0) });
-        el.className = 'mt-2 text-xs text-rose-600';
-      }
-    }
-
-    function syncAscendNet(changed) {
-      if (changed === 'ascend') {
-        $('netStorageInItPct').value = 100 - Number($('ascendInItPct').value);
-      } else if (changed === 'net') {
-        $('ascendInItPct').value = 100 - Number($('netStorageInItPct').value);
-      }
-      $('fullAscendItPct').value = $('ascendInItPct').value;
-      $('fullNetItPct').value = $('netStorageInItPct').value;
-    }
-
-    function rebalanceProjectPct(changedId) {
-      const it = Number($('pctItDevice').value);
-      const power = Number($('pctPowerCool').value);
-      const land = Number($('pctLandBuild').value);
-      if (changedId === 'pctLandBuild') {
-        $('pctPowerCool').value = Math.max(0, 100 - it - land);
-      } else if (changedId === 'pctItDevice') {
-        $('pctLandBuild').value = Math.max(0, 100 - it - power);
-      } else {
-        $('pctLandBuild').value = Math.max(0, 100 - it - power);
-      }
-      updatePctSumHint();
-      syncKeyToFull();
-    }
-
-    function linkFromP() {
-      if (syncLock) return;
-      syncLock = true;
-      const p = Number($('computeP').value);
-      $('clusterMw').value = fmtNum(pToMw(p), 4);
-      $('npuCount').value = Math.round(p);
-      syncLock = false;
-      syncKeyToFull();
-      renderAll();
-    }
-
-    function linkFromMw() {
-      if (syncLock) return;
-      syncLock = true;
-      const mw = Number($('clusterMw').value);
-      const p = mwToP(mw);
-      $('computeP').value = fmtNum(p, 2);
-      $('npuCount').value = Math.round(p);
-      syncLock = false;
-      syncKeyToFull();
-      renderAll();
-    }
-
-    function syncKeyToFull() {
-      if (syncLock) return;
-      syncLock = true;
-      $('fullComputeP').value = $('computeP').value;
-      $('fullClusterMw').value = $('clusterMw').value;
-      $('fullNpuCount').value = $('npuCount').value;
-      $('fullNpuPrice').value = $('npuUnitPrice').value;
-      $('fullPctIt').value = $('pctItDevice').value;
-      $('fullPctPower').value = $('pctPowerCool').value;
-      $('fullPctLand').value = $('pctLandBuild').value;
-      $('fullAscendItPct').value = $('ascendInItPct').value;
-      $('fullNetItPct').value = $('netStorageInItPct').value;
-      $('fullPue').value = $('pue').value;
-      $('fullElecPrice').value = $('elecPrice').value;
-      $('fullUtil').value = $('utilization').value;
-      $('fullTpsInputMiss').value = $('tpsInputMiss').value;
-      $('fullTpsInputHit').value = $('tpsInputHit').value;
-      $('fullTpsOutput').value = $('tpsOutput').value;
-      $('fullDeprecYears').value = $('deprecYears').value;
-      $('fullFixedOpex').value = $('annualFixedOpex').value;
-      $('fullCapexOpexPct').value = $('capexOpexPct').value;
-      syncLock = false;
-    }
-
-    function syncFullToKey() {
-      if (syncLock) return;
-      syncLock = true;
-      $('computeP').value = $('fullComputeP').value;
-      $('clusterMw').value = $('fullClusterMw').value;
-      $('npuCount').value = $('fullNpuCount').value;
-      $('npuUnitPrice').value = $('fullNpuPrice').value;
-      $('pctItDevice').value = $('fullPctIt').value;
-      $('pctPowerCool').value = $('fullPctPower').value;
-      $('pctLandBuild').value = $('fullPctLand').value;
-      $('ascendInItPct').value = $('fullAscendItPct').value;
-      $('netStorageInItPct').value = $('fullNetItPct').value;
-      $('pue').value = $('fullPue').value;
-      $('elecPrice').value = $('fullElecPrice').value;
-      $('utilization').value = $('fullUtil').value;
-      $('tpsInputMiss').value = $('fullTpsInputMiss').value;
-      $('tpsInputHit').value = $('fullTpsInputHit').value;
-      $('tpsOutput').value = $('fullTpsOutput').value;
-      $('deprecYears').value = $('fullDeprecYears').value;
-      $('annualFixedOpex').value = $('fullFixedOpex').value;
-      $('capexOpexPct').value = $('fullCapexOpexPct').value;
-      syncLock = false;
-      updatePctSumHint();
-      renderAll();
-    }
-
-    function renderAll() {
-      const s = readState();
-      $('keyTotalCapex').textContent = fmtWan(s.totalCapex);
-      $('keyItCapex').textContent = fmtWan(s.itEquipment);
-      $('keyAnnualDep').textContent = fmtWan(s.annualDep);
-      $('keyCapexPerM').textContent = fmtNum(s.capexPerM, 2) + ' ' + L('元/M');
-      $('keyAnnualPower').textContent = fmtWan(s.annualPower);
-      $('keyAnnualOps').textContent = fmtWan(s.annualOps);
-      $('keyAnnualOpexTotal').textContent = fmtWan(s.annualPower + s.annualOps);
-      $('keyOpexPerM').textContent = fmtNum(s.opexPerM, 2) + ' ' + L('元/M');
-
-      $('cmpSelfCost').textContent = fmtNum(s.costPerMBlended, 2);
-      $('cmpRefEff').textContent = fmtNum(s.refBlended, 2);
-      const clouds = CLOUD_COMPARE[activeScenario].clouds.map((c) => ({
-        ...c,
-        blended: blendedCloudPrice(c, s.tokenMix),
-      }));
-      const cheaper = clouds.filter((c) => s.costPerMBlended <= c.blended).length;
-      if (s.costPerMBlended <= s.refBlended) {
-        $('cmpVerdict').innerHTML = `<span class="text-emerald-700">${Lp('✓ 具备价格竞争力 · 低于 {cheaper}/{total} 家均摊价', { cheaper, total: clouds.length })}</span>`;
-      } else {
-        $('cmpVerdict').innerHTML = `<span class="text-rose-700">${Lp('✗ 高于对标均摊价 {diff} 元/M · 仅低于 {cheaper}/{total} 家', { diff: fmtNum(s.costPerMBlended - s.refBlended, 2), cheaper, total: clouds.length })}</span>`;
-      }
-      renderCompareChart(s);
-      renderFullMetrics(s);
-    }
-
-    function renderComparePanel(title, unitLabel, s, sc, type) {
-      const selfCost = s.costPerMBlended;
-      const items = sc.clouds.map((c) => ({
-        name: c.name,
-        price: cloudPriceByType(c, type),
-        blended: blendedCloudPrice(c, s.tokenMix),
-      }));
-      items.push({ name: L('★ 自建'), price: selfCost, isSelf: true });
-      items.sort((a, b) => a.price - b.price);
-      const maxP = Math.max(...items.map((i) => i.price), 0.01) * 1.15;
-      return `
-        <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
-          <p class="text-sm font-semibold text-slate-800">${title}</p>
-          <p class="mt-0.5 text-[11px] leading-4 text-slate-500">${unitLabel}</p>
-          <div class="mt-3 space-y-2">
-            ${items.map((item) => {
-              const pct = Math.max(3, (item.price / maxP) * 100);
-              const barCls = item.isSelf
-                ? 'bg-gradient-to-r from-amber-400 to-amber-500'
-                : 'bg-gradient-to-r from-blue-400 to-blue-600';
-              const hint = item.isSelf
-                ? L('均摊全成本')
-                : Lp('均摊 {price}', { price: fmtNum(item.blended, 2) });
-              return `<div class="grid grid-cols-[4.5rem_1fr_3rem] items-center gap-2 text-xs sm:grid-cols-[5rem_1fr_3.25rem]">
-                <div class="min-w-0">
-                  <span class="${item.isSelf ? 'font-bold text-amber-800' : 'text-slate-700'} block truncate">${item.name}</span>
-                  <span class="text-[10px] text-slate-400 block truncate">${hint}</span>
-                </div>
-                <div class="h-5 overflow-hidden rounded-md bg-white"><div class="${barCls} h-full rounded-md transition-all duration-300" style="width:${pct}%"></div></div>
-                <span class="tabular-nums text-right font-medium">${fmtNum(item.price, 2)}</span>
-              </div>`;
-            }).join('')}
-          </div>
-        </div>`;
-    }
-
-    function renderCompareChart(s) {
-      const sc = CLOUD_COMPARE[activeScenario];
-      const mixPct = Lp('未命中 {miss}% · 命中 {hit}% · 输出 {out}%', {
-        miss: fmtNum(s.tokenMix.miss * 100, 1),
-        hit: fmtNum(s.tokenMix.hit * 100, 1),
-        out: fmtNum(s.tokenMix.out * 100, 1),
-      });
-      $('compareChart').innerHTML = `
-        <p class="text-sm font-semibold text-slate-800">${L(sc.title)}${L(' · 三类 Token 均摊比价')}</p>
-        <p class="mt-1 text-xs text-slate-500">${Lp('单卡吞吐 {miss} / {hit} / {output} t/s · Token 占比 {mixPct} · 自建均摊 {cost} 元/M', {
-          miss: fmtNum(s.tpsInputMiss, 0),
-          hit: fmtNum(s.tpsInputHit, 0),
-          output: fmtNum(s.tpsOutput, 1),
-          mixPct,
-          cost: fmtNum(s.costPerMBlended, 2),
-        })}</p>
-        <div class="mt-4 grid gap-4 lg:grid-cols-3">
-          ${renderComparePanel(L('输入 · 未命中'), L('元/百万 Token（云公开输入价 vs 自建均摊）'), s, sc, 'miss')}
-          ${renderComparePanel(L('输入 · 命中'), L('元/百万 Token（云公开缓存命中价 vs 自建均摊）'), s, sc, 'hit')}
-          ${renderComparePanel(L('输出'), L('元/百万 Token（云公开输出价 vs 自建均摊）'), s, sc, 'out')}
-        </div>`;
-    }
-
-    function renderFullMetrics(s) {
-      const rows = [
-        [L('算力规模 P'), fmtNum(s.computeP, 2) + ' P', L('1 卡 = 1P（2026H2）')],
-        [L('NPU 数量'), s.npuCount + ' ' + L('卡'), L('= P 取整')],
-        [L('集群 IT 功率'), fmtNum(s.clusterMw, 4) + ' MW', L('64 卡 = 125kW')],
-        [L('昇腾采购'), fmtWan(s.ascendCost), L('P × 单卡价')],
-        [L('IT 设备投资'), fmtWan(s.itEquipment), Lp('昇腾 ÷ {pct}%', { pct: fmtNum(s.ascendPct * 100, 0) })],
-        [L('供电/散热投资'), fmtWan(s.powerCapex), Lp('总投资 × {pct}%', { pct: fmtNum(s.powerPct * 100, 0) })],
-        [L('土地/建筑投资'), fmtWan(s.landCapex), Lp('总投资 × {pct}%', { pct: fmtNum(s.landPct * 100, 0) })],
-        [L('总投资 CAPEX'), fmtWan(s.totalCapex), L('IT 设备 ÷ IT 工程占比')],
-        [L('年输出 Token'), fmtTokens(s.annualTokens), L('P × 输出 t/s × 86400 × 365 × u')],
-        [L('年输入·未命中'), fmtTokens(s.annualMissTokens), L('P × 未命中 t/s × 86400 × 365 × u')],
-        [L('年输入·命中'), fmtTokens(s.annualHitTokens), L('P × 命中 t/s × 86400 × 365 × u')],
-        [L('年 Token 合计'), fmtTokens(s.annualTotalTokens), L('未命中 + 命中 + 输出')],
-        [L('输入/输出 t/s'), `${fmtNum(s.tpsInputMiss, 0)} / ${fmtNum(s.tpsInputHit, 0)} / ${fmtNum(s.tpsOutput, 1)}`, L('未命中 / 命中 / 输出')],
-        [L('年折旧'), fmtWan(s.annualDep), Lp('{years} 年', { years: s.deprecYears })],
-        [L('年电费'), fmtWan(s.annualPower), L('MW × 8760 × PUE × u × 电价')],
-        [L('自建均摊 / M'), fmtNum(s.costPerMBlended, 3) + ' ' + L('元'), L('全成本 ÷ 三类 Token 合计')],
-        [L('自建输出摊销 / M'), fmtNum(s.costPerM, 3) + ' ' + L('元'), L('全成本 ÷ 年输出 Token')],
-        [L('对标均摊价'), fmtNum(s.refBlended, 2) + ' ' + L('元/M'), L('按 t/s 占比加权云价')],
-        [L('年净利润（对标）'), fmtWan(s.profit), Lp('对标均摊 {price} 元/M', { price: fmtNum(s.refBlended, 2) })],
-        [L('盈亏平衡利用率'), Number.isFinite(s.breakeven) && s.breakeven <= 1 ? fmtNum(s.breakeven * 100, 1) + '%' : '—', L('固定 ÷ 边际')],
-        [L('静态回收期'), Number.isFinite(s.payback) ? fmtNum(s.payback, 1) + ' ' + L('年') : '—', L('CAPEX ÷ 年利润')],
-      ];
-      $('fullMetricsBody').innerHTML = rows.map(([k, v, n]) =>
-        `<tr><td class="px-4 py-2.5 font-medium">${k}</td><td class="px-4 py-2.5 tabular-nums">${v}</td><td class="hidden px-4 py-2.5 text-slate-500 md:table-cell">${n}</td></tr>`
-      ).join('');
-    }
-
-    function applyServiceModel() {
-      const svc = $('serviceModel').value;
-      if (svc === 'ds-v4' || svc === 'glm-51') {
-        const preset = SPEC.presets[svc];
-        $('tpsInputMiss').value = preset.tpsInputMiss;
-        $('tpsInputHit').value = preset.tpsInputHit;
-        $('tpsOutput').value = preset.tpsOutput;
-        activeScenario = svc;
-      } else {
-        syncKeyToFull();
-        renderAll();
-        return;
-      }
-      document.querySelectorAll('.cmp-tab').forEach((b) => {
-        const on = b.dataset.scenario === activeScenario;
-        b.className = 'cmp-tab rounded-xl px-4 py-2 text-sm font-semibold transition ' + (on ? 'text-blue-700 shadow-sm bg-white' : 'text-slate-600 hover:bg-white/80');
-      });
-      syncKeyToFull();
-      renderAll();
-    }
-
-    function showPwdOverlay() {
-      $('pwdOverlay').classList.remove('hidden');
-      $('pwdOverlay').classList.add('flex');
-      $('pwdInput').value = '';
-      $('pwdError').classList.add('hidden');
-      $('pwdInput').focus();
-    }
-
-    function hidePwdOverlay() {
-      $('pwdOverlay').classList.add('hidden');
-      $('pwdOverlay').classList.remove('flex');
-    }
-
-    function setKeyParamsVisible(visible) {
-      keyParamsUnlocked = visible;
-      $('keyParamsPanel').classList.toggle('hidden', !visible);
-      $('calcProcessPanel').classList.toggle('hidden', !visible);
-      $('keyParamsToggle').checked = visible;
-      const ro = !visible;
-      ['fullNpuPrice', 'fullAscendItPct'].forEach((id) => {
-        $(id).readOnly = ro;
-        $(id).classList.toggle('cursor-default', ro);
-        $(id).classList.toggle('bg-white', !ro);
-        $(id).classList.toggle('bg-slate-50', ro);
-      });
-    }
-
-    $('keyParamsToggle').addEventListener('change', () => {
-      if ($('keyParamsToggle').checked) {
-        if (keyParamsUnlocked) {
-          setKeyParamsVisible(true);
-        } else {
-          $('keyParamsToggle').checked = false;
-          showPwdOverlay();
-        }
-      } else {
-        setKeyParamsVisible(false);
-      }
-    });
-
-    $('pwdCancel').addEventListener('click', () => { hidePwdOverlay(); $('keyParamsToggle').checked = false; });
-    $('pwdOk').addEventListener('click', () => {
-      if ($('pwdInput').value.trim().toLowerCase() === KEY_PASSWORD) {
-        hidePwdOverlay();
-        setKeyParamsVisible(true);
-      } else {
-        $('pwdError').classList.remove('hidden');
-      }
-    });
-    $('pwdInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('pwdOk').click(); });
-
-    $('computeP').addEventListener('input', linkFromP);
-    $('clusterMw').addEventListener('input', linkFromMw);
-
-    ['pctItDevice', 'pctPowerCool'].forEach((id) => {
-      $(id).addEventListener('input', () => { rebalanceProjectPct(id); renderAll(); });
-    });
-    $('pctLandBuild').addEventListener('input', () => { rebalanceProjectPct('pctLandBuild'); renderAll(); });
-
-    $('ascendInItPct').addEventListener('input', () => { syncAscendNet('ascend'); renderAll(); });
-
-    ['pue', 'elecPrice', 'utilization', 'tpsInputMiss', 'tpsInputHit', 'tpsOutput', 'deprecYears', 'npuUnitPrice'].forEach((id) => {
-      $(id).addEventListener('input', () => { syncKeyToFull(); renderAll(); });
-    });
-
-    ['fullComputeP', 'fullClusterMw', 'fullNpuPrice', 'fullPctIt', 'fullPctPower', 'fullPctLand',
-      'fullAscendItPct', 'fullPue', 'fullElecPrice', 'fullUtil',
-      'fullTpsInputMiss', 'fullTpsInputHit', 'fullTpsOutput',
-      'fullDeprecYears', 'fullFixedOpex', 'fullCapexOpexPct'
-    ].forEach((id) => {
-      $(id).addEventListener('input', () => {
-        if (id === 'fullComputeP') { syncFullToKey(); linkFromP(); return; }
-        if (id === 'fullClusterMw') { syncFullToKey(); linkFromMw(); return; }
-        syncFullToKey();
-      });
-    });
-
-    $('fullAscendItPct').addEventListener('input', () => {
-      $('ascendInItPct').value = $('fullAscendItPct').value;
-      syncAscendNet('ascend');
-      renderAll();
-    });
-
-    document.querySelectorAll('.cmp-tab').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        activeScenario = btn.dataset.scenario;
-        $('serviceModel').value = activeScenario;
-        applyServiceModel();
-      });
-    });
-    $('serviceModel').addEventListener('change', applyServiceModel);
-
-    $('syncConfigBtn').addEventListener('click', syncConfigToCloud);
-
-    async function bootPage() {
-      await waitForI18n();
-      const [defaultsResult, cloudResult] = await Promise.all([
-        AidcConfig.load('roi.defaults', LOCAL_ROI_DEFAULTS),
-        AidcConfig.load('roi.cloud_compare', LOCAL_CLOUD_COMPARE),
-      ]);
-      configLoadMeta = { defaults: defaultsResult.source, cloud: cloudResult.source };
-      mergeCloudCompare(cloudResult.data);
-      applyRoiConfig(defaultsResult.data);
-      activeScenario = $('serviceModel').value === 'glm-51' ? 'glm-51' : 'ds-v4';
-      ['fullNpuPrice', 'fullAscendItPct'].forEach((id) => {
-        $(id).readOnly = true;
-        $(id).classList.add('cursor-default', 'bg-slate-50');
-      });
-      syncAscendNet('ascend');
-      syncKeyToFull();
-      document.querySelectorAll('.cmp-tab').forEach((b) => {
-        const on = b.dataset.scenario === activeScenario;
-        b.className = 'cmp-tab rounded-xl px-4 py-2 text-sm font-semibold transition ' + (on ? 'text-blue-700 shadow-sm bg-white' : 'text-slate-600 hover:bg-white/80');
-      });
-      refreshRoiI18n();
-    }
-
   </script>
-
-  <script src="js/aidc-locale-bridge.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/lang-switch.js"></script>
-  <script src="js/i18n-bootstrap.js"></script>
-  <script>
-    AidcI18nBootstrap.bootstrap('aidc-investment-roi', {
-      onReady: function () {
-        globalThis.__aidcPageRefreshI18n?.();
-        if (typeof bootPage === 'function') bootPage();
-      },
-      onLocaleChange: function () {
-        globalThis.__aidcPageRefreshI18n?.();
-      },
-    });
-    if (window.AidcLocaleBridge) {
-      AidcLocaleBridge.initIframeListener(function (locale) {
-        if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
-          AidcI18n.setLocale(locale, { page: 'aidc-investment-roi', common: true, basePath: 'i18n/' });
-        }
-      }, { selfSource: 'aidc-investment-roi' });
-    }
-  </script>
+  <script src="js/aidc-investment-roi-page.js"></script>
 </body>
 </html>

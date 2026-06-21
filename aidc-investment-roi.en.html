@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI data center token service investment ROI: Ascend NPU CAPEX/OPEX vs public cloud API pricing." />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>Token Investment ROI · AI Data Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #roiForm select {
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.85rem center; background-size: 1.125rem;
+    }
+    .cmp-bar-self { box-shadow: 0 0 0 2px rgb(251 191 36), 0 0 12px rgba(251,191,36,.35); }
+    html.aidc-embed #site-header,
+    html.aidc-embed #site-footer { display: none !important; }
+    html.aidc-embed main { padding-top: 1.25rem; }
+    @media (min-width: 640px) {
+      html.aidc-embed main { padding-top: 1.5rem; }
+    }
+  </style>
+  <script>
+    try {
+      if (window.self !== window.top) document.documentElement.classList.add('aidc-embed');
+    } catch (e) {
+      document.documentElement.classList.add('aidc-embed');
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header id="site-header" class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl" aria-label="Main navigation">
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center" aria-label="AIDC 2026 · Home">
+        <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10" />
+      </a>
+      <ul class="ml-auto flex flex-wrap items-center gap-6 text-sm font-semibold">
+        <li><a href="ai-dc-design.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">AI DC Design</a></li>
+        <li><a href="index.html#inference" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">Agentic Inference</a></li>
+        <li><a href="post-training.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">Post-Training</a></li>
+        <li><a href="white-paper.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">White Paper</a></li>
+        <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">About US</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
+    <section class="flex flex-col gap-8 lg:gap-10">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Investment ROI</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">Token Service Investment ROI</h1>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">Models <strong class="font-semibold text-slate-800">compute scale (P)</strong> and <strong class="font-semibold text-slate-800">cluster power (MW)</strong> together — CAPEX on the left, OPEX on the right, with live price comparison in the center.</p>
+        <p id="configSourceBadge" class="mt-2 text-xs font-medium text-slate-500" aria-live="polite"></p>
+      </div>
+
+      <form id="roiForm" class="grid items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+        <!-- 左：CAPEX -->
+        <div class="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">CAPEX</p>
+            <h2 class="mt-1 text-xl font-bold text-slate-950" >Capital investment · key parameters</h2>
+          </div>
+          <div class="space-y-4 lg:flex-1">
+            <div class="space-y-4">
+              <div>
+                <label for="computeP" class="block text-sm font-medium text-slate-700" >Compute scale (P)</label>
+                <input id="computeP" type="number" min="0.01" step="0.01" value="512"
+                  class="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                <p class="mt-1 text-xs text-slate-500" >2026H2: 1 card = 1P</p>
+              </div>
+              <div>
+                <label for="clusterMw" class="block text-sm font-medium text-slate-700" >Cluster IT power (MW)</label>
+                <input id="clusterMw" type="number" min="0.001" step="0.001" value="1"
+                  class="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                <p class="mt-1 text-xs text-slate-500" >Spec: 64 cards = 125kW</p>
+              </div>
+            </div>
+            <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+              <p class="text-xs font-semibold text-slate-700" >Project investment mix (100% total)</p>
+              <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label for="pctItDevice" class="block text-xs font-medium text-slate-600" >IT equipment (%)</label>
+                  <input id="pctItDevice" type="number" min="0" max="100" step="1" value="65"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label for="pctPowerCool" class="block text-xs font-medium text-slate-600" >Power / cooling (%)</label>
+                  <input id="pctPowerCool" type="number" min="0" max="100" step="1" value="25"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label for="pctLandBuild" class="block text-xs font-medium text-slate-600" >Land / building (%)</label>
+                  <input id="pctLandBuild" type="number" min="0" max="100" step="1" value="10"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+              </div>
+              <p id="pctSumHint" class="mt-2 text-xs text-emerald-600">Three items total 100%</p>
+            </div>
+          </div>
+          <div class="mt-auto flex min-h-[11.75rem] flex-col rounded-2xl bg-slate-950 p-5 text-white">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400" >CAPEX results</p>
+            <dl class="mt-3 flex flex-1 flex-col">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <dt class="text-xs text-slate-400" >Total investment</dt>
+                  <dd id="keyTotalCapex" class="mt-0.5 text-lg font-bold tabular-nums text-blue-300">—</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-slate-400" >IT equipment investment</dt>
+                  <dd id="keyItCapex" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-slate-400" >Annual depreciation</dt>
+                  <dd id="keyAnnualDep" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
+                </div>
+                <div aria-hidden="true" class="invisible">
+                  <dt class="text-xs">—</dt>
+                  <dd class="mt-0.5 text-lg font-bold">—</dd>
+                </div>
+              </div>
+              <div class="mt-auto border-t border-white/10 pt-3">
+                <dt class="text-xs text-slate-400" >CAPEX amortization (USD/M output tokens)</dt>
+                <dd id="keyCapexPerM" class="mt-0.5 text-2xl font-bold tabular-nums text-amber-300">—</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- 右：OPEX -->
+        <div class="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-600">OPEX</p>
+            <h2 class="mt-1 text-xl font-bold text-slate-950" >Operating cost · key parameters</h2>
+          </div>
+          <div class="space-y-4 lg:flex-1">
+            <div>
+              <label for="deprecYears" class="block text-sm font-medium text-slate-700" >Equipment depreciation (years)</label>
+              <input id="deprecYears" type="number" min="1" step="1" value="5"
+                class="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+            </div>
+            <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+              <p class="text-xs font-semibold text-slate-700" >Operating environment</p>
+              <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label for="pue" class="block text-xs font-medium text-slate-600">PUE</label>
+                  <input id="pue" type="number" min="1" step="0.01" value="1.25"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label for="elecPrice" class="block text-xs font-medium text-slate-600" >Industrial electricity (USD/kWh)</label>
+                  <input id="elecPrice" type="number" min="0.01" step="0.01" value="0.09"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label for="utilization" class="block text-xs font-medium text-slate-600" >Average utilization (%)</label>
+                  <input id="utilization" type="number" min="1" max="100" step="1" value="75"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+              <p class="text-xs font-semibold text-slate-700" >Per-card throughput (tokens/s)</p>
+              <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label for="tpsInputMiss" class="block text-xs font-medium text-slate-600" >Input · cache miss</label>
+                  <input id="tpsInputMiss" type="number" min="0" step="1" value="900"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label for="tpsInputHit" class="block text-xs font-medium text-slate-600" >Input · cache hit</label>
+                  <input id="tpsInputHit" type="number" min="0" step="1" value="3600"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label for="tpsOutput" class="block text-xs font-medium text-slate-600" >Output</label>
+                  <input id="tpsOutput" type="number" min="0.1" step="0.1" value="28"
+                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+              </div>
+            </div>
+            <p class="text-xs leading-5 text-slate-500" >Cluster IT power links to P/MW on the left; electricity cost estimated as MW × PUE × utilization. Price comparison amortizes full cost across all three token types.</p>
+          </div>
+          <div class="mt-auto flex min-h-[11.75rem] flex-col rounded-2xl bg-slate-950 p-5 text-white">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400" >OPEX results</p>
+            <dl class="mt-3 flex flex-1 flex-col">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <dt class="text-xs text-slate-400" >Annual electricity</dt>
+                  <dd id="keyAnnualPower" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-300">—</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-slate-400" >Annual ops (fixed + maintenance)</dt>
+                  <dd id="keyAnnualOps" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-slate-400" >Total annual OPEX</dt>
+                  <dd id="keyAnnualOpexTotal" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-200">—</dd>
+                </div>
+                <div aria-hidden="true" class="invisible">
+                  <dt class="text-xs">—</dt>
+                  <dd class="mt-0.5 text-lg font-bold">—</dd>
+                </div>
+              </div>
+              <div class="mt-auto border-t border-white/10 pt-3">
+                <dt class="text-xs text-slate-400" >Total OPEX (USD/M output tokens)</dt>
+                <dd id="keyOpexPerM" class="mt-0.5 text-2xl font-bold tabular-nums text-emerald-300">—</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <input type="hidden" id="npuCount" value="512" />
+        <input type="hidden" id="annualFixedOpex" value="110" />
+        <input type="hidden" id="capexOpexPct" value="3" />
+      </form>
+
+      <!-- 比价 -->
+      <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6 lg:p-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-violet-600">Price Compare</p>
+            <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl" >Public cloud list price vs self-built full cost</h2>
+          </div>
+          <div class="inline-flex gap-1 rounded-2xl bg-slate-100 p-1" role="tablist">
+            <button type="button" data-scenario="ds-v4" class="cmp-tab rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm bg-white">DeepSeek V4</button>
+            <button type="button" data-scenario="glm-51" class="cmp-tab rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-white/80">GLM-5.1</button>
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+          <div>
+            <span class="text-xs text-slate-500" >Self-built blended price</span>
+            <span id="cmpSelfCost" class="ml-2 text-xl font-bold tabular-nums text-amber-600">—</span>
+            <span class="text-sm text-slate-500" >USD/M tokens (all three types)</span>
+          </div>
+          <div>
+            <span class="text-xs text-slate-500" >Reference blended price</span>
+            <span id="cmpRefEff" class="ml-2 text-lg font-semibold tabular-nums text-blue-700">—</span>
+            <span class="text-sm text-slate-500" >USD/M (throughput-weighted)</span>
+          </div>
+          <div id="cmpVerdict" class="w-full text-sm font-semibold text-slate-700 sm:w-auto">—</div>
+        </div>
+        <p id="cmpPricingNote" class="mt-4 text-xs leading-5 text-slate-500"></p>
+        <div id="compareChart" class="mt-6" aria-live="polite"></div>
+      </div>
+
+      <!-- 全量参数 -->
+      <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6 lg:p-8">
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Full Model</p>
+        <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl" >All parameters & formulas</h2>
+
+        <div class="mt-6 grid gap-6 lg:grid-cols-2">
+          <fieldset class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <legend class="px-2 text-sm font-bold text-slate-900" >All CAPEX parameters</legend>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-600" >Ascend NPU model</label>
+                <input id="npuModelReadonly" type="text" readonly value="2026H2 model (1P/card · 64 cards=125kW · default $70k/card)"
+                  class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700" />
+              </div>
+              <div>
+                <label for="fullNpuCount" class="block text-xs font-medium text-slate-600" >NPU count (= P)</label>
+                <input id="fullNpuCount" type="number" readonly class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullClusterMw" class="block text-xs font-medium text-slate-600" >Cluster IT power (MW)</label>
+                <input id="fullClusterMw" type="number" step="0.001" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullComputeP" class="block text-xs font-medium text-slate-600" >Compute scale (P)</label>
+                <input id="fullComputeP" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullNpuPrice" class="block text-xs font-medium text-slate-600" >Unit price ($10k USD)</label>
+                <input id="fullNpuPrice" type="number" step="0.1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullAscendItPct" class="block text-xs font-medium text-slate-600" >Ascend share in IT (%)</label>
+                <input id="fullAscendItPct" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullNetItPct" class="block text-xs font-medium text-slate-600" >Network/storage in IT (%)</label>
+                <input id="fullNetItPct" type="number" readonly class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullPctIt" class="block text-xs font-medium text-slate-600" >IT equipment share (%)</label>
+                <input id="fullPctIt" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullPctPower" class="block text-xs font-medium text-slate-600" >Power/cooling share (%)</label>
+                <input id="fullPctPower" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullPctLand" class="block text-xs font-medium text-slate-600" >Land/building share (%)</label>
+                <input id="fullPctLand" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullDeprecYears" class="block text-xs font-medium text-slate-600" >Depreciation (years)</label>
+                <input id="fullDeprecYears" type="number" min="1" value="5" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <legend class="px-2 text-sm font-bold text-slate-900" >All OPEX parameters</legend>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label for="fullPue" class="block text-xs font-medium text-slate-600">PUE</label>
+                <input id="fullPue" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullElecPrice" class="block text-xs font-medium text-slate-600" >Electricity price (USD/kWh)</label>
+                <input id="fullElecPrice" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullUtil" class="block text-xs font-medium text-slate-600" >Utilization (%)</label>
+                <input id="fullUtil" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullFixedOpex" class="block text-xs font-medium text-slate-600" >Fixed ops ($10k USD/year)</label>
+                <input id="fullFixedOpex" type="number" value="110" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullCapexOpexPct" class="block text-xs font-medium text-slate-600" >Annual CAPEX maintenance (%)</label>
+                <input id="fullCapexOpexPct" type="number" step="0.5" value="3" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div class="sm:col-span-2">
+                <label for="serviceModel" class="block text-xs font-medium text-slate-600" >Service model tier</label>
+                <select id="serviceModel" class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-9 text-sm">
+                  <option value="ds-v4" selected >DeepSeek V4-Flash tier</option>
+                  <option value="glm-51" >GLM-5.1 tier</option>
+                  <option value="custom" >Custom throughput</option>
+                </select>
+              </div>
+              <div>
+                <label for="fullTpsInputMiss" class="block text-xs font-medium text-slate-600" >Per-card input · cache miss (t/s)</label>
+                <input id="fullTpsInputMiss" type="number" step="1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullTpsInputHit" class="block text-xs font-medium text-slate-600" >Per-card input · cache hit (t/s)</label>
+                <input id="fullTpsInputHit" type="number" step="1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+              <div>
+                <label for="fullTpsOutput" class="block text-xs font-medium text-slate-600" >Per-card output (t/s)</label>
+                <input id="fullTpsOutput" type="number" step="0.1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-7 text-blue-900">
+          <strong class="font-semibold" >Formulas:</strong>
+          <ul class="mt-2 list-inside list-disc space-y-1">
+            <li ><code class="rounded bg-white/70 px-1">MW</code> = P × 125 ÷ 64000（64 卡 = 125kW）</li>
+            <li ><code class="rounded bg-white/70 px-1">Ascend procurement</code> = P × 单卡价；<code class="rounded bg-white/70 px-1">IT equipment investment</code> = 昇腾采购 ÷ IT 内昇腾占比</li>
+            <li ><code class="rounded bg-white/70 px-1">Total investment CAPEX</code> = IT 设备投资 ÷ IT 设备工程占比</li>
+            <li ><code class="rounded bg-white/70 px-1">Annual electricity</code> = MW × 1000 × 8760 × PUE × 利用率 × 电价</li>
+            <li ><code class="rounded bg-white/70 px-1">Annual tokens total</code> = 年输入未命中 + 年输入命中 + 年输出</li>
+            <li ><code class="rounded bg-white/70 px-1">自建均摊价/M</code> = (年折旧 + 年电费 + 年运维) ÷ (年 Token 合计 / 10⁶)</li>
+            <li ><code class="rounded bg-white/70 px-1">云均摊价/M</code> = 入未命中价 × 占比 + 入命中价 × 占比 + 出价 × 占比（占比 = 各 t/s ÷ 三类 t/s 合计）</li>
+            <li ><code class="rounded bg-white/70 px-1">CAPEX/OPEX 摊销/M</code> = 分项成本 ÷ (年输出 Token / 10⁶)（结果区仍按输出 Token 口径）</li>
+          </ul>
+          <p class="mt-3 text-xs text-blue-800/80" >Step-by-step details appear in the calculation table after unlocking key parameters at the bottom.</p>
+        </div>
+      </div>
+
+      <!-- 关键参数 + 计算过程（页面底部，密码解锁后联动显示） -->
+      <div class="flex flex-col gap-4">
+        <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:px-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-slate-900" >Key parameters</p>
+              <p class="text-xs text-slate-500" >Hidden by default; when enabled, shows the calculation table and sensitive items such as per-card price</p>
+            </div>
+            <label class="inline-flex cursor-pointer items-center gap-2">
+              <span class="text-sm text-slate-600" >Show key parameters</span>
+              <input id="keyParamsToggle" type="checkbox" class="peer sr-only" />
+              <span class="relative h-7 w-12 rounded-full bg-slate-200 transition peer-checked:bg-blue-600 after:absolute after:left-0.5 after:top-0.5 after:h-6 after:w-6 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+            </label>
+          </div>
+          <div id="keyParamsPanel" class="hidden mt-4 border-t border-slate-100 pt-4">
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <label for="npuUnitPrice" class="block text-sm font-medium text-slate-700" >Per-card price ($10k USD/card)</label>
+                <input id="npuUnitPrice" type="number" min="0" step="0.1" value="7"
+                  class="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+              </div>
+              <div>
+                <label for="ascendInItPct" class="block text-sm font-medium text-slate-700" >In IT · Ascend share (%)</label>
+                <input id="ascendInItPct" type="number" min="0" max="100" step="1" value="85"
+                  class="mt-2 h-11 w-full rounded-xl border border-slate-200 px-3 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+              </div>
+              <div>
+                <label for="netStorageInItPct" class="block text-sm font-medium text-slate-700" >In IT · network/storage share (%)</label>
+                <input id="netStorageInItPct" type="number" min="0" max="100" step="1" value="15" readonly
+                  class="mt-2 h-11 w-full cursor-default rounded-xl border border-slate-200 bg-slate-50 px-3 text-base text-slate-600" />
+              </div>
+            </div>
+            <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4">
+              <button type="button" id="syncConfigBtn"
+                class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                >
+                同步当前参数到云端
+              </button>
+              <span id="syncConfigHint" class="text-xs text-slate-500"></span>
+            </div>
+          </div>
+        </div>
+
+        <div id="calcProcessPanel" class="hidden overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <div class="border-b border-slate-100 px-5 py-3 sm:px-6">
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Calculation</p>
+            <h2 class="mt-0.5 text-base font-bold text-slate-950" >CAPEX / OPEX calculation steps</h2>
+            <p class="mt-1 text-xs text-slate-500" >Updates live with page inputs and key parameters</p>
+          </div>
+          <table class="min-w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+              <tr><th class="px-4 py-3 sm:px-6" >Metric</th><th class="px-4 py-3" >Value</th><th class="px-4 py-3 hidden md:table-cell" >Notes</th></tr>
+            </thead>
+            <tbody id="fullMetricsBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="border-t border-slate-200 bg-white py-6">
+    <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
+      <span><span>MIIT ICP filing:</span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a></span>
+      <span class="hidden sm:inline" aria-hidden="true">|</span>
+      <span><span>Public security filing:</span><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a></span>
+    </p>
+  </footer>
+
+  <!-- 密码弹层 -->
+  <div id="pwdOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-labelledby="pwdTitle">
+      <h3 id="pwdTitle" class="text-lg font-bold text-slate-950" >Enter access password</h3>
+      <p class="mt-2 text-sm text-slate-600" >Unlocking key parameters requires verification (case-insensitive).</p>
+      <input id="pwdInput" type="password" autocomplete="off"  placeholder="Password"
+        class="mt-4 h-11 w-full rounded-xl border border-slate-200 px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+      <p id="pwdError" class="mt-2 hidden text-sm text-rose-600" >Incorrect password, please try again.</p>
+      <div class="mt-4 flex justify-end gap-2">
+        <button type="button" id="pwdCancel" class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" >Cancel</button>
+        <button type="button" id="pwdOk" class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700" >Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config-loader.js"></script>
+  <script>
+    window.ROI_PAGE_CONFIG = {
+      locale: 'en',
+      localeTag: 'en-US',
+      strings: {
+  "Token 服务投资收益分析": "Token Service Investment ROI",
+  "以": "Models",
+  "算力规模（P）": "Compute scale (P)",
+  "与": "and",
+  "集群功率（MW）": "cluster power (MW)",
+  "联动建模，左侧 CAPEX、右侧 OPEX，中部比价图实时反映竞争力。": "together — CAPEX on the left, OPEX on the right, with live price comparison in the center.",
+  "投资建设 · 关键参数": "Capital investment · key parameters",
+  "2026H2：1 卡 = 1P": "2026H2: 1 card = 1P",
+  "集群 IT 功率（MW）": "Cluster IT power (MW)",
+  "规格：64 卡 = 125kW": "Spec: 64 cards = 125kW",
+  "工程投资结构（合计 100%）": "Project investment mix (100% total)",
+  "IT 设备投资（%）": "IT equipment (%)",
+  "供电 / 散热（%）": "Power / cooling (%)",
+  "土地 / 建筑（%）": "Land / building (%)",
+  "三项合计 100%": "Three items total 100%",
+  "三项合计 {sum}%（应为 100%）": "Three items total {sum}% (should be 100%)",
+  "CAPEX 结果": "CAPEX results",
+  "总投资": "Total investment",
+  "IT 设备投资": "IT equipment investment",
+  "年折旧": "Annual depreciation",
+  "CAPEX 摊销（元/百万输出 Token）": "CAPEX amortization (USD/M output tokens)",
+  "运行成本 · 关键参数": "Operating cost · key parameters",
+  "设备折旧年限（年）": "Equipment depreciation (years)",
+  "运行环境": "Operating environment",
+  "工业电价（元/kWh）": "Industrial electricity (USD/kWh)",
+  "平均利用率（%）": "Average utilization (%)",
+  "单卡吞吐（tokens/s）": "Per-card throughput (tokens/s)",
+  "输入·未命中": "Input · cache miss",
+  "输入·命中": "Input · cache hit",
+  "输出": "Output",
+  "集群 IT 功率由左侧 P/MW 联动；电费按 MW × PUE × 利用率估算。比价按三类 Token 总量均摊全成本。": "Cluster IT power links to P/MW on the left; electricity cost estimated as MW × PUE × utilization. Price comparison amortizes full cost across all three token types.",
+  "OPEX 结果": "OPEX results",
+  "年电费": "Annual electricity",
+  "年运维（固定+维保）": "Annual ops (fixed + maintenance)",
+  "年 OPEX 合计": "Total annual OPEX",
+  "OPEX 合计（元/百万输出 Token）": "Total OPEX (USD/M output tokens)",
+  "公有云公开价 vs 自建全成本": "Public cloud list price vs self-built full cost",
+  "自建均摊价": "Self-built blended price",
+  "元/百万 Token（三类合计）": "USD/M tokens (all three types)",
+  "对标均摊价": "Reference blended price",
+  "元/M（按吞吐加权）": "USD/M (throughput-weighted)",
+  "全部参数与计算公式": "All parameters & formulas",
+  "CAPEX 全部参数": "All CAPEX parameters",
+  "昇腾 NPU 型号": "Ascend NPU model",
+  "2026H2型号（1P/卡 · 64卡=125kW · 默认50万/卡）": "2026H2 model (1P/card · 64 cards=125kW · default $70k/card)",
+  "NPU 数量（= P）": "NPU count (= P)",
+  "单卡价（万元）": "Unit price ($10k USD)",
+  "IT 内昇腾（%）": "Ascend share in IT (%)",
+  "IT 内网络/存储（%）": "Network/storage in IT (%)",
+  "IT 设备占比（%）": "IT equipment share (%)",
+  "供电/散热占比（%）": "Power/cooling share (%)",
+  "土地/建筑占比（%）": "Land/building share (%)",
+  "折旧年限（年）": "Depreciation (years)",
+  "OPEX 全部参数": "All OPEX parameters",
+  "电价（元/kWh）": "Electricity price (USD/kWh)",
+  "利用率（%）": "Utilization (%)",
+  "固定运维（万元/年）": "Fixed ops ($10k USD/year)",
+  "CAPEX 年维保（%）": "Annual CAPEX maintenance (%)",
+  "服务模型档位": "Service model tier",
+  "DeepSeek V4-Flash 级": "DeepSeek V4-Flash tier",
+  "GLM-5.1 级": "GLM-5.1 tier",
+  "自定义吞吐": "Custom throughput",
+  "单卡输入·未命中（t/s）": "Per-card input · cache miss (t/s)",
+  "单卡输入·命中（t/s）": "Per-card input · cache hit (t/s)",
+  "单卡输出（t/s）": "Per-card output (t/s)",
+  "公式：": "Formulas:",
+  "formulaMw": "<code class=\"rounded bg-white/70 px-1\">MW</code> = P × 125 ÷ 64000 (64 cards = 125kW)",
+  "formulaAscendIt": "<code class=\"rounded bg-white/70 px-1\">Ascend procurement</code> = P × unit price; <code class=\"rounded bg-white/70 px-1\">IT equipment investment</code> = Ascend procurement ÷ Ascend share in IT",
+  "formulaTotalCapex": "<code class=\"rounded bg-white/70 px-1\">Total investment CAPEX</code> = IT equipment investment ÷ IT equipment project share",
+  "formulaAnnualPower": "<code class=\"rounded bg-white/70 px-1\">Annual electricity</code> = MW × 1000 × 8760 × PUE × utilization × price",
+  "formulaAnnualTokens": "<code class=\"rounded bg-white/70 px-1\">Annual tokens total</code> = annual input miss + annual input hit + annual output",
+  "formulaSelfBlended": "<code class=\"rounded bg-white/70 px-1\">Self-built blended /M</code> = (annual depreciation + annual electricity + annual ops) ÷ (annual tokens total / 10⁶)",
+  "formulaCloudBlended": "<code class=\"rounded bg-white/70 px-1\">Cloud blended /M</code> = miss price × share + hit price × share + output price × share (share = each t/s ÷ sum of three t/s)",
+  "formulaAmortPerM": "<code class=\"rounded bg-white/70 px-1\">CAPEX/OPEX amortization /M</code> = line-item cost ÷ (annual output tokens / 10⁶) (results still use output token basis)",
+  "逐步计算明细见页面底部「关键参数」解锁后的计算过程表。": "Step-by-step details appear in the calculation table after unlocking key parameters at the bottom.",
+  "关键参数": "Key parameters",
+  "默认隐藏；开启后同时展示下方计算过程与单卡价格等敏感项": "Hidden by default; when enabled, shows the calculation table and sensitive items such as per-card price",
+  "显示关键参数": "Show key parameters",
+  "单卡价格（万元/卡）": "Per-card price ($10k USD/card)",
+  "IT 内 · 昇腾占比（%）": "In IT · Ascend share (%)",
+  "IT 内 · 网络/存储占比（%）": "In IT · network/storage share (%)",
+  "同步当前参数到云端": "Sync current parameters to cloud",
+  "CAPEX / OPEX 计算过程": "CAPEX / OPEX calculation steps",
+  "随页面输入与关键参数实时更新": "Updates live with page inputs and key parameters",
+  "指标": "Metric",
+  "数值": "Value",
+  "说明": "Notes",
+  "输入访问密码": "Enter access password",
+  "开启「关键参数」需验证身份（不区分大小写）。": "Unlocking key parameters requires verification (case-insensitive).",
+  "密码": "Password",
+  "密码错误，请重试。": "Incorrect password, please try again.",
+  "取消": "Cancel",
+  "确认": "Confirm",
+  "配置来源：云端数据库（全量同步）": "Config source: cloud database (fully synced)",
+  "配置来源：部分云端 + 部分本地默认": "Config source: partial cloud + partial local defaults",
+  "配置来源：本地默认（数据库不可用或未配置）": "Config source: local defaults (database unavailable or not configured)",
+  "请先开启并解锁关键参数": "Please enable and unlock key parameters first",
+  "同步中…": "Syncing…",
+  "已同步到云端": "Synced to cloud",
+  "同步失败：{msg}": "Sync failed: {msg}",
+  "万元": "",
+  "元/M": "USD/M",
+  "元": "USD",
+  "卡": "cards",
+  "年": "years",
+  "✓ 具备价格竞争力 · 低于 {cheaper}/{total} 家均摊价": "✓ Price competitive · below {cheaper}/{total} providers' blended prices",
+  "✗ 高于对标均摊价 {diff} 元/M · 仅低于 {cheaper}/{total} 家": "✗ Above reference blended price by {diff} USD/M · only below {cheaper}/{total} providers",
+  "DeepSeek V4 档": "DeepSeek V4 tier",
+  "GLM-5.1 档": "GLM-5.1 tier",
+  " · 三类 Token 均摊比价": " · three token types blended comparison",
+  "单卡吞吐 {miss} / {hit} / {output} t/s · Token 占比 {mixPct} · 自建均摊 {cost} 元/M": "Per-card throughput {miss} / {hit} / {output} t/s · Token mix {mixPct} · Self-built blended {cost} USD/M",
+  "未命中 {miss}% · 命中 {hit}% · 输出 {out}%": "Miss {miss}% · Hit {hit}% · Output {out}%",
+  "输入 · 未命中": "Input · cache miss",
+  "输入 · 命中": "Input · cache hit",
+  "元/百万 Token（云公开输入价 vs 自建均摊）": "USD/M tokens (cloud input price vs self-built blended)",
+  "元/百万 Token（云公开缓存命中价 vs 自建均摊）": "USD/M tokens (cloud cache-hit price vs self-built blended)",
+  "元/百万 Token（云公开输出价 vs 自建均摊）": "USD/M tokens (cloud output price vs self-built blended)",
+  "★ 自建": "★ Self-built",
+  "均摊全成本": "Blended full cost",
+  "均摊 {price}": "Blended {price}",
+  "算力规模 P": "Compute scale P",
+  "1 卡 = 1P（2026H2）": "1 card = 1P (2026H2)",
+  "NPU 数量": "NPU count",
+  "= P 取整": "= round(P)",
+  "集群 IT 功率": "Cluster IT power",
+  "64 卡 = 125kW": "64 cards = 125kW",
+  "昇腾采购": "Ascend procurement",
+  "P × 单卡价": "P × unit price",
+  "昇腾 ÷ {pct}%": "Ascend ÷ {pct}%",
+  "供电/散热投资": "Power/cooling investment",
+  "总投资 × {pct}%": "Total investment × {pct}%",
+  "土地/建筑投资": "Land/building investment",
+  "总投资 CAPEX": "Total investment CAPEX",
+  "IT 设备 ÷ IT 工程占比": "IT equipment ÷ IT project share",
+  "年输出 Token": "Annual output tokens",
+  "P × 输出 t/s × 86400 × 365 × u": "P × output t/s × 86400 × 365 × u",
+  "年输入·未命中": "Annual input · cache miss",
+  "P × 未命中 t/s × 86400 × 365 × u": "P × miss t/s × 86400 × 365 × u",
+  "年输入·命中": "Annual input · cache hit",
+  "P × 命中 t/s × 86400 × 365 × u": "P × hit t/s × 86400 × 365 × u",
+  "年 Token 合计": "Annual tokens total",
+  "未命中 + 命中 + 输出": "Miss + hit + output",
+  "输入/输出 t/s": "Input/output t/s",
+  "未命中 / 命中 / 输出": "Miss / hit / output",
+  "MW × 8760 × PUE × u × 电价": "MW × 8760 × PUE × u × price",
+  "自建均摊 / M": "Self-built blended /M",
+  "全成本 ÷ 三类 Token 合计": "Full cost ÷ total of three token types",
+  "自建输出摊销 / M": "Self-built output amortization /M",
+  "全成本 ÷ 年输出 Token": "Full cost ÷ annual output tokens",
+  "按 t/s 占比加权云价": "Cloud prices weighted by t/s share",
+  "年净利润（对标）": "Annual net profit (reference)",
+  "对标均摊 {price} 元/M": "Reference blended {price} USD/M",
+  "盈亏平衡利用率": "Breakeven utilization",
+  "固定 ÷ 边际": "Fixed ÷ marginal",
+  "静态回收期": "Static payback period",
+  "CAPEX ÷ 年利润": "CAPEX ÷ annual profit",
+  "{years} 年": "{years} years"
+},
+      configKeys: { defaults: 'roi.defaults.en', cloudCompare: 'roi.cloud_compare.en' },
+      localDefaults: {
+  "schemaVersion": 1,
+  "computeP": 512,
+  "clusterMw": 1.0,
+  "pctItDevice": 65,
+  "pctPowerCool": 25,
+  "pctLandBuild": 10,
+  "npuUnitPrice": 7,
+  "ascendInItPct": 85,
+  "deprecYears": 5,
+  "pue": 1.25,
+  "elecPrice": 0.09,
+  "utilization": 75,
+  "tpsInputMiss": 900,
+  "tpsInputHit": 3600,
+  "tpsOutput": 28,
+  "annualFixedOpex": 110,
+  "capexOpexPct": 3,
+  "serviceModel": "ds-v4"
+},
+      localCloudCompare: {
+  "schemaVersion": 1,
+  "ds-v4": {
+    "title": "DeepSeek V4 tier",
+    "refInputMiss": 0.14,
+    "refInputHit": 0.0028,
+    "refOutput": 0.28,
+    "pricingNote": "Benchmark region: UAE (Azure UAE North / AWS me-central-1). List prices per million tokens from DeepSeek API docs, Azure AI Foundry, and AWS Bedrock (Jun 2026). Cache-hit where unavailable uses input-miss rate.",
+    "clouds": [
+      {
+        "name": "DeepSeek API Official",
+        "inputMiss": 0.14,
+        "inputHit": 0.0028,
+        "output": 0.28
+      },
+      {
+        "name": "Azure AI Foundry (UAE)",
+        "inputMiss": 0.21,
+        "inputHit": 0.0042,
+        "output": 0.56
+      },
+      {
+        "name": "AWS Bedrock (me-central-1)",
+        "inputMiss": 0.62,
+        "inputHit": 0.62,
+        "output": 1.85
+      },
+      {
+        "name": "Azure AI Foundry (Global)",
+        "inputMiss": 0.19,
+        "inputHit": 0.0038,
+        "output": 0.51
+      }
+    ]
+  },
+  "glm-51": {
+    "title": "GLM-5.1 tier",
+    "refInputMiss": 0.42,
+    "refInputHit": 0.105,
+    "refOutput": 2.1,
+    "pricingNote": "Overseas GLM-5.1 API pricing varies by region; figures are illustrative for comparison only.",
+    "clouds": [
+      {
+        "name": "Z.AI Official",
+        "inputMiss": 0.42,
+        "inputHit": 0.105,
+        "output": 1.68
+      },
+      {
+        "name": "OpenRouter (illustrative)",
+        "inputMiss": 0.55,
+        "inputHit": 0.14,
+        "output": 2.2
+      },
+      {
+        "name": "Together AI (illustrative)",
+        "inputMiss": 0.48,
+        "inputHit": 0.12,
+        "output": 1.92
+      }
+    ]
+  }
+},
+    };
+  </script>
+  <script src="js/aidc-investment-roi-page.js"></script>
+</body>
+</html>

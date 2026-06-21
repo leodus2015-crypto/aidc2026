@@ -19,7 +19,9 @@ aidc 静态站点归档
   ai-dc-layout_37.html        Tab「机柜布局（风冷）」
   datacenter-3d-case-b.html   Tab「案例 A（风冷）」
   datacenter-3d-v3-2.html     Tab「案例 B（风冷）」
-  aidc-investment-roi.html    Tab「Investment ROI」
+  aidc-investment-roi.html    Tab「Investment ROI」（中文）
+  aidc-investment-roi.en.html  同上（英文 · USD · 海外云比价）
+  js/aidc-investment-roi-page.js  ROI 页共享逻辑
 
 【兼容重定向页（不在主导航，保留旧链接）】
   ai-dc-layout.html       → ai-dc-design.html
