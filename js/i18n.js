@@ -4,8 +4,8 @@
 (function (global) {
   const STORAGE_KEY = 'aidc-locale';
   const DEFAULT_LOCALE = 'zh';
-  /** Bump when i18n JSON content changes to avoid stale browser cache. */
-  const BUNDLE_VERSION = '4';
+  /** Synced with data/asset-version.json via scripts/bump-asset-version.py */
+  const BUNDLE_VERSION = global.AIDC_ASSET_VERSION || '5';
 
   let locale = DEFAULT_LOCALE;
   let messages = {};

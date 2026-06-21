@@ -22,6 +22,9 @@ usage() {
   ./scripts/deploy.sh --full-reset "提交说明"
                                      服务器备份 .env 后清空目录再全量同步
 
+  SKIP_BUMP=1 ./scripts/deploy.sh "说明"   提交时不递增资源版本号
+  ./scripts/deploy.sh --no-bump "说明"     同上
+
 环境:
   复制 deploy.env.example → deploy.env 并填写 SSH 信息
 
@@ -37,6 +40,7 @@ while [[ $# -gt 0 ]]; do
     --push-only) DO_SYNC=0 ;;
     --full-reset) FULL_RESET=1 ;;
     --no-commit) SKIP_COMMIT=1 ;;
+    --no-bump) SKIP_BUMP=1 ;;
     -h|--help) usage; exit 0 ;;
     *)
       if [[ -z "${COMMIT_MSG}" ]]; then
@@ -71,6 +75,7 @@ RSYNC_EXCLUDES=(
   --exclude '.env'
   --exclude 'deploy.env'
   --exclude '.DS_Store'
+  --exclude '.user.ini'
   --exclude 'api/__pycache__/'
   --exclude '**/__pycache__/'
   --exclude '*.pyc'
@@ -91,6 +96,12 @@ git_commit_and_push() {
       echo "错误：有未提交改动，请提供提交说明。" >&2
       exit 1
     }
+    if [[ "${SKIP_BUMP:-0}" -eq 0 ]]; then
+      echo ">> bump 静态资源版本号"
+      python3 "${ROOT}/scripts/bump-asset-version.py" --bump --sync
+    else
+      echo ">> 跳过 bump（SKIP_BUMP / --no-bump）"
+    fi
     git add -A
     git commit -m "${COMMIT_MSG}"
   else
@@ -130,14 +141,17 @@ rsync_to_server() {
 
 verify_deploy() {
   echo ">> 验证"
+  local ver
+  ver="$(python3 "${ROOT}/scripts/bump-asset-version.py" --show 2>/dev/null || echo '?')"
   ssh "${SSH_OPTS[@]}" "${DEPLOY_USER}@${DEPLOY_HOST}" \
     "test -f '${DEPLOY_PATH}/js/lang-switch.js' && test -f '${DEPLOY_PATH}/ai-dc-design.html'" \
     && echo "   ✓ 关键文件存在" \
     || { echo "   ✗ 关键文件缺失" >&2; exit 1; }
 
   if command -v curl >/dev/null 2>&1; then
-    code="$(curl -s -o /dev/null -w '%{http_code}' "https://www.aidc2026.cn/js/lang-switch.js" || true)"
-    echo "   https://www.aidc2026.cn/js/lang-switch.js → HTTP ${code}"
+    code="$(curl -s -o /dev/null -w '%{http_code}' "https://www.aidc2026.cn/js/lang-switch.js?v=${ver}" || true)"
+    echo "   https://www.aidc2026.cn/js/lang-switch.js?v=${ver} → HTTP ${code}"
+    echo "   asset-version.json → $(curl -s "https://www.aidc2026.cn/data/asset-version.json" 2>/dev/null || echo 'n/a')"
   fi
 }
 

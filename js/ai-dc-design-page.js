@@ -16,8 +16,8 @@
     roiEn: 'aidc-investment-roi.en.html',
   };
 
-  /** Bump when embedded iframe pages change (i18n / logic) to avoid stale browser cache. */
-  const IFRAME_ASSET_VERSION = '4';
+  /** iframe cache-bust; synced via data/asset-version.json + bump-asset-version.py */
+  const IFRAME_ASSET_VERSION = global.AIDC_ASSET_VERSION || '5';
 
   function iframeSrc(key) {
     if (key === 'roi' && global.AidcI18n?.getLocale?.() === 'en') return IFRAME_BASE.roiEn;

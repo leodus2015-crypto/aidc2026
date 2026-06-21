@@ -36,8 +36,9 @@ aidc 静态站点归档
   i18n/*.json
   js/i18n.js、js/i18n-bootstrap.js、js/lang-switch.js、js/aidc-locale-bridge.js
   js/embed-mode.js、js/redirect-page.js
-  js/index-page.js、js/ai-dc-design-page.js、js/ai-dc-room-layout-page.js
-  js/about-us-page.js、js/config-loader.js
+  js/index-page.js、js/ai-dc-design-page.js、js/aidc-investment-roi-page.js、js/config-loader.js
+  js/aidc-asset-version.js、data/asset-version.json、scripts/bump-asset-version.py
+  deploy/nginx-static-cache.conf、deploy/CACHE.md
 
 站点结构
 ────────
