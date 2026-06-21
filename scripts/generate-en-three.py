@@ -11,7 +11,7 @@ EN_DIR = ROOT / "en"
 
 TARGETS = [
     "datacenter-3d-case-b.html",
-    "datacenter-3d-v3 2.html",
+    "datacenter-3d-v3-2.html",
 ]
 
 # Longest-first: complete phrases only (avoid atomic 保存/功率/卡/名称 that break compounds)

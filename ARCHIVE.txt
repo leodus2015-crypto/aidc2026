@@ -18,7 +18,7 @@ aidc 静态站点归档
   ai-dc-floor-detail.html     机房布局 · 单层平面图（嵌套 iframe）
   ai-dc-layout_37.html        Tab「机柜布局（风冷）」
   datacenter-3d-case-b.html   Tab「案例 A（风冷）」
-  datacenter-3d-v3 2.html     Tab「案例 B（风冷）」
+  datacenter-3d-v3-2.html     Tab「案例 B（风冷）」
   aidc-investment-roi.html    Tab「Investment ROI」
 
 【兼容重定向页（不在主导航，保留旧链接）】

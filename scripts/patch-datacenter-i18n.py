@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 PAGES = [
     ("datacenter-3d-case-b", ROOT / "datacenter-3d-case-b.html"),
-    ("datacenter-3d-v3-2", ROOT / "datacenter-3d-v3 2.html"),
+    ("datacenter-3d-v3-2", ROOT / "datacenter-3d-v3-2.html"),
 ]
 
 HELPER = """

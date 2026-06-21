@@ -25,8 +25,8 @@ PAGES = [
     },
     {
         "page_id": "datacenter-3d-v3-2",
-        "zh": ROOT / "datacenter-3d-v3 2.html",
-        "en": ROOT / "en" / "datacenter-3d-v3 2.html",
+        "zh": ROOT / "datacenter-3d-v3-2.html",
+        "en": ROOT / "en" / "datacenter-3d-v3-2.html",
         "meta_zh": {
             "title": "DataCenter 3D 设计器 · 案例B（风冷超节点）",
             "description": "数据中心 3D 机柜布局设计器 · 案例B（风冷超节点）",
