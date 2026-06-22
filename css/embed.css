@@ -11,6 +11,14 @@ html.aidc-embed .aidc-chrome {
   display: none !important;
 }
 
+html.aidc-embed .page-hdr {
+  display: none !important;
+}
+
+html.aidc-embed .page {
+  padding-top: 0;
+}
+
 html.aidc-embed body.flex.min-h-screen {
   min-height: 0;
 }

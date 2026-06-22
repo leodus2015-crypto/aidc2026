@@ -93,31 +93,45 @@
     const scope = root || document;
     scope.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
-      if (key) el.textContent = t(key);
+      if (!key) return;
+      const val = t(key);
+      if (val !== key) el.textContent = val;
     });
     scope.querySelectorAll('[data-i18n-html]').forEach((el) => {
       const key = el.getAttribute('data-i18n-html');
-      if (key) el.innerHTML = t(key);
+      if (!key) return;
+      const val = t(key);
+      if (val !== key) el.innerHTML = val;
     });
     scope.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
       const key = el.getAttribute('data-i18n-placeholder');
-      if (key) el.setAttribute('placeholder', t(key));
+      if (!key) return;
+      const val = t(key);
+      if (val !== key) el.setAttribute('placeholder', val);
     });
     scope.querySelectorAll('[data-i18n-title]').forEach((el) => {
       const key = el.getAttribute('data-i18n-title');
-      if (key) el.setAttribute('title', t(key));
+      if (!key) return;
+      const val = t(key);
+      if (val !== key) el.setAttribute('title', val);
     });
     scope.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
       const key = el.getAttribute('data-i18n-aria-label');
-      if (key) el.setAttribute('aria-label', t(key));
+      if (!key) return;
+      const val = t(key);
+      if (val !== key) el.setAttribute('aria-label', val);
     });
     scope.querySelectorAll('[data-i18n-download]').forEach((el) => {
       const key = el.getAttribute('data-i18n-download');
-      if (key) el.setAttribute('download', t(key));
+      if (!key) return;
+      const val = t(key);
+      if (val !== key) el.setAttribute('download', val);
     });
     scope.querySelectorAll('[data-i18n-alt]').forEach((el) => {
       const key = el.getAttribute('data-i18n-alt');
-      if (key) el.setAttribute('alt', t(key));
+      if (!key) return;
+      const val = t(key);
+      if (val !== key) el.setAttribute('alt', val);
     });
   }
 

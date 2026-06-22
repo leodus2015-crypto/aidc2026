@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI 数据中心部署分布、推理性能、算存协同与算云协同特性演示。">
+<title>AI DC · 部署 &amp; 协同特性</title>
+<script src="js/aidc-asset-version.js?v=8"></script>
+<script src="js/embed-mode.js?v=8"></script>
+<link rel="stylesheet" href="css/embed.css?v=8" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f0f5fc;--bg2:#fff;--bd:#d0dcf0;
+  --ai:#1d6fe5;--cmp:#8b5cf6;--bus:#10b981;
+  --text:#1a2d44;--t2:#4a6888;--t3:#8aaaca;
+  --pwr:#c97000;--ep:#db2877;
+  --shadow:0 2px 16px rgba(0,50,130,.09);
+  --ssd:#f59e0b;--ret:#22d3ee;--miss:#94a3b8;
+}
+html[lang="en"] .pr-lbl{width:128px}
+html[lang="en"] .synergy-left{width:320px}
+html[lang="en"] .cc-phase-txt{min-width:88px}
+html[lang="en"] .cc-util-lbl{width:64px}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;
+  min-height:100vh;padding:24px 20px 48px;
+  background-image:radial-gradient(circle at 70% 20%,rgba(29,111,229,.04) 0%,transparent 60%),
+    radial-gradient(circle at 20% 80%,rgba(139,92,246,.04) 0%,transparent 50%);
+}
+.page{max-width:1200px;margin:0 auto}
+
+/* ── HEADER ── */
+.page-hdr{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:0 2px}
+.hdr-icon{width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(140deg,#0033aa,#1d6fe5);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 12px rgba(29,111,229,.35);}
+.page-hdr h1{font-size:20px;font-weight:900;letter-spacing:1.5px;color:var(--text);font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
+.page-hdr h1 span{color:var(--ai)}
+.page-hdr p{font-size:10px;color:var(--t3);font-family:Arial,sans-serif;
+  letter-spacing:2px;margin-top:2px}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;
+  padding:18px 20px;box-shadow:var(--shadow);}
+.ctitle{display:flex;align-items:center;gap:8px;margin-bottom:14px;
+  font-size:10px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;
+  font-family:'Arial Narrow',Arial,sans-serif;font-weight:700;}
+.ctitle-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 6px rgba(29,111,229,.5);}
+.ctitle-line{flex:1;height:1px;background:var(--bd)}
+.ctitle-badge{font-size:9px;padding:2px 9px;border-radius:4px;
+  font-family:'Arial Narrow',Arial,sans-serif;font-weight:700;
+  background:rgba(29,111,229,.08);color:var(--ai);border:1px solid rgba(29,111,229,.2);}
+
+/* ── FRONT VIEW ── */
+#frontView{overflow-x:auto;border-radius:8px;border:1px solid var(--bd);
+  background:#edf4ff;min-height:190px;}
+#frontView svg{display:block;}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:9px;
+  color:var(--t2);font-family:'Arial Narrow',Arial,sans-serif;}
+.leg-item{display:flex;align-items:center;gap:5px;}
+.leg-dot{width:9px;height:9px;border-radius:2px;border:1px solid rgba(0,0,0,.1);}
+
+/* ── PERF META ── */
+.perf-meta{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+.pmi{font-size:10px;color:var(--t3);font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
+.pmi strong{color:var(--t2);font-weight:700;font-family:Arial,sans-serif;}
+
+/* ── PERF ROWS (3-row layout) ── */
+.perf-rows{display:flex;flex-direction:column;gap:9px;}
+.pr{display:flex;align-items:center;gap:12px;border-radius:10px;padding:14px 14px;
+  border:1px solid var(--bd);position:relative;overflow:hidden;}
+.pr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+.pr-std{background:linear-gradient(130deg,rgba(29,111,229,.04),#fff);}
+.pr-std::before{background:linear-gradient(180deg,#1447b5,var(--ai));}
+.pr-ep{background:linear-gradient(130deg,rgba(236,72,153,.05),#fff);}
+.pr-ep::before{background:linear-gradient(180deg,var(--ep),#1447b5);}
+.pr-lbl{width:110px;flex-shrink:0;}
+.pr-title{font-size:14px;font-weight:800;color:var(--text);font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
+.pr-pdsub{font-size:10px;font-weight:700;color:var(--t2);margin-top:2px;font-family:'Microsoft YaHei',sans-serif;}
+.pr-chip{font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:4px;display:inline-block;
+  font-family:'Arial Narrow',Arial,sans-serif;}
+.chip-std{background:rgba(29,111,229,.1);color:var(--ai);border:1px solid rgba(29,111,229,.22);}
+.chip-ep{background:rgba(236,72,153,.1);color:var(--ep);border:1px solid rgba(236,72,153,.3);}
+.pr-cabs{flex:1;min-width:0;}
+.pr-cabs-svg{overflow:visible;display:block;}
+.pr-cabs-legend{font-size:10px;color:var(--t3);margin-top:5px;font-family:'Microsoft YaHei',Arial,sans-serif;}
+.pr-stats{width:148px;flex-shrink:0;text-align:right;border-left:1px solid var(--bd);padding-left:12px;}
+.pr-rate{font-size:28px;font-weight:800;font-family:Arial,sans-serif;line-height:1;}
+.pr-unit{font-size:10px;color:var(--t3);font-family:Arial,sans-serif;margin-top:2px;}
+.pr-total-lbl{font-size:10px;color:var(--t3);font-family:'Microsoft YaHei',Arial,sans-serif;margin-top:7px;}
+.pr-total{font-size:14px;font-weight:800;font-family:Arial,sans-serif;letter-spacing:.3px;}
+
+/* ── SLO queues ── */
+.ccs-card{margin-top:16px;}
+.ccs-section{margin-top:14px;}
+.ccs-sec-title{font-size:9.5px;color:var(--t3);letter-spacing:1.5px;
+  text-transform:uppercase;font-family:'Arial Narrow',Arial,sans-serif;
+  font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.ccs-sec-title::before{content:'';width:3px;height:12px;border-radius:2px;
+  background:var(--bus);display:inline-block;}
+.ccs-sec-title.cmp::before{background:var(--cmp);}
+.slo-wrapper{border-radius:8px;border:1px solid var(--bd);background:#f7faff;overflow:hidden;}
+.slo-inner{display:grid;grid-template-columns:1fr 44px 1fr;}
+.slo-col{padding:10px 10px 6px;}
+.slo-col-title{font-size:8px;font-weight:700;letter-spacing:.8px;color:var(--t3);
+  text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:7px;text-align:center;}
+.slo-item{border-radius:5px;padding:5px 8px;font-size:8.5px;font-weight:700;
+  margin-bottom:4px;border:1px solid transparent;
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;
+  transition:all .35s cubic-bezier(.4,0,.2,1);line-height:1.3;}
+.slo-l1{background:rgba(220,38,38,.1);color:#b91c1c;border-color:rgba(220,38,38,.25);}
+.slo-l2{background:rgba(217,119,6,.1);color:#b45309;border-color:rgba(217,119,6,.22);}
+.slo-l3{background:rgba(29,111,229,.09);color:var(--ai);border-color:rgba(29,111,229,.2);}
+.slo-l4{background:rgba(100,116,139,.08);color:#4a6888;border-color:rgba(100,116,139,.18);}
+.slo-free{background:rgba(16,185,129,.1);color:#047857;border-color:rgba(16,185,129,.25);
+  animation:slo-pulse 2.2s ease infinite;}
+.slo-busy{background:rgba(245,158,58,.08);color:#92400e;border-color:rgba(245,158,58,.2);opacity:.6;}
+@keyframes slo-pulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 7px rgba(16,185,129,.28)}}
+.slo-flash{animation:slo-pop .45s ease-out!important;}
+@keyframes slo-pop{0%{transform:scale(1.05);opacity:1}100%{transform:scale(1);opacity:1}}
+.slo-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;}
+.slo-footer{display:flex;gap:6px;padding:7px 10px;border-top:1px solid var(--bd);
+  background:rgba(16,185,129,.03);flex-wrap:wrap;}
+.slo-badge{font-size:8.5px;font-weight:700;padding:3px 8px;border-radius:4px;
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
+.slo-bg{background:rgba(16,185,129,.1);color:#047857;border:1px solid rgba(16,185,129,.22);}
+.slo-bb{background:rgba(29,111,229,.09);color:var(--ai);border:1px solid rgba(29,111,229,.2);}
+.slo-bp{background:rgba(139,92,246,.09);color:var(--cmp);border:1px solid rgba(139,92,246,.18);}
+
+/* ── 算存协同 split layout ── */
+.synergy-wrap{display:flex;gap:16px;align-items:stretch;}
+.synergy-left{width:300px;flex-shrink:0;border-right:1px solid var(--bd);padding-right:14px;display:flex;flex-direction:column;}
+.syn-diag-fill{flex:1;display:flex;align-items:stretch;min-height:260px;}
+.syn-diag-fill svg{width:100%;}
+.synergy-left .syn-foot{margin-top:auto;padding-top:10px;}
+.synergy-right{flex:1;min-width:0;}
+.syn-sec-title{font-size:9.5px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;
+  font-family:'Arial Narrow',Arial,sans-serif;font-weight:700;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;}
+.syn-sec-title::before{content:'';width:3px;height:12px;border-radius:2px;background:var(--cmp);display:inline-block;}
+.syn-metric{padding:14px;border-radius:8px;border:1px solid rgba(139,92,246,.22);background:rgba(139,92,246,.025);}
+.syn-big-num{font-size:38px;font-weight:800;font-family:Arial,sans-serif;line-height:1;color:var(--cmp);}
+.syn-divider{height:1px;background:rgba(139,92,246,.15);margin:10px 0;}
+.syn-cmp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.syn-cmp-val{font-size:10.5px;font-weight:700;color:var(--t2);font-family:Arial,sans-serif;}
+.syn-arrow{color:var(--cmp);font-weight:900;margin:0 4px;}
+.syn-uplift{font-size:12px;font-weight:800;color:var(--bus);font-family:Arial,sans-serif;}
+.syn-kpi-row{display:flex;gap:7px;margin-top:10px;}
+.syn-kpi{flex:1;text-align:center;padding:7px 4px;border-radius:6px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.12);}
+.syn-kpi-val{font-size:13px;font-weight:800;font-family:Arial,sans-serif;line-height:1;}
+.syn-kpi-lbl{font-size:7px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;margin-top:3px;}
+
+/* Benefit chips */
+.benefit-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.benefit-chip{display:flex;align-items:center;gap:9px;padding:9px 14px;
+  border-radius:8px;border:1px solid var(--bd);background:#fff;flex:1;min-width:140px;}
+.bc-val{font-size:20px;font-weight:800;font-family:Arial,sans-serif;line-height:1;}
+.bc-desc{color:var(--t2);font-size:9.5px;line-height:1.5;
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
+
+/* Info row (shared) */
+.dn-info-row{display:flex;gap:10px;padding:6px 12px;border-top:1px solid var(--bd);
+  background:rgba(29,111,229,.025);flex-wrap:wrap;}
+.dn-info-item{display:flex;align-items:center;gap:4px;font-size:8.5px;color:var(--t2);
+  font-family:'Microsoft YaHei','微软雅黑',sans-serif;white-space:nowrap;}
+.dn-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+/* ── 算云协同 cabinet visual ── */
+.cc-visual-wrap{border-radius:8px;overflow:hidden;border:1px solid var(--bd);background:#f7faff;}
+.cc-phase-bar{display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:6px;}
+.cc-phase-ind{font-size:11px;font-weight:800;font-family:'Microsoft YaHei',sans-serif;color:var(--ai);}
+.cc-main-area{display:flex;align-items:flex-start;gap:8px;padding:12px 12px 8px;}
+.cc-users-panel{width:88px;flex-shrink:0;text-align:center;}
+.cc-panel-title{font-size:8px;font-weight:700;color:var(--t3);letter-spacing:.8px;
+  text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:6px;text-align:center;}
+.cc-users-grid{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;min-height:62px;align-content:flex-start;}
+.cc-user-count{font-size:9px;font-weight:700;font-family:Arial,sans-serif;margin-top:4px;transition:color .5s;}
+.cc-arrows-col{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding-top:18px;}
+.cc-cabs-panel{flex:1;min-width:0;}
+.cc-cab-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:8px;}
+.cc-cab{border-radius:4px;padding:4px 3px;border:1px solid rgba(148,163,184,.2);
+  background:rgba(148,163,184,.05);transition:all .5s ease;}
+.cc-cab-lbl{font-size:5.5px;font-weight:700;text-align:center;font-family:Arial,sans-serif;
+  margin-bottom:3px;transition:color .5s;}
+.cc-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5px;}
+.cc-card{height:6px;border-radius:1px;background:rgba(148,163,184,.15);transition:all .5s ease;}
+.cc-util-wrap{display:flex;align-items:center;gap:6px;}
+.cc-util-lbl{font-size:8px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;white-space:nowrap;width:52px;flex-shrink:0;}
+.cc-util-track{flex:1;height:7px;border-radius:4px;background:rgba(0,0,0,.06);overflow:hidden;}
+.cc-util-bar{height:100%;border-radius:4px;transition:width 1.2s ease,background .6s ease;}
+.cc-util-pct{font-size:10px;font-weight:800;font-family:Arial,sans-serif;width:34px;text-align:right;flex-shrink:0;transition:color .5s;}
+
+/* ── 算云协同 对比模块 ── */
+.cc-compare-wrap{display:flex;gap:10px;align-items:stretch;margin-bottom:8px;}
+.cc-side{flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--bd);background:#fff;}
+.cc-side-bad{background:#f8fafc;border-color:#cbd5e1;}
+.cc-side-good{background:#f3fdf8;border-color:#a7f3d0;}
+.cc-side-hd{font-size:10px;font-weight:800;font-family:'Microsoft YaHei',sans-serif;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.cc-metric-row{display:flex;align-items:baseline;gap:7px;margin-bottom:8px;}
+.cc-num-big{font-size:24px;font-weight:900;font-family:Arial,sans-serif;transition:color .3s;}
+.cc-num-lbl{font-size:8.5px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;line-height:1.5;}
+.cc-chart-box{height:88px;position:relative;margin-bottom:8px;}
+.cc-chart-box canvas{display:block;width:100%;height:100%;}
+.cc-grid-compare{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;}
+.cc-cab-c{height:26px;border-radius:3px;border:1px solid rgba(148,163,184,.2);background:rgba(148,163,184,.04);overflow:hidden;transition:border-color .4s;}
+.cc-cab-fill{width:100%;height:100%;transition:background .4s ease,opacity .4s ease;}
+.cc-vs-col{display:flex;align-items:center;justify-content:center;width:22px;flex-shrink:0;}
+.cc-vs-txt{font-size:10px;font-weight:900;color:var(--t3);writing-mode:vertical-rl;letter-spacing:3px;}
+.cc-timebar{display:flex;align-items:center;gap:8px;margin:8px 0 6px;padding:5px 8px;background:#f8fafc;border-radius:6px;border:1px solid var(--bd);}
+.cc-time-disp{font-size:12px;font-weight:700;font-family:Arial,sans-serif;color:var(--text);width:42px;flex-shrink:0;}
+.cc-time-track{flex:1;height:5px;border-radius:3px;background:rgba(0,0,0,.07);overflow:hidden;}
+.cc-time-prog{height:100%;border-radius:3px;background:var(--ai);transition:width .12s linear;}
+.cc-phase-txt{font-size:8.5px;font-weight:700;font-family:'Microsoft YaHei',sans-serif;min-width:68px;text-align:center;transition:color .3s;}
+.cc-replay-btn{font-size:9px;padding:3px 9px;border-radius:5px;border:1px solid var(--bd);background:#fff;color:var(--t2);cursor:pointer;font-family:'Microsoft YaHei',sans-serif;flex-shrink:0;}
+.cc-replay-btn:hover{background:#f0f7ff;color:var(--ai);}
+.cc-legend-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:2px;}
+.cc-leg-item{display:flex;align-items:center;gap:4px;font-size:8px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;}
+.cc-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+
+@media(max-width:860px){
+  .synergy-wrap{flex-direction:column;align-items:stretch;}
+  .synergy-left{width:100%;border-right:none;border-bottom:1px solid var(--bd);padding-right:0;padding-bottom:12px;}
+  .synergy-right{width:100%;}
+  body{padding:14px 12px 36px}
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+</style>
+</head>
+<body data-i18n-page="ai-dc-deployment-perf">
+
+<div class="page">
+
+<!-- ══ PAGE HEADER ══ -->
+<div class="page-hdr">
+  <div class="hdr-icon">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <rect x="2" y="3" width="6" height="4" rx="1" fill="rgba(255,255,255,.9)"/>
+      <rect x="2" y="9" width="6" height="4" rx="1" fill="rgba(255,255,255,.7)"/>
+      <rect x="10" y="3" width="6" height="4" rx="1" fill="rgba(130,200,255,.9)"/>
+      <rect x="10" y="9" width="6" height="4" rx="1" fill="rgba(130,200,255,.7)"/>
+      <circle cx="19" cy="5" r="1.5" fill="#80e0ff"><animate attributeName="opacity" values="1;.2;1" dur="1.6s" repeatCount="indefinite"/></circle>
+      <circle cx="19" cy="11" r="1.5" fill="#80e0ff"><animate attributeName="opacity" values="1;.2;1" dur="2.1s" repeatCount="indefinite"/></circle>
+    </svg>
+  </div>
+  <div>
+    <h1>AI DC · <span data-dp-i18n="部署 & 协同特性">部署 &amp; 协同特性</span></h1>
+    <p data-dp-i18n="HUAWEI AI DATA CENTER · 96 NPU · ASCEND · DEEPSEEK V4 FLASH · OCEANSTOR">HUAWEI AI DATA CENTER · 96 NPU · ASCEND · DEEPSEEK V4 FLASH · OCEANSTOR</p>
+  </div>
+</div>
+
+<!-- ══ CARD 1: DEPLOYMENT FRONT VIEW ══ -->
+<div class="card" style="margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:none;">
+  <div class="ctitle">
+    <div class="ctitle-dot" style="background:var(--ai)"></div>
+    <span data-dp-i18n="AI DC · 机柜部署分布">AI DC · 机柜部署分布</span>
+    <div class="ctitle-badge"><span data-dp-i18n="12智算 + 6通算 + 2总线 = 20柜 · 96卡 · 正视图">12智算 + 6通算 + 2总线 = 20柜 · 96卡 · 正视图</span></div>
+    <div class="ctitle-line"></div>
+  </div>
+  <div id="frontView"></div>
+</div>
+
+<!-- ══ CARD 2: PERFORMANCE (3-row) ══ -->
+<div class="card" style="margin-top:14px;">
+  <div class="ctitle">
+    <div class="ctitle-dot" style="background:var(--ai)"></div>
+    <span data-dp-i18n="AI DC · 推理性能（昇腾智算柜）">AI DC · 推理性能（昇腾智算柜）</span>
+    <div class="ctitle-line"></div>
+  </div>
+
+  <div class="perf-meta">
+    <div class="pmi"><span data-dp-i18n="模型">模型</span> <strong>DeepSeek-V4-Flash</strong> <span style="font-family:Arial,sans-serif;color:var(--t2);font-weight:700;">284B-A13B · FP8</span></div>
+    <div class="pmi">TPOT <strong>50ms</strong></div>
+    <div class="pmi"><span data-dp-i18n="每台AI服务器">每台AI服务器</span> <strong data-dp-i18n="8卡昇腾NPU">8卡昇腾NPU</strong></div>
+  </div>
+
+  <div class="perf-rows">
+
+    <!-- Row 1: 单机 PD混部 -->
+    <div class="pr pr-std">
+      <div class="pr-lbl">
+        <div class="pr-title" data-dp-i18n="单机部署">单机部署</div>
+        <div class="pr-pdsub" data-dp-i18n="PD 混部">PD 混部</div>
+        <div class="pr-chip chip-std" data-dp-i18n="1实例/柜 · 8卡">1实例/柜 · 8卡</div>
+      </div>
+      <div class="pr-cabs">
+        <div id="pcabs-single" class="pr-cabs-svg"></div>
+        <div class="pr-cabs-legend" data-dp-i18n="12 × 智算柜 · 每柜独立 1 个模型实例">12 × 智算柜 &nbsp;·&nbsp; 每柜独立 1 个模型实例</div>
+      </div>
+      <div class="pr-stats">
+        <div class="pr-total" style="color:var(--ai);font-size:22px;">5.28B</div>
+        <div class="pr-unit"><span data-dp-i18n="Token / 天">Token / 天</span> &nbsp;<span style="color:var(--t3);font-weight:400;" data-dp-i18n="(12柜合计)">(12柜合计)</span></div>
+        <div style="height:8px;"></div>
+        <div class="pr-rate" style="color:var(--ai);font-size:18px;">55M</div>
+        <div class="pr-unit" data-dp-i18n="Token / 卡 / 天">Token / 卡 / 天</div>
+      </div>
+    </div>
+
+    <!-- Row 2: 双机 PD混部 -->
+    <div class="pr pr-std">
+      <div class="pr-lbl">
+        <div class="pr-title" data-dp-i18n="双机部署">双机部署</div>
+        <div class="pr-pdsub" data-dp-i18n="PD 混部">PD 混部</div>
+        <div class="pr-chip chip-std" data-dp-i18n="2柜/实例 · 16卡">2柜/实例 · 16卡</div>
+      </div>
+      <div class="pr-cabs">
+        <div id="pcabs-dual" class="pr-cabs-svg"></div>
+        <div class="pr-cabs-legend" data-dp-i18n="12 × 智算柜 · 每 2 柜 1 实例，共 6 实例">12 × 智算柜 &nbsp;·&nbsp; 每 2 柜 1 实例，共 6 实例</div>
+      </div>
+      <div class="pr-stats">
+        <div class="pr-total" style="color:var(--ai);font-size:22px;">12B</div>
+        <div class="pr-unit"><span data-dp-i18n="Token / 天">Token / 天</span> &nbsp;<span style="color:var(--t3);font-weight:400;" data-dp-i18n="(12柜合计)">(12柜合计)</span></div>
+        <div style="height:8px;"></div>
+        <div class="pr-rate" style="color:var(--ai);font-size:18px;">125M</div>
+        <div class="pr-unit" data-dp-i18n="Token / 卡 / 天">Token / 卡 / 天</div>
+      </div>
+    </div>
+
+    <!-- Row 3: 4机大EP PD分离 -->
+    <div class="pr pr-ep">
+      <div class="pr-lbl">
+        <div class="pr-title" data-dp-i18n="4机大EP">4机大EP</div>
+        <div class="pr-pdsub" style="color:var(--ep)" data-dp-i18n="PD 分离">PD 分离</div>
+        <div class="pr-chip chip-ep" data-dp-i18n="4柜/实例 · 32卡">4柜/实例 · 32卡</div>
+      </div>
+      <div class="pr-cabs">
+        <div id="pcabs-ep" class="pr-cabs-svg"></div>
+        <div class="pr-cabs-legend" data-dp-i18n="12 × 智算柜 · 每 4 柜 1 实例，共 3 实例">12 × 智算柜 &nbsp;·&nbsp; 每 4 柜 1 实例，共 3 实例</div>
+      </div>
+      <div class="pr-stats">
+        <div class="pr-total" style="color:var(--ep);font-size:22px;">32.45B</div>
+        <div class="pr-unit"><span data-dp-i18n="Token / 天">Token / 天</span> &nbsp;<span style="color:var(--t3);font-weight:400;" data-dp-i18n="(12柜合计)">(12柜合计)</span></div>
+        <div style="height:8px;"></div>
+        <div class="pr-rate" style="color:var(--ep);font-size:18px;">338M</div>
+        <div class="pr-unit" data-dp-i18n="Token / 卡 / 天">Token / 卡 / 天</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ CARD 3: 算存协同 ══ -->
+<div class="card" style="margin-top:16px;">
+  <div class="ctitle">
+    <div class="ctitle-dot" style="background:var(--cmp)"></div>
+    <span data-dp-i18n="算存协同">算存协同</span>
+    <div class="ctitle-badge" style="background:rgba(139,92,246,.08);color:var(--cmp);border-color:rgba(139,92,246,.2);" data-dp-i18n="OceanStor AI 存储 · KV Cache UCM 多级缓存协同">OceanStor AI 存储 · KV Cache UCM 多级缓存协同</div>
+    <div class="ctitle-line"></div>
+  </div>
+
+  <div class="synergy-wrap">
+
+    <!-- Left: 5-cabinet diagram -->
+    <div class="synergy-left">
+      <div class="syn-sec-title" data-dp-i18n="存算架构 · 1通算柜 + 4智算柜">存算架构 · 1通算柜 + 4智算柜</div>
+      <div class="syn-diag-fill">
+        <svg id="syn-svg" style="display:block;overflow:visible;"></svg>
+      </div>
+      <p class="syn-foot" style="font-size:10.5px;color:var(--t2);line-height:1.8;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.synFoot">
+        AI 存储<strong>持久化写入 KV Cache</strong>；同前缀请求到来，直接从存储<strong>多级缓存召回</strong>，<strong>跳过完整 Prefill</strong>，128K 输入/1K 输出场景下 TTFT 从 9100 ms 降至 4400 ms（降幅 52%），算力 100% 投入 Decode。
+      </p>
+    </div>
+
+    <!-- Right: 3-tier KV Cache demo -->
+    <div class="synergy-right">
+      <div class="syn-sec-title" data-dp-i18n="KV Cache 三级缓存 · 查询数据流（实时演示）">KV Cache 三级缓存 · 查询数据流（实时演示）</div>
+
+      <!-- Phase banner (shortened to diagram width) + scenario condition (right) -->
+      <div style="display:flex;gap:10px;align-items:stretch;margin-bottom:10px;">
+        <div id="sn-phase-bar" style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:7px 12px;background:#f8fafc;border:1px solid var(--bd);border-radius:7px;min-height:40px;">
+          <div id="sn-ph-icon" style="font-size:15px;flex-shrink:0;width:18px;text-align:center;">⏳</div>
+          <div style="flex:1;min-width:0;">
+            <div id="sn-ph-name" style="font-size:10px;font-weight:800;color:var(--text);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="等待推理请求...">等待推理请求...</div>
+            <div id="sn-ph-desc" style="font-size:8px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;margin-top:1px;" data-dp-i18n="NPU 就绪，KV Cache 服务运行中">NPU 就绪，KV Cache 服务运行中</div>
+          </div>
+          <div id="sn-ph-tag" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:#fff;color:var(--t3);white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;transition:all .3s;flex-shrink:0;" data-dp-i18n="待机">待机</div>
+        </div>
+        <!-- 场景输入条件：以下所有具体指标的测试口径 -->
+        <div style="width:136px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:6px 9px;border:1px dashed rgba(139,92,246,.4);border-radius:7px;background:rgba(139,92,246,.04);">
+          <div style="font-size:6.5px;font-weight:700;color:var(--cmp);letter-spacing:.5px;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:2px;" data-dp-i18n="📐 测试场景">📐 测试场景</div>
+          <div style="font-size:8.5px;font-weight:800;color:var(--text);font-family:Arial,sans-serif;" data-dp-i18n="128K 输入 / 1K 输出">128K 输入 / 1K 输出</div>
+          <div style="font-size:7px;color:var(--t2);margin-top:1px;font-family:'Microsoft YaHei',sans-serif;">DeepSeek-V4-Flash</div>
+        </div>
+      </div>
+
+      <!-- Two-column: diagram + metrics -->
+      <div style="display:flex;gap:10px;align-items:stretch;">
+
+        <!-- 3-tier diagram -->
+        <div id="sn-diag" style="flex:1;min-width:0;position:relative;display:flex;flex-direction:column;">
+          <canvas id="sn-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;"></canvas>
+
+          <!-- Tier 1: NPU + HBM -->
+          <div id="sn-tier-npu" style="border-radius:8px;border:2px solid rgba(29,111,229,.28);padding:10px 12px;background:linear-gradient(135deg,#f0f5ff,#fff);transition:border-color .4s,box-shadow .4s;position:relative;z-index:1;">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+              <span style="font-size:13px;flex-shrink:0;">🔮</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:11px;font-weight:800;color:var(--ai);" data-dp-i18n="NPU · HBM L1 缓存">NPU · HBM L1 缓存</div>
+                <div style="font-size:7px;color:var(--t3);font-family:Arial,sans-serif;margin-top:1px;">96GB HBM · 4 TB/s · &lt;1μs</div>
+              </div>
+              <div id="sn-badge-npu" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:#fff;opacity:0;transition:all .3s;white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;">检索中</div>
+            </div>
+            <div id="sn-hbm-bars" style="display:flex;gap:2px;align-items:flex-end;height:22px;"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:3px;">
+              <span style="font-size:7px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="HBM 占用（KV Cache 近满）">HBM 占用（KV Cache 近满）</span>
+              <span style="font-size:7px;font-weight:700;color:var(--ai);font-family:Arial,sans-serif;">~93%</span>
+            </div>
+          </div>
+
+          <!-- Gap 1 -->
+          <div style="height:38px;position:relative;display:flex;align-items:center;justify-content:center;">
+            <div id="sn-gap1" style="font-size:7.5px;font-weight:700;color:var(--t3);background:#fff;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);position:relative;z-index:2;transition:color .35s,border-color .35s;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="HBM 溢出 → SSD L2">HBM 溢出 → SSD L2</div>
+          </div>
+
+          <!-- Tier 2: SSD -->
+          <div id="sn-tier-ssd" style="border-radius:8px;border:2px solid rgba(245,158,11,.28);padding:10px 12px;background:linear-gradient(135deg,#fffbf0,#fff);transition:border-color .4s,box-shadow .4s;position:relative;z-index:1;">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+              <span style="font-size:13px;flex-shrink:0;">💾</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:11px;font-weight:800;color:var(--ssd);" data-dp-i18n="NVMe SSD · L2 缓存">NVMe SSD · L2 缓存</div>
+                <div style="font-size:7px;color:var(--t3);font-family:Arial,sans-serif;margin-top:1px;">4 × 3.84TB · 28 GB/s · ~80μs</div>
+              </div>
+              <div id="sn-badge-ssd" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:#fff;opacity:0;transition:all .3s;white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;">检索中</div>
+            </div>
+            <div id="sn-ssd-row" style="display:flex;gap:4px;"></div>
+          </div>
+
+          <!-- Gap 2 -->
+          <div style="height:38px;position:relative;display:flex;align-items:center;justify-content:center;">
+            <div id="sn-gap2" style="font-size:7.5px;font-weight:700;color:var(--t3);background:#fff;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);position:relative;z-index:2;transition:color .35s,border-color .35s;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="SSD 未命中 → AI 存储 L3">SSD 未命中 → AI 存储 L3</div>
+          </div>
+
+          <!-- Tier 3: AI Storage (grows to fill — bottom aligns with right Prefill box) -->
+          <div id="sn-tier-ais" style="flex:1;display:flex;flex-direction:column;border-radius:8px;border:2px solid rgba(139,92,246,.28);padding:10px 12px;background:linear-gradient(135deg,#f8f5ff,#fff);transition:border-color .4s,box-shadow .4s;position:relative;z-index:1;">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+              <span style="font-size:13px;flex-shrink:0;">🗄️</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:11px;font-weight:800;color:var(--cmp);" data-dp-i18n="OceanStor AI 存储 · L3">OceanStor AI 存储 · L3</div>
+                <div style="font-size:7px;color:var(--t3);font-family:Arial,sans-serif;margin-top:1px;" data-dp-i18n="KV Cache Pool · PB级 · 500 GB/s · ~1ms">KV Cache Pool · PB级 · 500 GB/s · ~1ms</div>
+              </div>
+              <div id="sn-badge-ais" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid rgba(16,185,129,.25);background:rgba(16,185,129,.08);color:#047857;opacity:0;transition:all .3s;white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;">✓ 命中！</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex:1;">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:7px;color:var(--t3);margin-bottom:3px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="KV Cache 持久化存储块">KV Cache 持久化存储块</div>
+                <div id="sn-kv-grid" style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;"></div>
+              </div>
+              <div style="text-align:center;flex-shrink:0;min-width:42px;">
+                <div style="font-size:17px;font-weight:900;font-family:Arial,sans-serif;color:var(--bus);" id="sn-hit-rate">90%</div>
+                <div style="font-size:7px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="命中率">命中率</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics column -->
+        <div style="width:136px;flex-shrink:0;display:flex;flex-direction:column;gap:7px;">
+
+          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#fff;">
+            <div style="font-size:7.5px;color:var(--t3);letter-spacing:.7px;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:4px;" data-dp-i18n="TTFT 首Token延迟">TTFT 首Token延迟</div>
+            <div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:900;font-family:Arial,sans-serif;line-height:1;color:var(--bus);">↓52</span><span style="font-size:14px;font-weight:900;color:var(--bus);font-family:Arial,sans-serif;">%</span></div>
+            <div style="font-size:7.5px;color:var(--t2);margin-top:2px;" data-dp-i18n="TTFT 降低（以查代算）">TTFT 降低（以查代算）</div>
+            <div style="height:1px;background:var(--bd);margin:5px 0;"></div>
+            <div style="font-size:7.5px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;line-height:1.65;" data-dp-i18n-html="无缓存 <strong style=\"color:var(--t2)\">9100ms</strong> → 缓存命中 <strong style=\"color:var(--bus)\">4400ms</strong>">无缓存 <strong style="color:var(--t2);">9100ms</strong> → 缓存命中 <strong style="color:var(--bus);">4400ms</strong></div>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#fff;">
+            <div style="font-size:7.5px;color:var(--t3);letter-spacing:.7px;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:4px;" data-dp-i18n="E2E 吞吐">E2E 吞吐</div>
+            <div style="font-size:22px;font-weight:900;font-family:Arial,sans-serif;line-height:1;color:var(--cmp);">568M</div>
+            <div style="font-size:7.5px;color:var(--t2);margin-top:2px;" data-dp-i18n="Token / 卡 / 天">Token / 卡 / 天</div>
+            <div style="font-size:7px;color:var(--cmp);font-weight:700;margin-top:3px;font-family:Arial,sans-serif;">54.53B <span style="color:var(--t3);font-weight:400;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="Token/天 (12柜96卡)">Token/天 (12柜96卡)</span></div>
+            <div style="height:1px;background:var(--bd);margin:5px 0;"></div>
+            <div style="font-size:7.5px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;line-height:1.65;" data-dp-i18n-html="无缓存：<strong style=\"color:var(--t2)\">338M</strong> / 卡 · <strong style=\"color:var(--t2)\">32.45B</strong>/天<br>提升 <strong style=\"color:var(--cmp)\">↑68%</strong>">无缓存：<strong style="color:var(--t2);">338M</strong> / 卡 · <strong style="color:var(--t2);">32.45B</strong>/天<br>提升 <strong style="color:var(--cmp);">↑68%</strong></div>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#fff;">
+            <div style="font-size:7.5px;color:var(--t3);letter-spacing:.5px;margin-bottom:6px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="缓存命中路径">缓存命中路径</div>
+            <div style="display:flex;align-items:center;gap:5px;padding:2px 0;">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--ai);flex-shrink:0;"></div>
+              <span style="font-size:7.5px;color:var(--t2);flex:1;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="HBM L1">HBM L1</span>
+              <span style="font-size:8px;font-weight:700;color:var(--miss);font-family:Arial,sans-serif;" id="sn-pr-hbm">MISS</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:2px 0;">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--ssd);flex-shrink:0;"></div>
+              <span style="font-size:7.5px;color:var(--t2);flex:1;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="SSD L2">SSD L2</span>
+              <span style="font-size:8px;font-weight:700;color:var(--miss);font-family:Arial,sans-serif;" id="sn-pr-ssd">MISS</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;padding:2px 0;">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--cmp);flex-shrink:0;"></div>
+              <span style="font-size:7.5px;color:var(--t2);flex:1;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="AI 存储 L3">AI 存储 L3</span>
+              <span style="font-size:8px;font-weight:700;color:var(--bus);font-family:Arial,sans-serif;" id="sn-pr-ais">HIT ✓</span>
+            </div>
+            <div style="height:1px;background:var(--bd);margin:5px 0;"></div>
+            <div style="font-size:9px;font-weight:800;color:var(--bus);font-family:'Microsoft YaHei',sans-serif;transition:color .3s;" id="sn-mode-lbl">✦ 以查代算</div>
+          </div>
+
+          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#f8fafc;">
+            <div style="font-size:7.5px;color:var(--t3);margin-bottom:5px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="Prefill 跳过">Prefill 跳过</div>
+            <div style="display:flex;align-items:baseline;gap:3px;margin-bottom:3px;">
+              <span style="font-size:12px;font-weight:800;font-family:Arial,sans-serif;color:var(--bus);">128K</span>
+              <span style="font-size:7px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="Token 前缀">Token 前缀</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:3px;">
+              <span style="font-size:12px;font-weight:800;font-family:Arial,sans-serif;color:var(--cmp);">100%</span>
+              <span style="font-size:7px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="算力投入 Decode">算力投入 Decode</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Legend (below the two-column block, full width) -->
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;">
+        <div style="display:flex;align-items:center;gap:4px;font-size:7.5px;color:var(--t2);">
+          <div style="width:16px;height:2.5px;background:rgba(29,111,229,.6);border-radius:2px;"></div><span data-dp-i18n="Cache 查询（下行）">Cache 查询（下行）</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;font-size:7.5px;color:var(--t2);">
+          <div style="width:16px;height:2.5px;background:var(--ret);border-radius:2px;"></div><span data-dp-i18n="以查代算 回程">以查代算 回程</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;font-size:7.5px;color:var(--t2);">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--bus);flex-shrink:0;"></div><span data-dp-i18n="命中块">命中块</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CARD 4: 算云协同 ══ -->
+<div class="card ccs-card">
+  <div class="ctitle">
+    <div class="ctitle-dot" style="background:var(--bus)"></div>
+    <span data-dp-i18n="算云协同">算云协同</span>
+    <div class="ctitle-badge" style="background:rgba(16,185,129,.08);color:var(--bus);border-color:rgba(16,185,129,.2);"><span data-dp-i18n="ModelArts · 弹性推理调度引擎">ModelArts · 弹性推理调度引擎</span></div>
+    <div class="ctitle-line"></div>
+  </div>
+
+  <!-- Feature 1: Cabinet-level day/night visual -->
+  <div class="ccs-section">
+    <div class="ccs-sec-title" data-dp-i18n="特性一 · 算力动态弹性 · 白天推理 / 夜间训练">特性一 &nbsp;·&nbsp; 算力动态弹性 · 白天推理 / 夜间训练</div>
+    <div class="cc-visual-wrap" style="padding:12px;">
+      <!-- 左右对比面板 -->
+      <div class="cc-compare-wrap">
+        <!-- 左：传统方案 -->
+        <div class="cc-side cc-side-bad">
+          <div class="cc-side-hd" style="color:#64748b;">
+            <span style="font-size:13px;line-height:1;">◈</span><span data-dp-i18n="传统方案（无算云协同）">传统方案（无算云协同）</span>
+          </div>
+          <div class="cc-metric-row">
+            <span class="cc-num-big" id="cc-util-trad" style="color:#64748b;">26%</span>
+            <div class="cc-num-lbl" data-dp-i18n-html="dp.ccTradLbl">平均算力利用率<br><span style="color:#94a3b8;font-weight:700;font-size:8px;">训练/推理各自独占 · 互不调配 · 大量闲置</span></div>
+          </div>
+          <div class="cc-chart-box">
+            <canvas id="cc-canvas-trad"></canvas>
+          </div>
+          <div style="font-size:8px;font-weight:700;color:var(--t3);margin-bottom:4px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="12 × 算力柜（静态独占）">12 × 算力柜（静态独占）</div>
+          <div class="cc-grid-compare" id="cc-grid-trad"></div>
+        </div>
+
+        <!-- VS divider -->
+        <div class="cc-vs-col"><div class="cc-vs-txt">VS</div></div>
+
+        <!-- 右：算云协同 -->
+        <div class="cc-side cc-side-good">
+          <div class="cc-side-hd" style="color:#10b981;">
+            <span style="font-size:13px;line-height:1;">✦</span><span data-dp-i18n="算云协同方案">算云协同方案</span>
+          </div>
+          <div class="cc-metric-row">
+            <span class="cc-num-big" id="cc-util-new" style="color:#10b981;">65%</span>
+            <div class="cc-num-lbl">
+              <span data-dp-i18n-html="dp.ccNewLbl">平均算力利用率 <strong style="color:#10b981;">↑2×</strong></span><br>
+              <span id="cc-elastic-lbl" style="color:#f59e0b;font-weight:700;font-size:8px;"></span>
+            </div>
+          </div>
+          <div class="cc-chart-box">
+            <canvas id="cc-canvas-new"></canvas>
+          </div>
+          <div style="font-size:8px;font-weight:700;color:var(--t3);margin-bottom:4px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="12 × 算力柜（弹性调度）">12 × 算力柜（弹性调度）</div>
+          <div class="cc-grid-compare" id="cc-grid-new"></div>
+        </div>
+      </div>
+
+      <!-- 时间轴 + 控制 -->
+      <div class="cc-timebar">
+        <span class="cc-time-disp" id="cc-time-disp">00:00</span>
+        <div class="cc-time-track"><div class="cc-time-prog" id="cc-time-prog" style="width:0%"></div></div>
+        <span class="cc-phase-txt" id="cc-phase-txt" style="color:var(--cmp);">🌙 夜间训练</span>
+        <button class="cc-replay-btn" onclick="ccReplay()" data-dp-i18n="▶ 重播">▶ 重播</button>
+      </div>
+
+      <!-- 图例 -->
+      <div class="cc-legend-row">
+        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:#1d6fe5;"></div><span data-dp-i18n="推理运行（白天）">推理运行（白天）</span></div>
+        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:#8b5cf6;"></div><span data-dp-i18n="训练运行（夜间）">训练运行（夜间）</span></div>
+        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:#f59e0b;"></div><span data-dp-i18n="弹性扩容峰值">弹性扩容峰值</span></div>
+        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:rgba(148,163,184,.3);border:1px solid rgba(148,163,184,.3);"></div><span data-dp-i18n="空闲浪费">空闲浪费</span></div>
+      </div>
+    </div>
+    <p style="margin-top:7px;font-size:9.5px;color:var(--t2);line-height:1.75;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.cloudPara">
+      白天（08–22时）多用户弹性扩容推理实例，NPU 利用率实时跟随业务量；业务峰值时自动<strong>按需扩容</strong>；夜间（22–08时）闲置推理算力<strong>无缝切换训练任务</strong>。传统方案训练与推理独占各自服务器、互不调配，白天仅推理柜运行、夜间仅训练柜运行，综合算力利用率不足 <strong style="color:#64748b">30%</strong>；算云协同将同一套硬件利用率稳定控制在 <strong style="color:var(--bus)">50–80%</strong> 区间，提升 <strong style="color:var(--bus)">2×</strong> 以上。
+    </p>
+  </div>
+
+  <!-- Feature 2: SLO Dual-Queue -->
+  <div class="ccs-section">
+    <div class="ccs-sec-title" data-dp-i18n="特性二 · 基于 SLO 弹性调度 · 双队列动态匹配">特性二 &nbsp;·&nbsp; 基于 SLO 弹性调度 &nbsp;·&nbsp; 双队列动态匹配</div>
+    <div class="slo-wrapper">
+      <div class="slo-inner">
+        <div class="slo-col">
+          <div class="slo-col-title" data-dp-i18n="📋 请求队列（SLO 等级排序）">📋 请求队列（SLO 等级排序）</div>
+          <div id="req-queue">
+            <div class="slo-item slo-l1">🔴 L1 · 实时交易风控</div>
+            <div class="slo-item slo-l1">🔴 L1 · 实时欺诈监测</div>
+            <div class="slo-item slo-l2">🟠 L2 · 智能投顾建议</div>
+            <div class="slo-item slo-l2">🟠 L2 · 客户身份验证</div>
+            <div class="slo-item slo-l3">🔵 L3 · 智能营销推荐</div>
+            <div class="slo-item slo-l4">⚪ L4 · 市场趋势预测</div>
+          </div>
+        </div>
+        <div class="slo-divider">
+          <svg width="32" height="100" viewBox="0 0 32 100" fill="none">
+            <path d="M16,0 L16,84" stroke="#1d6fe5" stroke-width="1.5" stroke-dasharray="4 3" opacity=".4">
+              <animate attributeName="stroke-dashoffset" values="0;-14" dur="1s" repeatCount="indefinite"/>
+            </path>
+            <polygon points="10,75 16,88 22,75" fill="#1d6fe5" opacity=".55"/>
+          </svg>
+          <div id="slo-status" style="font-size:8px;color:var(--ai);font-weight:700;font-family:Arial,sans-serif;text-align:center;letter-spacing:.5px;margin-top:2px;">匹配中</div>
+        </div>
+        <div class="slo-col">
+          <div class="slo-col-title" data-dp-i18n="🖥️ 推理实例队列（闲→忙排序）">🖥️ 推理实例队列（闲→忙排序）</div>
+          <div id="inst-queue">
+            <div class="slo-item slo-free">🟢 实例 1 · 空闲</div>
+            <div class="slo-item slo-free">🟢 实例 2 · 空闲</div>
+            <div class="slo-item slo-free">🟢 实例 3 · 空闲</div>
+            <div class="slo-item slo-busy">🟡 实例 4 · 处理中</div>
+            <div class="slo-item slo-busy">🟡 实例 5 · 处理中</div>
+            <div class="slo-item slo-busy" style="opacity:.45">🔴 实例 6 · 高负载</div>
+          </div>
+        </div>
+      </div>
+      <div class="slo-footer">
+        <span class="slo-badge slo-bg" data-dp-i18n="高 SLO 等级后到先得 · L1 直接插队">高 SLO 等级后到先得 · L1 直接插队</span>
+        <span class="slo-badge slo-bb" data-dp-i18n="空闲实例优先承接请求">空闲实例优先承接请求</span>
+        <span class="slo-badge slo-bp" data-dp-i18n="ModelArts 请求调度器">ModelArts 请求调度器</span>
+      </div>
+    </div>
+    <p style="margin-top:7px;font-size:9.5px;color:var(--t2);line-height:1.75;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.sloPara">
+      请求遵循<strong>高 SLO 等级后到先得</strong>，L1 实时请求无需排队直接优先处理；推理实例按忙闲排序，<strong>空闲实例靠前</strong>优先承接；双队列匹配机制保障 SLO 达成率稳定在 <strong style="color:var(--bus)">98%+</strong>，同时支持多业务场景共用模型实例，算力利用率提升 <strong style="color:var(--ai)">40%</strong>。
+    </p>
+  </div>
+
+  <div class="benefit-row">
+    <div class="benefit-chip">
+      <span class="bc-val" style="color:var(--bus)">50–80%</span>
+      <div class="bc-desc" data-dp-i18n-html="算力利用率<br>vs. 静态独占 &lt;30%">算力利用率<br>vs. 静态独占 &lt;30%</div>
+    </div>
+    <div class="benefit-chip">
+      <span class="bc-val" style="color:var(--bus)">98%+</span>
+      <div class="bc-desc" data-dp-i18n-html="SLO 达成率<br>稳定保障">SLO 达成率<br>稳定保障</div>
+    </div>
+    <div class="benefit-chip">
+      <span class="bc-val" style="color:var(--ai)">↑2×</span>
+      <div class="bc-desc" data-dp-i18n-html="算力利用率提升<br>推理/训练混合调度">算力利用率提升<br>推理/训练混合调度</div>
+    </div>
+    <div class="benefit-chip">
+      <span class="bc-val" style="color:var(--cmp)" data-dp-i18n="多场景">多场景</span>
+      <div class="bc-desc" data-dp-i18n-html="共用模型实例<br>业务敏捷弹性">共用模型实例<br>业务敏捷弹性</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .page -->
+
+<script>
+
+function L(s) {
+  if (!s || !window.AidcI18n) return s;
+  const v = AidcI18n.getLookupText(s);
+  return v != null ? v : s;
+}
+function Lp(key, params) {
+  let t = L(key);
+  if (params) Object.entries(params).forEach(([k, v]) => { t = t.replaceAll('{' + k + '}', String(v)); });
+  return t;
+}
+function applyDpStaticI18n() {
+  document.querySelectorAll('[data-dp-i18n-html]').forEach((el) => {
+    const key = el.getAttribute('data-dp-i18n-html');
+    if (key) el.innerHTML = L(key);
+  });
+  document.querySelectorAll('[data-dp-i18n]').forEach((el) => {
+    const key = el.getAttribute('data-dp-i18n');
+    if (!key || el.hasAttribute('data-dp-i18n-html')) return;
+    el.textContent = L(key);
+  });
+}
+let _snRefreshPhase = null;
+let _sloRefreshQueues = null;
+let _ccRefreshLabels = null;
+
+function refreshDeploymentPerfI18n() {
+  applyDpStaticI18n();
+  if (typeof drawFrontView === 'function') drawFrontView();
+  if (typeof initPerfRows === 'function') initPerfRows();
+  if (typeof initSynCard === 'function') initSynCard();
+  if (_snRefreshPhase) _snRefreshPhase();
+  if (_sloRefreshQueues) _sloRefreshQueues();
+  if (_ccRefreshLabels) _ccRefreshLabels();
+}
+globalThis.__aidcPageRefreshI18n = refreshDeploymentPerfI18n;
+
+// ══════════════════════════════════════════════════════════
+// LAYOUT CONFIG — 4 groups: CMP(6), AI(6), BUS(2), AI(6)
+// 总线柜 sits between AI-06 and AI-07
+// ══════════════════════════════════════════════════════════
+const CFG = {ai:12, cmp:6, bus:2};
+
+function getGroups() {
+  return [
+    {type:'cmp', count:6, color:'#8b5cf6', fill:'rgba(139,92,246,.15)',
+     label:L('通算柜'), idPfx:'GC', startIdx:0,
+     role:[L('HCS 云底座 · ModelArts · ManageOne · CCAE')],
+     subs:[]},
+    {type:'ai', count:6, color:'#1d6fe5', fill:'rgba(29,111,229,.15)',
+     label:L('智算柜'), idPfx:'AI', startIdx:0,
+     role:[L('DeepSeek · Qwen · GLM 等 推理 & 训练')],
+     subs:[]},
+    {type:'bus', count:2, color:'#10b981', fill:'rgba(16,185,129,.15)',
+     label:L('总线柜'), idPfx:'BC', startIdx:0,
+     role:[L('UnifiedBus 总线协议')],
+     subs:[]},
+    {type:'ai', count:6, color:'#1d6fe5', fill:'rgba(29,111,229,.15)',
+     label:L('智算柜'), idPfx:'AI', startIdx:6,
+     role:[L('DeepSeek · Qwen · GLM 等 推理 & 训练')],
+     subs:[]},
+  ];
+}
+
+const CAB_W   = 48;
+const CAB_H   = 112;
+const CAB_GAP = 3;
+const GRP_GAP = 22;
+const PAD_X   = 18;
+const TOP_ANNO = 80;
+const TOP_LBL  = 0;    // no per-cabinet label row
+const BOT_LBL  = 6;
+const SVG_H    = TOP_ANNO + TOP_LBL + CAB_H + BOT_LBL;
+
+let aiCabPos = [];
+
+// ══ DRAW FRONT VIEW ══
+function drawFrontView(){
+  const GROUPS = getGroups();
+  const wrap = document.getElementById('frontView');
+  const totalCabs = GROUPS.reduce((s,g)=>s+g.count, 0);
+  const nGaps = GROUPS.length - 1;
+  const contentW = totalCabs*CAB_W + (totalCabs - GROUPS.length)*CAB_GAP + nGaps*GRP_GAP;
+  const wrapW = wrap.clientWidth - 4 || 920;
+  const SVG_W = Math.max(contentW + PAD_X*2, wrapW);
+  const xOff  = PAD_X + Math.max(0, (SVG_W - contentW - PAD_X*2) / 2);
+
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${SVG_W}" height="${SVG_H}" style="min-width:${contentW+PAD_X*2}px">`;
+  s += `<rect width="${SVG_W}" height="${SVG_H}" fill="#edf4ff"/>`;
+  for(let x=0;x<SVG_W;x+=24) s+=`<line x1="${x}" y1="0" x2="${x}" y2="${SVG_H}" stroke="rgba(0,80,200,.04)" stroke-width="1"/>`;
+  for(let y=0;y<SVG_H;y+=24) s+=`<line x1="0" y1="${y}" x2="${SVG_W}" y2="${y}" stroke="rgba(0,80,200,.04)" stroke-width="1"/>`;
+
+  let xCur = xOff;
+  aiCabPos = [];
+
+  // U-height constant (pixels per 1U in 42U rack)
+  const U = CAB_H / 42;
+
+  GROUPS.forEach((g, gi) => {
+    const gW = g.count * CAB_W + (g.count-1) * CAB_GAP;
+    const gX = xCur;
+    const cabBaseY = TOP_ANNO + TOP_LBL;
+
+    // Group wash
+    s += `<rect x="${gX-4}" y="${TOP_ANNO-4}" width="${gW+8}" height="${CAB_H+8}" rx="6" fill="${g.fill}" opacity=".45"/>`;
+
+    // Bracket
+    const bY = 10;
+    s += `<line x1="${gX}" y1="${bY+14}" x2="${gX+gW}" y2="${bY+14}" stroke="${g.color}" stroke-width="1.5" opacity=".55"/>`;
+    s += `<line x1="${gX}" y1="${bY+14}" x2="${gX}" y2="${bY+20}" stroke="${g.color}" stroke-width="1.5" opacity=".55"/>`;
+    s += `<line x1="${gX+gW}" y1="${bY+14}" x2="${gX+gW}" y2="${bY+20}" stroke="${g.color}" stroke-width="1.5" opacity=".55"/>`;
+
+    // Group label
+    s += `<text x="${gX+gW/2}" y="${bY+8}" text-anchor="middle" font-size="11" font-weight="900" fill="${g.color}" font-family="Microsoft YaHei,Arial,sans-serif">${g.label} ×${g.count}</text>`;
+
+    // Role text
+    g.role.forEach((ln, li) => {
+      s += `<text x="${gX+gW/2}" y="${bY+28+li*14}" text-anchor="middle" font-size="10" font-weight="800" fill="${g.color}" font-family="Microsoft YaHei,Arial,sans-serif">${ln}</text>`;
+    });
+    // Sub lines
+    g.subs.forEach((ln, li) => {
+      s += `<text x="${gX+gW/2}" y="${bY+28+g.role.length*14+2+li*12}" text-anchor="middle" font-size="8" font-weight="600" fill="${g.color}" opacity=".7" font-family="Microsoft YaHei,Arial,sans-serif">${ln}</text>`;
+    });
+
+    // Draw individual cabinets
+    for(let i=0; i<g.count; i++){
+      const cx = xCur;
+      if(g.type==='ai') aiCabPos.push({cx, cy:cabBaseY, cw:CAB_W, ch:CAB_H});
+
+      // Cabinet shell
+      s += `<rect x="${cx}" y="${cabBaseY}" width="${CAB_W}" height="${CAB_H}" rx="3" fill="${g.fill}" stroke="${g.color}" stroke-width="1.5"/>`;
+      s += `<rect x="${cx}" y="${cabBaseY}" width="${CAB_W}" height="5" rx="1.5" fill="${g.color}" opacity=".45"/>`;
+      s += `<rect x="${cx+4}" y="${cabBaseY+CAB_H-4}" width="${CAB_W-8}" height="4" rx="1" fill="${g.color}" opacity=".2"/>`;
+
+      // ── 通算柜 equipment (labeled boxes) ──
+      if(g.type === 'cmp') {
+        const c = g.color;
+        const isAIStore = (i === g.count - 1); // GC-06 only
+        const innerY = cabBaseY + 8;
+        const innerH = CAB_H - 16;
+
+        if(isAIStore){
+          // 3 boxes: 交换机 / 通用服务器 / AI存储
+          const swH  = Math.round(innerH * 0.20);
+          const svrH = Math.round(innerH * 0.28);
+          const stH2 = Math.max(14, innerH - swH - svrH - 10);
+          const swY  = innerY;
+          const svrY = swY + swH + 5;
+          const stY2 = svrY + svrH + 5;
+          s += `<rect x="${cx+3}" y="${swY}" width="${CAB_W-6}" height="${swH}" rx="1.5" fill="${c}" opacity=".2" stroke="${c}" stroke-width=".8"/>`;
+          s += `<text x="${cx+CAB_W/2}" y="${swY+swH/2+3}" text-anchor="middle" font-size="6" font-weight="700" fill="${c}" font-family="Microsoft YaHei,Arial,sans-serif">${L('交换机')}</text>`;
+          s += `<rect x="${cx+3}" y="${svrY}" width="${CAB_W-6}" height="${svrH}" rx="1.5" fill="${c}" opacity=".14" stroke="${c}" stroke-width=".8"/>`;
+          s += `<text x="${cx+CAB_W/2}" y="${svrY+svrH/2+3}" text-anchor="middle" font-size="6" font-weight="700" fill="${c}" font-family="Microsoft YaHei,Arial,sans-serif">${L('通用服务器')}</text>`;
+          s += `<rect x="${cx+3}" y="${stY2}" width="${CAB_W-6}" height="${stH2}" rx="1.5" fill="rgba(139,92,246,.28)" stroke="${c}" stroke-width="1.2"/>`;
+          s += `<text x="${cx+CAB_W/2}" y="${stY2+stH2/2+3}" text-anchor="middle" font-size="7" font-weight="900" fill="${c}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 存储')}</text>`;
+        } else {
+          // 2 boxes: 交换机 / 通用服务器
+          const swH  = Math.round(innerH * 0.24);
+          const svrH = Math.round(innerH * 0.58);
+          const swY  = innerY;
+          const svrY = swY + swH + 5;
+          s += `<rect x="${cx+3}" y="${swY}" width="${CAB_W-6}" height="${swH}" rx="1.5" fill="${c}" opacity=".2" stroke="${c}" stroke-width=".8"/>`;
+          s += `<text x="${cx+CAB_W/2}" y="${swY+swH/2+3}" text-anchor="middle" font-size="6" font-weight="700" fill="${c}" font-family="Microsoft YaHei,Arial,sans-serif">${L('交换机')}</text>`;
+          s += `<rect x="${cx+3}" y="${svrY}" width="${CAB_W-6}" height="${svrH}" rx="1.5" fill="${c}" opacity=".14" stroke="${c}" stroke-width=".8"/>`;
+          s += `<text x="${cx+CAB_W/2}" y="${svrY+svrH/2+3}" text-anchor="middle" font-size="6" font-weight="700" fill="${c}" font-family="Microsoft YaHei,Arial,sans-serif">${L('通用服务器')}</text>`;
+        }
+      }
+
+      // ── 智算柜: AI服务器 box ──
+      if(g.type === 'ai') {
+        const c = g.color;
+        const aiH = Math.round(CAB_H * 0.65);
+        const aiY = Math.round(cabBaseY + (CAB_H - aiH) / 2);
+        s += `<rect x="${cx+3}" y="${aiY}" width="${CAB_W-6}" height="${aiH}" rx="2" fill="${c}" opacity=".2" stroke="${c}" stroke-width="1.5"/>`;
+        s += `<text x="${cx+CAB_W/2}" y="${aiY+aiH/2+3}" text-anchor="middle" font-size="7" font-weight="700" fill="${c}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`;
+      }
+
+      // ── 总线柜: 2 × UB Box ──
+      if(g.type === 'bus') {
+        const c = g.color;
+        const boxH = Math.round(CAB_H * 0.27);
+        const gap  = 10;
+        const totH = boxH * 2 + gap;
+        const box0Y = Math.round(cabBaseY + (CAB_H - totH) / 2);
+        for(let b=0;b<2;b++){
+          const by = box0Y + b*(boxH+gap);
+          s += `<rect x="${cx+3}" y="${by}" width="${CAB_W-6}" height="${boxH}" rx="2" fill="${c}" opacity=".2" stroke="${c}" stroke-width="1.2"/>`;
+          s += `<text x="${cx+CAB_W/2}" y="${by+boxH/2+3}" text-anchor="middle" font-size="6.5" font-weight="700" fill="${c}" font-family="Microsoft YaHei,Arial,sans-serif">${L('UB Box')}</text>`;
+        }
+      }
+
+      xCur += CAB_W + CAB_GAP;
+    }
+    if(gi < GROUPS.length-1) xCur += GRP_GAP - CAB_GAP;
+  });
+
+  s += '</svg>';
+  wrap.innerHTML = s;
+}
+
+function bootDeploymentPerf() {
+  drawFrontView();
+  initPerfRows();
+  initSynCard();
+  initSynCacheDemo();
+  initCloudAnim();
+  initSLOAnim();
+}
+let _dpBooted = false;
+function bootDeploymentPerfOnce() {
+  if (_dpBooted) return;
+  _dpBooted = true;
+  bootDeploymentPerf();
+}
+window.addEventListener('load', () => {
+  setTimeout(() => { if (!window.AidcI18n?.isActive?.()) bootDeploymentPerfOnce(); }, 800);
+});
+window.addEventListener('resize', ()=>{ drawFrontView(); initPerfRows(); initSynCard(); });
+
+// ══ PERF ROWS: 智算柜-style cabs + DeepSeek instance overlays ══
+// Cab style matches the main 机柜部署分布图 智算柜
+function drawPerfCab(svg, cx, cH, cW, color, seed){
+  const capH  = 5;
+  const botH  = 4;
+  // Cabinet shell (matches main view 智算柜 style)
+  svg.push(`<rect x="${cx}" y="0" width="${cW}" height="${cH}" rx="2" fill="${color}" opacity=".12" stroke="${color}" stroke-width="1.5"/>`);
+  svg.push(`<rect x="${cx}" y="0" width="${cW}" height="${capH}" rx="1.5" fill="${color}" opacity=".45"/>`);
+  svg.push(`<rect x="${cx+3}" y="${cH-botH}" width="${cW-6}" height="${botH}" rx="1" fill="${color}" opacity=".2"/>`);
+  // AI服务器 box (centered) — label placed BELOW cabinet to avoid overlay collision
+  const innerY = capH + 3;
+  const innerH = cH - capH - botH - 6;
+  const asvH = Math.round(innerH * 0.82);
+  const asvY = innerY + Math.round((innerH - asvH) / 2);
+  svg.push(`<rect x="${cx+2}" y="${asvY}" width="${cW-4}" height="${asvH}" rx="1.5" fill="${color}" opacity=".2" stroke="${color}" stroke-width="1.2"/>`);
+  // Note: AI服务器 label is drawn in Pass 2 (after DeepSeek pill overlay) so it's always visible
+}
+
+function initPerfRows(){
+  const configs = [
+    {id:'pcabs-single', group:1, color:'#1d6fe5'},
+    {id:'pcabs-dual',   group:2, color:'#1d6fe5'},
+    {id:'pcabs-ep',     group:4, color:'#db2777'},
+  ];
+
+  configs.forEach(cfg => {
+    const el = document.getElementById(cfg.id);
+    if(!el) return;
+    const N = 12;
+    const nGroups = N / cfg.group;
+    const cabGap = 3;
+    // Extra gap between groups (to visually separate instances)
+    const grpGap = cfg.group > 1 ? Math.round(cfg.group * 4) : cabGap;
+    const W = Math.max(220, el.offsetWidth || el.parentElement.clientWidth || 300);
+    const totalInterGaps = (N-1)*cabGap + (nGroups-1)*grpGap;
+    const cW = Math.max(16, Math.floor((W - totalInterGaps) / N));
+    // Match main view proportions: main is 48×112 = 1:2.33
+    const cH = Math.round(cW * 2.33);
+    // Overlay label row height below cabs
+    const lblH = cfg.group > 1 ? 16 : 0;
+    const svgH = cH + lblH + 4;
+
+    const parts = []; // svg element strings
+    parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${svgH}" style="overflow:visible;display:block">`);
+
+    // ── Pass 1: all cabinet bases ──
+    let x = 0;
+    const groupCache = [];
+    for(let gi=0; gi<nGroups; gi++){
+      const gStartX = x;
+      const gW = cfg.group * cW + (cfg.group-1)*cabGap;
+      groupCache.push({gStartX, gW});
+      for(let ci=0; ci<cfg.group; ci++){
+        drawPerfCab(parts, x, cH, cW, cfg.color, gi*cfg.group + ci);
+        x += cW + cabGap;
+      }
+      if(gi < nGroups-1) x += grpGap;
+    }
+
+    // ── Pass 2: DeepSeek-V4-Flash instance overlays ──
+    groupCache.forEach(({gStartX, gW}, gi) => {
+      const ovX = gStartX - 1;
+      const ovW = gW + 2;
+      const ovY = 0;
+      const ovH = cH;
+      // Overlay rect
+      parts.push(`<rect x="${ovX}" y="${ovY}" width="${ovW}" height="${ovH}" rx="3" fill="${cfg.color}" opacity=".19" stroke="${cfg.color}" stroke-width="1.8"/>`);
+
+      // Text: "DeepSeek-V4-Flash" — solid pill background + white text for readability
+      const textCx = gStartX + gW / 2;
+      const textCy = cH / 2;
+      if(gW >= 38){
+        // Wide enough for 2-line horizontal pill
+        const fz = Math.min(7.5, Math.max(5, gW * 0.095));
+        const lineH = fz + 2;
+        const pillW = gW - 6;
+        const pillH = lineH * 2 + 6;
+        const pillX = textCx - pillW/2;
+        const pillY = textCy - pillH/2;
+        // Pill background
+        parts.push(`<rect x="${pillX}" y="${pillY}" width="${pillW}" height="${pillH}" rx="4" fill="${cfg.color}" opacity=".82"/>`);
+        // White text (2 lines)
+        parts.push(`<text x="${textCx}" y="${pillY + lineH}" text-anchor="middle" font-size="${fz}" fill="white" font-family="Arial,sans-serif" font-weight="800">DeepSeek</text>`);
+        parts.push(`<text x="${textCx}" y="${pillY + lineH*2 + 1}" text-anchor="middle" font-size="${fz}" fill="white" font-family="Arial,sans-serif" font-weight="800">V4-Flash</text>`);
+      } else {
+        // Narrow: rotated pill
+        const fz = Math.min(6.5, Math.max(4.5, cH * 0.082));
+        const pillW = cH * 0.72;
+        const pillH = cW - 4;
+        // Pill background (will be rotated)
+        parts.push(`<rect x="${textCx - pillW/2}" y="${textCy - pillH/2}" width="${pillW}" height="${pillH}" rx="3" fill="${cfg.color}" opacity=".82" transform="rotate(-90,${textCx},${textCy})"/>`);
+        parts.push(`<text x="${textCx}" y="${textCy}" text-anchor="middle" dominant-baseline="middle" font-size="${fz}" fill="white" font-family="Arial,sans-serif" font-weight="800" transform="rotate(-90,${textCx},${textCy})">DeepSeek-V4-Flash</text>`);
+      }
+
+      // Label row below (multi-group only)
+      if(cfg.group > 1){
+        const bY = cH + 3;
+        parts.push(`<line x1="${gStartX+3}" y1="${bY}" x2="${gStartX+gW-3}" y2="${bY}" stroke="${cfg.color}" stroke-width="1.2" opacity=".4"/>`);
+        parts.push(`<line x1="${gStartX+3}" y1="${bY}" x2="${gStartX+3}" y2="${bY+5}" stroke="${cfg.color}" stroke-width="1.2" opacity=".4"/>`);
+        parts.push(`<line x1="${gStartX+gW-3}" y1="${bY}" x2="${gStartX+gW-3}" y2="${bY+5}" stroke="${cfg.color}" stroke-width="1.2" opacity=".4"/>`);
+        const modelFz = Math.min(8, Math.max(5.5, gW * 0.09));
+        parts.push(`<text x="${textCx}" y="${bY+13}" text-anchor="middle" font-size="${modelFz}" fill="${cfg.color}" font-family="Arial,sans-serif" font-weight="700" opacity=".75">${Lp('实例 {n}', {n: gi+1})}</text>`);
+      }
+      // Per-cab AI服务器 labels — drawn AFTER overlay pill so they always appear on top, inside cabinet bottom
+      const cabLabelFz = Math.min(6.5, Math.max(4.5, cW * 0.13));
+      for(let ci=0; ci<cfg.group; ci++){
+        const cabLabelX = gStartX + ci*(cW + cabGap) + cW/2;
+        parts.push(`<text x="${cabLabelX}" y="${cH-9}" text-anchor="middle" font-size="${cabLabelFz}" font-weight="700" fill="${cfg.color}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`);
+      }
+    });
+
+    parts.push('</svg>');
+    el.innerHTML = parts.join('');
+  });
+}
+
+// ══ 算存协同: 5-cabinet diagram — vertical layout (4 AI cabs top, 1 CMP bottom) ══
+function initSynCard(){
+  const svgEl = document.getElementById('syn-svg');
+  if(!svgEl) return;
+
+  // Fill the whole left column so the diagram tracks the height of the
+  // right-hand 3-tier panel (智算柜→HBM/SSD on top, 通算柜→AI存储 at bottom).
+  const fillEl = svgEl.parentElement;   // .syn-diag-fill
+  const W = Math.max(200, fillEl.clientWidth || 260);
+  const targetH = Math.max(300, fillEl.clientHeight || 340);
+  const margin = 6, aiGap = 5, n = 4;
+
+  // 4 AI cabinets in top row (side by side)
+  const aiCabW = Math.floor((W - 2*margin - (n-1)*aiGap) / n);
+
+  // CMP cabinet: full width, spans all 4 AI cabs + their gaps
+  const cmpCabW = aiCabW * n + (n-1)*aiGap;
+
+  // Vertical distribution to fill targetH:
+  //   智算柜(上, HBM+SSD) ≈56%  ·  连接间隙 ≈14%  ·  通算柜(下, AI存储) ≈30%
+  const topY       = 2;          // tiny top margin (no header label above)
+  const botLegendH = 28;         // bottom legend row
+  const usableH    = targetH - topY - botLegendH;
+  let aiCabH  = Math.round(usableH * 0.56);
+  let vertGap = Math.round(usableH * 0.14);
+  // keep AI cabinet from becoming too tall/narrow on very tall columns
+  const aiCapH = Math.round(aiCabW * 2.7);
+  if(aiCabH > aiCapH){ vertGap += (aiCabH - aiCapH); aiCabH = aiCapH; }
+  let cmpCabH = usableH - aiCabH - vertGap;
+
+  const cmpTopY = topY + aiCabH + vertGap;
+  const svgH    = targetH;
+
+  svgEl.setAttribute('width', W);
+  svgEl.setAttribute('height', svgH);
+
+  let s = '';
+  const aiC = '#1d6fe5', cmpC = '#8b5cf6';
+  const cmpX = margin;
+
+  // ── CMP interior geometry (horizontal bands top→bottom) ──
+  const cmpInnerH = cmpCabH - 13;
+  const swH  = Math.round(cmpInnerH * 0.24);
+  const svrH = Math.round(cmpInnerH * 0.30);
+  const stH  = Math.max(18, cmpInnerH - swH - svrH - 8);
+  const swY  = cmpTopY + 7;
+  const svrY = swY + swH + 4;
+  const stY  = svrY + svrH + 4;
+
+  // ── AI cabinet interior geometry (shared for all 4) ──
+  const _innerH = aiCabH - 16;
+  const _asvH   = Math.round(_innerH * 0.88);
+  const _asvY   = topY + 8 + Math.round((_innerH - _asvH) / 2);
+  const _hdrH   = Math.max(9, Math.round(_asvH * 0.14));
+  const _aiCntH = _asvH - _hdrH - 8;
+  const _aiCntY = _asvY + _hdrH + 4;
+  const _aiVGap = Math.max(5, Math.round(_aiCntH * 0.12));
+  const _aiHbmH = Math.round(_aiCntH * 0.25);
+  const _aiHbmY = _aiCntY;
+  const _aiSsdH = Math.round(_aiCntH * 0.30);
+  const _aiSsdY = _aiHbmY + _aiHbmH + _aiVGap;
+
+  // ── 4 AI Cabinets (top row) ──
+  for(let ai=0; ai<4; ai++){
+    const aiX = cmpX + ai*(aiCabW + aiGap);
+    const cx  = aiX + aiCabW/2;
+
+    // Shell
+    s += `<rect x="${aiX}" y="${topY}" width="${aiCabW}" height="${aiCabH}" rx="3" fill="rgba(29,111,229,.12)" stroke="${aiC}" stroke-width="1.6"/>`;
+    s += `<rect x="${aiX}" y="${topY}" width="${aiCabW}" height="5" rx="1.5" fill="${aiC}" opacity=".42"/>`;
+    s += `<rect x="${aiX+3}" y="${topY+aiCabH-4}" width="${aiCabW-6}" height="4" rx="1" fill="${aiC}" opacity=".2"/>`;
+
+    // AI服务器 box
+    s += `<rect x="${aiX+3}" y="${_asvY}" width="${aiCabW-6}" height="${_asvH}" rx="2" fill="rgba(29,111,229,.11)" stroke="${aiC}" stroke-width="1.2"/>`;
+    s += `<rect x="${aiX+3}" y="${_asvY}" width="${aiCabW-6}" height="${_hdrH}" rx="2" fill="${aiC}" opacity=".38"/>`;
+    const hdrFz = Math.min(9, Math.max(5.5, Math.round(_hdrH * 0.62)));
+    s += `<text x="${cx}" y="${_asvY+Math.round(_hdrH*.68)}" text-anchor="middle" font-size="${hdrFz}" font-weight="700" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`;
+
+    // HBM block
+    s += `<rect x="${aiX+5}" y="${_aiHbmY}" width="${aiCabW-10}" height="${_aiHbmH}" rx="1.5" fill="${aiC}" opacity=".32" stroke="${aiC}" stroke-width=".8"/>`;
+    const hbmFz = Math.min(9, Math.max(5, Math.round(_aiHbmH*.40)));
+    s += `<text x="${cx}" y="${_aiHbmY+_aiHbmH/2+hbmFz*.4}" text-anchor="middle" font-size="${hbmFz}" font-weight="700" fill="${aiC}" font-family="Arial,sans-serif">HBM</text>`;
+
+    // HBM→SSD mini-arrow
+    const vAX = Math.round(cx), vAY0 = _aiHbmY+_aiHbmH;
+    const vSW = Math.max(3,Math.round(aiCabW*.09)), vHW = Math.max(7,Math.round(aiCabW*.18));
+    const vSH = Math.max(2, _aiVGap-4);
+    s += `<rect x="${vAX-vSW/2}" y="${vAY0}" width="${vSW}" height="${vSH}" rx=".5" fill="${aiC}" opacity=".32"/>`;
+    s += `<polygon points="${vAX-vHW/2},${vAY0+vSH} ${vAX+vHW/2},${vAY0+vSH} ${vAX},${_aiSsdY}" fill="${aiC}" opacity=".40"/>`;
+
+    // SSD block
+    s += `<rect x="${aiX+5}" y="${_aiSsdY}" width="${aiCabW-10}" height="${_aiSsdH}" rx="1.5" fill="${aiC}" opacity=".17" stroke="${aiC}" stroke-width=".8"/>`;
+    const ssdFz = Math.min(9, Math.max(5, Math.round(_aiSsdH*.32)));
+    s += `<text x="${cx}" y="${_aiSsdY+_aiSsdH/2+ssdFz*.4}" text-anchor="middle" font-size="${ssdFz}" font-weight="700" fill="${aiC}" font-family="Arial,sans-serif">SSD</text>`;
+
+    // ── Offload arrow: SSD bottom → straight down → into AI存储 top ──
+    const ssdBotX = Math.round(cx);
+    const ssdBotY = _aiSsdY + _aiSsdH;
+    s += `<path d="M ${ssdBotX},${ssdBotY} V ${stY}" fill="none" stroke="${cmpC}" stroke-width="4" stroke-opacity=".14" stroke-linecap="round"/>`;
+    s += `<path d="M ${ssdBotX},${ssdBotY} V ${stY}" fill="none" stroke="${cmpC}" stroke-width="1.8" stroke-opacity=".58" stroke-dasharray="5 4" stroke-linecap="round">
+      <animate attributeName="stroke-dashoffset" values="18;0" dur="${0.62+ai*.08}s" repeatCount="indefinite" calcMode="linear"/>
+    </path>`;
+    // Arrowhead pointing down into AI存储
+    s += `<polygon points="${ssdBotX-4},${stY-6} ${ssdBotX+4},${stY-6} ${ssdBotX},${stY}" fill="${cmpC}" opacity=".75"/>`;
+  }
+
+  // ── Mid-gap label (KV Cache UCM) ──
+  const midGY = topY + aiCabH + vertGap/2;
+  s += `<text x="${cmpX+cmpCabW/2}" y="${midGY-4}" text-anchor="middle" font-size="9.5" font-weight="800" fill="${cmpC}" font-family="Arial Narrow,Arial,sans-serif" opacity=".92">${L('KV Cache UCM 多级缓存协同')}</text>`;
+  s += `<text x="${cmpX+cmpCabW/2}" y="${midGY+9}" text-anchor="middle" font-size="8" fill="${cmpC}" font-family="Arial Narrow,Arial,sans-serif" opacity=".65">${L('SSD KV Cache 卸载至 AI 存储持久化')}</text>`;
+
+  // ── CMP Cabinet (bottom, full width) ──
+  s += `<rect x="${cmpX}" y="${cmpTopY}" width="${cmpCabW}" height="${cmpCabH}" rx="3" fill="rgba(139,92,246,.12)" stroke="${cmpC}" stroke-width="1.5"/>`;
+  s += `<rect x="${cmpX}" y="${cmpTopY}" width="${cmpCabW}" height="5" rx="1.5" fill="${cmpC}" opacity=".4"/>`;
+  s += `<rect x="${cmpX+2}" y="${cmpTopY+cmpCabH-4}" width="${cmpCabW-4}" height="4" rx="1" fill="${cmpC}" opacity=".2"/>`;
+
+  const cmpIW = cmpCabW - 6;
+  // 交换机 band
+  s += `<rect x="${cmpX+3}" y="${swY}" width="${cmpIW}" height="${swH}" rx="2" fill="rgba(139,92,246,.2)" stroke="${cmpC}" stroke-width="1"/>`;
+  const swFz = Math.min(9, Math.max(7, Math.round(swH*.32)));
+  s += `<text x="${cmpX+cmpCabW/2}" y="${swY+swH/2+swFz*.4}" text-anchor="middle" font-size="${swFz}" font-weight="700" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('交换机')}</text>`;
+  // 通用服务器 band
+  s += `<rect x="${cmpX+3}" y="${svrY}" width="${cmpIW}" height="${svrH}" rx="2" fill="rgba(139,92,246,.15)" stroke="${cmpC}" stroke-width="1"/>`;
+  const svrFz = Math.min(9, Math.max(7, Math.round(svrH*.26)));
+  s += `<text x="${cmpX+cmpCabW/2}" y="${svrY+svrH/2+svrFz*.4}" text-anchor="middle" font-size="${svrFz}" font-weight="700" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('通用服务器')}</text>`;
+  // AI存储 band (prominent)
+  s += `<rect x="${cmpX+2}" y="${stY}" width="${cmpCabW-4}" height="${stH}" rx="2" fill="rgba(139,92,246,.28)" stroke="${cmpC}" stroke-width="1.4"/>`;
+  const stFz = Math.min(13, Math.max(8, Math.round(stH*.22)));
+  s += `<text x="${cmpX+cmpCabW/2}" y="${stY+stH/2+stFz*.38}" text-anchor="middle" font-size="${stFz}" font-weight="900" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 存储')}</text>`;
+
+  // ── Bottom legend (文字在最下面) ──
+  const lblY = cmpTopY + cmpCabH + 16;
+  const halfW = cmpCabW / 2;
+  s += `<rect x="${cmpX+2}" y="${lblY-8}" width="9" height="9" rx="2" fill="${aiC}" opacity=".55"/>`;
+  s += `<text x="${cmpX+14}" y="${lblY}" font-size="8.5" font-weight="700" fill="${aiC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 智算柜 ×4')}</text>`;
+  s += `<rect x="${cmpX+halfW+4}" y="${lblY-8}" width="9" height="9" rx="2" fill="${cmpC}" opacity=".55"/>`;
+  s += `<text x="${cmpX+halfW+16}" y="${lblY}" font-size="8.5" font-weight="700" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('通算柜（OceanStor）')}</text>`;
+
+  svgEl.innerHTML = s;
+}
+
+// ══ 算存协同: 三级缓存 KV Cache 查询流 演示 ══
+function initSynCacheDemo(){
+  const diagEl = document.getElementById('sn-diag');
+  if(!diagEl) return;
+
+  // Build HBM bars
+  const hbmWrap = document.getElementById('sn-hbm-bars');
+  if(hbmWrap && !hbmWrap.children.length){
+    [94,91,96,93,88,95,92,97,90,94,89,93,95,91,96,92,88,94,93,96].forEach(p=>{
+      const bar = document.createElement('div');
+      bar.style.cssText = `flex:1;border-radius:2px 2px 0 0;background:rgba(29,111,229,.1);border:1px solid rgba(29,111,229,.2);position:relative;overflow:hidden;`;
+      const fill = document.createElement('div');
+      fill.style.cssText = `position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(29,111,229,.55),#1d6fe5);border-radius:1px;height:${p}%;`;
+      bar.appendChild(fill);
+      hbmWrap.appendChild(bar);
+    });
+  }
+
+  // Build SSD boxes
+  const ssdRow = document.getElementById('sn-ssd-row');
+  if(ssdRow && !ssdRow.children.length){
+    [{n:'SSD 1',w:62},{n:'SSD 2',w:71},{n:'SSD 3',w:58},{n:'SSD 4',w:67}].forEach(d=>{
+      ssdRow.innerHTML += `<div style="flex:1;border-radius:6px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.05);padding:5px 4px;text-align:center;">
+        <div style="font-size:7.5px;font-weight:700;color:var(--ssd);display:block;margin-bottom:4px;font-family:Arial,sans-serif;">${d.n}</div>
+        <div style="height:4px;border-radius:3px;background:rgba(245,158,11,.1);overflow:hidden;margin-bottom:2px;"><div style="height:100%;border-radius:3px;background:var(--ssd);width:${d.w}%;"></div></div>
+        <div style="font-size:6.5px;color:var(--t3);font-family:Arial,sans-serif;">3.84 TB</div>
+      </div>`;
+    });
+  }
+
+  // Build KV grid
+  const kvGrid = document.getElementById('sn-kv-grid');
+  const SN_HIT = new Set([1,3,5,8,11,14,16,19,22,25,27,30,33,36,38,41,44,46,49,52,55,57,60,62,65,68,70]);
+  if(kvGrid && !kvGrid.children.length){
+    for(let i=0;i<72;i++){
+      const c = document.createElement('div');
+      c.id = 'sn-kvc-'+i;
+      const base = `height:8px;border-radius:1.5px;border:1px solid;transition:background .3s,border-color .3s,box-shadow .3s;`;
+      c.style.cssText = SN_HIT.has(i)
+        ? base+'background:rgba(139,92,246,.35);border-color:rgba(139,92,246,.4);'
+        : base+'background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.14);';
+      kvGrid.appendChild(c);
+    }
+  }
+
+  // Canvas
+  const canvas = document.getElementById('sn-canvas');
+  const ctx = canvas.getContext('2d');
+  const tierNpu = document.getElementById('sn-tier-npu');
+  const tierSsd = document.getElementById('sn-tier-ssd');
+  const tierAis = document.getElementById('sn-tier-ais');
+
+  function snRect(el){
+    const dc=diagEl.getBoundingClientRect(), er=el.getBoundingClientRect();
+    return { cx:er.left-dc.left+er.width/2, cy:er.top-dc.top+er.height/2,
+             top:er.top-dc.top, bot:er.top-dc.top+er.height,
+             x:er.left-dc.left, w:er.width, h:er.height };
+  }
+
+  let snParticles = [];
+  function snSpawn(fromEl, toEl, color, n, up){
+    const fr=snRect(fromEl), to=snRect(toEl);
+    for(let i=0;i<n;i++){
+      const ox=(Math.random()-.5)*28;
+      snParticles.push({
+        sx:fr.cx+ox, sy:up?to.bot-4:fr.bot-4,
+        ex:fr.cx+ox, ey:up?fr.top+4:to.top+4,
+        color, size:2.5+Math.random()*2, prog:-Math.random()*.45,
+        speed:0.007+Math.random()*.007, alpha:0.75+Math.random()*.25, done:false
+      });
+    }
+  }
+
+  // Helpers
+  function snBadge(id,txt,type){
+    const b=document.getElementById('sn-badge-'+id); if(!b)return;
+    b.textContent=txt; b.style.opacity='1';
+    const styles={
+      search:'background:rgba(29,111,229,.08);color:#1d6fe5;border-color:rgba(29,111,229,.2);',
+      ssrch:'background:rgba(245,158,11,.08);color:#b45309;border-color:rgba(245,158,11,.28);',
+      aisrch:'background:rgba(139,92,246,.08);color:#8b5cf6;border-color:rgba(139,92,246,.22);',
+      miss:'background:rgba(148,163,184,.08);color:#94a3b8;border-color:rgba(148,163,184,.25);',
+      hit:'background:rgba(16,185,129,.08);color:#047857;border-color:rgba(16,185,129,.25);'
+    };
+    b.style.cssText += styles[type]||'';
+  }
+  function snGlow(el,c){ el.style.boxShadow=`0 0 0 3px ${c}`; }
+  function snG1(c,bc){ const g=document.getElementById('sn-gap1'); if(g){g.style.color=c;g.style.borderColor=bc||c;} }
+  function snG2(c,bc){ const g=document.getElementById('sn-gap2'); if(g){g.style.color=c;g.style.borderColor=bc||c;} }
+  function snPR(id,t,c){ const e=document.getElementById('sn-pr-'+id); if(e){e.textContent=t;e.style.color=c;} }
+  function snKVHit(){ SN_HIT.forEach((ci,idx)=>{setTimeout(()=>{
+    const c=document.getElementById('sn-kvc-'+ci);
+    if(c)c.style.cssText='height:8px;border-radius:1.5px;border:1px solid var(--bus);background:var(--bus);box-shadow:0 0 4px rgba(16,185,129,.4);transition:all .3s;';
+  },idx*25);}); }
+  function snKVReset(){ for(let i=0;i<72;i++){
+    const c=document.getElementById('sn-kvc-'+i);
+    if(c) c.style.cssText=SN_HIT.has(i)
+      ? 'height:8px;border-radius:1.5px;border:1px solid rgba(139,92,246,.4);background:rgba(139,92,246,.35);transition:all .3s;'
+      : 'height:8px;border-radius:1.5px;border:1px solid rgba(139,92,246,.14);background:rgba(139,92,246,.08);transition:all .3s;';
+  }}
+  function snReset(){
+    snParticles=[];
+    [tierNpu,tierSsd,tierAis].forEach(t=>{t.style.boxShadow='';});
+    ['npu','ssd','ais'].forEach(id=>{const b=document.getElementById('sn-badge-'+id);if(b)b.style.opacity='0';});
+    snG1('var(--t3)','var(--bd)'); snG2('var(--t3)','var(--bd)');
+    snPR('hbm',L('MISS'),'var(--miss)'); snPR('ssd',L('MISS'),'var(--miss)'); snPR('ais',L('HIT ✓'),'var(--bus)');
+    const m=document.getElementById('sn-mode-lbl'); if(m){m.textContent=L('✦ 以查代算');m.style.color='var(--bus)';}
+    const t=document.getElementById('sn-ph-tag'); if(t){t.style.background='';t.style.color='';t.style.borderColor='';}
+    snKVReset();
+  }
+
+  let snScanTmr=null;
+  function snKVScan(){
+    let i=0; snScanTmr=setInterval(()=>{
+      if(i>=72){clearInterval(snScanTmr);return;}
+      const c=document.getElementById('sn-kvc-'+i);
+      if(c){c.style.background='rgba(139,92,246,.55)';setTimeout(()=>{c.style.background='';},180);}
+      i++;
+    },10);
+  }
+
+  const SN_PHASES=[
+    {dur:800,  icon:'⏳',name:'系统就绪 · 等待推理请求',     desc:'HBM KV Cache 已满，SSD + AI 存储在线',       tag:'待机',  fn:()=>snReset()},
+    {dur:700,  icon:'📥',name:'推理请求进入 NPU 队列',       desc:'新请求到来，开始查找 KV Cache 前缀...',      tag:'请求',  fn:()=>snGlow(tierNpu,'rgba(29,111,229,.2)')},
+    {dur:1100, icon:'🔍',name:'查询 HBM L1 · 搜索中',       desc:'片上 HBM 高速搜索 KV Cache 前缀块...',      tag:'L1检索',fn:()=>{snBadge('npu',L('检索中...'),'search');snGlow(tierNpu,'rgba(29,111,229,.22)');}},
+    {dur:750,  icon:'❌',name:'HBM L1 未命中',               desc:'HBM 近满 93%，目标 KV Cache 已被淘汰',      tag:'L1 MISS',fn:()=>{snBadge('npu',L('✗ 未命中'),'miss');snPR('hbm',L('MISS'),'var(--miss)');}},
+    {dur:650,  icon:'⬇',name:'下行至 SSD L2',               desc:'查询路径延伸至本地 NVMe SSD 层...',          tag:'→ SSD', fn:()=>{snG1('var(--ssd)');snSpawn(tierNpu,tierSsd,'rgba(29,111,229,.7)',9,false);}},
+    {dur:1000, icon:'🔍',name:'查询 SSD L2 · 并行扫描',     desc:'并行扫描 4 路 NVMe SSD KV Cache...',        tag:'L2检索',fn:()=>{snBadge('ssd',L('检索中...'),'ssrch');snGlow(tierSsd,'rgba(245,158,11,.2)');snPR('ssd',L('查询...'),'var(--ssd)');}},
+    {dur:700,  icon:'❌',name:'SSD L2 未命中',               desc:'SSD 无匹配 KV Cache，升级至 AI 存储层',      tag:'L2 MISS',fn:()=>{snBadge('ssd',L('✗ 未命中'),'miss');snPR('ssd',L('MISS'),'var(--miss)');}},
+    {dur:600,  icon:'⬇',name:'下行至 OceanStor AI 存储',    desc:'查询路径延伸至远端 AI 存储池（~1ms）...',    tag:'→ L3',  fn:()=>{snG2('var(--cmp)');snSpawn(tierSsd,tierAis,'rgba(245,158,11,.7)',9,false);}},
+    {dur:1200, icon:'🔍',name:'查询 AI 存储 L3 · 扫描中',   desc:'OceanStor KV Cache Pool 持久化前缀检索...',  tag:'L3检索',fn:()=>{snBadge('ais',L('检索中...'),'aisrch');snGlow(tierAis,'rgba(139,92,246,.2)');snPR('ais',L('查询...'),'var(--cmp)');snKVScan();}},
+    {dur:1000, icon:'✅',name:'AI 存储 L3 命中！',           desc:'KV Cache 命中！前缀命中率 90%，以查代算激活', tag:'✓ HIT',fn:()=>{
+      snBadge('ais',L('✓ 命中！'),'hit');snGlow(tierAis,'rgba(16,185,129,.22)');snPR('ais',L('HIT ✓'),'var(--bus)');snKVHit();
+      const m=document.getElementById('sn-mode-lbl');if(m){m.textContent=L('✦ 以查代算 激活');m.style.color='var(--bus)';}
+      const tag=document.getElementById('sn-ph-tag');if(tag){tag.style.background='rgba(16,185,129,.1)';tag.style.color='#047857';tag.style.borderColor='rgba(16,185,129,.3)';}
+    }},
+    {dur:1300, icon:'⬆',name:'以查代算 · KV Cache 回传',    desc:'命中数据高速回传：AI存储→SSD→HBM→NPU Decode', tag:'回程',fn:()=>{
+      snG2('var(--ret)'); snG1('var(--ret)');
+      snSpawn(tierAis,tierSsd,'#22d3ee',8,true);
+      setTimeout(()=>snSpawn(tierSsd,tierNpu,'#22d3ee',8,true),500);
+      const tag=document.getElementById('sn-ph-tag');if(tag){tag.style.background='rgba(34,211,238,.1)';tag.style.color='#0891b2';tag.style.borderColor='rgba(34,211,238,.3)';}
+    }},
+    {dur:900,  icon:'🚀',name:'推理结果输出',                desc:'TTFT 4400ms · Prefill 跳过 · Decode 吞吐满载',tag:'完成',  fn:()=>{snGlow(tierNpu,'rgba(16,185,129,.22)');snBadge('npu',L('✓ 输出完成'),'hit');}},
+  ];
+
+  let snPhIdx=0, snLastT=0;
+  function snSetPhase(idx){
+    snPhIdx=((idx%SN_PHASES.length)+SN_PHASES.length)%SN_PHASES.length;
+    const ph=SN_PHASES[snPhIdx];
+    const icon=document.getElementById('sn-ph-icon');const name=document.getElementById('sn-ph-name');
+    const desc=document.getElementById('sn-ph-desc');const tag=document.getElementById('sn-ph-tag');
+    if(icon)icon.textContent=ph.icon;
+    if(name)name.textContent=L(ph.name);
+    if(desc)desc.textContent=L(ph.desc);
+    if(tag)tag.textContent=L(ph.tag);
+    ph.fn();
+  }
+
+  let snAnimId=null;
+  function snResizeCanvas(){ const r=diagEl.getBoundingClientRect(); canvas.width=r.width; canvas.height=r.height; }
+
+  function snLoop(ts){
+    snResizeCanvas();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(ts-snLastT > SN_PHASES[snPhIdx].dur){ snLastT=ts; snSetPhase(snPhIdx+1); }
+
+    // Background dashed guide lines
+    const rnpu=snRect(tierNpu), rssd=snRect(tierSsd), rais=snRect(tierAis);
+    [[rnpu,rssd,'#1d6fe5'],[rssd,rais,'#8b5cf6']].forEach(([a,b,c])=>{
+      ctx.save(); ctx.setLineDash([3,5]); ctx.strokeStyle=c; ctx.lineWidth=1.5; ctx.globalAlpha=.16;
+      ctx.beginPath(); ctx.moveTo(a.cx,a.bot); ctx.lineTo(b.cx,b.top); ctx.stroke(); ctx.restore();
+    });
+
+    // Particles
+    snParticles=snParticles.filter(p=>!p.done);
+    snParticles.forEach(p=>{
+      p.prog+=p.speed; if(p.prog<0)return; if(p.prog>=1){p.done=true;return;}
+      const ease=p.prog<.5?2*p.prog*p.prog:1-Math.pow(-2*p.prog+2,2)/2;
+      const cx=p.sx+(p.ex-p.sx)*ease, cy=p.sy+(p.ey-p.sy)*ease;
+      const alpha=p.prog>.85?(1-p.prog)/.15:Math.min(1,p.prog*5);
+      ctx.save(); ctx.globalAlpha=p.alpha*alpha; ctx.fillStyle=p.color;
+      ctx.shadowBlur=8; ctx.shadowColor=p.color;
+      ctx.beginPath(); ctx.arc(cx,cy,p.size,0,Math.PI*2); ctx.fill(); ctx.restore();
+    });
+    snAnimId=requestAnimationFrame(snLoop);
+  }
+
+  if(snAnimId)cancelAnimationFrame(snAnimId);
+  snResizeCanvas(); snSetPhase(0); snLastT=performance.now();
+  snAnimId=requestAnimationFrame(snLoop);
+  _snRefreshPhase = () => snSetPhase(snPhIdx);
+}
+
+// ══ 算云协同: 左右对比动态演示 ══
+let _ccAnimId = null;
+window.ccReplay = function(){ _ccSlot = 0; };
+let _ccSlot = 0;
+
+function initCloudAnim(){
+  const canvT   = document.getElementById('cc-canvas-trad');
+  const canvN   = document.getElementById('cc-canvas-new');
+  const gridT   = document.getElementById('cc-grid-trad');
+  const gridN   = document.getElementById('cc-grid-new');
+  const elUtilT = document.getElementById('cc-util-trad');
+  const elUtilN = document.getElementById('cc-util-new');
+  const elTime  = document.getElementById('cc-time-disp');
+  const elProg  = document.getElementById('cc-time-prog');
+  const elPhase = document.getElementById('cc-phase-txt');
+  const elElast = document.getElementById('cc-elastic-lbl');
+  if(!canvT || !canvN || !gridT || !gridN) return;
+
+  // 48 half-hour slots (00:00–23:30)
+  // Traditional: inference-dedicated cabs (blue, daytime) + training-dedicated cabs (purple, nighttime)
+  // Not interchangeable — each group lies idle when the other is active → combined util < 30%
+  const tradInfD = [  // inference (dedicated cabs, blue): active daytime only
+    .00,.00,.00,.00,.00,.00,.00,.00,  // 00:00–04:00 night — inference idle
+    .02,.05,.12,.20,.26,.28,.27,.26,  // 04:00–08:00 dawn ramp-up
+    .28,.30,.31,.32,.31,.30,.29,.30,  // 08:00–12:00 daytime
+    .30,.31,.32,.31,.30,.32,.30,.29,  // 12:00–16:00 daytime
+    .27,.22,.16,.10,.06,.03,.01,.00,  // 16:00–20:00 dusk ramp-down
+    .00,.00,.00,.00,.00,.00,.00,.00   // 20:00–24:00 night — inference idle
+  ];
+  const tradTrnD = [  // training (dedicated cabs, purple): active nighttime only
+    .22,.22,.23,.23,.22,.22,.21,.20,  // 00:00–04:00 night training
+    .18,.14,.10,.06,.02,.00,.00,.00,  // 04:00–08:00 ramp-down as dawn breaks
+    .00,.00,.00,.00,.00,.00,.00,.00,  // 08:00–12:00 training idle
+    .00,.00,.00,.00,.00,.00,.00,.02,  // 12:00–16:00 training idle
+    .06,.10,.14,.18,.20,.22,.23,.23,  // 16:00–20:00 evening ramp-up
+    .23,.23,.22,.22,.22,.23,.23,.23   // 20:00–24:00 night training
+  ];
+  // 算云协同: utilization held in the 50–80% band (never above 80%),
+  // blue=infer day, purple=train night, amber=elastic peak
+  const newD = [
+    .58,.59,.60,.60,.59,.58,.57,.56,  // 00:00–04:00 night train
+    .57,.58,.60,.62,.61,.60,.58,.60,  // 04:00–08:00
+    .64,.68,.72,.74,.73,.71,.68,.70,  // 08:00–12:00 day
+    .72,.74,.76,.78,.80,.79,.77,.75,  // 12:00–16:00 day (peak 0.80)
+    .72,.70,.67,.64,.62,.60,.58,.59,  // 16:00–20:00
+    .61,.63,.64,.63,.61,.60,.59,.58   // 20:00–24:00 night
+  ];
+
+  const N = 48;
+  const N_CABS = 12;
+  const isDay  = s => s >= 16 && s < 44;               // 08:00–22:00 = slots 16–43
+  const isPeak = s => (s>=18&&s<=21)||(s>=28&&s<=33);  // 09–11, 14–17
+
+  // Build cabinet grids
+  function buildGrid(el){
+    el.innerHTML = '';
+    const fills = [];
+    for(let i=0;i<N_CABS;i++){
+      const c = document.createElement('div');
+      c.className = 'cc-cab-c';
+      const f = document.createElement('div');
+      f.className = 'cc-cab-fill';
+      c.appendChild(f);
+      el.appendChild(c);
+      fills.push({c, f});
+    }
+    return fills;
+  }
+  const cabsT = buildGrid(gridT);
+  const cabsN = buildGrid(gridN);
+
+  // Update traditional grid: cabs 0-6 = inference-dedicated (blue), cabs 7-11 = training-dedicated (purple)
+  // Neither group can use the other's idle time — shows the "siloed" waste
+  function updateGridTrad(slot){
+    const infUtil = tradInfD[slot];
+    const trnUtil = tradTrnD[slot];
+    const INF_CABS = 7;  // first 7 = inference-dedicated
+    cabsT.forEach(({c, f}, i)=>{
+      if(i < INF_CABS){
+        // Inference cabinet (blue) — active during daytime
+        if(infUtil > 0.02){
+          f.style.background = '#1d6fe5'; f.style.opacity='.48';
+          c.style.borderColor = 'rgba(29,111,229,.28)';
+        } else {
+          f.style.background = 'rgba(148,163,184,.14)'; f.style.opacity='1';
+          c.style.borderColor = 'rgba(148,163,184,.2)';
+        }
+      } else {
+        // Training cabinet (purple) — active during nighttime
+        if(trnUtil > 0.02){
+          f.style.background = '#8b5cf6'; f.style.opacity='.42';
+          c.style.borderColor = 'rgba(139,92,246,.28)';
+        } else {
+          f.style.background = 'rgba(148,163,184,.14)'; f.style.opacity='1';
+          c.style.borderColor = 'rgba(148,163,184,.2)';
+        }
+      }
+    });
+  }
+
+  // Update new grid (inference day=blue, training night=purple, peak=amber)
+  function updateGridNew(slot){
+    const util    = newD[slot];
+    const day     = isDay(slot);
+    const peak    = isPeak(slot);
+    const nActive = Math.round(util * N_CABS);
+    const nPeak   = peak ? Math.min(2, N_CABS - nActive + 1) : 0;
+    elElast.textContent = peak ? L('⚡ 弹性扩容中') : '';
+    cabsN.forEach(({c, f}, i)=>{
+      let bg, bc;
+      if(i < nActive - nPeak){
+        bg = day ? '#1d6fe5' : '#8b5cf6';
+        bc = day ? 'rgba(29,111,229,.32)' : 'rgba(139,92,246,.32)';
+        f.style.opacity = '.65';
+      } else if(i < nActive){
+        bg = '#f59e0b'; bc = 'rgba(245,158,11,.38)'; f.style.opacity='.80';
+      } else {
+        bg = 'rgba(148,163,184,.1)'; bc = 'rgba(148,163,184,.18)'; f.style.opacity='1';
+      }
+      f.style.background = bg; c.style.borderColor = bc;
+    });
+  }
+
+  // Draw area chart on canvas (segment-by-segment for per-slot coloring)
+  // For isTrad: infD = tradInfD, trnD = tradTrnD → draws stacked blue (inference) + purple (training)
+  // For !isTrad: infD = newD, trnD = null → original single-color rendering
+  function drawChart(canvas, infD, endSlot, isTrad, trnD){
+    const W = canvas.clientWidth; const H = canvas.clientHeight;
+    if(!W || !H) return;
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+
+    // Grid lines
+    ctx.setLineDash([2,3]);
+    ctx.strokeStyle = 'rgba(0,0,0,.07)';
+    ctx.lineWidth = 1;
+    [.25,.50,.75,1.0].forEach(v => {
+      const y = Math.round(H - v*H*0.86 - 6);
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    // Ghost full curve (shows total)
+    const ghostD = trnD ? infD.map((v,i)=>v+trnD[i]) : infD;
+    ctx.beginPath();
+    ghostD.forEach((v,i)=>{ const x=(i/(N-1))*W, y=H-v*H*0.86-6; i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+    ctx.strokeStyle='rgba(0,0,0,.06)'; ctx.lineWidth=1; ctx.stroke();
+
+    if(endSlot < 1) return;
+    const end = Math.min(endSlot, N-1);
+    const baseY = H - 3;
+
+    if(isTrad && trnD){
+      // Stacked: purple (training) at bottom, blue (inference) stacked on top
+      for(let i=1; i<=end; i++){
+        const x0 = ((i-1)/(N-1))*W, x1 = (i/(N-1))*W;
+        const ip = infD[i-1], ic = infD[i];
+        const tp = trnD[i-1], tc = trnD[i];
+        const yTrnP = H - tp*H*0.86 - 6,  yTrnC = H - tc*H*0.86 - 6;
+        const yTotP = H - (ip+tp)*H*0.86 - 6, yTotC = H - (ic+tc)*H*0.86 - 6;
+
+        // Training fill (purple, bottom layer)
+        if(tc > 0.005 || tp > 0.005){
+          ctx.beginPath();
+          ctx.moveTo(x0,baseY); ctx.lineTo(x0,yTrnP); ctx.lineTo(x1,yTrnC); ctx.lineTo(x1,baseY);
+          ctx.closePath(); ctx.fillStyle='rgba(139,92,246,.18)'; ctx.fill();
+          ctx.beginPath(); ctx.moveTo(x0,yTrnP); ctx.lineTo(x1,yTrnC);
+          ctx.strokeStyle='#8b5cf6'; ctx.lineWidth=1.5; ctx.stroke();
+        }
+        // Inference fill (blue, stacked on top of training)
+        if(ic > 0.005 || ip > 0.005){
+          ctx.beginPath();
+          ctx.moveTo(x0,yTrnP); ctx.lineTo(x0,yTotP); ctx.lineTo(x1,yTotC); ctx.lineTo(x1,yTrnC);
+          ctx.closePath(); ctx.fillStyle='rgba(29,111,229,.18)'; ctx.fill();
+          ctx.beginPath(); ctx.moveTo(x0,yTotP); ctx.lineTo(x1,yTotC);
+          ctx.strokeStyle='#1d6fe5'; ctx.lineWidth=1.5; ctx.stroke();
+        }
+      }
+      // Dot at combined top
+      const dotX = (end/(N-1))*W;
+      const dotY = H - (infD[end]+trnD[end])*H*0.86 - 6;
+      ctx.beginPath(); ctx.arc(dotX,dotY,3.5,0,Math.PI*2);
+      ctx.fillStyle = trnD[end] > infD[end] ? '#8b5cf6' : '#1d6fe5'; ctx.fill();
+    } else {
+      // New scheme: original segment-by-segment coloring
+      for(let i=1; i<=end; i++){
+        const x0 = ((i-1)/(N-1))*W, y0 = H - infD[i-1]*H*0.86 - 6;
+        const x1 = (i/(N-1))*W,     y1 = H - infD[i]  *H*0.86 - 6;
+        const day  = isDay(i), peak = isPeak(i);
+        const fillC = peak?'rgba(245,158,11,.22)':(day?'rgba(29,111,229,.20)':'rgba(139,92,246,.22)');
+        const lineC = peak?'#f59e0b':(day?'#1d6fe5':'#8b5cf6');
+        ctx.beginPath();
+        ctx.moveTo(x0,baseY); ctx.lineTo(x0,y0); ctx.lineTo(x1,y1); ctx.lineTo(x1,baseY);
+        ctx.closePath(); ctx.fillStyle=fillC; ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1);
+        ctx.strokeStyle=lineC; ctx.lineWidth=2; ctx.stroke();
+      }
+      const dotX=(end/(N-1))*W, dotY=H-infD[end]*H*0.86-6;
+      ctx.beginPath(); ctx.arc(dotX,dotY,3.5,0,Math.PI*2);
+      const dotDay=isDay(end), dotPk=isPeak(end);
+      ctx.fillStyle=dotPk?'#f59e0b':dotDay?'#1d6fe5':'#8b5cf6'; ctx.fill();
+    }
+
+    // % labels on right
+    ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.font = '9px Arial'; ctx.textAlign = 'right';
+    ['100%','75%','50%','25%'].forEach((lbl,i)=>{
+      ctx.fillText(lbl, W-2, Math.round(H*0.07 + i*(H*0.86*0.333)));
+    });
+  }
+
+  // Running average up to current slot (optional arr2 for stacked sum)
+  function avg(arr, n, arr2){ const d=arr2?arr.map((v,i)=>v+arr2[i]):arr; return Math.round(d.slice(0,n+1).reduce((a,b)=>a+b,0)/(n+1)*100); }
+
+  // Animation loop: one slot per 140ms → 48×140 = ~6.7s per cycle
+  const STEP_MS = 140;
+  let lastT = 0;
+  function loop(t){
+    if(t - lastT >= STEP_MS){
+      lastT = t;
+      const s = _ccSlot;
+      const hh = Math.floor(s/2), mm = (s%2)*30;
+      elTime.textContent = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+      elProg.style.width = `${(s/(N-1))*100}%`;
+      const day = isDay(s), peak = isPeak(s);
+      elPhase.textContent = peak ? L('⚡ 弹性扩容') : (day ? L('☀ 白天推理') : L('🌙 夜间训练'));
+      elPhase.style.color = peak ? '#f59e0b' : (day ? 'var(--ai)' : 'var(--cmp)');
+
+      elUtilT.textContent = avg(tradInfD, s, tradTrnD) + '%';
+      elUtilN.textContent = avg(newD,  s) + '%';
+
+      drawChart(canvT, tradInfD, s, true, tradTrnD);
+      drawChart(canvN, newD,  s, false);
+      updateGridTrad(s);
+      updateGridNew(s);
+
+      _ccSlot = (s + 1) % N;
+    }
+    _ccAnimId = requestAnimationFrame(loop);
+  }
+  if(_ccAnimId) cancelAnimationFrame(_ccAnimId);
+  _ccAnimId = requestAnimationFrame(loop);
+  _ccRefreshLabels = function () {
+    const s = _ccSlot;
+    const day = isDay(s), peak = isPeak(s);
+    if (elPhase) {
+      elPhase.textContent = peak ? L('⚡ 弹性扩容') : (day ? L('☀ 白天推理') : L('🌙 夜间训练'));
+      elPhase.style.color = peak ? '#f59e0b' : (day ? 'var(--ai)' : 'var(--cmp)');
+    }
+    if (elElast) elElast.textContent = peak ? L('⚡ 弹性扩容中') : '';
+  };
+}
+
+// ══ SLO DUAL-QUEUE ANIMATION ══
+function initSLOAnim(){
+  const reqQ   = document.getElementById('req-queue');
+  const instQ  = document.getElementById('inst-queue');
+  const statEl = document.getElementById('slo-status');
+  if(!reqQ || !instQ) return;
+
+  const reqData = [
+    {cls:'slo-l1', label:'🔴 L1 · 实时交易风控'},
+    {cls:'slo-l1', label:'🔴 L1 · 实时欺诈监测'},
+    {cls:'slo-l2', label:'🟠 L2 · 智能投顾建议'},
+    {cls:'slo-l2', label:'🟠 L2 · 客户身份验证'},
+    {cls:'slo-l3', label:'🔵 L3 · 智能营销推荐'},
+    {cls:'slo-l3', label:'🔵 L3 · 投资组合分析'},
+    {cls:'slo-l4', label:'⚪ L4 · 市场趋势预测'},
+    {cls:'slo-l4', label:'⚪ L4 · 合规报告生成'},
+  ];
+
+  const instStates = [
+    [{f:true,l:'🟢 实例 1 · 空闲'},{f:true,l:'🟢 实例 2 · 空闲'},{f:true,l:'🟢 实例 3 · 空闲'},{f:false,l:'🟡 实例 4 · 处理中'},{f:false,l:'🟡 实例 5 · 处理中'},{f:false,l:'🔴 实例 6 · 高负载'}],
+    [{f:true,l:'🟢 实例 2 · 空闲'},{f:true,l:'🟢 实例 5 · 空闲'},{f:false,l:'🟡 实例 1 · 处理中'},{f:false,l:'🟡 实例 3 · 处理中'},{f:false,l:'🟡 实例 4 · 处理中'},{f:false,l:'🔴 实例 6 · 高负载'}],
+    [{f:true,l:'🟢 实例 3 · 空闲'},{f:true,l:'🟢 实例 4 · 空闲'},{f:true,l:'🟢 实例 6 · 空闲'},{f:false,l:'🟡 实例 1 · 处理中'},{f:false,l:'🟡 实例 2 · 处理中'},{f:false,l:'🟡 实例 5 · 处理中'}],
+    [{f:true,l:'🟢 实例 1 · 空闲'},{f:false,l:'🟡 实例 2 · 处理中'},{f:false,l:'🟡 实例 3 · 处理中'},{f:false,l:'🟡 实例 4 · 处理中'},{f:false,l:'🟡 实例 5 · 处理中'},{f:false,l:'🔴 实例 6 · 高负载'}],
+  ];
+
+  let instIdx = 0, reqOffset = 0;
+
+  function renderQueues(){
+    reqQ.innerHTML = '';
+    for(let i=0;i<6;i++){
+      const d = reqData[(reqOffset+i)%reqData.length];
+      const el = document.createElement('div');
+      el.className = 'slo-item '+d.cls;
+      el.textContent = L(d.label);
+      reqQ.appendChild(el);
+    }
+    instQ.innerHTML = '';
+    const state = instStates[instIdx%instStates.length];
+    state.forEach(s=>{
+      const el = document.createElement('div');
+      el.className = 'slo-item '+(s.f?'slo-free':'slo-busy');
+      el.textContent = L(s.l);
+      instQ.appendChild(el);
+    });
+  }
+
+  function doMatch(){
+    const reqItems  = reqQ.querySelectorAll('.slo-item');
+    const instItems = instQ.querySelectorAll('.slo-item');
+    const freeInst  = [...instItems].filter(el=>el.classList.contains('slo-free'));
+    let delay = 0;
+    const pairCount = Math.min(reqItems.length, freeInst.length, 3);
+    for(let i=0;i<pairCount;i++){
+      const ri=reqItems[i], ii=freeInst[i];
+      setTimeout(()=>{
+        ri.classList.add('slo-flash'); ii.classList.add('slo-flash');
+        statEl.textContent = Lp('L{idx}→实例 匹配', { idx: i+1 });
+        setTimeout(()=>{ ri.classList.remove('slo-flash'); ii.classList.remove('slo-flash'); }, 400);
+      }, delay);
+      delay += 380;
+    }
+    setTimeout(()=>{ statEl.textContent = L('✅ SLO 98%+'); }, delay);
+    setTimeout(()=>{ statEl.textContent = L('匹配中'); }, delay+1500);
+  }
+
+  renderQueues();
+  setTimeout(doMatch, 800);
+  _sloRefreshQueues = renderQueues;
+  setInterval(()=>{
+    reqOffset = (reqOffset+2)%reqData.length;
+    instIdx++;
+    renderQueues();
+    setTimeout(doMatch, 400);
+  }, 4200);
+}
+</script>
+
+<script src="js/aidc-locale-bridge.js?v=8"></script>
+<script src="js/i18n.js?v=8"></script>
+<script src="js/i18n-bootstrap.js?v=8"></script>
+<script>
+  AidcI18nBootstrap.bootstrap('ai-dc-deployment-perf', {
+    onReady: function () {
+      document.documentElement.lang = AidcI18n.getLocale() === 'en' ? 'en' : 'zh-CN';
+      bootDeploymentPerfOnce();
+      globalThis.__aidcPageRefreshI18n?.();
+    },
+    onLocaleChange: function () {
+      document.documentElement.lang = AidcI18n.getLocale() === 'en' ? 'en' : 'zh-CN';
+      globalThis.__aidcPageRefreshI18n?.();
+    },
+  });
+  if (window.AidcLocaleBridge) {
+    AidcLocaleBridge.initIframeListener(function (locale) {
+      if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+        AidcI18n.setLocale(locale, { page: 'ai-dc-deployment-perf', common: false, basePath: 'i18n/' });
+      }
+    }, { selfSource: 'ai-dc-deployment-perf' });
+  }
+</script>
+
+</body>
+</html>

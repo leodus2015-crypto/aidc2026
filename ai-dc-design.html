@@ -101,6 +101,17 @@
           >机柜布局（风冷）</button>
           <button
             type="button"
+            id="tab-synergy"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-synergy"
+            data-layout-tab="synergy"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            data-i18n="tabs.synergy"
+          >产品协同</button>
+          <button
+            type="button"
             id="tab-case-a"
             role="tab"
             aria-selected="false"
@@ -182,6 +193,18 @@
         </div>
       </div>
 
+      <div id="panel-synergy" role="tabpanel" aria-labelledby="tab-synergy" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            data-iframe-key="synergy"
+            data-i18n-title="iframe.synergy"
+            title="AI DC 布局 · 产品协同"
+            class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-[#f0f5fc]"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
       <div id="panel-roi" role="tabpanel" aria-labelledby="tab-roi" aria-hidden="true" class="hidden min-w-0 w-full">
         <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
           <iframe
@@ -208,12 +231,12 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=6"></script>
-<script src="js/aidc-locale-bridge.js?v=6"></script>
-  <script src="js/i18n.js?v=6"></script>
-  <script src="js/lang-switch.js?v=6"></script>
-  <script src="js/i18n-bootstrap.js?v=6"></script>
-  <script src="js/ai-dc-design-page.js?v=6"></script>
+    <script src="js/aidc-asset-version.js?v=8"></script>
+<script src="js/aidc-locale-bridge.js?v=8"></script>
+  <script src="js/i18n.js?v=8"></script>
+  <script src="js/lang-switch.js?v=8"></script>
+  <script src="js/i18n-bootstrap.js?v=8"></script>
+  <script src="js/ai-dc-design-page.js?v=8"></script>
   <script>
     AidcI18nBootstrap.bootstrap('ai-dc-design', {
       onReady: function () {

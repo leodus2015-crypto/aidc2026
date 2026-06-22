@@ -9,6 +9,7 @@
     "caseA": "案例A（风冷）",
     "caseB": "案例B（风冷）",
     "plan": "机柜布局（风冷）",
+    "synergy": "产品协同",
     "roi": "Investment ROI"
   },
   "iframe": {
@@ -16,6 +17,7 @@
     "caseA": "AI DC 布局 · 案例A（风冷）",
     "caseB": "AI DC 布局 · 案例B（风冷）",
     "plan": "AI DC 布局 · 机柜布局（风冷）",
+    "synergy": "AI DC 布局 · 产品协同",
     "roi": "AI DC 布局 · Investment ROI"
   }
 }

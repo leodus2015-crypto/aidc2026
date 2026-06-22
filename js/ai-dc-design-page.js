@@ -12,6 +12,7 @@
     caseA: 'datacenter-3d-case-b.html',
     caseB: 'datacenter-3d-v3-2.html',
     plan: 'ai-dc-layout_37.html',
+    synergy: 'ai-dc-deployment-perf.html?embed=1',
     roi: 'aidc-investment-roi.html',
     roiEn: 'aidc-investment-roi.en.html',
   };

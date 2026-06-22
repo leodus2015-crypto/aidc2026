@@ -9,6 +9,7 @@
     "caseA": "Case A (Air-Cooled)",
     "caseB": "Case B (Air-Cooled)",
     "plan": "Cabinet Layout (Air-Cooled)",
+    "synergy": "Product Synergy",
     "roi": "Investment ROI"
   },
   "iframe": {
@@ -16,6 +17,7 @@
     "caseA": "AI DC Layout · Case A (Air-Cooled)",
     "caseB": "AI DC Layout · Case B (Air-Cooled)",
     "plan": "AI DC Layout · Cabinet Layout (Air-Cooled)",
+    "synergy": "AI DC Layout · Product Synergy",
     "roi": "AI DC Layout · Investment ROI"
   }
 }
