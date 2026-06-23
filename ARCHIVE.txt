@@ -1,6 +1,6 @@
 aidc 静态站点归档
-版本：v2026.06.19
-日期：2026-06-19
+版本：v2026.06.22
+日期：2026-06-22
 
 包含
 ────
@@ -17,11 +17,11 @@ aidc 静态站点归档
   ai-dc-four-layer.html       机房布局 · 四层示意（嵌套 iframe）
   ai-dc-floor-detail.html     机房布局 · 单层平面图（嵌套 iframe）
   ai-dc-layout_37.html        Tab「机柜布局（风冷）」
+  ai-dc-deployment-perf.html  Tab「产品协同」（?embed=1 · 部署 & 协同特性）
   datacenter-3d-case-b.html   Tab「案例 A（风冷）」
   datacenter-3d-v3-2.html     Tab「案例 B（风冷）」
   aidc-investment-roi.html    Tab「Investment ROI」（中文）
   aidc-investment-roi.en.html  同上（英文 · USD · 海外云比价）
-  ai-dc-deployment-perf.html   部署 & 协同特性（算存/算云演示）
   js/aidc-investment-roi-page.js  ROI 页共享逻辑
 
 【兼容重定向页（不在主导航，保留旧链接）】
@@ -46,10 +46,10 @@ aidc 静态站点归档
 站点结构
 ────────
   主导航 5 页 + 404。
-  ai-dc-design.html 通过 js/ai-dc-design-page.js 加载上述 7 个子页 iframe；
+  ai-dc-design.html 通过 js/ai-dc-design-page.js 加载上述 8 个子页 iframe；
   ai-dc-room-layout.html 再通过 js/ai-dc-room-layout-page.js 加载四层示意与单层平面。
 
-  Tab 顺序（ai-dc-design）：机房布局 | 机柜布局（风冷）| 案例 A | 案例 B | Investment ROI
+  Tab 顺序（ai-dc-design）：机房布局 | 机柜布局（风冷）| 产品协同 | 案例 A | 案例 B | Investment ROI
   默认 Tab：机房布局（roomLayout）；单层平面图含功能区面积标注（EHU 750 m²、风冷/液冷 820 m²、
   配电功能区 420 m² 标于左侧两块低压配电合计区域）；中间配电区高度为原 70%，上下机房等比加高。
 
