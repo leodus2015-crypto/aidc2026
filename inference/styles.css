@@ -1,0 +1,1347 @@
+:root {
+  --page: #f8fafc;
+  --surface: #ffffff;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --blue: #2563eb;
+  --blue-soft: #dbeafe;
+  --cyan-soft: #e0f2fe;
+  --amber-soft: #fef3c7;
+  --violet-soft: #ede9fe;
+  --emerald-soft: #d1fae5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* 布局与 Agentic 推理页（index.html）对齐；Tailwind 负责页面壳，此处保留教程内容与动画 */
+.inference-doc .card {
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
+  background: var(--surface);
+  box-shadow: 0 20px 25px -5px rgba(226, 232, 240, 0.7), 0 8px 10px -6px rgba(226, 232, 240, 0.5);
+  padding: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .inference-doc .card {
+    padding: 1.5rem;
+  }
+}
+
+.inference-doc .card h2,
+.inference-doc .card h3,
+.inference-doc .section-title {
+  margin: 0;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.inference-doc .card p,
+.inference-doc .card li {
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.inference-doc .content-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  padding-bottom: 2rem;
+}
+
+.inference-doc .two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.inference-doc .step-list {
+  counter-reset: step;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.inference-doc .step-list li {
+  position: relative;
+  padding-left: 3rem;
+  margin: 1rem 0;
+}
+
+.inference-doc .step-list li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--blue);
+  color: white;
+  font-weight: 800;
+  font-size: 0.875rem;
+}
+
+.inference-doc .callout {
+  border-left: 4px solid var(--blue);
+  background: rgba(219, 234, 254, 0.55);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  color: #1e3a8a;
+  line-height: 1.75;
+}
+
+.inference-doc .diagram {
+  width: 100%;
+  min-height: 20rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+
+.inference-doc .pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.inference-doc .pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  padding: 0.45rem 0.8rem;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.inference-doc .metric {
+  border-radius: 1.25rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 1rem;
+}
+
+.inference-doc .metric strong {
+  display: block;
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+
+.inference-doc .footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--line);
+  margin-top: 2rem;
+}
+
+.inference-doc .footer-nav a {
+  color: var(--blue);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.inference-doc .footer-nav a:hover {
+  color: #1d4ed8;
+}
+
+.inference-doc .go {
+  color: var(--blue);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.inference-doc .go:hover {
+  color: #1d4ed8;
+}
+
+.inference-doc .grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.inference-doc .waterfall-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-bottom: 2rem;
+}
+
+.waterfall-stage {
+  position: relative;
+}
+
+.waterfall-stage + .waterfall-stage::before {
+  content: "";
+  display: block;
+  width: 2px;
+  height: 2.5rem;
+  margin: 0 auto;
+  background: linear-gradient(180deg, var(--blue), rgba(37, 99, 235, 0.15));
+}
+
+.stage-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.stage-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.65rem;
+  border-radius: 999px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.stage-header h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  letter-spacing: -0.03em;
+}
+
+.stage-summary {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 52rem;
+}
+
+.flow-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.flow-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.flow-legend i {
+  display: inline-block;
+  width: 1.25rem;
+  height: 0.2rem;
+  border-radius: 999px;
+}
+
+.flow-legend .leg-active { background: #2563eb; }
+.flow-legend .leg-kv { background: #7c3aed; }
+.flow-legend .leg-ssd { background: #d97706; }
+.flow-legend .leg-net { background: #059669; }
+
+.server-diagram {
+  min-height: 28rem;
+}
+
+.server-diagram .srv-core {
+  font: 800 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill: #0f172a;
+}
+
+.server-diagram .srv-desc {
+  font: 600 9px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.server-diagram .srv-hbm-fw {
+  font: 600 7px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill: #15803d;
+}
+
+.server-diagram .srv-hbm-wt {
+  font: 600 10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill: #15803d;
+}
+
+.server-diagram .srv-brace {
+  fill: none;
+  stroke: #0f172a;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.server-diagram .srv-title {
+  font: 800 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill: #0f172a;
+}
+
+.server-diagram .srv-sub {
+  font: 600 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill: #64748b;
+}
+
+/* Stage 1 · 容器镜像 SSD → HBM */
+.stage-boot .s1-fw-fill {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.stage-boot.s1-anim-done .s1-fw-fill {
+  transform: scaleX(1);
+}
+
+.stage-boot.s1-anim-running .s1-fw-fill {
+  animation: s1-fw-fill 0.45s ease-out forwards;
+  animation-delay: calc(2.4s + var(--s1-card, 0) * 0.35s);
+}
+
+.stage-boot .s1-fw-outline {
+  pointer-events: none;
+}
+
+.stage-boot .s1-fw-fly-main,
+.stage-boot .s1-fw-fly-card {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage-boot.s1-anim-running .s1-fw-fly-main {
+  animation: s1-fw-fly-main 2.4s ease-in-out forwards;
+}
+
+.stage-boot.s1-anim-running .s1-fw-fly-card {
+  animation-duration: 0.45s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  animation-delay: calc(2.4s + var(--s1-card, 0) * 0.35s);
+}
+
+.stage-boot.s1-anim-running .s1-fw-fly-card-0 { animation-name: s1-fw-fly-card-0; }
+.stage-boot.s1-anim-running .s1-fw-fly-card-1 { animation-name: s1-fw-fly-card-1; }
+.stage-boot.s1-anim-running .s1-fw-fly-card-2 { animation-name: s1-fw-fly-card-2; }
+.stage-boot.s1-anim-running .s1-fw-fly-card-3 { animation-name: s1-fw-fly-card-3; }
+.stage-boot.s1-anim-running .s1-fw-fly-card-4 { animation-name: s1-fw-fly-card-4; }
+.stage-boot.s1-anim-running .s1-fw-fly-card-5 { animation-name: s1-fw-fly-card-5; }
+.stage-boot.s1-anim-running .s1-fw-fly-card-6 { animation-name: s1-fw-fly-card-6; }
+.stage-boot.s1-anim-running .s1-fw-fly-card-7 { animation-name: s1-fw-fly-card-7; }
+
+.stage-boot .s1-fw-route {
+  opacity: 0;
+}
+
+.stage-boot.s1-anim-running .s1-fw-route {
+  animation: s1-fw-route-show 2.4s ease-in-out forwards;
+}
+
+@keyframes s1-fw-fly-main {
+  0% { transform: translate(153px, 254px); opacity: 1; }
+  28% { transform: translate(170px, 178px); opacity: 1; }
+  52% { transform: translate(170px, 120px); opacity: 1; }
+  88% { transform: translate(280px, 178px); opacity: 1; }
+  100% { transform: translate(280px, 178px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-0 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(380px, 237.5px); opacity: 1; }
+  100% { transform: translate(380px, 237.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-1 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(495px, 237.5px); opacity: 1; }
+  100% { transform: translate(495px, 237.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-2 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(610px, 237.5px); opacity: 1; }
+  100% { transform: translate(610px, 237.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-3 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(725px, 237.5px); opacity: 1; }
+  100% { transform: translate(725px, 237.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-4 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(380px, 408.5px); opacity: 1; }
+  100% { transform: translate(380px, 408.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-5 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(495px, 408.5px); opacity: 1; }
+  100% { transform: translate(495px, 408.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-6 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(610px, 408.5px); opacity: 1; }
+  100% { transform: translate(610px, 408.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fly-card-7 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(725px, 408.5px); opacity: 1; }
+  100% { transform: translate(725px, 408.5px); opacity: 0; }
+}
+
+@keyframes s1-fw-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes s1-fw-route-show {
+  0% { opacity: 0; }
+  8% { opacity: 0.55; }
+  92% { opacity: 0.55; }
+  100% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-boot.s1-anim-running .s1-fw-fly-main,
+  .stage-boot.s1-anim-running .s1-fw-fly-card,
+  .stage-boot.s1-anim-running .s1-fw-route {
+    animation: none;
+  }
+
+  .stage-boot .s1-fw-fill,
+  .stage-boot.s1-anim-done .s1-fw-fill {
+    transform: scaleX(1);
+  }
+
+  .stage-boot .s1-fw-route {
+    opacity: 0.35;
+  }
+}
+
+/* Stage 2 · 模型权重 SSD → HBM */
+.stage-load .s2-wt-fill {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.stage-load.s2-anim-done .s2-wt-fill {
+  transform: scaleX(1);
+}
+
+.stage-load.s2-anim-running .s2-wt-fill {
+  animation: s2-wt-fill 0.45s ease-out forwards;
+  animation-delay: calc(2.4s + var(--s2-card, 0) * 0.35s);
+}
+
+.stage-load .s2-wt-outline {
+  pointer-events: none;
+}
+
+.stage-load .s2-wt-fly-main,
+.stage-load .s2-wt-fly-card {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage-load.s2-anim-running .s2-wt-fly-main {
+  animation: s2-wt-fly-main 2.4s ease-in-out forwards;
+}
+
+.stage-load.s2-anim-running .s2-wt-fly-card {
+  animation-duration: 0.45s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  animation-delay: calc(2.4s + var(--s2-card, 0) * 0.35s);
+}
+
+.stage-load.s2-anim-running .s2-wt-fly-card-0 { animation-name: s2-wt-fly-card-0; }
+.stage-load.s2-anim-running .s2-wt-fly-card-1 { animation-name: s2-wt-fly-card-1; }
+.stage-load.s2-anim-running .s2-wt-fly-card-2 { animation-name: s2-wt-fly-card-2; }
+.stage-load.s2-anim-running .s2-wt-fly-card-3 { animation-name: s2-wt-fly-card-3; }
+.stage-load.s2-anim-running .s2-wt-fly-card-4 { animation-name: s2-wt-fly-card-4; }
+.stage-load.s2-anim-running .s2-wt-fly-card-5 { animation-name: s2-wt-fly-card-5; }
+.stage-load.s2-anim-running .s2-wt-fly-card-6 { animation-name: s2-wt-fly-card-6; }
+.stage-load.s2-anim-running .s2-wt-fly-card-7 { animation-name: s2-wt-fly-card-7; }
+
+.stage-load .s2-wt-route {
+  opacity: 0;
+}
+
+.stage-load.s2-anim-running .s2-wt-route {
+  animation: s2-wt-route-show 2.4s ease-in-out forwards;
+}
+
+@keyframes s2-wt-fly-main {
+  0% { transform: translate(202px, 254px); opacity: 1; }
+  28% { transform: translate(170px, 178px); opacity: 1; }
+  52% { transform: translate(170px, 120px); opacity: 1; }
+  88% { transform: translate(280px, 178px); opacity: 1; }
+  100% { transform: translate(280px, 178px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-0 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(380px, 229px); opacity: 1; }
+  100% { transform: translate(380px, 229px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-1 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(495px, 229px); opacity: 1; }
+  100% { transform: translate(495px, 229px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-2 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(610px, 229px); opacity: 1; }
+  100% { transform: translate(610px, 229px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-3 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(725px, 229px); opacity: 1; }
+  100% { transform: translate(725px, 229px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-4 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(380px, 400px); opacity: 1; }
+  100% { transform: translate(380px, 400px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-5 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(495px, 400px); opacity: 1; }
+  100% { transform: translate(495px, 400px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-6 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(610px, 400px); opacity: 1; }
+  100% { transform: translate(610px, 400px); opacity: 0; }
+}
+
+@keyframes s2-wt-fly-card-7 {
+  0% { transform: translate(280px, 178px); opacity: 0; }
+  12% { opacity: 1; }
+  88% { transform: translate(725px, 400px); opacity: 1; }
+  100% { transform: translate(725px, 400px); opacity: 0; }
+}
+
+@keyframes s2-wt-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes s2-wt-route-show {
+  0% { opacity: 0; }
+  8% { opacity: 0.55; }
+  92% { opacity: 0.55; }
+  100% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-load.s2-anim-running .s2-wt-fly-main,
+  .stage-load.s2-anim-running .s2-wt-fly-card,
+  .stage-load.s2-anim-running .s2-wt-route {
+    animation: none;
+  }
+
+  .stage-load .s2-wt-fill,
+  .stage-load.s2-anim-done .s2-wt-fill {
+    transform: scaleX(1);
+  }
+
+  .stage-load .s2-wt-route {
+    opacity: 0.35;
+  }
+}
+
+/* Stage 3 · Question → Token ID 循环 */
+.stage-question .s3-question-text {
+  font: 600 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill: #047857;
+}
+
+.stage-question .s3-token-text {
+  font: 700 9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  fill: #1d4ed8;
+}
+
+.stage-question .s3-question-fly,
+.stage-question .s3-token-fly {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage-question.s3-anim-running .s3-question-fly {
+  animation: s3-question-fly 12s ease-in-out infinite;
+}
+
+.stage-question.s3-anim-running .s3-token-fly-0 { animation: s3-token-fly-0 12s ease-in-out infinite; }
+.stage-question.s3-anim-running .s3-token-fly-1 { animation: s3-token-fly-1 12s ease-in-out infinite; }
+.stage-question.s3-anim-running .s3-token-fly-2 { animation: s3-token-fly-2 12s ease-in-out infinite; }
+.stage-question.s3-anim-running .s3-token-fly-3 { animation: s3-token-fly-3 12s ease-in-out infinite; }
+.stage-question.s3-anim-running .s3-token-fly-4 { animation: s3-token-fly-4 12s ease-in-out infinite; }
+.stage-question.s3-anim-running .s3-token-fly-5 { animation: s3-token-fly-5 12s ease-in-out infinite; }
+.stage-question.s3-anim-running .s3-token-fly-6 { animation: s3-token-fly-6 12s ease-in-out infinite; }
+
+@keyframes s3-question-fly {
+  0% { transform: translate(20px, 196px); opacity: 0; }
+  4% { transform: translate(20px, 196px); opacity: 1; }
+  18% { transform: translate(170px, 120px); opacity: 1; }
+  24% { transform: translate(170px, 120px); opacity: 1; }
+  28% { transform: translate(170px, 120px); opacity: 0; }
+  100% { transform: translate(170px, 120px); opacity: 0; }
+}
+
+@keyframes s3-token-fly-0 {
+  0%, 26% { transform: translate(170px, 120px); opacity: 0; }
+  27% { transform: translate(170px, 120px); opacity: 1; }
+  36% { transform: translate(170px, 168px); opacity: 1; }
+  48% { transform: translate(306px, 192px); opacity: 1; }
+  54% { transform: translate(306px, 192px); opacity: 0; }
+  100% { transform: translate(306px, 192px); opacity: 0; }
+}
+
+@keyframes s3-token-fly-1 {
+  0%, 30% { transform: translate(170px, 120px); opacity: 0; }
+  31% { transform: translate(170px, 120px); opacity: 1; }
+  40% { transform: translate(170px, 168px); opacity: 1; }
+  52% { transform: translate(306px, 192px); opacity: 1; }
+  58% { transform: translate(306px, 192px); opacity: 0; }
+  100% { transform: translate(306px, 192px); opacity: 0; }
+}
+
+@keyframes s3-token-fly-2 {
+  0%, 34% { transform: translate(170px, 120px); opacity: 0; }
+  35% { transform: translate(170px, 120px); opacity: 1; }
+  44% { transform: translate(170px, 168px); opacity: 1; }
+  56% { transform: translate(306px, 192px); opacity: 1; }
+  62% { transform: translate(306px, 192px); opacity: 0; }
+  100% { transform: translate(306px, 192px); opacity: 0; }
+}
+
+@keyframes s3-token-fly-3 {
+  0%, 38% { transform: translate(170px, 120px); opacity: 0; }
+  39% { transform: translate(170px, 120px); opacity: 1; }
+  48% { transform: translate(170px, 168px); opacity: 1; }
+  60% { transform: translate(306px, 192px); opacity: 1; }
+  66% { transform: translate(306px, 192px); opacity: 0; }
+  100% { transform: translate(306px, 192px); opacity: 0; }
+}
+
+@keyframes s3-token-fly-4 {
+  0%, 42% { transform: translate(170px, 120px); opacity: 0; }
+  43% { transform: translate(170px, 120px); opacity: 1; }
+  52% { transform: translate(170px, 168px); opacity: 1; }
+  64% { transform: translate(306px, 192px); opacity: 1; }
+  70% { transform: translate(306px, 192px); opacity: 0; }
+  100% { transform: translate(306px, 192px); opacity: 0; }
+}
+
+@keyframes s3-token-fly-5 {
+  0%, 46% { transform: translate(170px, 120px); opacity: 0; }
+  47% { transform: translate(170px, 120px); opacity: 1; }
+  56% { transform: translate(170px, 168px); opacity: 1; }
+  68% { transform: translate(306px, 192px); opacity: 1; }
+  74% { transform: translate(306px, 192px); opacity: 0; }
+  100% { transform: translate(306px, 192px); opacity: 0; }
+}
+
+@keyframes s3-token-fly-6 {
+  0%, 50% { transform: translate(170px, 120px); opacity: 0; }
+  51% { transform: translate(170px, 120px); opacity: 1; }
+  60% { transform: translate(170px, 168px); opacity: 1; }
+  72% { transform: translate(306px, 192px); opacity: 1; }
+  78% { transform: translate(306px, 192px); opacity: 0; }
+  100% { transform: translate(306px, 192px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-question.s3-anim-running .s3-question-fly,
+  .stage-question.s3-anim-running .s3-token-fly {
+    animation: none;
+  }
+}
+
+/* Stage 4 · Prefill：模型权重 HBM→NPU，再 KV Cache */
+.stage-prefill .s4-wt-fill {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+}
+
+.stage-prefill.s4-wt-done .s4-wt-fill,
+.stage-prefill.s4-anim-done .s4-wt-fill {
+  transform: scaleY(1);
+}
+
+.stage-prefill .s4-wt-outline {
+  pointer-events: none;
+}
+
+.stage-prefill .s4-wt-fly {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage-prefill.s4-wt-running .s4-wt-fly {
+  animation: s4-wt-fly 0.55s ease-in-out forwards;
+  animation-delay: calc(var(--s4-card, 0) * 0.35s);
+}
+
+.stage-prefill.s4-wt-running .s4-wt-fill {
+  animation: s4-wt-fill 0.4s ease-out forwards;
+  animation-delay: calc(0.45s + var(--s4-card, 0) * 0.35s);
+}
+
+@keyframes s4-wt-fly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 1; }
+  88% { transform: translate(0, -72px); opacity: 1; }
+  100% { transform: translate(0, -72px); opacity: 0; }
+}
+
+@keyframes s4-wt-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.stage-prefill .s4-kv-source-outline {
+  pointer-events: none;
+}
+
+.stage-prefill .s4-kv-source-fill {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+}
+
+.stage-prefill.s4-kv-source-done .s4-kv-source-fill,
+.stage-prefill.s4-anim-done .s4-kv-source-fill {
+  transform: scaleY(1);
+}
+
+.stage-prefill.s4-kv-prime-running .s4-kv-source-fill {
+  animation: s4-kv-source-fill 0.45s ease-out forwards;
+  animation-delay: calc(var(--s4-card, 0) * 0.12s);
+}
+
+@keyframes s4-kv-source-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.stage-prefill .s4-kv-cache-fill {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+}
+
+.stage-prefill.s4-anim-done .s4-kv-cache-fill {
+  transform: scaleY(1);
+}
+
+.stage-prefill.s4-kv-running .s4-kv-cache-fill {
+  animation: s4-kv-fill 5s ease-in-out forwards;
+  animation-delay: calc(var(--s4-card, 0) * 0.15s);
+}
+
+.stage-prefill .s4-kv-cache-outline {
+  pointer-events: none;
+}
+
+.stage-prefill .s4-kv-fly {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.stage-prefill.s4-kv-running .s4-kv-fly {
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--s4-card, 0) * 0.15s);
+}
+
+.stage-prefill.s4-kv-running .s4-kv-fly-1 { animation-name: s4-kv-fly-1; }
+.stage-prefill.s4-kv-running .s4-kv-fly-2 { animation-name: s4-kv-fly-2; }
+.stage-prefill.s4-kv-running .s4-kv-fly-3 { animation-name: s4-kv-fly-3; }
+.stage-prefill.s4-kv-running .s4-kv-fly-4 { animation-name: s4-kv-fly-4; }
+
+.waterfall-stage .stage-replay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.08);
+}
+
+.waterfall-stage .stage-replay-btn svg {
+  display: block;
+}
+
+.waterfall-stage .stage-replay-btn:hover:not(:disabled) {
+  border-color: #16a34a;
+  color: #15803d;
+  background: #f0fdf4;
+}
+
+.waterfall-stage .stage-replay-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@keyframes s4-kv-fly-1 {
+  0%, 4% { transform: translate(0, 0); opacity: 0; }
+  5% { transform: translate(0, 0); opacity: 1; }
+  18% { transform: translate(0, 56px); opacity: 1; }
+  22%, 100% { transform: translate(0, 56px); opacity: 0; }
+}
+
+@keyframes s4-kv-fly-2 {
+  0%, 29% { transform: translate(0, 0); opacity: 0; }
+  30% { transform: translate(0, 0); opacity: 1; }
+  43% { transform: translate(0, 56px); opacity: 1; }
+  47%, 100% { transform: translate(0, 56px); opacity: 0; }
+}
+
+@keyframes s4-kv-fly-3 {
+  0%, 54% { transform: translate(0, 0); opacity: 0; }
+  55% { transform: translate(0, 0); opacity: 1; }
+  68% { transform: translate(0, 56px); opacity: 1; }
+  72%, 100% { transform: translate(0, 56px); opacity: 0; }
+}
+
+@keyframes s4-kv-fly-4 {
+  0%, 79% { transform: translate(0, 0); opacity: 0; }
+  80% { transform: translate(0, 0); opacity: 1; }
+  93% { transform: translate(0, 56px); opacity: 1; }
+  97%, 100% { transform: translate(0, 56px); opacity: 0; }
+}
+
+@keyframes s4-kv-fill {
+  0%, 21% { transform: scaleY(0); }
+  22%, 46% { transform: scaleY(0.25); }
+  47%, 71% { transform: scaleY(0.5); }
+  72%, 96% { transform: scaleY(0.75); }
+  97%, 100% { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-prefill.s4-wt-running .s4-wt-fly {
+    animation: none;
+  }
+
+  .stage-prefill .s4-wt-fill,
+  .stage-prefill.s4-wt-done .s4-wt-fill,
+  .stage-prefill.s4-anim-done .s4-wt-fill {
+    transform: scaleY(1);
+  }
+
+  .stage-prefill .s4-kv-fly,
+  .stage-prefill.s4-kv-prime-running .s4-kv-source-fill {
+    animation: none;
+  }
+
+  .stage-prefill .s4-kv-source-fill,
+  .stage-prefill.s4-kv-source-done .s4-kv-source-fill,
+  .stage-prefill.s4-anim-done .s4-kv-source-fill {
+    transform: scaleY(1);
+  }
+
+  .stage-prefill .s4-kv-cache-fill,
+  .stage-prefill.s4-anim-done .s4-kv-cache-fill {
+    transform: scaleY(1);
+  }
+}
+
+/* Stage 5 · KV Cache Prefill → Decode */
+.stage-decode .s5-kv-source-fill {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(1);
+}
+
+.stage-decode.s5-anim-done .s5-kv-source-fill {
+  transform: scaleY(0);
+}
+
+.stage-decode .s5-kv-source-outline {
+  pointer-events: none;
+}
+
+.stage-decode.s5-transfer-running .s5-kv-source-fill {
+  animation: s5-kv-source-clear 0.45s ease-out forwards;
+  animation-delay: calc(var(--s5-card, 0) * 0.35s);
+}
+
+@keyframes s5-kv-source-clear {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0); }
+}
+
+.stage-decode .s5-kv-fill {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+}
+
+.stage-decode.s5-anim-done .s5-kv-fill {
+  transform: scaleY(1);
+}
+
+.stage-decode .s5-kv-outline {
+  pointer-events: none;
+}
+
+.stage-decode .s5-kv-fly {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage-decode.s5-transfer-running .s5-kv-fly {
+  animation: s5-kv-fly 0.6s ease-in-out forwards;
+  animation-delay: calc(var(--s5-card, 0) * 0.35s);
+}
+
+.stage-decode.s5-transfer-running .s5-kv-fill {
+  animation: s5-kv-decode-fill 0.45s ease-out forwards;
+  animation-delay: calc(0.45s + var(--s5-card, 0) * 0.35s);
+}
+
+.stage-decode .s5-kv-route {
+  opacity: 0;
+}
+
+.stage-decode.s5-transfer-running .s5-kv-route {
+  animation: s5-kv-route-show 2.2s ease-in-out forwards;
+}
+
+.stage-decode .s5-kv-compute-fill {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+}
+
+.stage-decode.s5-kv-compute-done .s5-kv-compute-fill,
+.stage-decode.s5-anim-done .s5-kv-compute-fill {
+  transform: scaleY(1);
+}
+
+.stage-decode .s5-kv-compute-outline {
+  pointer-events: none;
+}
+
+.stage-decode.s5-compute-prime-running .s5-kv-compute-fill {
+  animation: s5-kv-compute-fill 0.45s ease-out forwards;
+  animation-delay: calc(var(--s5-card, 0) * 0.12s);
+}
+
+.stage-decode .s5-kv-compute-fly {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.stage-decode.s5-compute-running .s5-kv-compute-fly {
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--s5-card, 0) * 0.15s);
+}
+
+.stage-decode.s5-compute-running .s5-kv-compute-fly-1 { animation-name: s5-kv-compute-fly-1; }
+.stage-decode.s5-compute-running .s5-kv-compute-fly-2 { animation-name: s5-kv-compute-fly-2; }
+.stage-decode.s5-compute-running .s5-kv-compute-fly-3 { animation-name: s5-kv-compute-fly-3; }
+.stage-decode.s5-compute-running .s5-kv-compute-fly-4 { animation-name: s5-kv-compute-fly-4; }
+
+.stage-decode.s5-compute-running .s5-kv-compute {
+  animation: s5-kv-compute-pulse 5s ease-in-out 1 forwards;
+  animation-delay: calc(var(--s5-card, 0) * 0.15s);
+}
+
+@keyframes s5-kv-fly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 1; }
+  88% { transform: translate(0, 171px); opacity: 1; }
+  100% { transform: translate(0, 171px); opacity: 0; }
+}
+
+@keyframes s5-kv-decode-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes s5-kv-compute-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes s5-kv-compute-fly-1 {
+  0%, 4% { transform: translate(0, 0); opacity: 0; }
+  5% { transform: translate(0, 0); opacity: 1; }
+  18% { transform: translate(0, -56px); opacity: 1; }
+  22%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s5-kv-compute-fly-2 {
+  0%, 29% { transform: translate(0, 0); opacity: 0; }
+  30% { transform: translate(0, 0); opacity: 1; }
+  43% { transform: translate(0, -56px); opacity: 1; }
+  47%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s5-kv-compute-fly-3 {
+  0%, 54% { transform: translate(0, 0); opacity: 0; }
+  55% { transform: translate(0, 0); opacity: 1; }
+  68% { transform: translate(0, -56px); opacity: 1; }
+  72%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s5-kv-compute-fly-4 {
+  0%, 79% { transform: translate(0, 0); opacity: 0; }
+  80% { transform: translate(0, 0); opacity: 1; }
+  93% { transform: translate(0, -56px); opacity: 1; }
+  97%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s5-kv-compute-pulse {
+  0%, 100% { opacity: 1; }
+  5%, 30%, 55%, 80% { opacity: 0.55; }
+}
+
+@keyframes s5-kv-route-show {
+  0% { opacity: 0; }
+  8% { opacity: 0.55; }
+  92% { opacity: 0.55; }
+  100% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-decode.s5-transfer-running .s5-kv-fly,
+  .stage-decode.s5-transfer-running .s5-kv-route,
+  .stage-decode.s5-transfer-running .s5-kv-source-fill,
+  .stage-decode.s5-compute-prime-running .s5-kv-compute-fill,
+  .stage-decode.s5-compute-running .s5-kv-compute-fly,
+  .stage-decode.s5-compute-running .s5-kv-compute {
+    animation: none;
+  }
+
+  .stage-decode .s5-kv-source-fill,
+  .stage-decode.s5-anim-done .s5-kv-source-fill {
+    transform: scaleY(0);
+  }
+
+  .stage-decode .s5-kv-compute-fill,
+  .stage-decode.s5-kv-compute-done .s5-kv-compute-fill,
+  .stage-decode.s5-anim-done .s5-kv-compute-fill {
+    transform: scaleY(1);
+  }
+
+  .stage-decode .s5-kv-fill,
+  .stage-decode.s5-anim-done .s5-kv-fill {
+    transform: scaleY(1);
+  }
+
+  .stage-decode .s5-kv-route {
+    opacity: 0.35;
+  }
+}
+
+/* Stage 6 · Decode KV计算（与 Token 输出并行） */
+.stage-answer .s6-kv-compute-fill {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+}
+
+.stage-answer.s6-anim-done .s6-kv-compute-fill {
+  transform: scaleY(1);
+}
+
+.stage-answer.s6-anim-running .s6-kv-compute-fill {
+  animation: s6-kv-compute-fill 0.45s ease-out forwards;
+  animation-delay: calc(var(--s6-card, 0) * 0.12s);
+}
+
+.stage-answer .s6-kv-compute-outline {
+  pointer-events: none;
+}
+
+.stage-answer .s6-kv-compute-fly {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.stage-answer.s6-anim-running .s6-kv-compute-fly {
+  animation-duration: 15s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--s6-card, 0) * 0.15s);
+}
+
+.stage-answer.s6-anim-running .s6-kv-compute-fly-1 { animation-name: s6-kv-compute-fly-1; }
+.stage-answer.s6-anim-running .s6-kv-compute-fly-2 { animation-name: s6-kv-compute-fly-2; }
+.stage-answer.s6-anim-running .s6-kv-compute-fly-3 { animation-name: s6-kv-compute-fly-3; }
+.stage-answer.s6-anim-running .s6-kv-compute-fly-4 { animation-name: s6-kv-compute-fly-4; }
+
+.stage-answer.s6-anim-running .s6-kv-compute {
+  animation: s6-kv-compute-pulse 15s ease-in-out infinite;
+  animation-delay: calc(var(--s6-card, 0) * 0.15s);
+}
+
+@keyframes s6-kv-compute-fill {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes s6-kv-compute-fly-1 {
+  0%, 1.5% { transform: translate(0, 0); opacity: 0; }
+  2% { transform: translate(0, 0); opacity: 1; }
+  8% { transform: translate(0, -56px); opacity: 1; }
+  9.5%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s6-kv-compute-fly-2 {
+  0%, 15.5% { transform: translate(0, 0); opacity: 0; }
+  16% { transform: translate(0, 0); opacity: 1; }
+  22% { transform: translate(0, -56px); opacity: 1; }
+  23.5%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s6-kv-compute-fly-3 {
+  0%, 29.5% { transform: translate(0, 0); opacity: 0; }
+  30% { transform: translate(0, 0); opacity: 1; }
+  36% { transform: translate(0, -56px); opacity: 1; }
+  37.5%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s6-kv-compute-fly-4 {
+  0%, 43.5% { transform: translate(0, 0); opacity: 0; }
+  44% { transform: translate(0, 0); opacity: 1; }
+  50% { transform: translate(0, -56px); opacity: 1; }
+  51.5%, 100% { transform: translate(0, -56px); opacity: 0; }
+}
+
+@keyframes s6-kv-compute-pulse {
+  0%, 100% { opacity: 1; }
+  2%, 16%, 30%, 44% { opacity: 0.55; }
+}
+
+/* Stage 6 · Token ID → CPU → Answer 输出 */
+.stage-answer .s6-token-text {
+  font: 700 9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  fill: #1d4ed8;
+}
+
+.stage-answer .s6-answer-text {
+  font: 600 8px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  fill: #047857;
+}
+
+.stage-answer .s6-token-in,
+.stage-answer .s6-answer-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stage-answer.s6-anim-running .s6-token-in-0 { animation: s6-token-in-0 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-token-in-1 { animation: s6-token-in-1 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-token-in-2 { animation: s6-token-in-2 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-token-in-3 { animation: s6-token-in-3 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-token-in-4 { animation: s6-token-in-4 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-token-in-5 { animation: s6-token-in-5 15s ease-in-out infinite; }
+
+.stage-answer.s6-anim-running .s6-answer-out-0 { animation: s6-answer-out-0 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-answer-out-1 { animation: s6-answer-out-1 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-answer-out-2 { animation: s6-answer-out-2 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-answer-out-3 { animation: s6-answer-out-3 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-answer-out-4 { animation: s6-answer-out-4 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-answer-out-5 { animation: s6-answer-out-5 15s ease-in-out infinite; }
+
+@keyframes s6-token-in-0 {
+  0%, 1% { transform: translate(306px, 192px); opacity: 0; }
+  2% { transform: translate(306px, 192px); opacity: 1; }
+  10% { transform: translate(170px, 120px); opacity: 1; }
+  12%, 100% { transform: translate(170px, 120px); opacity: 0; }
+}
+
+@keyframes s6-token-in-1 {
+  0%, 15% { transform: translate(306px, 192px); opacity: 0; }
+  16% { transform: translate(306px, 192px); opacity: 1; }
+  24% { transform: translate(170px, 120px); opacity: 1; }
+  26%, 100% { transform: translate(170px, 120px); opacity: 0; }
+}
+
+@keyframes s6-token-in-2 {
+  0%, 29% { transform: translate(306px, 192px); opacity: 0; }
+  30% { transform: translate(306px, 192px); opacity: 1; }
+  38% { transform: translate(170px, 120px); opacity: 1; }
+  40%, 100% { transform: translate(170px, 120px); opacity: 0; }
+}
+
+@keyframes s6-token-in-3 {
+  0%, 43% { transform: translate(306px, 192px); opacity: 0; }
+  44% { transform: translate(306px, 192px); opacity: 1; }
+  52% { transform: translate(170px, 120px); opacity: 1; }
+  54%, 100% { transform: translate(170px, 120px); opacity: 0; }
+}
+
+@keyframes s6-token-in-4 {
+  0%, 57% { transform: translate(306px, 192px); opacity: 0; }
+  58% { transform: translate(306px, 192px); opacity: 1; }
+  66% { transform: translate(170px, 120px); opacity: 1; }
+  68%, 100% { transform: translate(170px, 120px); opacity: 0; }
+}
+
+@keyframes s6-token-in-5 {
+  0%, 71% { transform: translate(306px, 192px); opacity: 0; }
+  72% { transform: translate(306px, 192px); opacity: 1; }
+  80% { transform: translate(170px, 120px); opacity: 1; }
+  82%, 100% { transform: translate(170px, 120px); opacity: 0; }
+}
+
+@keyframes s6-answer-out-0 {
+  0%, 10% { transform: translate(170px, 120px); opacity: 0; }
+  11% { transform: translate(170px, 120px); opacity: 1; }
+  15% { transform: translate(170px, 168px); opacity: 1; }
+  22% { transform: translate(20px, 196px); opacity: 1; }
+  24%, 100% { transform: translate(20px, 196px); opacity: 0; }
+}
+
+@keyframes s6-answer-out-1 {
+  0%, 24% { transform: translate(170px, 120px); opacity: 0; }
+  25% { transform: translate(170px, 120px); opacity: 1; }
+  29% { transform: translate(170px, 168px); opacity: 1; }
+  36% { transform: translate(20px, 196px); opacity: 1; }
+  38%, 100% { transform: translate(20px, 196px); opacity: 0; }
+}
+
+@keyframes s6-answer-out-2 {
+  0%, 38% { transform: translate(170px, 120px); opacity: 0; }
+  39% { transform: translate(170px, 120px); opacity: 1; }
+  43% { transform: translate(170px, 168px); opacity: 1; }
+  50% { transform: translate(20px, 196px); opacity: 1; }
+  52%, 100% { transform: translate(20px, 196px); opacity: 0; }
+}
+
+@keyframes s6-answer-out-3 {
+  0%, 52% { transform: translate(170px, 120px); opacity: 0; }
+  53% { transform: translate(170px, 120px); opacity: 1; }
+  57% { transform: translate(170px, 168px); opacity: 1; }
+  64% { transform: translate(20px, 196px); opacity: 1; }
+  66%, 100% { transform: translate(20px, 196px); opacity: 0; }
+}
+
+@keyframes s6-answer-out-4 {
+  0%, 66% { transform: translate(170px, 120px); opacity: 0; }
+  67% { transform: translate(170px, 120px); opacity: 1; }
+  71% { transform: translate(170px, 168px); opacity: 1; }
+  78% { transform: translate(20px, 196px); opacity: 1; }
+  80%, 100% { transform: translate(20px, 196px); opacity: 0; }
+}
+
+@keyframes s6-answer-out-5 {
+  0%, 80% { transform: translate(170px, 120px); opacity: 0; }
+  81% { transform: translate(170px, 120px); opacity: 1; }
+  85% { transform: translate(170px, 168px); opacity: 1; }
+  92% { transform: translate(20px, 196px); opacity: 1; }
+  94%, 100% { transform: translate(20px, 196px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-answer.s6-anim-running .s6-token-in,
+  .stage-answer.s6-anim-running .s6-answer-out,
+  .stage-answer.s6-anim-running .s6-kv-compute-fill,
+  .stage-answer.s6-anim-running .s6-kv-compute-fly,
+  .stage-answer.s6-anim-running .s6-kv-compute {
+    animation: none;
+  }
+
+  .stage-answer.s6-anim-done .s6-kv-compute-fill,
+  .stage-answer.s6-anim-running .s6-kv-compute-fill {
+    transform: scaleY(1);
+  }
+}
+
+@media (min-width: 860px) {
+  .two-col {
+    grid-template-columns: minmax(0, 1fr) minmax(21rem, 0.7fr);
+  }
+
+  .content-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .inference-doc .footer-nav {
+    flex-direction: column;
+  }
+}
+
+.inference-embed-main {
+  min-width: 0;
+  width: 100%;
+}
+
+.inference-embed-body {
+  min-height: 0;
+  background: transparent;
+}
+
+html.aidc-embed .inference-embed-main {
+  padding: 0;
+}
+
+html.aidc-embed body.inference-doc {
+  min-height: 0;
+  background: transparent;
+}
+
+/* iframe embed (?embed=1) inside Agentic 推理页 */
+html.aidc-embed .aidc-chrome,
+html.aidc-embed .inference-subnav,
+html.aidc-embed .footer-nav,
+html.aidc-embed #lang-switch-root {
+  display: none !important;
+}

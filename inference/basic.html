@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LLM 推理原理：Prompt/Prefill、Decode、TTFT/TPOT 与 KV Cache 传递。" />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>推理原理 · Agentic 推理 · AI Data Center</title>
+  <script src="../js/embed-mode.js"></script>
+  <script>
+    (function () {
+      if (window.AidcEmbedMode?.isEmbed?.()) return;
+      var dest = new URL('../index.html', window.location.href);
+      dest.hash = 'inference';
+      dest.searchParams.set('tab', 'principles');
+      var lang = new URLSearchParams(window.location.search).get('lang');
+      if (lang === 'zh' || lang === 'en') dest.searchParams.set('lang', lang);
+      window.location.replace(dest.toString());
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900 inference-doc inference-embed-body" data-i18n-page="inference-basic">
+  <main class="inference-embed-main min-w-0 w-full">
+    <section class="inference-page-hdr mb-8 w-full max-w-3xl xl:max-w-4xl">
+      <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl" data-i18n="page.h1">推理原理：Prefill / Decode</h1>
+      <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n="page.lead">
+        大模型推理不是一次性写完整答案，而是先在 Prefill 阶段读完整 Prompt、生成 KV Cache，再在 Decode 阶段逐 token 生成答案。
+      </p>
+    </section>
+
+    <section class="content-layout">
+      <div class="two-col">
+        <article class="card">
+          <h2 data-i18n="steps.title">一次完整推理请求</h2>
+          <ol class="step-list">
+            <li data-i18n-html="steps.s1"><strong>用户输入 Question (Prompt)。</strong> 例如：“What does DC stand for”</li>
+            <li data-i18n-html="steps.s2"><strong>Tokenizer 切分 token。</strong> 文本被转换成模型可处理的 token id。</li>
+            <li data-i18n-html="steps.s3"><strong>Prefill 阶段。</strong> 模型一次性处理所有输入 token，并为每层 Attention 生成 KV Cache。</li>
+            <li data-i18n-html="steps.s4"><strong>Decode 阶段。</strong> 模型复用 KV Cache，每轮只生成一个新 token。</li>
+            <li data-i18n-html="steps.s5"><strong>直到 EOS。</strong> 新 token 不断追加到上下文，直到生成结束符或达到长度限制。</li>
+          </ol>
+        </article>
+
+        <aside class="card">
+          <h2 data-i18n="aside.title">先记住一句话</h2>
+          <p class="callout" data-i18n="aside.callout">
+            Prefill 决定首 token 前的等待时间，Decode 决定后续 token 的生成速度；KV Cache 是二者之间传递上下文记忆的关键。
+          </p>
+          <div class="pill-row" style="margin-top:1rem">
+            <span class="pill">Prompt</span>
+            <span class="pill">Prefill</span>
+            <span class="pill">KV Cache</span>
+            <span class="pill">Decode</span>
+            <span class="pill">Token</span>
+          </div>
+        </aside>
+      </div>
+
+      <article class="card">
+        <h2 data-i18n="page.diagramTitle">一张图看完整过程：Prefill 生成 KV Cache，Decode 逐步复用</h2>
+        <svg class="diagram" viewBox="0 0 1300 620" role="img" data-i18n-aria-label="page.diagramAria" aria-label="Prompt Prefill Decode 和 KV Cache 传递流程图" style="min-height:32rem">
+          <defs>
+            <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+              <path d="M0,0 L6,3 L0,6 z" fill="#2563eb" />
+            </marker>
+            <marker id="arrow-green" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 z" fill="#16a34a" />
+            </marker>
+            <marker id="arrow-violet" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 z" fill="#7c3aed" />
+            </marker>
+          </defs>
+          <style>
+            .box-title { font: 800 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#0f172a; }
+            .box-sub { font: 600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#64748b; }
+            .small { font: 700 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#475569; }
+            .phase { font: 800 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#0f172a; }
+            .metric-label { font: 800 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#334155; }
+            .token { font: 800 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#0f172a; }
+            .frame { stroke-width: 2; }
+            .dash-frame { stroke-width: 2; stroke-dasharray: 8 6; }
+            .dash-line { stroke-width: 2; stroke-dasharray: 6 6; }
+            .qa-tag { font: 800 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+            .qa-text { font: 700 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+            .qa-tag-q { fill: #047857; }
+            .qa-text-q { fill: #064e3b; }
+            .qa-tag-a { fill: #1d4ed8; }
+            .qa-text-a { fill: #1e3a8a; }
+          </style>
+
+          <!-- User question -->
+          <rect x="40" y="222" width="218" height="100" rx="20" fill="#ecfdf5" stroke="#059669" class="frame" />
+          <text x="149" y="264" text-anchor="middle" class="qa-tag qa-tag-q" data-i18n="diagram.questionLabel">Question (Prompt):</text>
+          <text x="149" y="294" text-anchor="middle" class="qa-text qa-text-q" data-i18n="diagram.questionText">What does DC stand for</text>
+          <line x1="258" y1="272" x2="292" y2="272" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)" />
+
+          <!-- Prefill phase brace -->
+          <path d="M 295 108 C 295 94, 308 86, 325 86 L 425 86 C 442 86, 448 68, 450 68 C 452 68, 458 86, 475 86 L 575 86 C 592 86, 605 94, 605 108" fill="none" stroke="#0f172a" class="frame" stroke-linecap="round" />
+          <text x="450" y="56" text-anchor="middle" class="phase" data-i18n="diagram.prefillPhase">Prefill phase</text>
+          <rect x="300" y="120" width="300" height="190" rx="22" fill="#ffffff" stroke="#0f172a" class="dash-frame" />
+          <rect x="360" y="145" width="180" height="58" rx="10" fill="#bae6fd" />
+          <text x="450" y="168" text-anchor="middle" class="box-title">LLM</text>
+          <text x="450" y="192" text-anchor="middle" class="box-sub" data-diagram-iter="1" data-i18n="diagram.iter1">iteration 1</text>
+          <g>
+            <rect x="312" y="248" width="50" height="44" rx="8" fill="#f7fee7" />
+            <rect x="368" y="248" width="50" height="44" rx="8" fill="#f7fee7" />
+            <rect x="424" y="248" width="44" height="44" rx="8" fill="#f7fee7" />
+            <rect x="474" y="248" width="54" height="44" rx="8" fill="#f7fee7" />
+            <rect x="532" y="248" width="44" height="44" rx="8" fill="#f7fee7" />
+            <text x="337" y="276" text-anchor="middle" class="token">What</text>
+            <text x="393" y="276" text-anchor="middle" class="token">does</text>
+            <text x="446" y="276" text-anchor="middle" class="token">DC</text>
+            <text x="501" y="276" text-anchor="middle" class="token">stand</text>
+            <text x="554" y="276" text-anchor="middle" class="token">for</text>
+          </g>
+          <g stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)">
+            <line x1="337" y1="248" x2="337" y2="212" />
+            <line x1="393" y1="248" x2="393" y2="212" />
+            <line x1="446" y1="248" x2="446" y2="212" />
+            <line x1="501" y1="248" x2="501" y2="212" />
+            <line x1="554" y1="248" x2="554" y2="212" />
+          </g>
+
+          <!-- KV cache created in prefill -->
+          <rect x="355" y="365" width="190" height="68" rx="18" fill="#ede9fe" stroke="#7c3aed" class="frame" />
+          <text x="450" y="394" text-anchor="middle" font-size="16" font-weight="800" fill="#5b21b6" data-i18n="diagram.kvCache">KV Cache</text>
+          <text x="450" y="418" text-anchor="middle" font-size="12" font-weight="700" fill="#6d28d9" data-i18n="diagram.kvSub">K/V for 5 prompt tokens</text>
+          <line x1="450" y1="292" x2="450" y2="365" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-violet)" />
+          <text x="318" y="402" text-anchor="end" font-size="13" font-weight="800" fill="#6d28d9" data-i18n="diagram.generate">生成</text>
+
+          <!-- Decode phase brace -->
+          <path d="M 625 108 C 625 94, 645 86, 675 86 L 875 86 C 915 86, 925 68, 955 68 C 985 68, 995 86, 1035 86 L 1235 86 C 1265 86, 1285 94, 1285 108" fill="none" stroke="#0f172a" class="frame" stroke-linecap="round" />
+          <text x="955" y="56" text-anchor="middle" class="phase" data-i18n="diagram.decodePhase">Decode phase (Token generation)</text>
+
+          <!-- Decode iterations: DC stands for Data Center. -->
+          <g>
+            <rect x="630" y="120" width="100" height="210" rx="16" fill="#ffffff" stroke="#0f172a" class="dash-frame" />
+            <rect x="647" y="145" width="66" height="54" rx="9" fill="#bae6fd" />
+            <text x="680" y="168" text-anchor="middle" class="box-title">LLM</text>
+            <text x="680" y="190" text-anchor="middle" class="box-sub" data-diagram-iter="2">iter 2</text>
+            <rect x="649" y="248" width="62" height="50" rx="10" fill="#ddd6fe" />
+            <text x="680" y="278" text-anchor="middle" class="token">DC</text>
+            <line x1="680" y1="248" x2="680" y2="211" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+          </g>
+          <g>
+            <rect x="740" y="120" width="100" height="210" rx="16" fill="#ffffff" stroke="#0f172a" class="dash-frame" />
+            <rect x="757" y="145" width="66" height="54" rx="9" fill="#bae6fd" />
+            <text x="790" y="168" text-anchor="middle" class="box-title">LLM</text>
+            <text x="790" y="190" text-anchor="middle" class="box-sub" data-diagram-iter="3">iter 3</text>
+            <rect x="759" y="248" width="62" height="50" rx="10" fill="#ddd6fe" />
+            <text x="790" y="278" text-anchor="middle" class="token">stands</text>
+            <line x1="790" y1="248" x2="790" y2="211" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+          </g>
+          <g>
+            <rect x="850" y="120" width="100" height="210" rx="16" fill="#ffffff" stroke="#0f172a" class="dash-frame" />
+            <rect x="867" y="145" width="66" height="54" rx="9" fill="#bae6fd" />
+            <text x="900" y="168" text-anchor="middle" class="box-title">LLM</text>
+            <text x="900" y="190" text-anchor="middle" class="box-sub" data-diagram-iter="4">iter 4</text>
+            <rect x="869" y="248" width="62" height="50" rx="10" fill="#ddd6fe" />
+            <text x="900" y="278" text-anchor="middle" class="token">for</text>
+            <line x1="900" y1="248" x2="900" y2="211" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+          </g>
+          <g>
+            <rect x="960" y="120" width="100" height="210" rx="16" fill="#ffffff" stroke="#0f172a" class="dash-frame" />
+            <rect x="977" y="145" width="66" height="54" rx="9" fill="#bae6fd" />
+            <text x="1010" y="168" text-anchor="middle" class="box-title">LLM</text>
+            <text x="1010" y="190" text-anchor="middle" class="box-sub" data-diagram-iter="5">iter 5</text>
+            <rect x="979" y="248" width="62" height="50" rx="10" fill="#ddd6fe" />
+            <text x="1010" y="278" text-anchor="middle" class="token">Data</text>
+            <line x1="1010" y1="248" x2="1010" y2="211" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+          </g>
+          <g>
+            <rect x="1070" y="120" width="100" height="210" rx="16" fill="#ffffff" stroke="#0f172a" class="dash-frame" />
+            <rect x="1087" y="145" width="66" height="54" rx="9" fill="#bae6fd" />
+            <text x="1120" y="168" text-anchor="middle" class="box-title">LLM</text>
+            <text x="1120" y="190" text-anchor="middle" class="box-sub" data-diagram-iter="6">iter 6</text>
+            <rect x="1089" y="248" width="62" height="50" rx="10" fill="#ddd6fe" />
+            <text x="1120" y="278" text-anchor="middle" class="token">Center</text>
+            <line x1="1120" y1="248" x2="1120" y2="211" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+          </g>
+          <g>
+            <rect x="1180" y="120" width="100" height="210" rx="16" fill="#ffffff" stroke="#0f172a" class="dash-frame" />
+            <rect x="1197" y="145" width="66" height="54" rx="9" fill="#bae6fd" />
+            <text x="1230" y="168" text-anchor="middle" class="box-title">LLM</text>
+            <text x="1230" y="190" text-anchor="middle" class="box-sub" data-diagram-iter="7">iter 7</text>
+            <rect x="1199" y="248" width="62" height="50" rx="10" fill="#ddd6fe" />
+            <text x="1230" y="278" text-anchor="middle" class="token">EOS</text>
+            <line x1="1230" y1="248" x2="1230" y2="211" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+          </g>
+
+          <!-- output token forwarding -->
+          <g stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)">
+            <path d="M600 172 H630" />
+            <path d="M730 172 H740" />
+            <path d="M840 172 H850" />
+            <path d="M950 172 H960" />
+            <path d="M1060 172 H1070" />
+            <path d="M1170 172 H1180" />
+          </g>
+
+          <!-- KV cache arrows to decode (each output token) -->
+          <path d="M545 372 C600 340, 640 310, 680 298" fill="none" stroke="#7c3aed" class="dash-line" marker-end="url(#arrow-violet)" />
+          <path d="M545 382 C680 350, 740 320, 790 298" fill="none" stroke="#7c3aed" class="dash-line" marker-end="url(#arrow-violet)" />
+          <path d="M545 392 C760 360, 830 330, 900 298" fill="none" stroke="#7c3aed" class="dash-line" marker-end="url(#arrow-violet)" />
+          <path d="M545 402 C840 370, 940 340, 1010 298" fill="none" stroke="#7c3aed" class="dash-line" marker-end="url(#arrow-violet)" />
+          <path d="M545 412 C920 380, 1040 350, 1120 298" fill="none" stroke="#7c3aed" class="dash-line" marker-end="url(#arrow-violet)" />
+          <path d="M545 422 C1000 390, 1140 360, 1230 298" fill="none" stroke="#7c3aed" class="dash-line" marker-end="url(#arrow-violet)" />
+          <text x="790" y="448" text-anchor="middle" font-size="13" font-weight="800" fill="#6d28d9" data-i18n="diagram.kvDecodeNote">KV Cache 被 Decode 阶段持续读取，并追加每个新 token 的 K/V</text>
+
+          <!-- metrics (below KV Cache to avoid line crossings) -->
+          <line x1="300" y1="468" x2="600" y2="468" stroke="#334155" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+          <text x="450" y="488" text-anchor="middle" class="metric-label" data-i18n="diagram.ttft">Time-To-First-Token (TTFT)</text>
+          <line x1="630" y1="468" x2="730" y2="468" stroke="#334155" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+          <text x="680" y="488" text-anchor="middle" class="metric-label" data-i18n="diagram.tpot">Time-Per-Output-Token (TPOT)</text>
+          <line x1="740" y1="468" x2="1280" y2="468" stroke="#334155" class="dash-line" marker-start="url(#arrow)" marker-end="url(#arrow)" />
+          <text x="1010" y="488" text-anchor="middle" class="metric-label" data-i18n="diagram.moreDecode">more decode iterations ...</text>
+
+          <!-- summary strip -->
+          <rect x="300" y="508" width="980" height="92" rx="20" fill="#eff6ff" stroke="#2563eb" class="frame" />
+          <text x="790" y="536" text-anchor="middle">
+            <tspan class="qa-tag qa-tag-a" data-i18n="diagram.answerPrefix">Answer is: </tspan>
+            <tspan class="qa-text qa-text-a" data-i18n="diagram.answerText">DC stands for Data Center.</tspan>
+          </text>
+          <g>
+            <rect x="649" y="548" width="62" height="30" rx="7" fill="#ddd6fe" stroke="#7c3aed" class="frame" />
+            <text x="680" y="568" text-anchor="middle" class="token" font-size="12">DC</text>
+            <rect x="759" y="548" width="62" height="30" rx="7" fill="#ddd6fe" stroke="#7c3aed" class="frame" />
+            <text x="790" y="568" text-anchor="middle" class="token" font-size="12">stands</text>
+            <rect x="869" y="548" width="62" height="30" rx="7" fill="#ddd6fe" stroke="#7c3aed" class="frame" />
+            <text x="900" y="568" text-anchor="middle" class="token" font-size="12">for</text>
+            <rect x="979" y="548" width="62" height="30" rx="7" fill="#ddd6fe" stroke="#7c3aed" class="frame" />
+            <text x="1010" y="568" text-anchor="middle" class="token" font-size="12">Data</text>
+            <rect x="1089" y="548" width="62" height="30" rx="7" fill="#ddd6fe" stroke="#7c3aed" class="frame" />
+            <text x="1120" y="568" text-anchor="middle" class="token" font-size="12">Center</text>
+            <rect x="1189" y="548" width="42" height="30" rx="7" fill="#ddd6fe" stroke="#7c3aed" class="frame" />
+            <text x="1210" y="568" text-anchor="middle" class="token" font-size="12">.</text>
+          </g>
+          <text x="790" y="590" text-anchor="middle" font-size="13" font-weight="600" fill="#64748b" data-i18n="diagram.footerNote">Prefill 生成 KV Cache，Decode 复用 KV Cache 逐 token 输出，直到 EOS。</text>
+        </svg>
+      </article>
+
+      <div class="two-col">
+        <article class="card">
+          <h2 data-i18n="metrics.title">图中三个关键指标</h2>
+          <ol class="step-list">
+            <li data-i18n-html="metrics.ttft"><strong>TTFT。</strong> 从请求进入到第一个输出 token 出来的时间，主要覆盖 Prompt 处理和 Prefill。</li>
+            <li data-i18n-html="metrics.tpot"><strong>TPOT。</strong> Decode 阶段每生成一个 token 的间隔，决定流式输出是否顺滑。</li>
+            <li data-i18n-html="metrics.kvc"><strong>KV Cache。</strong> Prefill 生成历史 token 的 K/V，Decode 每轮读取并追加新的 K/V。</li>
+          </ol>
+        </article>
+
+        <aside class="card">
+          <h2 data-i18n="engineering.title">工程含义</h2>
+          <p data-i18n="engineering.body">
+            长 Prompt 会拉长 Prefill 和 TTFT；长输出会占用更多 Decode 时间；并发请求多时，KV Cache 会快速消耗显存。
+            所以推理服务需要同时优化计算、显存和调度。
+          </p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/aidc-asset-version.js?v=8"></script>
+  <script src="../js/i18n.js?v=8"></script>
+  <script src="../js/inference-basic-page.js?v=8"></script>
+  <script>
+    (async function () {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get('lang');
+      if (lang === 'zh' || lang === 'en') {
+        try { localStorage.setItem('aidc-locale', lang); } catch (_) { /* ignore */ }
+      }
+      await AidcI18n.init({ page: 'inference-basic', common: true, basePath: '../i18n/' });
+      AidcI18n.applyDom();
+      initInferenceBasicPage();
+    })();
+  </script>
+</body>
+</html>

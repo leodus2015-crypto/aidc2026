@@ -1,8 +1,12 @@
 {
   "page": {
     "h1": "大模型推理HBM需求",
-    "intro": "请选择<strong class=\"font-semibold text-blue-700\">PD混部</strong>或<strong class=\"font-semibold text-blue-700\">PD分离</strong>估算权重与 HBM；需要评估序列占用时可切换到<strong class=\"font-semibold text-blue-700\">KV Cache计算</strong>。PD混部支持所有模型，PD分离可以提升性能，但仅支持部分模型的特定部署方式。",
+    "intro": "先学习<strong class=\"font-semibold text-blue-700\">推理原理</strong>与<strong class=\"font-semibold text-blue-700\">推理服务数据流</strong>，再用<strong class=\"font-semibold text-blue-700\">PD混部</strong>或<strong class=\"font-semibold text-blue-700\">PD分离</strong>估算权重与 HBM；需要评估序列占用时可切换到<strong class=\"font-semibold text-blue-700\">KV Cache计算</strong>。PD混部支持所有模型，PD分离可以提升性能，但仅支持部分模型的特定部署方式。",
     "tablistAria": "推理模式",
+    "tabPrinciples": "推理原理",
+    "tabDataflow": "推理服务数据流",
+    "iframePrinciplesTitle": "推理原理",
+    "iframeDataflowTitle": "推理服务数据流",
     "tabMixed": "PD混部",
     "tabSeparated": "PD分离",
     "tabKvcache": "KV Cache计算"

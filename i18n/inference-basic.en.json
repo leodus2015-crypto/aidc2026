@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "title": "Inference fundamentals · Agentic inference · AI Data Center",
+    "description": "LLM inference fundamentals: Prompt/Prefill, Decode, TTFT/TPOT, and KV Cache handoff."
+  },
+  "page": {
+    "h1": "Inference fundamentals: Prefill / Decode",
+    "lead": "LLM inference does not emit the full answer at once. Prefill reads the entire prompt and builds KV Cache; Decode then generates one token at a time.",
+    "diagramTitle": "End-to-end view: Prefill builds KV Cache, Decode reuses it step by step",
+    "diagramAria": "Prompt, Prefill, Decode, and KV Cache flow diagram",
+    "tabSelf": "Fundamentals",
+    "tabDataflow": "Service dataflow"
+  },
+  "steps": {
+    "title": "One full inference request",
+    "s1": "<strong>User sends a Question (Prompt).</strong> Example: “What does DC stand for”",
+    "s2": "<strong>Tokenizer splits tokens.</strong> Text becomes token IDs the model can consume.",
+    "s3": "<strong>Prefill phase.</strong> The model processes all input tokens at once and builds KV Cache for each attention layer.",
+    "s4": "<strong>Decode phase.</strong> The model reuses KV Cache and generates one new token per step.",
+    "s5": "<strong>Until EOS.</strong> New tokens append to context until an end token or length limit."
+  },
+  "aside": {
+    "title": "One sentence to remember",
+    "callout": "Prefill drives time-to-first-token; Decode drives per-token speed; KV Cache carries context memory between the two."
+  },
+  "metrics": {
+    "title": "Three key metrics in the diagram",
+    "ttft": "<strong>TTFT.</strong> Time from request arrival to the first output token—mostly prompt handling and Prefill.",
+    "tpot": "<strong>TPOT.</strong> Interval between Decode tokens—determines how smooth streaming feels.",
+    "kvc": "<strong>KV Cache.</strong> Prefill stores K/V for past tokens; each Decode step reads and appends new K/V."
+  },
+  "engineering": {
+    "title": "Engineering takeaway",
+    "body": "Long prompts inflate Prefill and TTFT; long outputs extend Decode; high concurrency quickly consumes KV Cache memory. Production inference must optimize compute, memory, and scheduling together."
+  },
+  "nav": {
+    "prev": "← Agentic inference",
+    "next": "Next: Inference service dataflow →"
+  },
+  "diagram": {
+    "questionLabel": "Question (Prompt):",
+    "questionText": "What does DC stand for",
+    "prefillPhase": "Prefill phase",
+    "decodePhase": "Decode phase (Token generation)",
+    "kvCache": "KV Cache",
+    "kvSub": "K/V for 5 prompt tokens",
+    "generate": "Build",
+    "kvDecodeNote": "Decode keeps reading KV Cache and appends K/V for each new token",
+    "ttft": "Time-To-First-Token (TTFT)",
+    "tpot": "Time-Per-Output-Token (TPOT)",
+    "moreDecode": "more decode iterations ...",
+    "answerPrefix": "Answer is: ",
+    "answerText": "DC stands for Data Center.",
+    "footerNote": "Prefill builds KV Cache; Decode reuses it token by token until EOS.",
+    "iter1": "iteration 1",
+    "iterN": "iter {n}"
+  }
+}

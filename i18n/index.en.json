@@ -1,8 +1,12 @@
 {
   "page": {
     "h1": "LLM Inference HBM Requirements",
-    "intro": "Choose <strong class=\"font-semibold text-blue-700\">PD co-located</strong> or <strong class=\"font-semibold text-blue-700\">PD separated</strong> to estimate weights and HBM; switch to <strong class=\"font-semibold text-blue-700\">KV Cache sizing</strong> when you need sequence memory. Co-located mode supports all models; separated mode can improve performance but only for specific deployment patterns on selected models.",
+    "intro": "Start with <strong class=\"font-semibold text-blue-700\">inference fundamentals</strong> and <strong class=\"font-semibold text-blue-700\">service dataflow</strong>, then use <strong class=\"font-semibold text-blue-700\">PD co-located</strong> or <strong class=\"font-semibold text-blue-700\">PD separated</strong> to estimate weights and HBM; switch to <strong class=\"font-semibold text-blue-700\">KV Cache sizing</strong> when you need sequence memory. Co-located mode supports all models; separated mode can improve performance but only for specific deployment patterns on selected models.",
     "tablistAria": "Inference mode",
+    "tabPrinciples": "Fundamentals",
+    "tabDataflow": "Service dataflow",
+    "iframePrinciplesTitle": "Inference fundamentals",
+    "iframeDataflowTitle": "Inference service dataflow",
     "tabMixed": "PD co-located",
     "tabSeparated": "PD separated",
     "tabKvcache": "KV Cache sizing"

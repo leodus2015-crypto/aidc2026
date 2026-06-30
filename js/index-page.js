@@ -2,12 +2,18 @@ function initIndexPage() {
   const t = (k, p) => AidcI18n.t(k, p);
   const loc = () => AidcI18n.localeTag();
 
+    const tabPrinciples = document.getElementById('tab-principles');
+    const tabDataflow = document.getElementById('tab-dataflow');
     const tabMixed = document.getElementById('tab-mixed');
     const tabSeparated = document.getElementById('tab-separated');
     const tabKvcache = document.getElementById('tab-kvcache');
+    const panelPrinciples = document.getElementById('panel-principles');
+    const panelDataflow = document.getElementById('panel-dataflow');
     const panelMixed = document.getElementById('panel-mixed');
     const panelSeparated = document.getElementById('panel-separated');
     const panelKvcache = document.getElementById('panel-kvcache');
+    const iframePrinciples = document.getElementById('iframe-principles');
+    const iframeDataflow = document.getElementById('iframe-dataflow');
 
     const modelNameInput = document.getElementById('modelName');
     const modelSizeInput = document.getElementById('modelSize');
@@ -598,27 +604,61 @@ function initIndexPage() {
       });
     }
 
+    function initialTabFromUrl() {
+      const tab = new URLSearchParams(window.location.search).get('tab');
+      if (tab === 'dataflow') return 'dataflow';
+      if (tab === 'mixed') return 'mixed';
+      if (tab === 'separated') return 'separated';
+      if (tab === 'kvcache') return 'kvcache';
+      return 'principles';
+    }
+
+    function inferenceIframeSrc(path) {
+      const lang = AidcI18n?.getLocale?.() || 'zh';
+      return `inference/${path}?embed=1&lang=${lang}`;
+    }
+
+    function ensureInferenceIframe(iframe, path) {
+      if (!iframe) return;
+      const nextSrc = inferenceIframeSrc(path);
+      if (iframe.getAttribute('src') !== nextSrc) {
+        iframe.setAttribute('src', nextSrc);
+      }
+    }
+
+    function syncInferenceIframes() {
+      if (iframePrinciples?.getAttribute('src')) {
+        ensureInferenceIframe(iframePrinciples, 'basic.html');
+      }
+      if (iframeDataflow?.getAttribute('src')) {
+        ensureInferenceIframe(iframeDataflow, 'server-dataflow.html');
+      }
+    }
+
     function selectDeploymentTab(mode) {
-      tabMixed.setAttribute('aria-selected', mode === 'mixed' ? 'true' : 'false');
-      tabSeparated.setAttribute('aria-selected', mode === 'separated' ? 'true' : 'false');
-      tabKvcache.setAttribute('aria-selected', mode === 'kvcache' ? 'true' : 'false');
+      const tabs = [
+        { id: 'principles', el: tabPrinciples, panel: panelPrinciples },
+        { id: 'dataflow', el: tabDataflow, panel: panelDataflow },
+        { id: 'mixed', el: tabMixed, panel: panelMixed },
+        { id: 'separated', el: tabSeparated, panel: panelSeparated },
+        { id: 'kvcache', el: tabKvcache, panel: panelKvcache },
+      ];
 
-      tabMixed.tabIndex = mode === 'mixed' ? 0 : -1;
-      tabSeparated.tabIndex = mode === 'separated' ? 0 : -1;
-      tabKvcache.tabIndex = mode === 'kvcache' ? 0 : -1;
+      tabs.forEach(({ id, el, panel }) => {
+        if (!el || !panel) return;
+        const active = mode === id;
+        el.setAttribute('aria-selected', active ? 'true' : 'false');
+        el.tabIndex = active ? 0 : -1;
+        el.className = active ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
+        panel.classList.toggle('hidden', !active);
+        panel.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
 
-      tabMixed.className = mode === 'mixed' ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-      tabSeparated.className = mode === 'separated' ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-      tabKvcache.className = mode === 'kvcache' ? TAB_ACTIVE_CLASS : TAB_INACTIVE_CLASS;
-
-      panelMixed.classList.toggle('hidden', mode !== 'mixed');
-      panelMixed.setAttribute('aria-hidden', mode === 'mixed' ? 'false' : 'true');
-      panelSeparated.classList.toggle('hidden', mode !== 'separated');
-      panelSeparated.setAttribute('aria-hidden', mode === 'separated' ? 'false' : 'true');
-      panelKvcache.classList.toggle('hidden', mode !== 'kvcache');
-      panelKvcache.setAttribute('aria-hidden', mode === 'kvcache' ? 'false' : 'true');
-
-      if (mode === 'mixed') {
+      if (mode === 'principles') {
+        ensureInferenceIframe(iframePrinciples, 'basic.html');
+      } else if (mode === 'dataflow') {
+        ensureInferenceIframe(iframeDataflow, 'server-dataflow.html');
+      } else if (mode === 'mixed') {
         updateEstimateMixed();
       } else if (mode === 'separated') {
         updateEstimateSeparated();
@@ -628,6 +668,8 @@ function initIndexPage() {
       }
     }
 
+    tabPrinciples?.addEventListener('click', () => selectDeploymentTab('principles'));
+    tabDataflow?.addEventListener('click', () => selectDeploymentTab('dataflow'));
     tabMixed.addEventListener('click', () => selectDeploymentTab('mixed'));
     tabSeparated.addEventListener('click', () => selectDeploymentTab('separated'));
     tabKvcache.addEventListener('click', () => selectDeploymentTab('kvcache'));
@@ -968,19 +1010,25 @@ function initIndexPage() {
 
     resultMessageSep.textContent = t('results.sepPlaceholder');
 
-    selectDeploymentTab('mixed');
+    selectDeploymentTab(initialTabFromUrl());
 
   window.refreshIndexPageI18n = function refreshIndexPageI18n() {
     document.querySelectorAll('#pdDeployMode option').forEach((opt) => {
       const key = opt.value === '32-1p1d' ? 'pd.layout32' : opt.value === '48-1p1d' ? 'pd.layout48' : null;
       if (key) opt.textContent = t(key);
     });
+    syncInferenceIframes();
+    AidcI18n.applyDom();
     const mode =
-      tabKvcache.getAttribute('aria-selected') === 'true'
+      tabKvcache?.getAttribute('aria-selected') === 'true'
         ? 'kvcache'
-        : tabSeparated.getAttribute('aria-selected') === 'true'
+        : tabSeparated?.getAttribute('aria-selected') === 'true'
           ? 'separated'
-          : 'mixed';
+          : tabMixed?.getAttribute('aria-selected') === 'true'
+            ? 'mixed'
+            : tabDataflow?.getAttribute('aria-selected') === 'true'
+              ? 'dataflow'
+              : 'principles';
     selectDeploymentTab(mode);
   };
 }

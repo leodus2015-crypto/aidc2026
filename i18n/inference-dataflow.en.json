@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "title": "Inference service dataflow · Agentic inference · AI Data Center",
+    "description": "Seven-stage inference service dataflow: boot, idle start, model load, Question, Prefill, Decode, Answer. 8-way PD disaggregated: 4 Prefill + 4 Decode."
+  },
+  "page": {
+    "h1": "Seven-stage inference service dataflow",
+    "lead": "The same <strong>inference server</strong> (CPU + DDR + local SSD + 8× NPU/HBM, <strong>PD disaggregated</strong>: top row 4 Prefill cards, bottom row 4 Decode cards) is shown top-to-bottom across seven stages: idle → service boot → model load → Question arrival → Prefill → Decode → Answer return. Each section keeps the same server layout and highlights only this stage’s data paths. <strong>Gray</strong> means idle; <strong>color</strong> means active or on-disk artifacts.",
+    "summary": "<strong>Seven stages:</strong> idle → boot → model load → Question → <strong>top Prefill</strong> (write KV) → <strong>bottom Decode</strong> (token by token) → Answer. Architecture: <strong>8-way PD disaggregated</strong> (4 Prefill + 4 Decode).",
+    "tabPrinciples": "Fundamentals",
+    "tabSelf": "Service dataflow"
+  },
+  "legend": {
+    "active": "Data path (this stage)",
+    "kv": "KV Cache",
+    "ssd": "SSD read",
+    "net": "Network I/O",
+    "idleGray": "Idle state (gray)",
+    "ssdBlue": "Files on SSD (blue)",
+    "npuGreen": "NPU active (green)"
+  },
+  "replay": {
+    "stage0": "Replay stage animation",
+    "stage1": "Replay container image load animation",
+    "stage2": "Replay model weights load animation",
+    "stage3": "Replay Question and Token ID animation",
+    "stage4": "Replay KV Cache fill animation",
+    "stage5": "Replay KV transfer and KV compute animation",
+    "stage6": "Replay Answer output animation"
+  },
+  "aria": {
+    "stage0": "Stage 0: server not started",
+    "stage1": "Stage 1: service boot without model",
+    "stage2": "Stage 2: load model",
+    "stage3": "Stage 3: Question arrival",
+    "stage4": "Stage 4: Prefill",
+    "stage5": "Stage 5: Decode",
+    "stage6": "Stage 6: Answer return"
+  },
+  "stages": {
+    "s0": {
+      "title": "Server not started",
+      "summary": "The machine is <strong>fully idle</strong>: CPU, DDR, NPU, and HBM are not serving inference. Local SSD may already hold OS, drivers, container images, and model weights, but the service process is not up.",
+      "l1": "<strong>CPU idle.</strong> Inference engine, scheduler, and tokenizer are not running.",
+      "l2": "<strong>DDR idle.</strong> No request or token staging data in memory.",
+      "l3": "<strong>Files on SSD.</strong> OS, drivers, container image, and weights are mounted (blue), waiting to load into HBM after boot.",
+      "l4": "<strong>NPU / HBM idle.</strong> The 8-card pool is not computing yet."
+    },
+    "s1": {
+      "title": "Server boot (model not loaded)",
+      "summary": "The inference service is up: CPU runs the <strong>main process</strong>, DDR holds the <strong>inference engine</strong>; all 8 NPUs are powered. Container images load from local SSD into the bottom of each HBM (~10%). <strong>No model weights yet.</strong>",
+      "l1": "<strong>Process ready.</strong> CPU runs the main process; DDR holds the inference engine.",
+      "l2": "<strong>Image in HBM.</strong> Container image sits at the bottom of each HBM (~10%); weights remain on SSD.",
+      "l3": "<strong>Not inferencing.</strong> Weights are not loaded and no Question is accepted yet."
+    },
+    "s2": {
+      "title": "Load model (SSD → HBM)",
+      "summary": "CPU reads <strong>model weights</strong> from local SSD and distributes them to 8 NPUs’ HBM (PD disaggregated · per-card shards). On top of the existing <strong>container image</strong> (~10%), HBM gains a <strong>weights</strong> region (~15%) and reserves KV Cache space.",
+      "l1": "<strong>Read disk.</strong> CPU reads model weights from local SSD (green highlight).",
+      "l2": "<strong>Transfer.</strong> Weights land in each NPU HBM atop the container image.",
+      "l3": "<strong>Ready.</strong> Weights stay resident in HBM (~15%); the server can accept requests."
+    },
+    "s3": {
+      "title": "Question arrival (CPU side)",
+      "summary": "The user Question enters CPU over the network; after tokenization the sequence is written to DDR and <strong>sent to NPU</strong> for Prefill. HBM already holds <strong>container image</strong> (~10%) and <strong>weights</strong> (~15%); KV compute has not started.",
+      "l1": "<strong>Network in.</strong> Question packets reach CPU.",
+      "l2": "<strong>Tokenize.</strong> CPU converts text to token IDs in DDR.",
+      "l3": "<strong>To NPU.</strong> The scheduler sends tokens to the NPU pool for Prefill."
+    },
+    "s4": {
+      "title": "Prefill (read full Question, build KV Cache)",
+      "summary": "Input tokens move H2D into the <strong>top 4 Prefill cards</strong>’ HBM, process the full prompt using resident weights, fill the KV region, and emit the first Answer token (TTFT); bottom Decode cards wait.",
+      "l1": "<strong>Dispatch.</strong> Token sequence moves from DDR into NPU HBM.",
+      "l2": "<strong>Prefill compute.</strong> Reuse HBM weights and <strong>create KV Cache</strong>.",
+      "l3": "<strong>First token.</strong> First output token arrives; TTFT ends."
+    },
+    "s5": {
+      "title": "Decode (generate Answer token by token)",
+      "summary": "Each Decode step reuses HBM weights and KV Cache, appends new K/V, and samples one token until EOS. PD disaggregated · top Prefill / bottom Decode roles.",
+      "l1": "<strong>Read KV.</strong> NPU reads KV Cache and the previous token from HBM.",
+      "l2": "<strong>Decode step.</strong> Reuse weights, append K/V, sample one token.",
+      "l3": "<strong>Loop.</strong> Repeat until finished."
+    },
+    "s6": {
+      "title": "Answer return (CPU side)",
+      "summary": "The full token sequence returns from NPU HBM to DDR; CPU detokenizes to Answer text and sends it back over the network.",
+      "l1": "<strong>Write back.</strong> Token sequence lands in DDR.",
+      "l2": "<strong>Detokenize.</strong> CPU converts to Answer text.",
+      "l3": "<strong>Deliver.</strong> Return to the user over the network."
+    }
+  },
+  "nav": {
+    "prev": "← Inference fundamentals",
+    "next": "Back to Agentic inference →"
+  },
+  "svg": {
+    "serverTitle": "Inference server · 8-way PD disagg.",
+    "serverIdle": "All components idle · inference service not started",
+    "cpu": "CPU",
+    "ddr": "DDR",
+    "localSsd": "Local SSD",
+    "network": "Network",
+    "mainProcess": "Main process",
+    "inferenceEngine": "Inference engine",
+    "osStack": "OS+PyTorch+engine+CANN",
+    "prefill": "Prefill",
+    "decode": "Decode",
+    "hbm": "HBM",
+    "modelWeights": "Model weights",
+    "containerImage": "Container image",
+    "kvCache": "KV Cache",
+    "kvCompute": "KV compute",
+    "question": "Question",
+    "answer": "Answer",
+    "detokenize": "Detokenize",
+    "tokenId": "Token ID",
+    "cpuIdle": "CPU (idle)",
+    "ddrIdle": "DDR (idle)",
+    "ssdMounted": "OS + drivers + container + model",
+    "ssdPrefix": "OS + drivers + ",
+    "ssdHlContainer": "container",
+    "ssdMid": " + ",
+    "ssdHlModel": "model",
+    "ssdSuffix": "",
+    "ssdTail": " + model",
+    "npuPoolTitle": "8 × NPU pool · top row Prefill · bottom row Decode",
+    "statusS1": "NPUs powered · container image loaded in HBM (~10%)",
+    "cpuReadWeights": "Read · distribute weights",
+    "ddrBuffer": "Buffer (optional)",
+    "loadLabel": "Load",
+    "statusS2": "8-card HBM · container image (10%) + weights (15%) · KV Cache reserved",
+    "cpuScheduleNet": "Schedule · tokenize · network",
+    "tokenSequence": "token sequence",
+    "statusS3": "8-card HBM · container image (10%) + weights (15%) · awaiting Prefill",
+    "cpuSchedulePrefill": "Schedule Prefill",
+    "inputTokenSequence": "input token sequence",
+    "weightsKv": "weights + KV",
+    "statusS4": "Top 4 Prefill cards · KV region write · bottom Decode cards idle",
+    "cpuScheduleDecode": "Schedule Decode",
+    "firstTokenId": "first token ID",
+    "statusS5": "Bottom 4 Decode cards · reuse KV + weights · token-by-token",
+    "answerTextLabel": "Answer text",
+    "statusS6": "Token ID → CPU → DDR → Answer · DC stands for Data Center."
+  }
+}

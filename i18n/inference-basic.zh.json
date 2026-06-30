@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "title": "推理原理 · Agentic 推理 · AI Data Center",
+    "description": "LLM 推理原理：Prompt/Prefill、Decode、TTFT/TPOT 与 KV Cache 传递。"
+  },
+  "page": {
+    "h1": "推理原理：Prefill / Decode",
+    "lead": "大模型推理不是一次性写完整答案，而是先在 Prefill 阶段读完整 Prompt、生成 KV Cache，再在 Decode 阶段逐 token 生成答案。",
+    "diagramTitle": "一张图看完整过程：Prefill 生成 KV Cache，Decode 逐步复用",
+    "diagramAria": "Prompt Prefill Decode 和 KV Cache 传递流程图",
+    "tabSelf": "推理原理",
+    "tabDataflow": "推理服务数据流"
+  },
+  "steps": {
+    "title": "一次完整推理请求",
+    "s1": "<strong>用户输入 Question (Prompt)。</strong> 例如：“What does DC stand for”",
+    "s2": "<strong>Tokenizer 切分 token。</strong> 文本被转换成模型可处理的 token id。",
+    "s3": "<strong>Prefill 阶段。</strong> 模型一次性处理所有输入 token，并为每层 Attention 生成 KV Cache。",
+    "s4": "<strong>Decode 阶段。</strong> 模型复用 KV Cache，每轮只生成一个新 token。",
+    "s5": "<strong>直到 EOS。</strong> 新 token 不断追加到上下文，直到生成结束符或达到长度限制。"
+  },
+  "aside": {
+    "title": "先记住一句话",
+    "callout": "Prefill 决定首 token 前的等待时间，Decode 决定后续 token 的生成速度；KV Cache 是二者之间传递上下文记忆的关键。"
+  },
+  "metrics": {
+    "title": "图中三个关键指标",
+    "ttft": "<strong>TTFT。</strong> 从请求进入到第一个输出 token 出来的时间，主要覆盖 Prompt 处理和 Prefill。",
+    "tpot": "<strong>TPOT。</strong> Decode 阶段每生成一个 token 的间隔，决定流式输出是否顺滑。",
+    "kvc": "<strong>KV Cache。</strong> Prefill 生成历史 token 的 K/V，Decode 每轮读取并追加新的 K/V。"
+  },
+  "engineering": {
+    "title": "工程含义",
+    "body": "长 Prompt 会拉长 Prefill 和 TTFT；长输出会占用更多 Decode 时间；并发请求多时，KV Cache 会快速消耗显存。所以推理服务需要同时优化计算、显存和调度。"
+  },
+  "nav": {
+    "prev": "← Agentic 推理",
+    "next": "下一篇：推理服务数据流 →"
+  },
+  "diagram": {
+    "questionLabel": "Question (Prompt):",
+    "questionText": "What does DC stand for",
+    "prefillPhase": "Prefill phase",
+    "decodePhase": "Decode phase (Token generation)",
+    "kvCache": "KV Cache",
+    "kvSub": "K/V for 5 prompt tokens",
+    "generate": "生成",
+    "kvDecodeNote": "KV Cache 被 Decode 阶段持续读取，并追加每个新 token 的 K/V",
+    "ttft": "Time-To-First-Token (TTFT)",
+    "tpot": "Time-Per-Output-Token (TPOT)",
+    "moreDecode": "more decode iterations ...",
+    "answerPrefix": "Answer is: ",
+    "answerText": "DC stands for Data Center.",
+    "footerNote": "Prefill 生成 KV Cache，Decode 复用 KV Cache 逐 token 输出，直到 EOS。",
+    "iter1": "iteration 1",
+    "iterN": "iter {n}"
+  }
+}

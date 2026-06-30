@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "title": "推理服务数据流 · Agentic 推理 · AI Data Center",
+    "description": "推理服务七阶段数据流：未启动、空载启动、模型加载、Question、Prefill、Decode、Answer。8 PD分离，4 Prefill + 4 Decode。"
+  },
+  "page": {
+    "h1": "推理服务七阶段数据流",
+    "lead": "以下用<strong>同一台推理服务器</strong>（CPU + DDR + 本地 SSD + 8×NPU/HBM，<strong>PD分离</strong>：上排 4 卡 Prefill、下排 4 卡 Decode）从上到下串联七个阶段：未启动 → 空载启动 → 加载模型 → Question 到达 → Prefill → Decode → Answer 返回。每节保留相同的服务器结构，只叠加本阶段的数据流高亮。<strong>灰色</strong>表示空闲，<strong>彩色</strong>表示运行态或已有文件。",
+    "summary": "<strong>七阶段串联：</strong>未启动 → 空载启动 → 加载模型 → Question → <strong>上排 Prefill</strong>（写 KV）→ <strong>下排 Decode</strong>（逐 token）→ Answer。架构为 <strong>8 PD分离</strong>（4 Prefill + 4 Decode）。",
+    "tabPrinciples": "推理原理",
+    "tabSelf": "推理服务数据流"
+  },
+  "legend": {
+    "active": "数据流（本阶段）",
+    "kv": "KV Cache",
+    "ssd": "SSD 读盘",
+    "net": "网络 I/O",
+    "idleGray": "空闲态（灰色）",
+    "ssdBlue": "SSD 已有文件（蓝色）",
+    "npuGreen": "NPU 运行态（绿色）"
+  },
+  "replay": {
+    "stage0": "重新播放本阶段动画",
+    "stage1": "重新播放容器镜像加载动画",
+    "stage2": "重新播放模型权重加载动画",
+    "stage3": "重新播放 Question 与 Token ID 动画",
+    "stage4": "重新播放 KV Cache 填充动画",
+    "stage5": "重新播放 KV 传递与 KV计算 动画",
+    "stage6": "重新播放 Answer 输出动画"
+  },
+  "aria": {
+    "stage0": "阶段0 服务器未启动",
+    "stage1": "阶段1 空载启动",
+    "stage2": "阶段2 加载模型",
+    "stage3": "阶段3 Question到达",
+    "stage4": "阶段4 Prefill",
+    "stage5": "阶段5 Decode",
+    "stage6": "阶段6 Answer返回"
+  },
+  "stages": {
+    "s0": {
+      "title": "服务器未启动",
+      "summary": "整机处于<strong>空闲态</strong>：CPU、DDR、NPU、HBM 均未参与推理；本地 SSD 上可已挂载 OS、驱动、容器镜像与模型权重文件，但服务进程尚未拉起。",
+      "l1": "<strong>CPU 空闲。</strong> 推理引擎主进程、调度器、Tokenizer 均未运行。",
+      "l2": "<strong>DDR 空闲。</strong> 主存中无请求与 token 中转数据。",
+      "l3": "<strong>SSD 已有文件。</strong> OS、驱动、容器镜像与模型权重已挂载（蓝色），等待启动后加载至 HBM。",
+      "l4": "<strong>NPU / HBM 空闲。</strong> 8 卡资源池尚未参与任何计算。"
+    },
+    "s1": {
+      "title": "服务器启动（未加载模型）",
+      "summary": "推理服务进程已启动：CPU 中运行<strong>主进程</strong>，DDR 中驻留<strong>推理引擎主进程</strong>；8 张 NPU 已上电，容器镜像从本地 SSD 加载至各卡 HBM 底部（约 10%），<strong>尚无模型权重</strong>。",
+      "l1": "<strong>进程就绪。</strong> CPU 运行主进程；DDR 驻留推理引擎主进程。",
+      "l2": "<strong>镜像入 HBM。</strong> 容器镜像已加载至各卡 HBM 底部（约 10%），模型权重仍在 SSD。",
+      "l3": "<strong>不可推理。</strong> 此时尚未加载模型权重，也未接受用户 Question。"
+    },
+    "s2": {
+      "title": "加载模型（SSD → HBM）",
+      "summary": "CPU 从本地 SSD 读取<strong>模型权重</strong>，分发至 8 张 NPU 的 HBM（PD分离 · 各卡持有相应分片）。在已有<strong>容器镜像</strong>（约 10%）基础上，HBM 新增<strong>模型权重</strong>区域（约 15%），并预留 KV Cache 空间。",
+      "l1": "<strong>读盘。</strong> CPU 从本地 SSD 读取模型权重（绿色标注）。",
+      "l2": "<strong>传输。</strong> 权重写入各 NPU HBM，叠加于已有容器镜像之上。",
+      "l3": "<strong>就绪。</strong> 模型权重常驻 HBM（约 15%），可接受推理请求。"
+    },
+    "s3": {
+      "title": "Question 到达（CPU 侧）",
+      "summary": "用户 Question 经网络进入 CPU；分词后 token 序列写入 DDR，并<strong>送往 NPU</strong> 等待 Prefill。HBM 中<strong>容器镜像</strong>（约 10%）、<strong>模型权重</strong>（约 15%）已就绪，尚未开始 KV 计算。",
+      "l1": "<strong>网络接收。</strong> Question 报文进入 CPU。",
+      "l2": "<strong>分词。</strong> CPU 将文本转为 token ID 序列，写入 DDR。",
+      "l3": "<strong>送往 NPU。</strong> token 序列经调度送入 NPU 资源池，等待 Prefill。"
+    },
+    "s4": {
+      "title": "Prefill（读完整 Question，生成 KV Cache）",
+      "summary": "输入 token 经 H2D 进入<strong>上排 4 张 Prefill 卡</strong>的 HBM，在已有模型权重基础上一次性处理全部 prompt，写入 KV 区域并产出第一个 Answer token（TTFT）；下排 Decode 卡待命。",
+      "l1": "<strong>下发。</strong> DDR 中的 token 序列进入 NPU HBM。",
+      "l2": "<strong>Prefill 计算。</strong> 复用 HBM 中模型权重，<strong>创建 KV Cache</strong>。",
+      "l3": "<strong>首 token。</strong> 得到第一个输出 token，TTFT 结束。"
+    },
+    "s5": {
+      "title": "Decode（逐 token 生成 Answer）",
+      "summary": "每轮 Decode 复用 HBM 中的模型权重与 KV Cache，追加新 K/V，采样得到一个 token；循环直至 EOS。PD分离 · 上排 Prefill / 下排 Decode 分工。",
+      "l1": "<strong>读 KV。</strong> NPU 从 HBM 读取已有 KV Cache 与上一 token。",
+      "l2": "<strong>Decode 一步。</strong> 复用权重，追加新 K/V，采样得到 1 个 token。",
+      "l3": "<strong>循环。</strong> 重复直至结束。"
+    },
+    "s6": {
+      "title": "Answer 返回（CPU 侧）",
+      "summary": "完整 token 序列从 NPU HBM 回到 DDR；CPU 反分词为 Answer 文本，再经网络返回用户。",
+      "l1": "<strong>回传。</strong> token 序列写入 DDR。",
+      "l2": "<strong>反分词。</strong> CPU 转为 Answer 文本。",
+      "l3": "<strong>交付。</strong> 经网络返回用户。"
+    }
+  },
+  "nav": {
+    "prev": "← 推理原理",
+    "next": "返回 Agentic 推理 →"
+  },
+  "svg": {
+    "serverTitle": "推理服务器 · 8 PD分离",
+    "serverIdle": "全部核心部件空闲 · 尚未启动推理服务",
+    "cpu": "CPU",
+    "ddr": "DDR",
+    "localSsd": "本地SSD",
+    "network": "网络",
+    "mainProcess": "主进程",
+    "inferenceEngine": "推理引擎主进程",
+    "osStack": "OS+PyTorch+推理引擎+CANN",
+    "prefill": "Prefill",
+    "decode": "Decode",
+    "hbm": "HBM",
+    "modelWeights": "模型权重",
+    "containerImage": "容器镜像",
+    "kvCache": "KV Cache",
+    "kvCompute": "KV计算",
+    "question": "Question",
+    "answer": "Answer",
+    "detokenize": "Detokenize",
+    "tokenId": "Token ID",
+    "cpuIdle": "CPU （空闲）",
+    "ddrIdle": "DDR（空闲）",
+    "ssdMounted": "OS + 驱动 + 容器镜像 + 模型权重（挂载）",
+    "ssdPrefix": "OS + 驱动 + ",
+    "ssdHlContainer": "容器镜像",
+    "ssdMid": " + ",
+    "ssdHlModel": "模型权重",
+    "ssdSuffix": "（挂载）",
+    "ssdTail": " + 模型权重（挂载）",
+    "npuPoolTitle": "8 × NPU资源池 · 上排 Prefill · 下排 Decode",
+    "statusS1": "NPU 已上电 · HBM 已加载容器镜像（约 10%）",
+    "cpuReadWeights": "读取 · 分发权重",
+    "ddrBuffer": "缓冲（可选）",
+    "loadLabel": "加载",
+    "statusS2": "8 卡 HBM · 容器镜像（10%）+ 模型权重（15%）· 预留 KV Cache",
+    "cpuScheduleNet": "调度 · 分词 · 网络",
+    "tokenSequence": "token 序列",
+    "statusS3": "8 卡 HBM · 容器镜像（10%）+ 模型权重（15%）· 待 Prefill",
+    "cpuSchedulePrefill": "调度 Prefill",
+    "inputTokenSequence": "输入 token 序列",
+    "weightsKv": "模型权重+KV",
+    "statusS4": "上排 4 卡 Prefill · KV 区域写入 · 下排 Decode 卡待命",
+    "cpuScheduleDecode": "调度 Decode",
+    "firstTokenId": "首token ID",
+    "statusS5": "下排 4 卡 Decode · 复用 KV + 模型权重 · 逐 token 生成",
+    "answerTextLabel": "Answer 文本",
+    "statusS6": "Token ID → CPU → DDR → Answer · DC stands for Data Center."
+  }
+}
