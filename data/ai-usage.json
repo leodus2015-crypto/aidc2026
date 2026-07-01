@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "updated_at": "2026-06-19T12:00:00+08:00",
-  "source": "Cursor Dashboard · usage-events-2026-06-19.csv",
-  "notes": "由 Cursor 导出 CSV 汇总；Included 行按账单周期拆分。Cache = Cache Read + Input (w/ Cache Write)；API / Auto + Composer = Input (w/o Cache Write) + Output Tokens。",
+  "updated_at": "2026-07-01T13:49:57+08:00",
+  "source": "Cursor Dashboard · usage-events-2026-07-01.csv",
+  "notes": "由 Cursor 导出 CSV 汇总；Included 行按账单周期拆分。同一周期重复导入时，仅合并事件日期晚于 recorded_at 的增量。Cache = Cache Read + Input (w/ Cache Write)；API / Auto + Composer = Input (w/o Cache Write) + Output Tokens。",
   "periods": [
     {
       "period": "2026-04-25 — 2026-05-25",
@@ -68,18 +68,18 @@
       "period": "2026-05-25 — 2026-06-25",
       "period_start": "2026-05-25",
       "period_end": "2026-06-25",
-      "recorded_at": "2026-06-19",
-      "total_tokens": 75566407,
+      "recorded_at": "2026-06-23",
+      "total_tokens": 265728228,
       "categories": [
         {
           "name": "Cache",
-          "tokens": 68232576,
-          "usage_percent": 90.3,
+          "tokens": 236525231,
+          "usage_percent": 89.0,
           "items": [
             {
               "name": "Cache Read",
-              "tokens": 68232576,
-              "usage_percent": 90.3
+              "tokens": 236525231,
+              "usage_percent": 89.0
             },
             {
               "name": "Cache Write",
@@ -90,25 +90,75 @@
         },
         {
           "name": "API",
-          "tokens": 2781102,
-          "usage_percent": 3.7,
+          "tokens": 6400691,
+          "usage_percent": 2.4,
           "items": [
             {
               "name": "gpt-5.5-medium",
-              "tokens": 2781102,
-              "usage_percent": 3.7
+              "tokens": 6400691,
+              "usage_percent": 2.4
             }
           ]
         },
         {
           "name": "Auto + Composer",
-          "tokens": 4552729,
-          "usage_percent": 6.0,
+          "tokens": 22802306,
+          "usage_percent": 8.6,
           "items": [
             {
               "name": "composer-2.5-fast",
-              "tokens": 4552729,
-              "usage_percent": 6.0
+              "tokens": 14926960,
+              "usage_percent": 5.6
+            },
+            {
+              "name": "auto",
+              "tokens": 7875346,
+              "usage_percent": 3.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "period": "2026-06-25 — 2026-07-25",
+      "period_start": "2026-06-25",
+      "period_end": "2026-07-25",
+      "recorded_at": "2026-07-01",
+      "total_tokens": 71784704,
+      "categories": [
+        {
+          "name": "Cache",
+          "tokens": 67293216,
+          "usage_percent": 93.7,
+          "items": [
+            {
+              "name": "Cache Read",
+              "tokens": 67293216,
+              "usage_percent": 93.7
+            }
+          ]
+        },
+        {
+          "name": "API",
+          "tokens": 766689,
+          "usage_percent": 1.1,
+          "items": [
+            {
+              "name": "gpt-5.5-medium",
+              "tokens": 766689,
+              "usage_percent": 1.1
+            }
+          ]
+        },
+        {
+          "name": "Auto + Composer",
+          "tokens": 3724799,
+          "usage_percent": 5.2,
+          "items": [
+            {
+              "name": "composer-2.5-fast",
+              "tokens": 3724799,
+              "usage_percent": 5.2
             }
           ]
         }

@@ -3,76 +3,173 @@ function initAboutUsPage() {
   const loc = () => AidcI18n.localeTag();
 
   const fallback = {
-    version: 2,
-    source: 'Cursor Dashboard · usage-events-2026-06-19.csv',
-    updated_at: '2026-06-19T12:00:00+08:00',
-    periods: [
-      {
-        period: '2026-04-25 — 2026-05-25',
-        period_start: '2026-04-25',
-        period_end: '2026-05-25',
-        recorded_at: '2026-06-19',
-        total_tokens: 84624306,
-        categories: [
-          {
-            name: 'Cache',
-            tokens: 77889664,
-            usage_percent: 92.0,
-            items: [
-              { name: 'Cache Read', tokens: 77889664, usage_percent: 92.0 },
-              { name: 'Cache Write', tokens: 0, usage_percent: 0.0 },
-            ],
-          },
-          {
-            name: 'API',
-            tokens: 489627,
-            usage_percent: 0.6,
-            items: [{ name: 'gpt-5.5-medium', tokens: 489627, usage_percent: 0.6 }],
-          },
-          {
-            name: 'Auto + Composer',
-            tokens: 6245015,
-            usage_percent: 7.4,
-            items: [
-              { name: 'composer-2.5-fast', tokens: 3278591, usage_percent: 3.9 },
-              { name: 'composer-2-fast', tokens: 2808023, usage_percent: 3.3 },
-              { name: 'auto', tokens: 158401, usage_percent: 0.2 },
-            ],
-          },
-        ],
-      },
-      {
-        period: '2026-05-25 — 2026-06-25',
-        period_start: '2026-05-25',
-        period_end: '2026-06-25',
-        recorded_at: '2026-06-19',
-        total_tokens: 75566407,
-        categories: [
-          {
-            name: 'Cache',
-            tokens: 68232576,
-            usage_percent: 90.3,
-            items: [
-              { name: 'Cache Read', tokens: 68232576, usage_percent: 90.3 },
-              { name: 'Cache Write', tokens: 0, usage_percent: 0.0 },
-            ],
-          },
-          {
-            name: 'API',
-            tokens: 2781102,
-            usage_percent: 3.7,
-            items: [{ name: 'gpt-5.5-medium', tokens: 2781102, usage_percent: 3.7 }],
-          },
-          {
-            name: 'Auto + Composer',
-            tokens: 4552729,
-            usage_percent: 6.0,
-            items: [{ name: 'composer-2.5-fast', tokens: 4552729, usage_percent: 6.0 }],
-          },
-        ],
-      },
-    ],
-  };
+    "version": 2,
+    "updated_at": "2026-07-01T13:49:57+08:00",
+    "source": "Cursor Dashboard \u00b7 usage-events-2026-07-01.csv",
+    "notes": "\u7531 Cursor \u5bfc\u51fa CSV \u6c47\u603b\uff1bIncluded \u884c\u6309\u8d26\u5355\u5468\u671f\u62c6\u5206\u3002Cache = Cache Read + Input (w/ Cache Write)\uff1bAPI / Auto + Composer = Input (w/o Cache Write) + Output Tokens\u3002",
+    "periods": [
+        {
+            "period": "2026-04-25 \u2014 2026-05-25",
+            "period_start": "2026-04-25",
+            "period_end": "2026-05-25",
+            "recorded_at": "2026-06-19",
+            "total_tokens": 84624306,
+            "categories": [
+                {
+                    "name": "Cache",
+                    "tokens": 77889664,
+                    "usage_percent": 92.0,
+                    "items": [
+                        {
+                            "name": "Cache Read",
+                            "tokens": 77889664,
+                            "usage_percent": 92.0
+                        },
+                        {
+                            "name": "Cache Write",
+                            "tokens": 0,
+                            "usage_percent": 0.0
+                        }
+                    ]
+                },
+                {
+                    "name": "API",
+                    "tokens": 489627,
+                    "usage_percent": 0.6,
+                    "items": [
+                        {
+                            "name": "gpt-5.5-medium",
+                            "tokens": 489627,
+                            "usage_percent": 0.6
+                        }
+                    ]
+                },
+                {
+                    "name": "Auto + Composer",
+                    "tokens": 6245015,
+                    "usage_percent": 7.4,
+                    "items": [
+                        {
+                            "name": "composer-2.5-fast",
+                            "tokens": 3278591,
+                            "usage_percent": 3.9
+                        },
+                        {
+                            "name": "composer-2-fast",
+                            "tokens": 2808023,
+                            "usage_percent": 3.3
+                        },
+                        {
+                            "name": "auto",
+                            "tokens": 158401,
+                            "usage_percent": 0.2
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "period": "2026-05-25 \u2014 2026-06-25",
+            "period_start": "2026-05-25",
+            "period_end": "2026-06-25",
+            "recorded_at": "2026-06-23",
+            "total_tokens": 265728228,
+            "categories": [
+                {
+                    "name": "Cache",
+                    "tokens": 236525231,
+                    "usage_percent": 89.0,
+                    "items": [
+                        {
+                            "name": "Cache Read",
+                            "tokens": 236525231,
+                            "usage_percent": 89.0
+                        },
+                        {
+                            "name": "Cache Write",
+                            "tokens": 0,
+                            "usage_percent": 0.0
+                        }
+                    ]
+                },
+                {
+                    "name": "API",
+                    "tokens": 6400691,
+                    "usage_percent": 2.4,
+                    "items": [
+                        {
+                            "name": "gpt-5.5-medium",
+                            "tokens": 6400691,
+                            "usage_percent": 2.4
+                        }
+                    ]
+                },
+                {
+                    "name": "Auto + Composer",
+                    "tokens": 22802306,
+                    "usage_percent": 8.6,
+                    "items": [
+                        {
+                            "name": "composer-2.5-fast",
+                            "tokens": 14926960,
+                            "usage_percent": 5.6
+                        },
+                        {
+                            "name": "auto",
+                            "tokens": 7875346,
+                            "usage_percent": 3.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "period": "2026-06-25 \u2014 2026-07-25",
+            "period_start": "2026-06-25",
+            "period_end": "2026-07-25",
+            "recorded_at": "2026-07-01",
+            "total_tokens": 71784704,
+            "categories": [
+                {
+                    "name": "Cache",
+                    "tokens": 67293216,
+                    "usage_percent": 93.7,
+                    "items": [
+                        {
+                            "name": "Cache Read",
+                            "tokens": 67293216,
+                            "usage_percent": 93.7
+                        }
+                    ]
+                },
+                {
+                    "name": "API",
+                    "tokens": 766689,
+                    "usage_percent": 1.1,
+                    "items": [
+                        {
+                            "name": "gpt-5.5-medium",
+                            "tokens": 766689,
+                            "usage_percent": 1.1
+                        }
+                    ]
+                },
+                {
+                    "name": "Auto + Composer",
+                    "tokens": 3724799,
+                    "usage_percent": 5.2,
+                    "items": [
+                        {
+                            "name": "composer-2.5-fast",
+                            "tokens": 3724799,
+                            "usage_percent": 5.2
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+};
 
   const barColors = ['bg-teal-500', 'bg-blue-600', 'bg-sky-500', 'bg-violet-500', 'bg-indigo-500', 'bg-emerald-500', 'bg-amber-500'];
 
