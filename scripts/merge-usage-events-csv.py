@@ -17,6 +17,7 @@ import argparse
 import csv
 import json
 import os
+import re
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -265,15 +266,122 @@ def count_code() -> dict:
     }
 
 
+def update_code_volume_pages(code: dict) -> None:
+    """Sync code volume stats into i18n JSON and about-us.html bar widths."""
+
+    def fmt_lines(n: int) -> str:
+        return f"{n:,}"
+
+    html_lines = code["lines_by_lang"].get("HTML", 0)
+    js_lines = code["lines_by_lang"].get("JavaScript", 0)
+    shell_lines = code["lines_by_lang"].get("Shell", 0)
+    svg_lines = code["lines_by_lang"].get("SVG", 0)
+    html_files = code["files_by_lang"].get("HTML", 0)
+    js_files = code["files_by_lang"].get("JavaScript", 0)
+    shell_files = code["files_by_lang"].get("Shell", 0)
+
+    zh_path = ROOT / "i18n" / "about-us.zh.json"
+    en_path = ROOT / "i18n" / "about-us.en.json"
+    for path, lang in ((zh_path, "zh"), (en_path, "en")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        cv = data["codeVolume"]
+        cv["statLinesValue"] = (
+            f"{fmt_lines(code['total_lines'])} 行" if lang == "zh" else f"{fmt_lines(code['total_lines'])} lines"
+        )
+        cv["statTokensValue"] = (
+            f"{code['tokens_mid_k']}K Tokens" if lang == "zh" else f"{code['tokens_mid_k']}K tokens"
+        )
+        chars = code["total_chars"]
+        cv["statLinesNote"] = (
+            f"若将全部源码一次性作为 Prompt 输入；{chars:,} 字符 ÷ 2.5 字符/Token，区间约 {code['tokens_low_k']}K–{code['tokens_high_k']}K。"
+            if lang == "zh"
+            else f"If all source were fed as a single prompt: {chars:,} characters ÷ 2.5 chars/token, roughly {code['tokens_low_k']}K–{code['tokens_high_k']}K."
+        )
+        cv["statFilesValue"] = f"{code['total_files']} 个" if lang == "zh" else str(code["total_files"])
+        cv["langHtmlShare"] = (
+            f"{fmt_lines(html_lines)} 行 · {code['pct']['HTML']}"
+            if lang == "zh"
+            else f"{fmt_lines(html_lines)} lines · {code['pct']['HTML']}"
+        )
+        cv["langHtmlNote"] = (
+            f"{html_files} 个页面文件（首页、推理原理、推理服务数据流、Agentic 推理、后训练、AI DC 规划、机房布局、3D 案例、ROI、About 等）"
+            if lang == "zh"
+            else f"{html_files} page files (home, inference basics, inference data flow, Agentic inference, post-training, AI DC design, room layout, 3D cases, ROI, About, etc.)"
+        )
+        cv["langJsShare"] = (
+            f"{fmt_lines(js_lines)} 行 · {code['pct']['JavaScript']}"
+            if lang == "zh"
+            else f"{fmt_lines(js_lines)} lines · {code['pct']['JavaScript']}"
+        )
+        cv["langJsNote"] = (
+            f"{js_files} 个脚本（i18n、各页逻辑、配置加载与语言桥接等）"
+            if lang == "zh"
+            else f"{js_files} scripts (i18n, page logic, config loader, locale bridge, etc.)"
+        )
+        cv["langSvgShare"] = (
+            f"{fmt_lines(svg_lines)} 行 · {code['pct']['SVG']}"
+            if lang == "zh"
+            else f"{fmt_lines(svg_lines)} lines · {code['pct']['SVG']}"
+        )
+        cv["langShellShare"] = (
+            f"{fmt_lines(shell_lines)} 行 · {code['pct']['Shell']}"
+            if lang == "zh"
+            else f"{fmt_lines(shell_lines)} lines · {code['pct']['Shell']}"
+        )
+        cv["langShellNote"] = (
+            f"{shell_files} 个脚本（本地预览、部署、API 启动与校验等）"
+            if lang == "zh"
+            else f"{shell_files} scripts (local preview, deploy, API startup, verification, etc.)"
+        )
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    html_path = ROOT / "about-us.html"
+    html = html_path.read_text(encoding="utf-8")
+    widths = {
+        "bg-blue-600": code["pct"]["HTML"].rstrip("%"),
+        "bg-amber-500": code["pct"]["JavaScript"].rstrip("%"),
+        "bg-violet-500": code["pct"]["SVG"].rstrip("%"),
+        "bg-emerald-500": code["pct"]["Shell"].rstrip("%"),
+    }
+    for color, width in widths.items():
+        html = re.sub(
+            rf'(class="h-full rounded-full {color}" style="width: )[\d.]+%',
+            rf"\g<1>{width}%",
+            html,
+            count=1,
+        )
+    html_path.write_text(html, encoding="utf-8")
+
+
+def sync_about_us_fallback() -> None:
+    data = load_usage()
+    js_path = ROOT / "js" / "about-us-page.js"
+    text = js_path.read_text(encoding="utf-8")
+    start = text.index("  const fallback = ")
+    end = text.index("\n};", start) + 3
+    js_path.write_text(text[:start] + "  const fallback = " + json.dumps(data, indent=4) + ";" + text[end:], encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Merge usage-events CSV and refresh code stats JSON snippet.")
-    parser.add_argument("csv", type=Path, help="Path to usage-events CSV export")
+    parser.add_argument("csv", type=Path, nargs="?", help="Path to usage-events CSV export")
     parser.add_argument("--recorded-at", help="YYYY-MM-DD for recorded_at (default: today CN)")
+    parser.add_argument("--code-only", action="store_true", help="Only recount code and update About US pages")
     args = parser.parse_args()
 
-    rec = date.fromisoformat(args.recorded_at) if args.recorded_at else None
-    usage = merge_csv(args.csv, rec)
+    usage = None
+    if args.code_only:
+        if args.csv:
+            parser.error("csv positional argument conflicts with --code-only")
+    elif args.csv:
+        rec = date.fromisoformat(args.recorded_at) if args.recorded_at else None
+        usage = merge_csv(args.csv, rec)
+        sync_about_us_fallback()
+    else:
+        parser.error("csv path required unless --code-only")
+
     code = count_code()
+    update_code_volume_pages(code)
     print(json.dumps({"usage": usage, "code": code}, indent=2))
     return 0
 
