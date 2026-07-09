@@ -36,6 +36,14 @@
     "液冷\n水力\n模块间": "液冷\n水力\n模块间",
     "低压\n配电": "低压\n配电",
     "电气\n室": "电气\n室",
-    "中压\n室": "中压\n室"
+    "中压\n室": "中压\n室",
+    "POD": "POD"
+  },
+  "podNotes": {
+    "title": "POD 布局说明",
+    "item1": "每栋DC，三层，每层4个POD，共计12个POD；",
+    "item2": "每个POD，8个微模块，每个微模块40个机柜，总计320个机柜；",
+    "noteLabel": "备注：",
+    "noteBody": "POD（Performance Optimization DataCenter）：包含供电、暖通、IT机房、柴发等完整功能。"
   }
 }

@@ -36,6 +36,14 @@
     "液冷\n水力\n模块间": "Liquid\nHydraulic\nModule Room",
     "低压\n配电": "LV\nPower",
     "电气\n室": "Electrical\nRoom",
-    "中压\n室": "MV\nRoom"
+    "中压\n室": "MV\nRoom",
+    "POD": "POD"
+  },
+  "podNotes": {
+    "title": "POD layout notes",
+    "item1": "Each DC building has 3 floors, 4 PODs per floor, 12 PODs in total.",
+    "item2": "Each POD has 8 micro-modules; each micro-module has 40 racks, 320 racks in total.",
+    "noteLabel": "Note:",
+    "noteBody": "POD (Performance Optimization DataCenter) is a self-contained unit with power, HVAC, IT halls, diesel generators, and related functions."
   }
 }

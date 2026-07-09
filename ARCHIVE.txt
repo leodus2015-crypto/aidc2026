@@ -1,6 +1,6 @@
 aidc 静态站点归档
-版本：v2026.06.22
-日期：2026-06-22
+版本：v2026.07.09
+日期：2026-07-09
 
 包含
 ────
@@ -41,6 +41,8 @@ aidc 静态站点归档
   js/index-page.js、js/ai-dc-design-page.js、js/aidc-investment-roi-page.js、js/config-loader.js
   js/aidc-asset-version.js、data/asset-version.json、scripts/bump-asset-version.py
   i18n/ai-dc-deployment-perf.{zh,en}.json、scripts/patch-deployment-perf-i18n.py
+  i18n/ai-dc-floor-detail.{zh,en}.json  单层平面图与 POD 说明文案
+  scripts/merge-usage-events-csv.py     About US Token CSV 增量合并与代码量刷新
   deploy/nginx-static-cache.conf、deploy/CACHE.md
 
 站点结构
@@ -50,8 +52,11 @@ aidc 静态站点归档
   ai-dc-room-layout.html 再通过 js/ai-dc-room-layout-page.js 加载四层示意与单层平面。
 
   Tab 顺序（ai-dc-design）：机房布局 | 机柜布局（风冷）| 产品协同 | 案例 A | 案例 B | Investment ROI
-  默认 Tab：机房布局（roomLayout）；单层平面图含功能区面积标注（EHU 750 m²、风冷/液冷 820 m²、
-  配电功能区 420 m² 标于左侧两块低压配电合计区域）；中间配电区高度为原 70%，上下机房等比加高。
+  默认 Tab：机房布局（roomLayout）。单层平面图（ai-dc-floor-detail.html）：
+    · 左上角红色虚线标出一个 POD（含 EHU、风冷/液冷机房及电源区上半部；电源区与下方 POD 共用）
+    · 配电功能区 420 m² 标注于虚框内电源区上半部
+    · 图下 POD 布局说明（12 POD / 320 机柜 / POD 定义）；embed 模式下图面等比缩放防裁切
+  About US：代码量 20,850 行、三周期 Token 累计；scripts/merge-usage-events-csv.py 增量合并 CSV
 
 说明
 ────

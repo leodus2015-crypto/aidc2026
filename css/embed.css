@@ -46,15 +46,16 @@ html.aidc-embed .floor-detail-main {
   padding: 0 !important;
   max-width: none;
   width: 100%;
+  overflow: hidden;
 }
 
 html.aidc-embed .floor-detail-main > section.floor-plan-section {
-  flex: 1;
+  flex: 1 1 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: stretch;
+  justify-content: flex-start;
   border: none;
   border-radius: 0;
   box-shadow: none;
@@ -64,11 +65,41 @@ html.aidc-embed .floor-detail-main > section.floor-plan-section {
 
 html.aidc-embed .floor-plan-svg {
   width: 100% !important;
-  height: auto !important;
-  max-height: none !important;
+  height: 100% !important;
+  max-height: 100% !important;
   min-height: 0 !important;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   align-self: stretch;
+}
+
+html.aidc-embed .pod-notes {
+  flex: 0 0 auto;
+  margin-top: 0.25rem !important;
+  padding: 0.375rem 0.5rem !important;
+  border-radius: 0.625rem;
+  box-shadow: none;
+}
+
+html.aidc-embed .pod-notes h2 {
+  font-size: 0.6875rem;
+  line-height: 1.25;
+}
+
+html.aidc-embed .pod-notes ol {
+  margin-top: 0.25rem !important;
+  padding-left: 1rem !important;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+}
+
+html.aidc-embed .pod-notes ol > li + li {
+  margin-top: 0.125rem;
+}
+
+html.aidc-embed .pod-notes p {
+  margin-top: 0.25rem !important;
+  font-size: 0.6875rem;
+  line-height: 1.3;
 }
 
 html.aidc-embed .room-layout-main {
