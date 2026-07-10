@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 VERSION_FILE = ROOT / "data" / "asset-version.json"
+RELEASE_FILE = ROOT / "data" / "site-release.json"
 ASSET_VERSION_JS = ROOT / "js" / "aidc-asset-version.js"
 FALLBACK_RE = re.compile(r"var FALLBACK = '\d+';")
 LOCAL_ASSET_RE = re.compile(
@@ -33,6 +34,19 @@ def load_version() -> str:
 def save_version(version: str) -> None:
     payload = {"version": version, "updatedAt": date.today().isoformat()}
     VERSION_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    sync_site_release(version)
+
+
+def sync_site_release(asset_version: str) -> None:
+    today = date.today()
+    release = {
+        "version": f"v{today.strftime('%Y.%m.%d')}",
+        "build": asset_version,
+        "updatedAt": today.isoformat(),
+        "siteUrl": "https://www.aidc2026.cn",
+        "repoUrl": "https://github.com/leodus2015-crypto/aidc2026",
+    }
+    RELEASE_FILE.write_text(json.dumps(release, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def bump_version() -> str:
@@ -111,6 +125,7 @@ def main() -> int:
 
     if args.sync:
         sync_all()
+        sync_site_release(load_version())
         return 0
 
     parser.print_help()

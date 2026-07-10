@@ -73,6 +73,16 @@
     "m6Role": "Core formula design and review",
     "m6Alt": "Andy"
   },
+  "openSource": {
+    "tag": "Open Source",
+    "title": "Open-source repository",
+    "p1": "The full site source lives on GitHub and is updated with each release. See the live site entry below for the current version and date.",
+    "siteLabel": "Live site",
+    "summary": "This site supports research and learning in the AI data center (AI DC) domain. Source code is open for reference — fork and adapt as needed.",
+    "repoLabel": "GitHub repository",
+    "repoNote": "Opens GitHub in a new tab. Issues and pull requests are welcome.",
+    "releaseLine": "Release {version} · Updated {date}"
+  },
   "msg": {
     "noBreakdown": "No breakdown available",
     "noEntries": "No entries yet",

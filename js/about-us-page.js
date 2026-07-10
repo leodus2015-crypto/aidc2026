@@ -190,6 +190,15 @@ function initAboutUsPage() {
     return map[name] || name;
   }
   let lastUsageData = null;
+  let lastReleaseData = null;
+
+  const releaseFallback = {
+    version: 'v2026.07.09',
+    build: '12',
+    updatedAt: '2026-07-09',
+    siteUrl: 'https://www.aidc2026.cn',
+    repoUrl: 'https://github.com/leodus2015-crypto/aidc2026',
+  };
 
   function formatTokens(value) {
     const n = Number(value) || 0;
@@ -295,13 +304,38 @@ function initAboutUsPage() {
     if (breakdown) breakdown.innerHTML = renderBreakdown(latest?.categories || []);
   }
 
+  function formatReleaseVersion(data) {
+    return data.version || '—';
+  }
+
+  function renderRelease(data) {
+    lastReleaseData = data;
+    const siteLink = document.getElementById('openSourceSiteLink');
+    if (siteLink && data.siteUrl) {
+      siteLink.href = data.siteUrl;
+    }
+    const meta = document.getElementById('openSourceReleaseMeta');
+    if (meta) {
+      meta.textContent = t('openSource.releaseLine', {
+        version: formatReleaseVersion(data),
+        date: formatDate(data.updatedAt),
+      });
+    }
+  }
+
   fetch('data/ai-usage.json', { cache: 'no-store' })
     .then((response) => (response.ok ? response.json() : fallback))
     .then(renderUsage)
     .catch(() => renderUsage(fallback));
 
+  fetch('data/site-release.json', { cache: 'no-store' })
+    .then((response) => (response.ok ? response.json() : releaseFallback))
+    .then(renderRelease)
+    .catch(() => renderRelease(releaseFallback));
+
   window.__aidcPageRefreshI18n = function refreshAboutUsI18n() {
     if (lastUsageData) renderUsage(lastUsageData);
+    if (lastReleaseData) renderRelease(lastReleaseData);
   };
 }
 

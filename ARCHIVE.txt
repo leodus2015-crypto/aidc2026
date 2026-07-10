@@ -33,7 +33,7 @@ aidc 静态站点归档
   preview-8011.sh
   assets/（团队头像等）
   css/embed.css
-  data/ai-usage.json、data/dc3d-case-*.defaults.json、data/config-seeds/
+  data/ai-usage.json、data/site-release.json（部署时自动更新版本）、data/dc3d-case-*.defaults.json、data/config-seeds/
   i18n/*.json
   i18n/ai-dc-deployment-perf.zh.json、i18n/ai-dc-deployment-perf.en.json  部署 & 协同特性页文案
   js/i18n.js、js/i18n-bootstrap.js、js/lang-switch.js、js/aidc-locale-bridge.js
@@ -43,6 +43,7 @@ aidc 静态站点归档
   i18n/ai-dc-deployment-perf.{zh,en}.json、scripts/patch-deployment-perf-i18n.py
   i18n/ai-dc-floor-detail.{zh,en}.json  单层平面图与 POD 说明文案
   scripts/merge-usage-events-csv.py     About US Token CSV 增量合并与代码量刷新
+  README.md                             仓库说明（含站点 Logo）
   deploy/nginx-static-cache.conf、deploy/CACHE.md
 
 站点结构

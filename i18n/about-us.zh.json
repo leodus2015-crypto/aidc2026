@@ -73,6 +73,16 @@
     "m6Role": "负责核心公式设计和校对",
     "m6Alt": "Andy"
   },
+  "openSource": {
+    "tag": "Open Source",
+    "title": "开源仓库",
+    "p1": "本网站全部页面源码已托管于 GitHub，仓库随每次发布更新；版本号与更新日期见下方在线站点信息。",
+    "siteLabel": "在线站点",
+    "summary": "本站面向 AI 数据中心（AI DC）领域的研究与学习，代码开源仅供查阅与参考，欢迎 fork 后按需改造。",
+    "repoLabel": "GitHub 仓库",
+    "repoNote": "链接将在新标签页打开 GitHub；提交 Issue 或 Pull Request 均欢迎。",
+    "releaseLine": "版本 {version} · 更新于 {date}"
+  },
   "msg": {
     "noBreakdown": "暂无明细",
     "noEntries": "暂无录入",
