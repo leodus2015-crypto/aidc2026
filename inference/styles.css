@@ -12,6 +12,20 @@
   --emerald-soft: #d1fae5;
 }
 
+html[data-theme="dark"] {
+  --page: #07111f;
+  --surface: #0f1c2e;
+  --ink: #f8fafc;
+  --muted: #b5c3d4;
+  --line: #2a3a50;
+  --blue: #60a5fa;
+  --blue-soft: #172f50;
+  --cyan-soft: #12354a;
+  --amber-soft: #493819;
+  --violet-soft: #302758;
+  --emerald-soft: #123d35;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -98,11 +112,23 @@ html {
   line-height: 1.75;
 }
 
+html[data-theme='dark'] .inference-doc .callout {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--blue);
+  color: var(--muted);
+}
+
 .inference-doc .diagram {
   width: 100%;
   min-height: 20rem;
   border-radius: 1.25rem;
   background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+
+html[data-theme='dark'] .inference-doc .diagram {
+  background: transparent;
+  border: 1px solid var(--line);
 }
 
 .inference-doc .pill-row {
@@ -114,16 +140,16 @@ html {
 .inference-doc .pill {
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: #fff;
+  background: var(--surface);
   padding: 0.45rem 0.8rem;
-  color: #475569;
+  color: var(--muted);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
 .inference-doc .metric {
   border-radius: 1.25rem;
-  background: #fff;
+  background: var(--surface);
   border: 1px solid var(--line);
   padding: 1rem;
 }
@@ -232,6 +258,10 @@ html {
   font-size: 0.82rem;
   font-weight: 700;
   color: #475569;
+}
+
+html[data-theme='dark'] .flow-legend {
+  color: var(--muted);
 }
 
 .flow-legend span {
@@ -806,10 +836,10 @@ html {
   width: 100%;
   height: 100%;
   padding: 0;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--line);
   border-radius: 999px;
-  background: #fff;
-  color: #64748b;
+  background: var(--surface);
+  color: var(--muted);
   cursor: pointer;
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.08);
 }
@@ -822,6 +852,12 @@ html {
   border-color: #16a34a;
   color: #15803d;
   background: #f0fdf4;
+}
+
+html[data-theme='dark'] .waterfall-stage .stage-replay-btn:hover:not(:disabled) {
+  border-color: #34d399;
+  color: #6ee7b7;
+  background: rgba(52, 211, 153, 0.12);
 }
 
 .waterfall-stage .stage-replay-btn:disabled {

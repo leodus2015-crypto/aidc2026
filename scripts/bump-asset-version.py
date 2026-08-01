@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bump data/asset-version.json and sync ?v= across HTML + aidc-asset-version.js FALLBACK."""
+"""Bump release metadata and sync ?v= across all HTML + shared assets."""
 
 from __future__ import annotations
 
@@ -16,14 +16,15 @@ RELEASE_FILE = ROOT / "data" / "site-release.json"
 ASSET_VERSION_JS = ROOT / "js" / "aidc-asset-version.js"
 FALLBACK_RE = re.compile(r"var FALLBACK = '\d+';")
 LOCAL_ASSET_RE = re.compile(
-    r'(?P<prefix>(?:src|href)=")((?:js|css|i18n)/[^"?#]+)(?P<q>\?v=\d+)?(?P<suffix>")',
+    r'(?P<prefix>(?:src|href)=")((?:\.\./)?(?:js|css|i18n)/[^"?#]+)(?P<q>\?v=\d+)?(?P<suffix>")',
     re.IGNORECASE,
 )
+INFERENCE_STYLE_RE = re.compile(r'(?P<prefix>href="styles\.css)(?:\?v=\d+)?(?P<suffix>")')
 ASSET_SCRIPT_MARK = "js/aidc-asset-version.js"
 
 
-def asset_script_line(version: str) -> str:
-    return f'  <script src="js/aidc-asset-version.js?v={version}"></script>\n'
+def asset_script_line(version: str, prefix: str = "") -> str:
+    return f'  <script src="{prefix}js/aidc-asset-version.js?v={version}"></script>\n'
 
 
 def load_version() -> str:
@@ -81,11 +82,18 @@ def patch_html_file(path: Path, version: str) -> bool:
         return f'{prefix}{asset}?v={version}{suffix}'
 
     text = LOCAL_ASSET_RE.sub(repl, text)
+    text = INFERENCE_STYLE_RE.sub(
+        lambda match: f'{match.group("prefix")}?v={version}{match.group("suffix")}',
+        text,
+    )
 
-    if ASSET_SCRIPT_MARK not in text and re.search(r'src="js/', text):
+    if ASSET_SCRIPT_MARK not in text and re.search(r'src="(?:\.\./)?js/', text):
+        relative = path.relative_to(ROOT)
+        depth = max(0, len(relative.parents) - 1)
+        prefix = "../" * depth
         text = re.sub(
-            r'(<script\s+[^>]*src="js/[^"]+"[^>]*>\s*</script>\n)',
-            lambda m: asset_script_line(version) + m.group(1),
+            r'(<script\s+[^>]*src="(?:\.\./)?js/[^"]+"[^>]*>\s*</script>\n)',
+            lambda m: asset_script_line(version, prefix) + m.group(1),
             text,
             count=1,
         )
@@ -100,7 +108,7 @@ def sync_all(version: str | None = None) -> str:
     v = version or load_version()
     sync_asset_version_js(v)
     changed = 0
-    for html in sorted(ROOT.glob("*.html")):
+    for html in sorted(ROOT.rglob("*.html")):
         if patch_html_file(html, v):
             changed += 1
     print(f"✓ asset version = {v}（已同步 {changed} 个 HTML + aidc-asset-version.js）")
@@ -125,7 +133,6 @@ def main() -> int:
 
     if args.sync:
         sync_all()
-        sync_site_release(load_version())
         return 0
 
     parser.print_help()

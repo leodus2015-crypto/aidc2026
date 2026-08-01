@@ -6,6 +6,9 @@
   <meta name="description" content="AI 数据中心 Token 服务投资收益分析：昇腾 NPU CAPEX/OPEX 与公有云 API 比价。" />
   <meta name="theme-color" content="#f8fafc" />
   <title>Token 投资收益 · AI Data Center</title>
+  <script src="js/aidc-theme.js?v=14"></script>
+  <script src="js/embed-mode.js?v=14"></script>
+  <script src="js/theme-switch.js?v=14"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     #roiForm select {
@@ -14,6 +17,12 @@
       background-repeat: no-repeat; background-position: right 0.85rem center; background-size: 1.125rem;
     }
     .cmp-bar-self { box-shadow: 0 0 0 2px rgb(251 191 36), 0 0 12px rgba(251,191,36,.35); }
+    html[data-theme='dark'] .cmp-bar-track {
+      background-color: var(--aidc-surface-muted);
+    }
+    html[data-theme='dark'] .cmp-price-panel .text-amber-800 {
+      color: #fbbf24;
+    }
     html.aidc-embed #site-header,
     html.aidc-embed #site-footer { display: none !important; }
     html.aidc-embed main { padding-top: 1.25rem; }
@@ -21,6 +30,8 @@
       html.aidc-embed main { padding-top: 1.5rem; }
     }
   </style>
+  <link rel="stylesheet" href="css/theme.css?v=14" />
+  <link rel="stylesheet" href="css/embed.css?v=14" />
   <script>
     try {
       if (window.self !== window.top) document.documentElement.classList.add('aidc-embed');
@@ -29,28 +40,31 @@
     }
   </script>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900">
+<body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="aidc-investment-roi">
   <header id="site-header" class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
-    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl" aria-label="主导航">
-      <a href="index.html" class="flex min-w-0 shrink-0 items-center" aria-label="AIDC 2026 · 首页">
+    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl" data-i18n-aria-label="nav.aria" aria-label="主导航">
+      <a href="index.html" class="flex min-w-0 shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
         <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10" />
       </a>
-      <ul class="ml-auto flex flex-wrap items-center gap-6 text-sm font-semibold">
-        <li><a href="ai-dc-design.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">AI DC规划</a></li>
-        <li><a href="index.html#inference" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">Agentic推理</a></li>
-        <li><a href="post-training.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">后训练</a></li>
-        <li><a href="white-paper.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">白皮书</a></li>
-        <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950">About US</a></li>
-      </ul>
+      <div class="ml-auto flex flex-wrap items-center gap-4">
+        <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+          <li><a href="ai-dc-design.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.aiDcLayout">AI DC规划</a></li>
+          <li><a href="index.html#inference" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.inference">Agentic推理</a></li>
+          <li><a href="post-training.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.postTraining">后训练</a></li>
+          <li><a href="white-paper.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.whitePaper">白皮书</a></li>
+          <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.aboutUs">About US</a></li>
+        </ul>
+        <div id="lang-switch-root" class="shrink-0"></div>
+      </div>
     </nav>
   </header>
 
   <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
     <section class="flex flex-col gap-8 lg:gap-10">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Investment ROI</p>
-        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">Token 服务投资收益分析</h1>
-        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">以<strong class="font-semibold text-slate-800">算力规模（P）</strong>与<strong class="font-semibold text-slate-800">集群功率（MW）</strong>联动建模，左侧 CAPEX、右侧 OPEX，中部比价图实时反映竞争力。</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="page.eyebrow">Investment ROI</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1">Token 服务投资收益分析</h1>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="page.introHtml">以<strong class="font-semibold text-slate-800">算力规模（P）</strong>与<strong class="font-semibold text-slate-800">集群功率（MW）</strong>联动建模，左侧 CAPEX、右侧 OPEX，中部比价图实时反映竞争力。</p>
         <p id="configSourceBadge" class="mt-2 text-xs font-medium text-slate-500" aria-live="polite"></p>
       </div>
 
@@ -76,7 +90,7 @@
                 <p class="mt-1 text-xs text-slate-500">规格：64 卡 = 125kW</p>
               </div>
             </div>
-            <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <div class="aidc-inset-panel rounded-xl p-3">
               <p class="text-xs font-semibold text-slate-700">工程投资结构（合计 100%）</p>
               <div class="mt-3 grid gap-3 sm:grid-cols-3">
                 <div>
@@ -139,7 +153,7 @@
               <input id="deprecYears" type="number" min="1" step="1" value="5"
                 class="mt-2 h-12 w-full rounded-2xl border border-slate-200 px-4 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
             </div>
-            <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <div class="aidc-inset-panel rounded-xl p-3">
               <p class="text-xs font-semibold text-slate-700">运行环境</p>
               <div class="mt-3 grid gap-3 sm:grid-cols-3">
                 <div>
@@ -159,7 +173,7 @@
                 </div>
               </div>
             </div>
-            <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <div class="aidc-inset-panel rounded-xl p-3">
               <p class="text-xs font-semibold text-slate-700">单卡吞吐（tokens/s）</p>
               <div class="mt-3 grid gap-3 sm:grid-cols-3">
                 <div>
@@ -179,7 +193,7 @@
                 </div>
               </div>
             </div>
-            <p class="text-xs leading-5 text-slate-500">集群 IT 功率由左侧 P/MW 联动；电费按 MW × PUE × 利用率估算。比价按三类 Token 总量均摊全成本。</p>
+            <p class="text-xs leading-5 text-slate-500">集群 IT 功率由左侧 P/MW 联动；电费按 MW × PUE × 利用率估算。比价区直接对比云公开价与自建全成本。</p>
           </div>
           <div class="mt-auto flex min-h-[11.75rem] flex-col rounded-2xl bg-slate-950 p-5 text-white">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">OPEX 结果</p>
@@ -227,19 +241,20 @@
             <button type="button" data-scenario="glm-51" class="cmp-tab rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-white/80">GLM-5.1</button>
           </div>
         </div>
-        <div class="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+        <div class="aidc-inset-panel mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-2xl px-4 py-3">
           <div>
-            <span class="text-xs text-slate-500">自建均摊价</span>
+            <span class="text-xs text-slate-500">自建全成本</span>
             <span id="cmpSelfCost" class="ml-2 text-xl font-bold tabular-nums text-amber-600">—</span>
-            <span class="text-sm text-slate-500">元/百万 Token（三类合计）</span>
+            <span class="text-sm text-slate-500">元/百万 Token</span>
           </div>
           <div>
-            <span class="text-xs text-slate-500">对标均摊价</span>
+            <span class="text-xs text-slate-500">云最低公开价</span>
             <span id="cmpRefEff" class="ml-2 text-lg font-semibold tabular-nums text-blue-700">—</span>
-            <span class="text-sm text-slate-500">元/M（按吞吐加权）</span>
+            <span class="text-sm text-slate-500">未命中 / 命中 / 输出</span>
           </div>
           <div id="cmpVerdict" class="w-full text-sm font-semibold text-slate-700 sm:w-auto">—</div>
         </div>
+        <p id="cmpPricingNote" class="mt-2 text-xs text-slate-500"></p>
         <div id="compareChart" class="mt-6" aria-live="polite"></div>
       </div>
 
@@ -249,7 +264,7 @@
         <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl">全部参数与计算公式</h2>
 
         <div class="mt-6 grid gap-6 lg:grid-cols-2">
-          <fieldset class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+          <fieldset class="aidc-inset-panel space-y-4 rounded-2xl p-4">
             <legend class="px-2 text-sm font-bold text-slate-900">CAPEX 全部参数</legend>
             <div class="grid gap-3 sm:grid-cols-2">
               <div class="sm:col-span-2">
@@ -300,7 +315,7 @@
             </div>
           </fieldset>
 
-          <fieldset class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+          <fieldset class="aidc-inset-panel space-y-4 rounded-2xl p-4">
             <legend class="px-2 text-sm font-bold text-slate-900">OPEX 全部参数</legend>
             <div class="grid gap-3 sm:grid-cols-2">
               <div>
@@ -347,19 +362,19 @@
           </fieldset>
         </div>
 
-        <div class="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-7 text-blue-900">
+        <div class="aidc-inset-panel mt-6 rounded-2xl p-4 text-sm leading-7">
           <strong class="font-semibold">公式：</strong>
           <ul class="mt-2 list-inside list-disc space-y-1">
-            <li><code class="rounded bg-white/70 px-1">MW</code> = P × 125 ÷ 64000（64 卡 = 125kW）</li>
-            <li><code class="rounded bg-white/70 px-1">昇腾采购</code> = P × 单卡价；<code class="rounded bg-white/70 px-1">IT 设备投资</code> = 昇腾采购 ÷ IT 内昇腾占比</li>
-            <li><code class="rounded bg-white/70 px-1">总投资 CAPEX</code> = IT 设备投资 ÷ IT 设备工程占比</li>
-            <li><code class="rounded bg-white/70 px-1">年电费</code> = MW × 1000 × 8760 × PUE × 利用率 × 电价</li>
-            <li><code class="rounded bg-white/70 px-1">年 Token 合计</code> = 年输入未命中 + 年输入命中 + 年输出</li>
-            <li><code class="rounded bg-white/70 px-1">自建均摊价/M</code> = (年折旧 + 年电费 + 年运维) ÷ (年 Token 合计 / 10⁶)</li>
-            <li><code class="rounded bg-white/70 px-1">云均摊价/M</code> = 入未命中价 × 占比 + 入命中价 × 占比 + 出价 × 占比（占比 = 各 t/s ÷ 三类 t/s 合计）</li>
-            <li><code class="rounded bg-white/70 px-1">CAPEX/OPEX 摊销/M</code> = 分项成本 ÷ (年输出 Token / 10⁶)（结果区仍按输出 Token 口径）</li>
+            <li><code>MW</code> = P × 125 ÷ 64000（64 卡 = 125kW）</li>
+            <li><code>昇腾采购</code> = P × 单卡价；<code>IT 设备投资</code> = 昇腾采购 ÷ IT 内昇腾占比</li>
+            <li><code>总投资 CAPEX</code> = IT 设备投资 ÷ IT 设备工程占比</li>
+            <li><code>年电费</code> = MW × 1000 × 8760 × PUE × 利用率 × 电价</li>
+            <li><code>年 Token 合计</code> = 年输入未命中 + 年输入命中 + 年输出</li>
+            <li><code>自建均摊价/M</code> = (年折旧 + 年电费 + 年运维) ÷ (年 Token 合计 / 10⁶)</li>
+            <li><code>云均摊价/M</code> = 入未命中价 × 占比 + 入命中价 × 占比 + 出价 × 占比（占比 = 各 t/s ÷ 三类 t/s 合计）</li>
+            <li><code>CAPEX/OPEX 摊销/M</code> = 分项成本 ÷ (年输出 Token / 10⁶)（结果区仍按输出 Token 口径）</li>
           </ul>
-          <p class="mt-3 text-xs text-blue-800/80">逐步计算明细见页面底部「关键参数」解锁后的计算过程表。</p>
+          <p class="aidc-inset-note mt-3 text-xs">逐步计算明细见页面底部「关键参数」解锁后的计算过程表。</p>
         </div>
       </div>
 
@@ -424,9 +439,9 @@
 
   <footer id="site-footer" class="border-t border-slate-200 bg-white py-6">
     <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
-      <span><span>工信部备案号：</span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a></span>
+      <span><span data-i18n="footer.miit">工信部备案号：</span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a></span>
       <span class="hidden sm:inline" aria-hidden="true">|</span>
-      <span><span>公安备案号：</span><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a></span>
+      <span><span data-i18n="footer.publicSecurity">公安备案号：</span><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a></span>
     </p>
   </footer>
 
@@ -445,47 +460,32 @@
     </div>
   </div>
 
-    <script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/config-loader.js?v=13"></script>
+    <script src="js/aidc-asset-version.js?v=14"></script>
+  <script src="js/config-loader.js?v=14"></script>
+  <script src="js/aidc-investment-roi-init.js?v=14"></script>
+  <script src="js/aidc-investment-roi-page.js?v=14"></script>
+  <script src="js/aidc-locale-bridge.js?v=14"></script>
+  <script src="js/i18n.js?v=14"></script>
+  <script src="js/lang-switch.js?v=14"></script>
+  <script src="js/i18n-bootstrap.js?v=14"></script>
   <script>
-    window.ROI_PAGE_CONFIG = {
-      locale: 'zh',
-      localeTag: 'zh-CN',
-      configKeys: { defaults: 'roi.defaults', cloudCompare: 'roi.cloud_compare' },
-      localDefaults: {
-        computeP: 512, clusterMw: 1.0, pctItDevice: 65, pctPowerCool: 25, pctLandBuild: 10,
-        npuUnitPrice: 50, ascendInItPct: 85, deprecYears: 5, pue: 1.25, elecPrice: 0.65,
-        utilization: 75, tpsInputMiss: 900, tpsInputHit: 3600, tpsOutput: 28,
-        annualFixedOpex: 800, capexOpexPct: 3, serviceModel: 'ds-v4',
+    AidcI18nBootstrap.bootstrap('aidc-investment-roi', {
+      onReady: function () {
+        AidcInvestmentRoiInit.applyConfig(AidcI18n.getLocale());
+        AidcInvestmentRoiPage.boot();
       },
-      localCloudCompare: {
-        'ds-v4': {
-          title: 'DeepSeek V4 档',
-          refInputMiss: 0.5, refInputHit: 0.125, refOutput: 2.0,
-          clouds: [
-            { name: 'DeepSeek 官方', inputMiss: 0.5, inputHit: 0.125, output: 1.6 },
-            { name: '硅基流动', inputMiss: 1.0, inputHit: 0.25, output: 2.0 },
-            { name: '阿里云百炼', inputMiss: 0.6, inputHit: 0.15, output: 2.4 },
-            { name: '火山引擎', inputMiss: 0.5, inputHit: 0.125, output: 2.0 },
-            { name: '腾讯云', inputMiss: 0.8, inputHit: 0.2, output: 3.2 },
-            { name: '天翼云', inputMiss: 0.9, inputHit: 0.225, output: 3.5 },
-          ],
-        },
-        'glm-51': {
-          title: 'GLM-5.1 档',
-          refInputMiss: 3.0, refInputHit: 0.75, refOutput: 15.0,
-          clouds: [
-            { name: '智谱 AI 官方', inputMiss: 3.0, inputHit: 0.75, output: 12.0 },
-            { name: '硅基流动', inputMiss: 6.0, inputHit: 1.5, output: 28.0 },
-            { name: '阿里云百炼', inputMiss: 3.5, inputHit: 0.875, output: 15.0 },
-            { name: '火山引擎', inputMiss: 4.0, inputHit: 1.0, output: 18.0 },
-            { name: '腾讯云', inputMiss: 4.5, inputHit: 1.125, output: 20.0 },
-            { name: '京东云', inputMiss: 4.2, inputHit: 1.05, output: 19.0 },
-          ],
-        },
+      onLocaleChange: function () {
+        AidcInvestmentRoiInit.applyConfig(AidcI18n.getLocale());
+        AidcInvestmentRoiPage.boot();
       },
-    };
+    });
+    if (window.AidcLocaleBridge) {
+      AidcLocaleBridge.initIframeListener(function (locale) {
+        if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+          AidcI18n.setLocale(locale, { page: 'aidc-investment-roi', common: true, basePath: 'i18n/' });
+        }
+      }, { selfSource: 'aidc-investment-roi' });
+    }
   </script>
-  <script src="js/aidc-investment-roi-page.js?v=13"></script>
 </body>
 </html>

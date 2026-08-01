@@ -3,11 +3,17 @@ function layoutSsdMountedLabels() {
     const text = group.querySelector('.ssd-mounted-text');
     if (!text) return;
 
-    let x = 77;
-    text.querySelectorAll('tspan').forEach((ts) => {
+    const spans = Array.from(text.querySelectorAll('tspan'));
+    const lengths = spans.map((ts) => (
+      typeof ts.getComputedTextLength === 'function' ? ts.getComputedTextLength() : 0
+    ));
+    const totalWidth = lengths.reduce((sum, len) => sum + len, 0);
+    const ssdCenterX = 170;
+    let x = ssdCenterX - totalWidth / 2;
+
+    spans.forEach((ts, index) => {
       ts.setAttribute('x', String(x));
-      const len = typeof ts.getComputedTextLength === 'function' ? ts.getComputedTextLength() : 0;
-      x += len;
+      x += lengths[index];
     });
 
     group.querySelectorAll('.ssd-hl-bg').forEach((rect) => {

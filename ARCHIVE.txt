@@ -37,6 +37,7 @@ aidc 静态站点归档
   i18n/*.json
   i18n/ai-dc-deployment-perf.zh.json、i18n/ai-dc-deployment-perf.en.json  部署 & 协同特性页文案
   js/i18n.js、js/i18n-bootstrap.js、js/lang-switch.js、js/aidc-locale-bridge.js
+  js/aidc-theme.js、js/theme-switch.js、css/theme.css（Light / Dark 与 iframe 联动）
   js/embed-mode.js、js/redirect-page.js
   js/index-page.js、js/ai-dc-design-page.js、js/aidc-investment-roi-page.js、js/config-loader.js
   js/aidc-asset-version.js、data/asset-version.json、scripts/bump-asset-version.py
@@ -63,6 +64,7 @@ aidc 静态站点归档
 ────
   与本目录源码一致；解压即用或与服务器 wwwroot 同步。
   全站采用方案 B（单 HTML + i18n/*.json）；英文通过 ?lang=en 或页内语言切换。
+  Light / Dark 与语言维度分离；主题存入 aidc-theme，并通过 postMessage 同步嵌套 iframe。
   例外：ai-dc-layout_37.html 仍使用页内 EN{} 与 AidcLocaleBridge，未完全迁到方案 B。
   3D 案例默认配置见 data/dc3d-case-a.defaults.json / dc3d-case-b.defaults.json。
   embed 模式：子页 URL 加 ?embed=1，样式见 css/embed.css、js/embed-mode.js。

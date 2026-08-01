@@ -15,6 +15,9 @@
     "download": "下载 PDF",
     "downloadName": "AI DC白皮书_中文版.pdf",
     "iframeTitle": "AI DC 白皮书 2024 中文版",
-    "fallbackHint": "若预览无法加载，请使用「新窗口打开」或「下载 PDF」。"
+    "fallbackHint": "若预览无法加载，请使用「新窗口打开」或「下载 PDF」。",
+    "missingTitle": "PDF 文件暂未就绪",
+    "missingDesc": "本地仓库未包含白皮书 PDF（assets/*.pdf 默认不纳入 Git）。在线预览与下载将在部署环境放置文件后自动恢复。",
+    "missingDeployHint": "部署说明：将中文版 PDF 命名为 assets/aidc-whitepaper-2024-zh.pdf 并上传至服务器 assets/ 目录。"
   }
 }

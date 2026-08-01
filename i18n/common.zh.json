@@ -20,5 +20,10 @@
     "switchAria": "语言",
     "zh": "中文",
     "en": "EN"
+  },
+  "theme": {
+    "switchAria": "显示模式",
+    "light": "Light",
+    "dark": "Dark"
   }
 }

@@ -29,6 +29,10 @@
     } else if (langRoot) {
       console.warn('[AidcI18n] lang-switch.js 未加载，语言切换不可用');
     }
+    const themeRoot = document.getElementById('theme-switch-root');
+    if (global.AidcThemeSwitch?.mount && themeRoot) {
+      global.AidcThemeSwitch.mount(themeRoot);
+    }
     if (typeof opts.onReady === 'function') opts.onReady();
   }
 

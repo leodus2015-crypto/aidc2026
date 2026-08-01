@@ -5,19 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="AI 数据中心部署分布、推理性能、算存协同与算云协同特性演示。">
 <title>AI DC · 部署 &amp; 协同特性</title>
-<script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/embed-mode.js?v=13"></script>
-<link rel="stylesheet" href="css/embed.css?v=13" />
+<script src="js/aidc-theme.js?v=14"></script>
+<script src="js/theme-switch.js?v=14"></script>
+<script src="js/aidc-asset-version.js?v=14"></script>
+<script src="js/embed-mode.js?v=14"></script>
+<link rel="stylesheet" href="css/embed.css?v=14" />
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#f0f5fc;--bg2:#fff;--bd:#d0dcf0;
+  --bg:#f0f5fc;--bg2:#fff;--inset:#f8fafc;--bd:#d0dcf0;
   --ai:#1d6fe5;--cmp:#8b5cf6;--bus:#10b981;
   --text:#1a2d44;--t2:#4a6888;--t3:#8aaaca;
   --pwr:#c97000;--ep:#db2877;
   --shadow:0 2px 16px rgba(0,50,130,.09);
   --ssd:#f59e0b;--ret:#22d3ee;--miss:#94a3b8;
+}
+html[data-theme="dark"]{
+  --bg:#07111f;--bg2:#0f1c2e;--inset:transparent;--bd:#2a3a50;
+  --ai:#60a5fa;--cmp:#a78bfa;--bus:#34d399;
+  --text:#f8fafc;--t2:#b5c3d4;--t3:#91a4bb;
+  --pwr:#fbbf24;--ep:#f472b6;
+  --shadow:0 4px 16px rgba(0,0,0,.3);
 }
 html[lang="en"] .pr-lbl{width:128px}
 html[lang="en"] .synergy-left{width:320px}
@@ -77,9 +86,9 @@ body{
 .pr{display:flex;align-items:center;gap:12px;border-radius:10px;padding:14px 14px;
   border:1px solid var(--bd);position:relative;overflow:hidden;}
 .pr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-.pr-std{background:linear-gradient(130deg,rgba(29,111,229,.04),#fff);}
+.pr-std{background:linear-gradient(130deg,rgba(29,111,229,.04),var(--bg2));}
 .pr-std::before{background:linear-gradient(180deg,#1447b5,var(--ai));}
-.pr-ep{background:linear-gradient(130deg,rgba(236,72,153,.05),#fff);}
+.pr-ep{background:linear-gradient(130deg,rgba(236,72,153,.05),var(--bg2));}
 .pr-ep::before{background:linear-gradient(180deg,var(--ep),#1447b5);}
 .pr-lbl{width:110px;flex-shrink:0;}
 .pr-title{font-size:14px;font-weight:800;color:var(--text);font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
@@ -106,7 +115,7 @@ body{
 .ccs-sec-title::before{content:'';width:3px;height:12px;border-radius:2px;
   background:var(--bus);display:inline-block;}
 .ccs-sec-title.cmp::before{background:var(--cmp);}
-.slo-wrapper{border-radius:8px;border:1px solid var(--bd);background:#f7faff;overflow:hidden;}
+.slo-wrapper{border-radius:8px;border:1px solid var(--bd);background:var(--inset);overflow:hidden;}
 .slo-inner{display:grid;grid-template-columns:1fr 44px 1fr;}
 .slo-col{padding:10px 10px 6px;}
 .slo-col-title{font-size:8px;font-weight:700;letter-spacing:.8px;color:var(--t3);
@@ -160,7 +169,7 @@ body{
 /* Benefit chips */
 .benefit-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
 .benefit-chip{display:flex;align-items:center;gap:9px;padding:9px 14px;
-  border-radius:8px;border:1px solid var(--bd);background:#fff;flex:1;min-width:140px;}
+  border-radius:8px;border:1px solid var(--bd);background:var(--bg2);flex:1;min-width:140px;}
 .bc-val{font-size:20px;font-weight:800;font-family:Arial,sans-serif;line-height:1;}
 .bc-desc{color:var(--t2);font-size:9.5px;line-height:1.5;
   font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
@@ -173,7 +182,7 @@ body{
 .dn-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
 
 /* ── 算云协同 cabinet visual ── */
-.cc-visual-wrap{border-radius:8px;overflow:hidden;border:1px solid var(--bd);background:#f7faff;}
+.cc-visual-wrap{border-radius:8px;overflow:hidden;border:1px solid var(--bd);background:var(--inset);}
 .cc-phase-bar{display:flex;align-items:center;justify-content:space-between;
   padding:8px 12px;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:6px;}
 .cc-phase-ind{font-size:11px;font-weight:800;font-family:'Microsoft YaHei',sans-serif;color:var(--ai);}
@@ -200,9 +209,9 @@ body{
 
 /* ── 算云协同 对比模块 ── */
 .cc-compare-wrap{display:flex;gap:10px;align-items:stretch;margin-bottom:8px;}
-.cc-side{flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--bd);background:#fff;}
-.cc-side-bad{background:#f8fafc;border-color:#cbd5e1;}
-.cc-side-good{background:#f3fdf8;border-color:#a7f3d0;}
+.cc-side{flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg2);}
+.cc-side-bad{background:var(--inset);border-color:var(--bd);}
+.cc-side-good{background:rgba(16,185,129,.08);border-color:rgba(52,211,153,.35);}
 .cc-side-hd{font-size:10px;font-weight:800;font-family:'Microsoft YaHei',sans-serif;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
 .cc-metric-row{display:flex;align-items:baseline;gap:7px;margin-bottom:8px;}
 .cc-num-big{font-size:24px;font-weight:900;font-family:Arial,sans-serif;transition:color .3s;}
@@ -214,13 +223,13 @@ body{
 .cc-cab-fill{width:100%;height:100%;transition:background .4s ease,opacity .4s ease;}
 .cc-vs-col{display:flex;align-items:center;justify-content:center;width:22px;flex-shrink:0;}
 .cc-vs-txt{font-size:10px;font-weight:900;color:var(--t3);writing-mode:vertical-rl;letter-spacing:3px;}
-.cc-timebar{display:flex;align-items:center;gap:8px;margin:8px 0 6px;padding:5px 8px;background:#f8fafc;border-radius:6px;border:1px solid var(--bd);}
+.cc-timebar{display:flex;align-items:center;gap:8px;margin:8px 0 6px;padding:5px 8px;background:var(--inset);border-radius:6px;border:1px solid var(--bd);}
 .cc-time-disp{font-size:12px;font-weight:700;font-family:Arial,sans-serif;color:var(--text);width:42px;flex-shrink:0;}
 .cc-time-track{flex:1;height:5px;border-radius:3px;background:rgba(0,0,0,.07);overflow:hidden;}
 .cc-time-prog{height:100%;border-radius:3px;background:var(--ai);transition:width .12s linear;}
 .cc-phase-txt{font-size:8.5px;font-weight:700;font-family:'Microsoft YaHei',sans-serif;min-width:68px;text-align:center;transition:color .3s;}
-.cc-replay-btn{font-size:9px;padding:3px 9px;border-radius:5px;border:1px solid var(--bd);background:#fff;color:var(--t2);cursor:pointer;font-family:'Microsoft YaHei',sans-serif;flex-shrink:0;}
-.cc-replay-btn:hover{background:#f0f7ff;color:var(--ai);}
+.cc-replay-btn{font-size:9px;padding:3px 9px;border-radius:5px;border:1px solid var(--bd);background:var(--bg2);color:var(--t2);cursor:pointer;font-family:'Microsoft YaHei',sans-serif;flex-shrink:0;}
+.cc-replay-btn:hover{background:var(--inset);color:var(--ai);}
 .cc-legend-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:2px;}
 .cc-leg-item{display:flex;align-items:center;gap:4px;font-size:8px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;}
 .cc-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
@@ -232,7 +241,25 @@ body{
   body{padding:14px 12px 36px}
 }
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+
+/* Dark: inline-style panels → transparent inset */
+html[data-theme="dark"] #sn-phase-bar{background:var(--inset)!important;border-color:var(--bd)!important;}
+html[data-theme="dark"] #sn-ph-tag{background:var(--bg2)!important;border-color:var(--bd)!important;}
+html[data-theme="dark"] #sn-tier-npu{background:linear-gradient(135deg,rgba(96,165,250,.08),var(--bg2))!important;}
+html[data-theme="dark"] #sn-tier-ssd{background:linear-gradient(135deg,rgba(245,158,11,.08),var(--bg2))!important;}
+html[data-theme="dark"] #sn-tier-ais{background:linear-gradient(135deg,rgba(167,139,250,.08),var(--bg2))!important;}
+html[data-theme="dark"] #sn-badge-npu,
+html[data-theme="dark"] #sn-badge-ssd{background:var(--bg2)!important;border-color:var(--bd)!important;}
+html[data-theme="dark"] #sn-gap1,
+html[data-theme="dark"] #sn-gap2{background:var(--bg2)!important;border-color:var(--bd)!important;}
+html[data-theme="dark"] .synergy-right [style*="background:#fff"],
+html[data-theme="dark"] .synergy-right [style*="background: #fff"]{background:var(--bg2)!important;}
+html[data-theme="dark"] .synergy-right [style*="background:#f8fafc"],
+html[data-theme="dark"] .synergy-right [style*="background: #f8fafc"]{background:var(--inset)!important;}
+html[data-theme="dark"] .pr-std{background:linear-gradient(130deg,rgba(96,165,250,.06),var(--bg2));}
+html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(244,114,182,.08),var(--bg2));}
 </style>
+<link rel="stylesheet" href="css/theme.css?v=14" />
 </head>
 <body data-i18n-page="ai-dc-deployment-perf">
 
@@ -254,6 +281,8 @@ body{
     <h1>AI DC · <span data-dp-i18n="部署 & 协同特性">部署 &amp; 协同特性</span></h1>
     <p data-dp-i18n="HUAWEI AI DATA CENTER · 96 NPU · ASCEND · DEEPSEEK V4 FLASH · OCEANSTOR">HUAWEI AI DATA CENTER · 96 NPU · ASCEND · DEEPSEEK V4 FLASH · OCEANSTOR</p>
   </div>
+  <div id="lang-switch-root" class="aidc-theme-switch-root" style="margin-left:auto"></div>
+  <div id="theme-switch-root" class="aidc-theme-switch-root"></div>
 </div>
 
 <!-- ══ CARD 1: DEPLOYMENT FRONT VIEW ══ -->
@@ -1678,9 +1707,10 @@ function initSLOAnim(){
 }
 </script>
 
-<script src="js/aidc-locale-bridge.js?v=13"></script>
-<script src="js/i18n.js?v=13"></script>
-<script src="js/i18n-bootstrap.js?v=13"></script>
+<script src="js/aidc-locale-bridge.js?v=14"></script>
+<script src="js/i18n.js?v=14"></script>
+<script src="js/lang-switch.js?v=14"></script>
+<script src="js/i18n-bootstrap.js?v=14"></script>
 <script>
   AidcI18nBootstrap.bootstrap('ai-dc-deployment-perf', {
     onReady: function () {

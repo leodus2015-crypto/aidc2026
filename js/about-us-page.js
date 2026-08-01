@@ -4,9 +4,9 @@ function initAboutUsPage() {
 
   const fallback = {
     "version": 2,
-    "updated_at": "2026-07-01T13:49:57+08:00",
-    "source": "Cursor Dashboard \u00b7 usage-events-2026-07-01.csv",
-    "notes": "\u7531 Cursor \u5bfc\u51fa CSV \u6c47\u603b\uff1bIncluded \u884c\u6309\u8d26\u5355\u5468\u671f\u62c6\u5206\u3002Cache = Cache Read + Input (w/ Cache Write)\uff1bAPI / Auto + Composer = Input (w/o Cache Write) + Output Tokens\u3002",
+    "updated_at": "2026-08-01T22:49:42+08:00",
+    "source": "Cursor Dashboard \u00b7 usage-events-2026-08-01.csv",
+    "notes": "\u7531 Cursor \u5bfc\u51fa CSV \u6c47\u603b\uff1bIncluded \u884c\u6309\u8d26\u5355\u5468\u671f\u62c6\u5206\u3002\u540c\u4e00\u5468\u671f\u91cd\u590d\u5bfc\u5165\u65f6\uff0c\u4ec5\u5408\u5e76\u4e8b\u4ef6\u65e5\u671f\u665a\u4e8e recorded_at \u7684\u589e\u91cf\u3002Cache = Cache Read + Input (w/ Cache Write)\uff1bAPI / Auto + Composer = Input (w/o Cache Write) + Output Tokens\u3002",
     "periods": [
         {
             "period": "2026-04-25 \u2014 2026-05-25",
@@ -127,42 +127,127 @@ function initAboutUsPage() {
             "period": "2026-06-25 \u2014 2026-07-25",
             "period_start": "2026-06-25",
             "period_end": "2026-07-25",
-            "recorded_at": "2026-07-01",
-            "total_tokens": 71784704,
+            "recorded_at": "2026-07-21",
+            "total_tokens": 157872029,
             "categories": [
                 {
                     "name": "Cache",
-                    "tokens": 67293216,
-                    "usage_percent": 93.7,
+                    "tokens": 146192952,
+                    "usage_percent": 92.6,
                     "items": [
                         {
                             "name": "Cache Read",
-                            "tokens": 67293216,
-                            "usage_percent": 93.7
+                            "tokens": 143133855,
+                            "usage_percent": 90.7
+                        },
+                        {
+                            "name": "Cache Write",
+                            "tokens": 3059097,
+                            "usage_percent": 1.9
                         }
                     ]
                 },
                 {
                     "name": "API",
-                    "tokens": 766689,
-                    "usage_percent": 1.1,
+                    "tokens": 6219789,
+                    "usage_percent": 3.9,
                     "items": [
                         {
                             "name": "gpt-5.5-medium",
-                            "tokens": 766689,
-                            "usage_percent": 1.1
+                            "tokens": 5201169,
+                            "usage_percent": 3.3
+                        },
+                        {
+                            "name": "gpt-5.6-sol-medium",
+                            "tokens": 1018620,
+                            "usage_percent": 0.6
                         }
                     ]
                 },
                 {
                     "name": "Auto + Composer",
-                    "tokens": 3724799,
-                    "usage_percent": 5.2,
+                    "tokens": 5459288,
+                    "usage_percent": 3.5,
                     "items": [
                         {
                             "name": "composer-2.5-fast",
-                            "tokens": 3724799,
-                            "usage_percent": 5.2
+                            "tokens": 4583208,
+                            "usage_percent": 2.9
+                        },
+                        {
+                            "name": "auto",
+                            "tokens": 681083,
+                            "usage_percent": 0.4
+                        },
+                        {
+                            "name": "cursor-grok-4.5-high-fast",
+                            "tokens": 194997,
+                            "usage_percent": 0.1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "period": "2026-07-25 \u2014 2026-08-25",
+            "period_start": "2026-07-25",
+            "period_end": "2026-08-25",
+            "recorded_at": "2026-08-01",
+            "total_tokens": 58270373,
+            "categories": [
+                {
+                    "name": "Cache",
+                    "tokens": 54772738,
+                    "usage_percent": 94.0,
+                    "items": [
+                        {
+                            "name": "Cache Read",
+                            "tokens": 53443684,
+                            "usage_percent": 91.7
+                        },
+                        {
+                            "name": "Cache Write",
+                            "tokens": 1329054,
+                            "usage_percent": 2.3
+                        }
+                    ]
+                },
+                {
+                    "name": "API",
+                    "tokens": 2039647,
+                    "usage_percent": 3.5,
+                    "items": [
+                        {
+                            "name": "gpt-5.5-medium",
+                            "tokens": 1146712,
+                            "usage_percent": 2.0
+                        },
+                        {
+                            "name": "gpt-5.6-sol-medium",
+                            "tokens": 892935,
+                            "usage_percent": 1.5
+                        }
+                    ]
+                },
+                {
+                    "name": "Auto + Composer",
+                    "tokens": 1457988,
+                    "usage_percent": 2.5,
+                    "items": [
+                        {
+                            "name": "auto",
+                            "tokens": 762598,
+                            "usage_percent": 1.3
+                        },
+                        {
+                            "name": "composer-2.5-fast",
+                            "tokens": 677965,
+                            "usage_percent": 1.2
+                        },
+                        {
+                            "name": "claude-4.5-sonnet-thinking",
+                            "tokens": 17425,
+                            "usage_percent": 0.0
                         }
                     ]
                 }
@@ -294,7 +379,7 @@ function initAboutUsPage() {
         ? periods
             .map(
               (entry) =>
-                `<li class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2"><span>${entry.period}</span><span class="tabular-nums font-semibold text-slate-900">${formatTokens(entry.total_tokens)}</span></li>`
+                `<li class="aidc-inset-panel flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-xl px-3 py-2"><span>${entry.period}</span><span class="tabular-nums font-semibold text-slate-900">${formatTokens(entry.total_tokens)}</span></li>`
             )
             .join('')
         : `<li class="text-slate-500">${t('msg.noEntries')}</li>`;

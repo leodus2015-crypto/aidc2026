@@ -1,0 +1,346 @@
+/* Post-training demo — Dark theme overrides (scoped to demo shell) */
+html[data-theme='dark'] #post-training {
+  color: var(--aidc-text);
+}
+
+html[data-theme='dark'] #post-training .container {
+  background: var(--aidc-surface);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training #home-page {
+  background: var(--aidc-surface);
+}
+
+html[data-theme='dark'] #post-training .sub-page {
+  background: var(--aidc-surface);
+}
+
+html[data-theme='dark'] #post-training .page-title {
+  color: var(--aidc-text-strong);
+}
+
+html[data-theme='dark'] #post-training .subtitle {
+  color: var(--aidc-text-soft);
+}
+
+html[data-theme='dark'] #post-training .flow-node:not(.active):not(.completed) {
+  background: transparent;
+  border-color: var(--aidc-border);
+  color: var(--aidc-text);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training .flow-arrow {
+  color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .sub-page-title,
+html[data-theme='dark'] #post-training .card-title {
+  color: var(--aidc-text-strong);
+  border-bottom-color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .content-card,
+html[data-theme='dark'] #post-training .log-container,
+html[data-theme='dark'] #post-training .stat-card,
+html[data-theme='dark'] #post-training .progress-container {
+  background: var(--aidc-surface);
+  border-color: var(--aidc-border);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training .info-box,
+html[data-theme='dark'] #post-training .progress-stat,
+html[data-theme='dark'] #post-training .log-entry,
+html[data-theme='dark'] #post-training .question-item,
+html[data-theme='dark'] #post-training .chat-box {
+  background: transparent;
+  border: 1px solid var(--aidc-border);
+  border-left: 3px solid var(--aidc-accent);
+}
+
+html[data-theme='dark'] #post-training .info-box-title,
+html[data-theme='dark'] #post-training .log-title,
+html[data-theme='dark'] #post-training .form-label {
+  color: var(--aidc-text);
+}
+
+html[data-theme='dark'] #post-training .info-box-content,
+html[data-theme='dark'] #post-training .progress-stat-label,
+html[data-theme='dark'] #post-training .form-label {
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .question-item:hover {
+  background: var(--aidc-surface-muted);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training .question-item.active {
+  background: rgba(96, 165, 250, 0.12);
+  border-color: var(--aidc-accent);
+}
+
+html[data-theme='dark'] #post-training .form-input,
+html[data-theme='dark'] #post-training .form-select {
+  background: var(--aidc-surface-muted);
+  border-color: var(--aidc-border);
+  color: var(--aidc-text);
+}
+
+html[data-theme='dark'] #post-training .form-input:focus,
+html[data-theme='dark'] #post-training .form-select:focus {
+  background: var(--aidc-surface);
+  border-color: var(--aidc-accent);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+html[data-theme='dark'] #post-training .tooltip-icon {
+  background: var(--aidc-surface-muted);
+  color: var(--aidc-text-soft);
+}
+
+html[data-theme='dark'] #post-training .dataset-card {
+  background: transparent;
+  border-color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .dataset-card:hover {
+  border-color: var(--aidc-accent);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training .dataset-card.selected {
+  background: rgba(96, 165, 250, 0.1);
+  border-color: var(--aidc-accent);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training .dataset-card .ds-name {
+  color: var(--aidc-text-strong);
+}
+
+html[data-theme='dark'] #post-training .dataset-card .ds-desc {
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .view-data-btn {
+  border-color: var(--aidc-border);
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .back-btn {
+  background: transparent;
+  border-color: var(--aidc-border);
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .back-btn:hover {
+  background: var(--aidc-surface-muted);
+  border-color: var(--aidc-border);
+  color: var(--aidc-text);
+}
+
+html[data-theme='dark'] #post-training .sub-progress-bar-container {
+  background: var(--aidc-surface-muted);
+}
+
+html[data-theme='dark'] #post-training .progress-bar-container {
+  background: var(--aidc-surface-muted);
+  border-color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .log-info {
+  background: rgba(56, 189, 248, 0.12);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+html[data-theme='dark'] #post-training .log-success {
+  background: rgba(52, 211, 153, 0.12);
+  color: #6ee7b7;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+html[data-theme='dark'] #post-training .log-warning {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+html[data-theme='dark'] #post-training .log-error {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+html[data-theme='dark'] #post-training .log-data {
+  background: rgba(167, 139, 250, 0.12);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+}
+
+html[data-theme='dark'] #post-training .modal,
+html[data-theme='dark'] #post-training #dataset-modal .modal-content {
+  background: var(--aidc-surface);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme='dark'] #post-training .modal-header,
+html[data-theme='dark'] #post-training #dataset-modal .dataset-modal-header,
+html[data-theme='dark'] #post-training #dataset-modal .dataset-modal-footer {
+  border-color: var(--aidc-border);
+  background: var(--aidc-surface);
+}
+
+html[data-theme='dark'] #post-training .modal-header h3,
+html[data-theme='dark'] #post-training #dataset-modal #modal-title {
+  color: var(--aidc-text-strong);
+}
+
+html[data-theme='dark'] #post-training .data-table th {
+  background: var(--aidc-surface-muted);
+  color: var(--aidc-text);
+  border-color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .data-table td {
+  border-color: var(--aidc-border);
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .data-table tbody tr:hover {
+  background: var(--aidc-surface-muted);
+}
+
+html[data-theme='dark'] #post-training .model-panel,
+html[data-theme='dark'] #post-training .chat-panel {
+  background: var(--aidc-surface);
+  border-color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .model-info h3 {
+  color: var(--aidc-text-strong);
+}
+
+html[data-theme='dark'] #post-training .model-info p {
+  color: var(--aidc-text-soft);
+}
+
+html[data-theme='dark'] #post-training .chat-body {
+  background: transparent;
+}
+
+html[data-theme='dark'] #post-training .chat-bubble.model {
+  background: var(--aidc-surface-muted);
+  color: var(--aidc-text);
+  border: 1px solid var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .chat-bubble.model .md-content h3 {
+  border-bottom-color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .chat-bubble.model .md-content code {
+  background: var(--aidc-surface-inset, var(--aidc-surface-muted));
+  color: var(--aidc-text);
+}
+
+html[data-theme='dark'] #post-training .chat-bubble.model .md-content blockquote {
+  background: transparent;
+  border-left-color: var(--aidc-accent);
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .chat-bubble.model .md-content strong {
+  color: var(--aidc-text-strong);
+}
+
+html[data-theme='dark'] #post-training .chat-message.assistant .message-content {
+  background: var(--aidc-surface-muted);
+  color: var(--aidc-text);
+  border: 1px solid var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .btn-secondary {
+  background: transparent;
+  border-color: var(--aidc-border);
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .btn-secondary:hover {
+  background: var(--aidc-surface-muted);
+  border-color: var(--aidc-accent);
+  color: var(--aidc-text);
+}
+
+html[data-theme='dark'] #post-training .flow-node:hover:not(.active):not(.completed) {
+  border-color: var(--aidc-accent);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training .flow-node-desc {
+  color: inherit;
+  opacity: 0.72;
+}
+
+html[data-theme='dark'] #post-training .flow-node:not(.active):not(.completed) .flow-node-number {
+  opacity: 0.2;
+}
+
+html[data-theme='dark'] #post-training .progress-stat-value,
+html[data-theme='dark'] #post-training .stat-value {
+  color: var(--aidc-accent);
+}
+
+html[data-theme='dark'] #post-training .stat-label,
+html[data-theme='dark'] #post-training .sub-progress-name {
+  color: var(--aidc-text-muted);
+}
+
+html[data-theme='dark'] #post-training .stat-change.positive {
+  color: #6ee7b7;
+}
+
+html[data-theme='dark'] #post-training .stat-change.negative {
+  color: #fca5a5;
+}
+
+html[data-theme='dark'] #post-training .chart-card {
+  background: var(--aidc-surface);
+  border-color: var(--aidc-border);
+  box-shadow: none;
+}
+
+html[data-theme='dark'] #post-training .chart-card h3 {
+  color: var(--aidc-text);
+}
+
+html[data-theme='dark'] #post-training .tooltip {
+  background: var(--aidc-surface-muted);
+  color: var(--aidc-text);
+  border: 1px solid var(--aidc-border);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme='dark'] #post-training .tooltip::before {
+  border-top-color: var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .tooltip-icon:hover {
+  background: var(--aidc-accent);
+  color: #fff;
+}
+
+html[data-theme='dark'] #post-training .chat-bubble.model .md-content pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid var(--aidc-border);
+}
+
+html[data-theme='dark'] #post-training .view-data-btn:hover {
+  background: var(--aidc-surface-muted);
+  border-color: var(--aidc-accent);
+  color: var(--aidc-text);
+}

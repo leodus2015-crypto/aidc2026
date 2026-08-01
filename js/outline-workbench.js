@@ -213,7 +213,7 @@
     els.summaryBar.innerHTML = `
       <span class="rounded-full bg-white px-3 py-1 shadow-sm ring-1 ring-slate-200">${outline.chapters.length} 章 · ${sections.length} 节</span>
       <span class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-800 ring-1 ring-emerald-200">已对齐 ${counts.aligned + counts.final}</span>
-      <span class="rounded-full bg-blue-50 px-3 py-1 text-blue-800 ring-1 ring-blue-200">评审中 ${counts.review}</span>
+      <span class="aidc-inset-panel rounded-full px-3 py-1 ring-1 ring-blue-200">评审中 ${counts.review}</span>
       <span class="rounded-full bg-slate-100 px-3 py-1 text-slate-700 ring-1 ring-slate-200">草稿 ${counts.draft}</span>
       <span class="rounded-full bg-amber-50 px-3 py-1 text-amber-800 ring-1 ring-amber-200">待讨论 ${counts.discuss}</span>
     `;

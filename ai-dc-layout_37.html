@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI数据中心·风冷超节点新建方案</title>
+<script src="js/aidc-theme.js?v=14"></script>
+<script src="js/embed-mode.js?v=14"></script>
+<script src="js/theme-switch.js?v=14"></script>
+<link rel="stylesheet" href="css/embed.css?v=14" />
+<link rel="stylesheet" href="css/theme.css?v=14" />
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -16,6 +21,13 @@
   --text:#1a2d44;--t2:#4a6888;--t3:#8aaaca;
   --pwr:#c97000;
   --shadow:0 1px 8px rgba(0,50,130,.09);
+}
+html[data-theme="dark"]{
+  --bg:#07111f;--bg2:#0f1c2e;--bg3:#162438;
+  --bd:#2a3a50;--bd2:#3c506a;
+  --ac:#60a5fa;--ac2:#93c5fd;
+  --text:#f8fafc;--t2:#b5c3d4;--t3:#91a4bb;
+  --shadow:0 4px 16px rgba(0,0,0,.3);
 }
 body{background:var(--bg);color:var(--text);font-family:'Microsoft YaHei','微软雅黑',Arial,sans-serif;min-height:100vh;
   background-image:linear-gradient(rgba(0,80,200,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,80,200,.04) 1px,transparent 1px);
@@ -196,6 +208,7 @@ body.lang-en *{font-family:Arial,Helvetica,sans-serif !important}
       <div class="badge"><div class="bl" data-i18n="楼板承重">楼板承重</div><div class="bv">&gt;12 kN</div></div>
     </div>
     <button class="lang-btn" id="langBtn" onclick="toggleLang()">EN</button>
+    <div id="theme-switch-root" class="aidc-theme-switch-root"></div>
   </div>
 </header>
 
@@ -345,8 +358,8 @@ body.lang-en *{font-family:Arial,Helvetica,sans-serif !important}
 </div>
 </div>
 
-  <script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/aidc-locale-bridge.js?v=13"></script>
+  <script src="js/aidc-asset-version.js?v=14"></script>
+<script src="js/aidc-locale-bridge.js?v=14"></script>
 <script>
 // ═══════════════════════════════════════
 // CONFIG DATA

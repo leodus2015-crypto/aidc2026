@@ -15,6 +15,9 @@
     "download": "Download PDF",
     "downloadName": "AI DC White Paper_Chinese Edition.pdf",
     "iframeTitle": "AI DC White Paper 2024 · Chinese Edition",
-    "fallbackHint": "If the preview fails to load, use “Open in new window” or “Download PDF”."
+    "fallbackHint": "If the preview fails to load, use “Open in new window” or “Download PDF”.",
+    "missingTitle": "PDF not available yet",
+    "missingDesc": "The white paper PDF is not bundled in this repository (assets/*.pdf is gitignored). Preview and download will work once the file is placed on the deployment server.",
+    "missingDeployHint": "Deploy: upload the Chinese edition as assets/aidc-whitepaper-2024-zh.pdf on the server."
   }
 }

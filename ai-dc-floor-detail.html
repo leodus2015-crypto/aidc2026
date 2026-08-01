@@ -6,9 +6,11 @@
   <meta name="description" content="AI 数据中心单层详细平面图：EHU 空调机房、风冷/液冷机房、配电与水力模块。" />
   <meta name="theme-color" content="#f8fafc" />
   <title>单层详细平面图 · AI Data Center</title>
-    <script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/embed-mode.js?v=13"></script>
-  <link rel="stylesheet" href="css/embed.css?v=13" />
+  <script src="js/aidc-theme.js?v=14"></script>
+  <script src="js/theme-switch.js?v=14"></script>
+  <script src="js/aidc-asset-version.js?v=14"></script>
+<script src="js/embed-mode.js?v=14"></script>
+  <link rel="stylesheet" href="css/embed.css?v=14" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     html, body { min-height: 100%; }
@@ -20,7 +22,26 @@
     .pod-outline { fill: none; stroke: #dc2626; stroke-width: 3.5; stroke-dasharray: 14 9; pointer-events: none; }
     .pod-label-bg { fill: #dc2626; }
     .pod-label-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #ffffff; font-weight: 800; letter-spacing: 0.08em; }
+    html[data-theme="dark"] .floor-plan-svg { background: #07111f; }
+    html[data-theme="dark"] #paper stop:first-child { stop-color: #0f1c2e; }
+    html[data-theme="dark"] #paper stop:last-child { stop-color: #111f32; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#ffffff"] { fill: #0f1c2e; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#f8fafc"] { fill: #111f32; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#e0f2fe"] { fill: #12354a; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#e2e8f0"] { fill: #243247; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#fef3c7"] { fill: #493819; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#fde68a"] { fill: #5d481b; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#ccfbf1"] { fill: #123d35; }
+    html[data-theme="dark"] .floor-plan-svg [fill="#475569"] { fill: #91a4bb; }
+    html[data-theme="dark"] .floor-plan-svg [stroke="#0f172a"] { stroke: #91a4bb; }
+    html[data-theme="dark"] .floor-plan-svg [stroke="#475569"],
+    html[data-theme="dark"] .floor-plan-svg [stroke="#64748b"] { stroke: #91a4bb; }
+    html[data-theme="dark"] .label,
+    html[data-theme="dark"] .dim-text { fill: #f8fafc; }
+    html[data-theme="dark"] .sub-label { fill: #b5c3d4; }
+    html[data-theme="dark"] .dim { stroke: #91a4bb; }
   </style>
+  <link rel="stylesheet" href="css/theme.css?v=14" />
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="ai-dc-floor-detail">
   <header class="aidc-chrome sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -34,6 +55,7 @@
         <li><a href="index.html#inference" class="text-slate-600 hover:text-slate-950" data-i18n="nav.inference">Agentic推理</a></li>
         <li><a href="post-training.html" class="text-slate-600 hover:text-slate-950" data-i18n="nav.postTraining">后训练</a></li>
         <li><a href="white-paper.html" class="text-slate-600 hover:text-slate-950" data-i18n="nav.whitePaper">白皮书</a></li>
+        <li><a href="about-us.html" class="text-slate-600 hover:text-slate-950" data-i18n="nav.aboutUs">About US</a></li>
       </ul>
       <div id="lang-switch-root" class="ml-auto shrink-0"></div>
     </nav>
@@ -254,10 +276,10 @@
       document.querySelectorAll('[data-pt-i18n]').forEach(applyPtI18nEl);
     }
 </script>
-  <script src="js/aidc-locale-bridge.js?v=13"></script>
-  <script src="js/i18n.js?v=13"></script>
-  <script src="js/lang-switch.js?v=13"></script>
-  <script src="js/i18n-bootstrap.js?v=13"></script>
+  <script src="js/aidc-locale-bridge.js?v=14"></script>
+  <script src="js/i18n.js?v=14"></script>
+  <script src="js/lang-switch.js?v=14"></script>
+  <script src="js/i18n-bootstrap.js?v=14"></script>
   <script>
     AidcI18nBootstrap.bootstrap('ai-dc-floor-detail', {
       onReady: function () { applyDemoStaticI18n(); },

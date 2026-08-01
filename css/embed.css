@@ -141,3 +141,36 @@ html.aidc-embed .room-layout-iframe {
   min-height: 16rem;
   height: auto !important;
 }
+
+/* 3D 设计器 iframe */
+html.aidc-embed #topbar {
+  display: none !important;
+}
+
+html.aidc-embed #sidebar {
+  top: 0;
+}
+
+html.aidc-embed #container3d {
+  top: 0;
+}
+
+/* layout_37 iframe */
+html.aidc-embed .hdr {
+  display: none !important;
+}
+
+html.aidc-embed .wrap {
+  max-width: none;
+  padding: 0.5rem 0.75rem 1rem;
+}
+
+/* ROI iframe：收紧顶栏留白（header 由页内 aidc-embed 规则隐藏） */
+html.aidc-embed #site-header,
+html.aidc-embed #site-footer {
+  display: none !important;
+}
+
+html.aidc-embed main.min-h-screen {
+  padding-top: 0.75rem !important;
+}

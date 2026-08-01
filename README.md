@@ -36,8 +36,20 @@
 
 - 纯静态 HTML + Tailwind CSS（CDN）
 - 单页 + `i18n/*.json` 中英文（`?lang=en` 或页内切换）
+- Light / Dark 双主题（`js/aidc-theme.js` + `css/theme.css`，跨 iframe 同步）
 - 嵌套 iframe + `?embed=1` 子页模式（见 `css/embed.css`）
 - 部署：`scripts/deploy.sh`（commit → push → rsync 至腾讯云）
+
+## 页面与素材合并约定
+
+语言和主题是两个独立维度，不复制四套页面：
+
+- 中文 / EN 文案只维护在对应的 `i18n/*.zh.json`、`i18n/*.en.json`
+- Light / Dark 颜色统一维护在 `css/theme.css` 或页面已有的 CSS 变量中
+- 新页面优先使用 `--aidc-*` 语义颜色，避免在页面壳新增裸 `#hex`
+- iframe 子页加载 `js/aidc-theme.js` 后会通过 `postMessage` 与父页同步，不应因切换主题重载 iframe
+- SVG 素材优先使用 CSS 变量；必须提供双版本的位图采用 `.light.*` / `.dark.*` 命名
+- 合并前检查：中文 Light、中文 Dark、EN Light、EN Dark
 
 ## 本地预览
 
@@ -74,6 +86,8 @@ aidc/
 cp deploy.env.example deploy.env   # 填写 SSH，勿提交
 ./scripts/deploy.sh "提交说明"      # commit + push + rsync
 ```
+
+**白皮书 PDF**：仓库 `.gitignore` 忽略 `assets/*.pdf`。部署前请将中文版 PDF 放到 `assets/aidc-whitepaper-2024-zh.pdf`（与 `white-paper.html` 引用路径一致）；未放置时页面会显示「PDF 暂未就绪」提示而非空白 iframe。
 
 线上站点：[https://www.aidc2026.cn](https://www.aidc2026.cn)
 

@@ -613,6 +613,17 @@ function initIndexPage() {
       return 'principles';
     }
 
+    function scrollToInferenceSection() {
+      const params = new URLSearchParams(window.location.search);
+      const shouldScroll = params.has('tab') || window.location.hash === '#inference';
+      if (!shouldScroll) return;
+      const section = document.getElementById('inference');
+      if (!section) return;
+      requestAnimationFrame(() => {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
     function inferenceIframeSrc(path) {
       const lang = AidcI18n?.getLocale?.() || 'zh';
       return `inference/${path}?embed=1&lang=${lang}`;
@@ -1011,6 +1022,7 @@ function initIndexPage() {
     resultMessageSep.textContent = t('results.sepPlaceholder');
 
     selectDeploymentTab(initialTabFromUrl());
+    scrollToInferenceSection();
 
   window.refreshIndexPageI18n = function refreshIndexPageI18n() {
     document.querySelectorAll('#pdDeployMode option').forEach((opt) => {

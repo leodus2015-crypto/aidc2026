@@ -9,19 +9,17 @@
 
   const IFRAME_BASE = {
     roomLayout: 'ai-dc-room-layout.html?embed=1',
-    caseA: 'datacenter-3d-case-b.html',
-    caseB: 'datacenter-3d-v3-2.html',
-    plan: 'ai-dc-layout_37.html',
+    caseA: 'datacenter-3d-case-b.html?embed=1',
+    caseB: 'datacenter-3d-v3-2.html?embed=1',
+    plan: 'ai-dc-layout_37.html?embed=1',
     synergy: 'ai-dc-deployment-perf.html?embed=1',
-    roi: 'aidc-investment-roi.html',
-    roiEn: 'aidc-investment-roi.en.html',
+    roi: 'aidc-investment-roi.html?embed=1',
   };
 
   /** iframe cache-bust; synced via data/asset-version.json + bump-asset-version.py */
   const IFRAME_ASSET_VERSION = global.AIDC_ASSET_VERSION || '5';
 
   function iframeSrc(key) {
-    if (key === 'roi' && global.AidcI18n?.getLocale?.() === 'en') return IFRAME_BASE.roiEn;
     return IFRAME_BASE[key];
   }
 
@@ -49,7 +47,6 @@
     const opts = options || {};
     const bust = opts.reload ? Date.now() : null;
     Object.keys(IFRAME_BASE).forEach((key) => {
-      if (key === 'roiEn') return;
       const iframe = document.querySelector(`iframe[data-iframe-key="${key}"]`);
       if (!iframe) return;
       const nextSrc = withLocale(iframeSrc(key), { bust });

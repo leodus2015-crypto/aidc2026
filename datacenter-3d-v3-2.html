@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DataCenter 3D 设计器 · 案例B（风冷超节点）</title>
+<script src="js/aidc-theme.js?v=14"></script>
+<script src="js/embed-mode.js?v=14"></script>
+<script src="js/theme-switch.js?v=14"></script>
+<link rel="stylesheet" href="css/embed.css?v=14" />
+<link rel="stylesheet" href="css/theme.css?v=14" />
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -21,6 +26,46 @@
     --dc-accent: #2563eb;
     --dc-accent-soft: #dbeafe;
     --dc-shadow: rgba(28, 25, 23, 0.08);
+  }
+  html[data-theme="dark"] {
+    --dc-page: #07111f;
+    --dc-bg: #07111f;
+    --dc-surface: #0f1c2e;
+    --dc-surface-muted: #162438;
+    --dc-surface-inset: #111f32;
+    --dc-border: #2a3a50;
+    --dc-border-strong: #3c506a;
+    --dc-text: #f8fafc;
+    --dc-text-secondary: #b5c3d4;
+    --dc-text-muted: #91a4bb;
+    --dc-text-faint: #71869f;
+    --dc-accent: #60a5fa;
+    --dc-accent-soft: #1e3a5f;
+    --dc-shadow: rgba(0, 0, 0, 0.35);
+  }
+  html[data-theme="dark"] #topbar,
+  html[data-theme="dark"] #tooltip,
+  html[data-theme="dark"] .toast,
+  html[data-theme="dark"] #stats {
+    background: rgba(15, 28, 46, 0.95);
+  }
+  html[data-theme="dark"] .tb-group,
+  html[data-theme="dark"] .color-group { background: var(--dc-surface-muted); }
+  html[data-theme="dark"] .tb-btn:hover,
+  html[data-theme="dark"] .color-btn:hover { background: var(--dc-surface-inset); }
+  html[data-theme="dark"] .tb-btn.active,
+  html[data-theme="dark"] .color-btn.active {
+    background: var(--dc-surface);
+    color: #93c5fd;
+  }
+  html[data-theme="dark"] .toast.warn {
+    border-color: #f59e0b;
+    background: rgba(251, 191, 36, 0.12);
+    color: #fcd34d;
+  }
+  html[data-theme="dark"] .sbf-input:disabled {
+    background: var(--dc-surface-inset);
+    color: var(--dc-text-muted);
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -47,22 +92,22 @@
   #topbar .logo small { font-size: 9px; color: var(--dc-text-muted); margin-left: 3px; font-weight: 500; display: none; }
   @media (min-width: 600px) { #topbar .logo small { display: inline; } }
 
-  .tb-group { display: flex; gap: 2px; background: #f1f5f9; border-radius: 7px; padding: 3px; border: 1px solid var(--dc-border); }
+  .tb-group { display: flex; gap: 2px; background: var(--dc-surface-muted); border-radius: 7px; padding: 3px; border: 1px solid var(--dc-border); }
   .tb-btn {
     padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: 600;
     background: transparent; color: var(--dc-text-muted); border: none; transition: all .2s; white-space: nowrap;
   }
   .tb-btn:hover { color: var(--dc-text); background: rgba(255,255,255,0.7); }
-  .tb-btn.active { background: #ffffff; color: #1d4ed8; box-shadow: 0 1px 2px var(--dc-shadow); }
+  .tb-btn.active { background: var(--dc-surface); color: var(--dc-accent); box-shadow: 0 1px 2px var(--dc-shadow); }
   @media (min-width: 600px) { .tb-btn { padding: 4px 12px; font-size: 11px; } }
 
-  .color-group { display: flex; gap: 2px; background: #f1f5f9; border-radius: 7px; padding: 3px; border: 1px solid var(--dc-border); }
+  .color-group { display: flex; gap: 2px; background: var(--dc-surface-muted); border-radius: 7px; padding: 3px; border: 1px solid var(--dc-border); }
   .color-btn {
     padding: 3px 6px; border-radius: 5px; font-size: 9px; font-weight: 600;
     background: transparent; color: var(--dc-text-muted); border: none; transition: all .2s;
   }
   .color-btn:hover { color: var(--dc-text); background: rgba(255,255,255,0.7); }
-  .color-btn.active { background: #ffffff; color: #1d4ed8; box-shadow: 0 1px 2px var(--dc-shadow); }
+  .color-btn.active { background: var(--dc-surface); color: var(--dc-accent); box-shadow: 0 1px 2px var(--dc-shadow); }
   @media (min-width: 600px) { .color-btn { padding: 4px 10px; font-size: 11px; } }
 
   #sidebar-toggle {
@@ -323,6 +368,8 @@
     <button class="color-btn" data-mode="power" data-dc-i18n="功率">功率</button>
   </div>
   <button id="sidebar-toggle">☰</button>
+  <div id="lang-switch-root" class="aidc-theme-switch-root shrink-0"></div>
+  <div id="theme-switch-root" class="aidc-theme-switch-root"></div>
 </div>
 
 <!-- ===== Sidebar ===== -->
@@ -508,8 +555,8 @@
 </div>
 
 <!-- ===== Three.js ===== -->
-  <script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/config-loader.js?v=13"></script>
+  <script src="js/aidc-asset-version.js?v=14"></script>
+<script src="js/config-loader.js?v=14"></script>
 <script type="importmap">
 {
   "imports": {
@@ -794,7 +841,15 @@ const statDims = document.getElementById('stat-dims');
 // Three.js
 // ======================================================================
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf4f3ef);
+scene.background = new THREE.Color(
+  document.documentElement.dataset.theme === 'dark' ? 0x07111f : 0xf4f3ef
+);
+window.addEventListener('aidc-theme-change', (event) => {
+  const dark = event.detail?.theme === 'dark';
+  scene.background.set(dark ? 0x07111f : 0xf4f3ef);
+  if (floorMesh) floorMesh.material.color.set(dark ? 0x1e293b : 0xe7e5e4);
+  makeGrid();
+});
 
 const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 500);
 camera.position.set(20, 25, 20);
@@ -847,7 +902,8 @@ function makeFloor() {
   const w = Math.max(C.totalW * 1.8, 30);
   const d = Math.max(C.totalD * 1.8, 30);
   const geo = new THREE.PlaneGeometry(w, d);
-  const mat = new THREE.MeshStandardMaterial({ color: 0xe7e5e4, roughness: 0.92, metalness: 0, side: THREE.DoubleSide });
+  const dark = document.documentElement.dataset.theme === 'dark';
+  const mat = new THREE.MeshStandardMaterial({ color: dark ? 0x1e293b : 0xe7e5e4, roughness: 0.92, metalness: 0, side: THREE.DoubleSide });
   floorMesh = new THREE.Mesh(geo, mat);
   floorMesh.rotation.x = -Math.PI / 2;
   floorMesh.position.y = -0.01;
@@ -858,7 +914,13 @@ function makeFloor() {
 function makeGrid() {
   if (gridHelper) { scene.remove(gridHelper); }
   const size = Math.max(C.totalW, C.totalD) * 2.2;
-  gridHelper = new THREE.GridHelper(size, Math.max(Math.round(size / 0.5), 20), 0xd6d3d1, 0xe7e5e4);
+  const dark = document.documentElement.dataset.theme === 'dark';
+  gridHelper = new THREE.GridHelper(
+    size,
+    Math.max(Math.round(size / 0.5), 20),
+    dark ? 0x64748b : 0xd6d3d1,
+    dark ? 0x334155 : 0xe7e5e4
+  );
   gridHelper.position.y = 0;
   scene.add(gridHelper);
 }
@@ -2578,10 +2640,10 @@ console.log(L('• 悬停查看机柜信息'));
 console.log(L('• 配置自动保存到 localStorage'));
 </script>
 
-  <script src="js/aidc-locale-bridge.js?v=13"></script>
-  <script src="js/i18n.js?v=13"></script>
-  <script src="js/lang-switch.js?v=13"></script>
-  <script src="js/i18n-bootstrap.js?v=13"></script>
+  <script src="js/aidc-locale-bridge.js?v=14"></script>
+  <script src="js/i18n.js?v=14"></script>
+  <script src="js/lang-switch.js?v=14"></script>
+  <script src="js/i18n-bootstrap.js?v=14"></script>
   <script>
     AidcI18nBootstrap.bootstrap('datacenter-3d-v3-2', {
       onReady: function () { globalThis.__aidcPageRefreshI18n?.(); },

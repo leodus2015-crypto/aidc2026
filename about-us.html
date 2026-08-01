@@ -6,7 +6,10 @@
   <meta name="description" content="About US · AIDC 2026 站点使命、AI 使用与开发团队介绍。" />
   <meta name="theme-color" content="#f8fafc" />
   <title>About US · AI Data Center</title>
+  <script src="js/aidc-theme.js?v=14"></script>
+  <script src="js/theme-switch.js?v=14"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/theme.css?v=14" />
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="about-us">
   <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -55,7 +58,7 @@
             <p data-i18n-html="codeVolume.intro"></p>
           </div>
           <dl class="mt-6 grid gap-4 sm:grid-cols-3">
-            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div class="aidc-inset-panel rounded-2xl px-4 py-3">
               <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statLinesLabel"></dt>
               <dd class="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                 <span class="text-lg font-semibold text-slate-900" data-i18n="codeVolume.statLinesValue"></span>
@@ -64,11 +67,11 @@
               </dd>
               <p class="mt-2 text-xs leading-5 text-slate-500" data-i18n="codeVolume.statLinesNote"></p>
             </div>
-            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div class="aidc-inset-panel rounded-2xl px-4 py-3">
               <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statFilesLabel"></dt>
               <dd class="mt-1 text-lg font-semibold text-slate-900" data-i18n="codeVolume.statFilesValue"></dd>
             </div>
-            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div class="aidc-inset-panel rounded-2xl px-4 py-3">
               <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statLangLabel"></dt>
               <dd class="mt-1 text-sm font-medium text-slate-800" data-i18n="codeVolume.statLangValue"></dd>
             </div>
@@ -81,7 +84,7 @@
                   <span class="font-medium text-slate-800">HTML</span>
                   <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langHtmlShare"></span>
                 </div>
-                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-blue-600" style="width: 80.3%"></div></div>
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-blue-600" style="width: 79.3%"></div></div>
                 <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langHtmlNote"></p>
               </li>
               <li>
@@ -89,7 +92,7 @@
                   <span class="font-medium text-slate-800">JavaScript</span>
                   <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langJsShare"></span>
                 </div>
-                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-amber-500" style="width: 17.3%"></div></div>
+                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-amber-500" style="width: 18.4%"></div></div>
                 <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langJsNote"></p>
               </li>
               <li>
@@ -123,11 +126,11 @@
             </p>
           </div>
           <dl class="mt-6 grid gap-4 sm:grid-cols-2">
-            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div class="aidc-inset-panel rounded-2xl px-4 py-3">
               <dt class="text-xs font-medium text-slate-500" data-i18n="usage.totalLabel"></dt>
               <dd id="usageTotalTokens" class="mt-1 text-lg font-semibold text-slate-900">—</dd>
             </div>
-            <div class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div class="aidc-inset-panel rounded-2xl px-4 py-3">
               <dt class="text-xs font-medium text-slate-500" data-i18n="usage.updatedLabel"></dt>
               <dd id="usageUpdatedAt" class="mt-1 text-sm font-medium text-slate-800">—</dd>
             </div>
@@ -150,7 +153,7 @@
             <p data-i18n="team.motto"></p>
           </div>
           <ul class="mt-6 space-y-4">
-            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
               <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
                 <img src="assets/avatar_tech_cto_head_only.png" data-i18n-alt="team.m1Alt" alt="来自大城市的人" width="48" height="48" class="h-full w-full object-cover" />
               </div>
@@ -159,7 +162,7 @@
                 <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m1Role"></p>
               </div>
             </li>
-            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
               <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
                 <img src="assets/cursor-logo.png" data-i18n-alt="team.m2Alt" alt="Cursor" width="48" height="48" class="h-full w-full object-cover" />
               </div>
@@ -168,7 +171,7 @@
                 <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m2Role"></p>
               </div>
             </li>
-            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
               <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
                 <img src="assets/tiger.png" data-i18n-alt="team.m3Alt" alt="虎哥" width="48" height="48" class="h-full w-full object-cover" />
               </div>
@@ -177,7 +180,7 @@
                 <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m3Role"></p>
               </div>
             </li>
-            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
               <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
                 <img src="assets/Johnson.jpg" data-i18n-alt="team.m4Alt" alt="Johnson" width="48" height="48" class="h-full w-full object-cover" />
               </div>
@@ -186,7 +189,7 @@
                 <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m4Role"></p>
               </div>
             </li>
-            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
               <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
                 <img src="assets/feifei.jpg" data-i18n-alt="team.m5Alt" alt="飞飞" width="48" height="48" class="h-full w-full object-cover" />
               </div>
@@ -195,7 +198,7 @@
                 <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m5Role"></p>
               </div>
             </li>
-            <li class="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
               <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
                 <img src="assets/Andy.png" data-i18n-alt="team.m6Alt" alt="Andy" width="48" height="48" class="h-full w-full object-cover" />
               </div>
@@ -214,7 +217,7 @@
             <p data-i18n="openSource.p1"></p>
           </div>
 
-          <div class="mt-6 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4 sm:px-5 sm:py-5">
+          <div class="mt-6 aidc-inset-panel rounded-2xl px-4 py-4 sm:px-5 sm:py-5">
             <p class="text-xs font-medium uppercase tracking-wide text-slate-500" data-i18n="openSource.siteLabel"></p>
             <a
               id="openSourceSiteLink"
@@ -228,7 +231,7 @@
             <p id="openSourceReleaseMeta" class="mt-2 text-sm tabular-nums text-slate-600">—</p>
           </div>
 
-          <div class="mt-4 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4 sm:px-5 sm:py-5">
+          <div class="mt-4 aidc-inset-panel rounded-2xl px-4 py-4 sm:px-5 sm:py-5">
             <p class="text-sm leading-6 text-slate-700" data-i18n="openSource.summary"></p>
             <p class="mt-4 text-xs font-medium uppercase tracking-wide text-slate-500" data-i18n="openSource.repoLabel"></p>
             <a
@@ -261,11 +264,11 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/i18n.js?v=13"></script>
-  <script src="js/lang-switch.js?v=13"></script>
-  <script src="js/i18n-bootstrap.js?v=13"></script>
-  <script src="js/about-us-page.js?v=13"></script>
+    <script src="js/aidc-asset-version.js?v=14"></script>
+<script src="js/i18n.js?v=14"></script>
+  <script src="js/lang-switch.js?v=14"></script>
+  <script src="js/i18n-bootstrap.js?v=14"></script>
+  <script src="js/about-us-page.js?v=14"></script>
   <script>
     AidcI18nBootstrap.bootstrap('about-us', { onReady: function () { initAboutUsPage(); } });
   </script>

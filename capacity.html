@@ -4,9 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>重定向至容量规划 · AI Data Center</title>
+  <script src="js/aidc-theme.js?v=14"></script>
+  <script src="js/theme-switch.js?v=14"></script>
+  <link rel="stylesheet" href="css/theme.css?v=14" />
+  <script src="js/redirect-page.js?v=14"></script>
+  <script>window.location.replace(AidcRedirectPage.indexUrl('#capacity'));</script>
   <noscript><meta http-equiv="refresh" content="0; url=index.html#capacity" /></noscript>
 </head>
 <body class="min-h-screen bg-slate-50 p-8 text-slate-700" data-i18n-page="capacity">
+  <div id="theme-switch-root" class="fixed top-3 left-3 z-50"></div>
   <div id="lang-switch-root" class="fixed top-3 right-3 z-50"></div>
 
   <p class="mx-auto max-w-lg pt-16 text-center text-sm">
@@ -31,18 +37,16 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/redirect-page.js?v=13"></script>
-  <script src="js/i18n.js?v=13"></script>
-  <script src="js/lang-switch.js?v=13"></script>
-  <script src="js/i18n-bootstrap.js?v=13"></script>
+    <script src="js/aidc-asset-version.js?v=14"></script>
+  <script src="js/i18n.js?v=14"></script>
+  <script src="js/lang-switch.js?v=14"></script>
+  <script src="js/i18n-bootstrap.js?v=14"></script>
   <script>
     AidcI18nBootstrap.bootstrap('capacity', {
       onReady: function () {
         var url = AidcRedirectPage.indexUrl('#capacity');
         var link = document.getElementById('redirectLink');
         if (link) link.href = url;
-        window.location.replace(url);
       },
       onLocaleChange: function () {
         var url = AidcRedirectPage.indexUrl('#capacity');

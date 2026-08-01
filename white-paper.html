@@ -6,6 +6,8 @@
   <meta name="description" content="AI DC 白皮书：1.0 版本文档在线预览与下载。" />
   <meta name="theme-color" content="#f8fafc" />
   <title>白皮书 · AI Data Center</title>
+  <script src="js/aidc-theme.js?v=14"></script>
+  <script src="js/theme-switch.js?v=14"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     html {
@@ -17,6 +19,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="css/theme.css?v=14" />
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="white-paper">
   <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -93,17 +96,19 @@
             <h2 class="text-lg font-semibold text-slate-900 sm:text-xl" data-i18n="edition.title"></h2>
             <p class="mt-2 text-sm leading-6 text-slate-600 sm:text-base" data-i18n="edition.desc"></p>
           </div>
-          <div class="flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2" id="whitepaper-actions">
             <a
               href="assets/aidc-whitepaper-2024-zh.pdf"
               target="_blank"
               rel="noopener noreferrer"
+              data-whitepaper-action
               class="inline-flex items-center rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700"
               data-i18n="edition.openNew"
             ></a>
             <a
               href="assets/aidc-whitepaper-2024-zh.pdf"
               download="AI DC白皮书_中文版.pdf"
+              data-whitepaper-action
               data-i18n-download="edition.downloadName"
               class="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
               data-i18n="edition.download"
@@ -111,7 +116,18 @@
           </div>
         </div>
 
-        <div id="whitepaper-2024-viewer" class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
+        <div
+          id="whitepaper-missing"
+          hidden
+          class="aidc-inset-panel mt-6 rounded-2xl px-5 py-6 sm:px-6 sm:py-8"
+          role="status"
+        >
+          <p id="whitepaper-missing-title" class="text-base font-semibold text-slate-900"></p>
+          <p id="whitepaper-missing-desc" class="mt-2 text-sm leading-6 text-slate-600"></p>
+          <p id="whitepaper-missing-deploy" class="mt-3 text-xs leading-5 text-slate-500"></p>
+        </div>
+
+        <div id="whitepaper-2024-viewer" hidden class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
           <iframe
             src="assets/aidc-whitepaper-2024-zh.pdf"
             data-i18n-title="edition.iframeTitle"
@@ -119,7 +135,7 @@
             class="h-[min(70vh,52rem)] w-full min-h-[20rem] bg-white"
           ></iframe>
         </div>
-        <p class="mt-3 text-xs text-slate-500 sm:text-sm" data-i18n="edition.fallbackHint"></p>
+        <p id="whitepaper-fallback-hint" class="mt-3 text-xs text-slate-500 sm:text-sm" data-i18n="edition.fallbackHint"></p>
       </div>
     </section>
   </main>
@@ -136,10 +152,20 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=13"></script>
-<script src="js/i18n.js?v=13"></script>
-  <script src="js/lang-switch.js?v=13"></script>
-  <script src="js/i18n-bootstrap.js?v=13"></script>
-  <script>AidcI18nBootstrap.bootstrap('white-paper');</script>
+    <script src="js/aidc-asset-version.js?v=14"></script>
+<script src="js/i18n.js?v=14"></script>
+  <script src="js/lang-switch.js?v=14"></script>
+  <script src="js/i18n-bootstrap.js?v=14"></script>
+  <script src="js/white-paper-page.js?v=14"></script>
+  <script>
+    AidcI18nBootstrap.bootstrap('white-paper', {
+      onReady: function () {
+        initWhitePaperPage();
+      },
+      onLocaleChange: function () {
+        initWhitePaperPage();
+      },
+    });
+  </script>
 </body>
 </html>

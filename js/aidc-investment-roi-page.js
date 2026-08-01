@@ -1,22 +1,34 @@
 /**
- * Investment ROI page logic — shared by aidc-investment-roi.html (zh) and aidc-investment-roi.en.html (en).
- * Requires window.ROI_PAGE_CONFIG before this script loads.
+ * Investment ROI page logic — single-page i18n via AidcI18n lookup + ROI_PAGE_CONFIG.
+ * Requires AidcInvestmentRoiInit.applyConfig() before boot.
  */
 (function () {
-  const PAGE = window.ROI_PAGE_CONFIG || {};
-  const locale = PAGE.locale || 'zh';
-  const localeTag = PAGE.localeTag || (locale === 'en' ? 'en-US' : 'zh-CN');
-  const strings = PAGE.strings || null;
-  const configKeys = PAGE.configKeys || {
+  let configKeys = {
     defaults: 'roi.defaults',
     cloudCompare: 'roi.cloud_compare',
   };
-  const LOCAL_ROI_DEFAULTS = PAGE.localDefaults || {};
-  const LOCAL_CLOUD_COMPARE = PAGE.localCloudCompare || {};
+  let LOCAL_ROI_DEFAULTS = {};
+  let LOCAL_CLOUD_COMPARE = {};
+
+  function getLocale() {
+    return window.AidcI18n?.getLocale?.() || window.ROI_PAGE_CONFIG?.locale || 'zh';
+  }
+
+  function localeTag() {
+    return window.AidcI18n?.localeTag?.() || (getLocale() === 'en' ? 'en-US' : 'zh-CN');
+  }
+
+  function applyPageConfig() {
+    const page = window.ROI_PAGE_CONFIG || {};
+    configKeys = page.configKeys || configKeys;
+    LOCAL_ROI_DEFAULTS = page.localDefaults || {};
+    LOCAL_CLOUD_COMPARE = page.localCloudCompare || {};
+    CLOUD_COMPARE = JSON.parse(JSON.stringify(LOCAL_CLOUD_COMPARE));
+  }
 
   function L(s) {
     if (!s) return s;
-    if (locale === 'en' && strings && strings[s] != null) return strings[s];
+    if (window.AidcI18n?.getLookupText) return AidcI18n.getLookupText(s);
     return s;
   }
   function Lp(key, params) {
@@ -40,16 +52,16 @@
   const MW_PER_P = SPEC.kwPer64Cards / SPEC.cardsPer64Kw / 1000;
   const KEY_PASSWORD = 'aidc2026';
 
-  let CLOUD_COMPARE = JSON.parse(JSON.stringify(LOCAL_CLOUD_COMPARE));
+  let CLOUD_COMPARE = {};
   let configLoadMeta = { defaults: 'local', cloud: 'local' };
 
   let activeScenario = 'ds-v4';
   let syncLock = false;
   let keyParamsUnlocked = false;
 
-  const fmtNum = (n, d = 2) => Number(n).toLocaleString(localeTag, { minimumFractionDigits: d, maximumFractionDigits: d });
+  const fmtNum = (n, d = 2) => Number(n).toLocaleString(localeTag(), { minimumFractionDigits: d, maximumFractionDigits: d });
   const fmtMoney = (y) => {
-    if (locale === 'en') {
+    if (getLocale() === 'en') {
       const abs = Math.abs(y);
       if (abs >= 1e9) return '$' + fmtNum(y / 1e9, 2) + 'B';
       if (abs >= 1e6) return '$' + fmtNum(y / 1e6, 2) + 'M';
@@ -376,17 +388,26 @@
     $('keyOpexPerM').textContent = fmtNum(s.opexPerM, 2) + ' ' + L('元/M');
 
     $('cmpSelfCost').textContent = fmtNum(s.costPerMBlended, 2);
-    $('cmpRefEff').textContent = fmtNum(s.refBlended, 2);
-    const clouds = CLOUD_COMPARE[activeScenario].clouds.map((c) => ({
-      ...c,
-      blended: blendedCloudPrice(c, s.tokenMix),
-    }));
-    const cheaper = clouds.filter((c) => s.costPerMBlended <= c.blended).length;
-    if (s.costPerMBlended <= s.refBlended) {
-      $('cmpVerdict').innerHTML = `<span class="text-emerald-700">${Lp('✓ 具备价格竞争力 · 低于 {cheaper}/{total} 家均摊价', { cheaper, total: clouds.length })}</span>`;
-    } else {
-      $('cmpVerdict').innerHTML = `<span class="text-rose-700">${Lp('✗ 高于对标均摊价 {diff} 元/M · 仅低于 {cheaper}/{total} 家', { diff: fmtNum(s.costPerMBlended - s.refBlended, 2), cheaper, total: clouds.length })}</span>`;
+    const sc = CLOUD_COMPARE[activeScenario];
+    const total = sc.clouds.length;
+    const cheaperByType = {
+      miss: sc.clouds.filter((c) => s.costPerMBlended > c.inputMiss).length,
+      hit: sc.clouds.filter((c) => s.costPerMBlended > c.inputHit).length,
+      out: sc.clouds.filter((c) => s.costPerMBlended > c.output).length,
+    };
+    const refEl = $('cmpRefEff');
+    if (refEl) {
+      const minMiss = Math.min(...sc.clouds.map((c) => c.inputMiss));
+      const minHit = Math.min(...sc.clouds.map((c) => c.inputHit));
+      const minOut = Math.min(...sc.clouds.map((c) => c.output));
+      refEl.textContent = `${fmtNum(minMiss, 2)} / ${fmtNum(minHit, 2)} / ${fmtNum(minOut, 2)}`;
     }
+    $('cmpVerdict').innerHTML = `<span class="text-slate-700">${Lp('公开价对比：未命中 {miss}/{total} 家低于自建 · 命中 {hit}/{total} · 输出 {out}/{total}', {
+      miss: cheaperByType.miss,
+      hit: cheaperByType.hit,
+      out: cheaperByType.out,
+      total,
+    })}</span>`;
     renderCompareChart(s);
     renderFullMetrics(s);
   }
@@ -396,13 +417,12 @@
     const items = sc.clouds.map((c) => ({
       name: c.name,
       price: cloudPriceByType(c, type),
-      blended: blendedCloudPrice(c, s.tokenMix),
     }));
     items.push({ name: L('★ 自建'), price: selfCost, isSelf: true });
     items.sort((a, b) => a.price - b.price);
     const maxP = Math.max(...items.map((i) => i.price), 0.01) * 1.15;
     return `
-      <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+      <div class="aidc-inset-panel cmp-price-panel rounded-2xl p-4">
         <p class="text-sm font-semibold text-slate-800">${title}</p>
         <p class="mt-0.5 text-[11px] leading-4 text-slate-500">${unitLabel}</p>
         <div class="mt-3 space-y-2">
@@ -411,16 +431,20 @@
             const barCls = item.isSelf
               ? 'bg-gradient-to-r from-amber-400 to-amber-500'
               : 'bg-gradient-to-r from-blue-400 to-blue-600';
+            const cheaper = item.isSelf ? null : item.price < selfCost;
             const hint = item.isSelf
-              ? L('均摊全成本')
-              : Lp('均摊 {price}', { price: fmtNum(item.blended, 2) });
+              ? L('全成本（三类 Token 合计）')
+              : (cheaper ? L('低于自建') : L('高于自建'));
+            const hintCls = item.isSelf
+              ? 'text-slate-400'
+              : (cheaper ? 'text-emerald-600' : 'text-rose-600');
             return `<div class="grid grid-cols-[4.5rem_1fr_3rem] items-center gap-2 text-xs sm:grid-cols-[5rem_1fr_3.25rem]">
               <div class="min-w-0">
                 <span class="${item.isSelf ? 'font-bold text-amber-800' : 'text-slate-700'} block truncate">${item.name}</span>
-                <span class="text-[10px] text-slate-400 block truncate">${hint}</span>
+                <span class="text-[10px] ${hintCls} block truncate">${hint}</span>
               </div>
-              <div class="h-5 overflow-hidden rounded-md bg-white"><div class="${barCls} h-full rounded-md transition-all duration-300" style="width:${pct}%"></div></div>
-              <span class="tabular-nums text-right font-medium">${fmtNum(item.price, 2)}</span>
+              <div class="cmp-bar-track h-5 overflow-hidden rounded-md bg-white"><div class="${barCls} h-full rounded-md transition-all duration-300" style="width:${pct}%"></div></div>
+              <span class="tabular-nums text-right font-medium text-slate-700">${fmtNum(item.price, 2)}</span>
             </div>`;
           }).join('')}
         </div>
@@ -429,26 +453,21 @@
 
   function renderCompareChart(s) {
     const sc = CLOUD_COMPARE[activeScenario];
-    const mixPct = Lp('未命中 {miss}% · 命中 {hit}% · 输出 {out}%', {
-      miss: fmtNum(s.tokenMix.miss * 100, 1),
-      hit: fmtNum(s.tokenMix.hit * 100, 1),
-      out: fmtNum(s.tokenMix.out * 100, 1),
-    });
     const noteEl = $('cmpPricingNote');
-    if (noteEl && sc.pricingNote) noteEl.textContent = sc.pricingNote;
+    if (noteEl) {
+      const note = sc.pricingNote ? L(sc.pricingNote) : '';
+      const updated = sc.updatedAt ? Lp('更新 {date}', { date: sc.updatedAt }) : '';
+      noteEl.textContent = [note, updated].filter(Boolean).join(' · ');
+    }
     $('compareChart').innerHTML = `
-      <p class="text-sm font-semibold text-slate-800">${L(sc.title)}${L(' · 三类 Token 均摊比价')}</p>
-      <p class="mt-1 text-xs text-slate-500">${Lp('单卡吞吐 {miss} / {hit} / {output} t/s · Token 占比 {mixPct} · 自建均摊 {cost} 元/M', {
-        miss: fmtNum(s.tpsInputMiss, 0),
-        hit: fmtNum(s.tpsInputHit, 0),
-        output: fmtNum(s.tpsOutput, 1),
-        mixPct,
+      <p class="text-sm font-semibold text-slate-800">${L(sc.title)}${L(' · 三类 Token 公开价对比')}</p>
+      <p class="mt-1 text-xs text-slate-500">${Lp('自建全成本 {cost} 元/百万 Token · 云侧为各平台公开价（元/百万 Token）', {
         cost: fmtNum(s.costPerMBlended, 2),
       })}</p>
       <div class="mt-4 grid gap-4 lg:grid-cols-3">
-        ${renderComparePanel(L('输入 · 未命中'), L('元/百万 Token（云公开输入价 vs 自建均摊）'), s, sc, 'miss')}
-        ${renderComparePanel(L('输入 · 命中'), L('元/百万 Token（云公开缓存命中价 vs 自建均摊）'), s, sc, 'hit')}
-        ${renderComparePanel(L('输出'), L('元/百万 Token（云公开输出价 vs 自建均摊）'), s, sc, 'out')}
+        ${renderComparePanel(L('输入 · 未命中'), L('元/百万 Token（云公开价 vs 自建全成本）'), s, sc, 'miss')}
+        ${renderComparePanel(L('输入 · 命中'), L('元/百万 Token（云公开价 vs 自建全成本）'), s, sc, 'hit')}
+        ${renderComparePanel(L('输出'), L('元/百万 Token（云公开价 vs 自建全成本）'), s, sc, 'out')}
       </div>`;
   }
 
@@ -598,6 +617,7 @@
   }
 
   async function bootPage() {
+    applyPageConfig();
     const [defaultsResult, cloudResult] = await Promise.all([
       AidcConfig.load(configKeys.defaults, LOCAL_ROI_DEFAULTS),
       AidcConfig.load(configKeys.cloudCompare, LOCAL_CLOUD_COMPARE),
@@ -622,5 +642,9 @@
   }
 
   bindEvents();
-  document.addEventListener('DOMContentLoaded', bootPage);
+  window.AidcInvestmentRoiPage = {
+    boot: bootPage,
+    renderAll,
+    applyPageConfig,
+  };
 })();

@@ -20,5 +20,10 @@
     "switchAria": "Language",
     "zh": "中文",
     "en": "EN"
+  },
+  "theme": {
+    "switchAria": "Display theme",
+    "light": "Light",
+    "dark": "Dark"
   }
 }
