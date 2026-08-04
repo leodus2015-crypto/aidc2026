@@ -39,17 +39,20 @@
 
   const $ = (id) => document.getElementById(id);
 
+  const SCALE_PRESETS = {
+    '768': { computeP: 768, clusterMw: 2.5 },
+    '384': { computeP: 384, clusterMw: 1.3 },
+  };
+  let activeScalePreset = '768';
+
   const SPEC = {
-    kwPer64Cards: 125,
-    cardsPer64Kw: 64,
     pPerCard: 1,
-    defaultUnitPriceWan: LOCAL_ROI_DEFAULTS.npuUnitPrice ?? 50,
+    defaultUnitPriceWan: LOCAL_ROI_DEFAULTS.npuUnitPrice ?? 60,
     presets: {
       'ds-v4': { tpsInputMiss: 900, tpsInputHit: 3600, tpsOutput: 28 },
       'glm-51': { tpsInputMiss: 400, tpsInputHit: 1600, tpsOutput: 12 },
     },
   };
-  const MW_PER_P = SPEC.kwPer64Cards / SPEC.cardsPer64Kw / 1000;
   const KEY_PASSWORD = 'aidc2026';
 
   let CLOUD_COMPARE = {};
@@ -77,10 +80,20 @@
     return fmtNum(n, 0);
   };
 
-  function pToMw(p) { return p * MW_PER_P; }
-  function mwToP(mw) { return mw / MW_PER_P; }
-
-  function tokenMix(tpsMiss, tpsHit, tpsOut) {
+  function syncScalePresetHighlight() {
+    const p = Number($('computeP').value);
+    const mw = Number($('clusterMw').value);
+    let matched = '';
+    Object.entries(SCALE_PRESETS).forEach(([id, preset]) => {
+      if (Math.abs(p - preset.computeP) < 0.01 && Math.abs(mw - preset.clusterMw) < 0.0001) matched = id;
+    });
+    activeScalePreset = matched;
+    document.querySelectorAll('.scale-preset').forEach((btn) => {
+      const on = btn.dataset.preset === matched;
+      btn.className = 'scale-preset rounded-xl px-3 py-1.5 text-xs font-semibold transition '
+        + (on ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200');
+    });
+  }
     const total = tpsMiss + tpsHit + tpsOut;
     if (total <= 0) return { miss: 0, hit: 0, out: 0 };
     return { miss: tpsMiss / total, hit: tpsHit / total, out: tpsOut / total };
@@ -303,26 +316,24 @@
     syncKeyToFull();
   }
 
-  function linkFromP() {
+  function syncFromComputeP() {
     if (syncLock) return;
     syncLock = true;
-    const p = Number($('computeP').value);
-    $('clusterMw').value = fmtNum(pToMw(p), 4);
-    $('npuCount').value = Math.round(p);
+    $('npuCount').value = Math.round(Number($('computeP').value));
     syncLock = false;
     syncKeyToFull();
+    syncScalePresetHighlight();
     renderAll();
   }
 
-  function linkFromMw() {
-    if (syncLock) return;
-    syncLock = true;
-    const mw = Number($('clusterMw').value);
-    const p = mwToP(mw);
-    $('computeP').value = fmtNum(p, 2);
-    $('npuCount').value = Math.round(p);
-    syncLock = false;
+  function applyScalePreset(presetId) {
+    const preset = SCALE_PRESETS[presetId];
+    if (!preset) return;
+    $('computeP').value = fmtNum(preset.computeP, preset.computeP % 1 === 0 ? 0 : 2);
+    $('clusterMw').value = fmtNum(preset.clusterMw, 4);
+    $('npuCount').value = Math.round(preset.computeP);
     syncKeyToFull();
+    syncScalePresetHighlight();
     renderAll();
   }
 
@@ -475,7 +486,7 @@
     const rows = [
       [L('算力规模 P'), fmtNum(s.computeP, 2) + ' P', L('1 卡 = 1P（2026H2）')],
       [L('NPU 数量'), s.npuCount + ' ' + L('卡'), L('= P 取整')],
-      [L('集群 IT 功率'), fmtNum(s.clusterMw, 4) + ' MW', L('64 卡 = 125kW')],
+      [L('集群 IT 功率'), fmtNum(s.clusterMw, 4) + ' MW', L('默认值，可以手工修改')],
       [L('昇腾采购'), fmtMoney(s.ascendCost), L('P × 单卡价')],
       [L('IT 设备投资'), fmtMoney(s.itEquipment), Lp('昇腾 ÷ {pct}%', { pct: fmtNum(s.ascendPct * 100, 0) })],
       [L('供电/散热投资'), fmtMoney(s.powerCapex), Lp('总投资 × {pct}%', { pct: fmtNum(s.powerPct * 100, 0) })],
@@ -573,8 +584,12 @@
     });
     $('pwdInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('pwdOk').click(); });
 
-    $('computeP').addEventListener('input', linkFromP);
-    $('clusterMw').addEventListener('input', linkFromMw);
+    $('computeP').addEventListener('input', syncFromComputeP);
+    $('clusterMw').addEventListener('input', () => { syncKeyToFull(); syncScalePresetHighlight(); renderAll(); });
+
+    document.querySelectorAll('.scale-preset').forEach((btn) => {
+      btn.addEventListener('click', () => applyScalePreset(btn.dataset.preset));
+    });
 
     ['pctItDevice', 'pctPowerCool'].forEach((id) => {
       $(id).addEventListener('input', () => { rebalanceProjectPct(id); renderAll(); });
@@ -593,8 +608,8 @@
       'fullDeprecYears', 'fullFixedOpex', 'fullCapexOpexPct'
     ].forEach((id) => {
       $(id).addEventListener('input', () => {
-        if (id === 'fullComputeP') { syncFullToKey(); linkFromP(); return; }
-        if (id === 'fullClusterMw') { syncFullToKey(); linkFromMw(); return; }
+        if (id === 'fullComputeP') { syncFullToKey(); syncFromComputeP(); return; }
+        if (id === 'fullClusterMw') { syncFullToKey(); renderAll(); return; }
         syncFullToKey();
       });
     });
@@ -638,6 +653,7 @@
     });
     updateConfigSourceBadge();
     updatePctSumHint();
+    syncScalePresetHighlight();
     renderAll();
   }
 

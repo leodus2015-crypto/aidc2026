@@ -6,12 +6,12 @@
 
   const ZH_DEFAULTS = {
     schemaVersion: 1,
-    computeP: 512,
-    clusterMw: 1.0,
+    computeP: 768,
+    clusterMw: 2.5,
     pctItDevice: 65,
     pctPowerCool: 25,
     pctLandBuild: 10,
-    npuUnitPrice: 50,
+    npuUnitPrice: 60,
     ascendInItPct: 85,
     deprecYears: 5,
     pue: 1.25,
@@ -27,8 +27,8 @@
 
   const EN_DEFAULTS = {
     schemaVersion: 1,
-    computeP: 512,
-    clusterMw: 1.0,
+    computeP: 768,
+    clusterMw: 2.5,
     pctItDevice: 65,
     pctPowerCool: 25,
     pctLandBuild: 10,

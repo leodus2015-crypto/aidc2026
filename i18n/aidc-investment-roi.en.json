@@ -6,7 +6,7 @@
   "page": {
     "eyebrow": "Investment ROI",
     "h1": "Token Service Investment ROI",
-    "introHtml": "Models <strong class=\"font-semibold text-slate-800\">compute scale (P)</strong> and <strong class=\"font-semibold text-slate-800\">cluster power (MW)</strong> together — CAPEX on the left, OPEX on the right, with live price comparison in the center."
+    "introHtml": "Models <strong class=\"font-semibold text-slate-800\">compute scale (P)</strong> and <strong class=\"font-semibold text-slate-800\">cluster IT power (MW)</strong> independently — CAPEX on the left, OPEX on the right, with live price comparison in the center."
   },
   "lookup": {
     "Token 服务投资收益分析": "Token Service Investment ROI",
@@ -19,6 +19,12 @@
     "2026H2：1 卡 = 1P": "2026H2: 1 card = 1P",
     "集群 IT 功率（MW）": "Cluster IT power (MW)",
     "规格：64 卡 = 125kW": "Spec: 64 cards = 125kW",
+    "与算力规模独立输入，无公式联动": "Independent from compute scale; no formula link",
+    "768P · 2.5MW": "768P · 2.5MW",
+    "384P · 1.3MW": "384P · 1.3MW",
+    "独立输入 IT 功率": "Independent IT power input",
+    "默认值，可以手工修改": "Default value; editable manually",
+    "算力规模与 IT 功率可独立填写；电费按 MW × PUE × 利用率估算。比价区直接对比云公开价与自建全成本。": "Compute scale and IT power are independent; electricity cost estimated as MW × PUE × utilization. Compare cloud list prices directly against self-built full cost.",
     "工程投资结构（合计 100%）": "Project investment mix (100% total)",
     "IT 设备投资（%）": "IT equipment (%)",
     "供电 / 散热（%）": "Power / cooling (%)",
@@ -66,7 +72,7 @@
     "全部参数与计算公式": "All parameters & formulas",
     "CAPEX 全部参数": "All CAPEX parameters",
     "昇腾 NPU 型号": "Ascend NPU model",
-    "2026H2型号（1P/卡 · 64卡=125kW · 默认50万/卡）": "2026H2 model (1P/card · 64 cards=125kW · default 500k CNY/card)",
+    "2026H2型号（1P/卡 · 64卡=125kW · 默认60万/卡）": "2026H2 model (1P/card · 64 cards=125kW · default 600k CNY/card)",
     "NPU 数量（= P）": "NPU count (= P)",
     "单卡价（万元）": "Unit price (×10k CNY)",
     "IT 内昇腾（%）": "Ascend share in IT (%)",
@@ -88,7 +94,7 @@
     "单卡输入·命中（t/s）": "Per-card input · cache hit (t/s)",
     "单卡输出（t/s）": "Per-card output (t/s)",
     "公式：": "Formulas:",
-    "formulaMw": "<code class=\"rounded bg-white/70 px-1\">MW</code> = P × 125 ÷ 64000 (64 cards = 125kW)",
+    "formulaMw": "<code class=\"rounded bg-white/70 px-1\">Cluster IT power (MW)</code> is an independent input; <code class=\"rounded bg-white/70 px-1\">annual electricity</code> = MW × 1000 × 8760 × PUE × utilization × price",
     "formulaAscendIt": "<code class=\"rounded bg-white/70 px-1\">Ascend procurement</code> = P × unit price; <code class=\"rounded bg-white/70 px-1\">IT equipment investment</code> = Ascend procurement ÷ Ascend share in IT",
     "formulaTotalCapex": "<code class=\"rounded bg-white/70 px-1\">Total investment CAPEX</code> = IT equipment investment ÷ IT equipment project share",
     "formulaAnnualPower": "<code class=\"rounded bg-white/70 px-1\">Annual electricity</code> = MW × 1000 × 8760 × PUE × utilization × price",
