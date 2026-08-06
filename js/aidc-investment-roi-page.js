@@ -94,6 +94,8 @@
         + (on ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200');
     });
   }
+
+  function tokenMix(tpsMiss, tpsHit, tpsOut) {
     const total = tpsMiss + tpsHit + tpsOut;
     if (total <= 0) return { miss: 0, hit: 0, out: 0 };
     return { miss: tpsMiss / total, hit: tpsHit / total, out: tpsOut / total };
