@@ -60,17 +60,17 @@
         { name: '天翼云', inputMiss: 1.2, inputHit: 0.024, output: 2.4 },
       ],
     },
-    'glm-51': {
-      title: 'GLM-5.1 档',
-      updatedAt: '2026-08-01',
-      pricingNote: 'GLM-5.1 公开价（32K 内档位）；智谱官方缓存命中价，其余平台按公开价目整理',
+    'glm-52': {
+      title: 'GLM-5.2 档',
+      updatedAt: '2026-08-06',
+      pricingNote: 'GLM-5.2 公开价；智谱 AI 开放平台 open.bigmodel.cn 价目，单位元/百万 Token',
       clouds: [
-        { name: '智谱 AI 官方', inputMiss: 6.0, inputHit: 1.3, output: 24.0 },
-        { name: '硅基流动', inputMiss: 6.0, inputHit: 1.3, output: 24.0 },
-        { name: '阿里云百炼', inputMiss: 6.0, inputHit: 1.3, output: 24.0 },
-        { name: '火山引擎', inputMiss: 6.5, inputHit: 1.4, output: 25.0 },
-        { name: '腾讯云', inputMiss: 7.0, inputHit: 1.5, output: 26.0 },
-        { name: '京东云', inputMiss: 6.8, inputHit: 1.4, output: 25.0 },
+        { name: '智谱 AI 官方', inputMiss: 8.0, inputHit: 2.0, output: 28.0 },
+        { name: '硅基流动', inputMiss: 8.0, inputHit: 2.0, output: 28.0 },
+        { name: '阿里云百炼', inputMiss: 8.0, inputHit: 2.0, output: 28.0 },
+        { name: '火山引擎', inputMiss: 8.5, inputHit: 2.1, output: 29.0 },
+        { name: '腾讯云', inputMiss: 8.0, inputHit: 2.0, output: 28.0 },
+        { name: '京东云', inputMiss: 8.2, inputHit: 2.0, output: 28.5 },
       ],
     },
   };
@@ -87,14 +87,14 @@
         { name: 'Azure AI Foundry (Global)', inputMiss: 0.19, inputHit: 0.0038, output: 0.51 },
       ],
     },
-    'glm-51': {
-      title: 'GLM-5.1 tier',
-      updatedAt: '2026-08-01',
-      pricingNote: 'GLM-5.1 list prices (≤32K tier) from Zhipu open platform; USD/M tokens.',
+    'glm-52': {
+      title: 'GLM-5.2 tier',
+      updatedAt: '2026-08-06',
+      pricingNote: 'GLM-5.2 list prices from Z.AI / Zhipu open platform; USD/M tokens.',
       clouds: [
-        { name: 'Zhipu Official', inputMiss: 0.84, inputHit: 0.18, output: 3.36 },
-        { name: 'SiliconFlow', inputMiss: 0.95, inputHit: 0.19, output: 3.55 },
-        { name: 'OpenRouter (Z.AI)', inputMiss: 1.0, inputHit: 0.2, output: 3.2 },
+        { name: 'Z.AI Official', inputMiss: 1.40, inputHit: 0.26, output: 4.40 },
+        { name: 'SiliconFlow', inputMiss: 1.45, inputHit: 0.27, output: 4.50 },
+        { name: 'OpenRouter (Z.AI)', inputMiss: 1.50, inputHit: 0.28, output: 4.60 },
       ],
     },
   };

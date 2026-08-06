@@ -13,16 +13,17 @@
       { "name": "Azure AI Foundry (Global)", "inputMiss": 0.19, "inputHit": 0.0038, "output": 0.51 }
     ]
   },
-  "glm-51": {
-    "title": "GLM-5.1 tier",
-    "refInputMiss": 0.42,
-    "refInputHit": 0.105,
-    "refOutput": 2.1,
-    "pricingNote": "Overseas GLM-5.1 API pricing varies by region; figures are illustrative for comparison only.",
+  "glm-52": {
+    "title": "GLM-5.2 tier",
+    "refInputMiss": 1.40,
+    "refInputHit": 0.26,
+    "refOutput": 4.40,
+    "updatedAt": "2026-08-06",
+    "pricingNote": "GLM-5.2 list prices from Z.AI / Zhipu open platform; USD/M tokens.",
     "clouds": [
-      { "name": "Z.AI Official", "inputMiss": 0.42, "inputHit": 0.105, "output": 1.68 },
-      { "name": "OpenRouter (illustrative)", "inputMiss": 0.55, "inputHit": 0.14, "output": 2.2 },
-      { "name": "Together AI (illustrative)", "inputMiss": 0.48, "inputHit": 0.12, "output": 1.92 }
+      { "name": "Z.AI Official", "inputMiss": 1.40, "inputHit": 0.26, "output": 4.40 },
+      { "name": "SiliconFlow", "inputMiss": 1.45, "inputHit": 0.27, "output": 4.50 },
+      { "name": "OpenRouter (Z.AI)", "inputMiss": 1.50, "inputHit": 0.28, "output": 4.60 }
     ]
   }
 }

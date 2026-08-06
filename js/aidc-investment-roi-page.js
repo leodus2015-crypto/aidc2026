@@ -50,7 +50,7 @@
     defaultUnitPriceWan: LOCAL_ROI_DEFAULTS.npuUnitPrice ?? 60,
     presets: {
       'ds-v4': { tpsInputMiss: 900, tpsInputHit: 3600, tpsOutput: 28 },
-      'glm-51': { tpsInputMiss: 400, tpsInputHit: 1600, tpsOutput: 12 },
+      'glm-52': { tpsInputMiss: 400, tpsInputHit: 1600, tpsOutput: 12 },
     },
   };
   const KEY_PASSWORD = 'aidc2026';
@@ -121,6 +121,7 @@
       if (val == null || val === '' || !$(id)) return;
       $(id).value = val;
     };
+    if (cfg.serviceModel === 'glm-51') cfg.serviceModel = 'glm-52';
     setNum('computeP', cfg.computeP);
     setNum('clusterMw', cfg.clusterMw != null ? fmtNum(Number(cfg.clusterMw), 4) : null);
     setNum('pctItDevice', cfg.pctItDevice);
@@ -166,10 +167,12 @@
   function mergeCloudCompare(remote) {
     if (!remote || typeof remote !== 'object') return;
     CLOUD_COMPARE = JSON.parse(JSON.stringify(LOCAL_CLOUD_COMPARE));
-    Object.keys(remote).forEach((k) => {
+    const r = { ...remote };
+    delete r['glm-51'];
+    Object.keys(r).forEach((k) => {
       if (k === 'schemaVersion') return;
-      if (remote[k] && typeof remote[k] === 'object') {
-        CLOUD_COMPARE[k] = { ...CLOUD_COMPARE[k], ...remote[k] };
+      if (r[k] && typeof r[k] === 'object') {
+        CLOUD_COMPARE[k] = { ...CLOUD_COMPARE[k], ...r[k] };
       }
     });
   }
@@ -515,7 +518,7 @@
 
   function applyServiceModel() {
     const svc = $('serviceModel').value;
-    if (svc === 'ds-v4' || svc === 'glm-51') {
+    if (svc === 'ds-v4' || svc === 'glm-52') {
       const preset = SPEC.presets[svc];
       $('tpsInputMiss').value = preset.tpsInputMiss;
       $('tpsInputHit').value = preset.tpsInputHit;
@@ -642,7 +645,7 @@
     configLoadMeta = { defaults: defaultsResult.source, cloud: cloudResult.source };
     mergeCloudCompare(cloudResult.data);
     applyRoiConfig(defaultsResult.data);
-    activeScenario = $('serviceModel').value === 'glm-51' ? 'glm-51' : 'ds-v4';
+    activeScenario = $('serviceModel').value === 'glm-52' ? 'glm-52' : 'ds-v4';
     ['fullNpuPrice', 'fullAscendItPct'].forEach((id) => {
       $(id).readOnly = true;
       $(id).classList.add('cursor-default', 'bg-slate-50');
