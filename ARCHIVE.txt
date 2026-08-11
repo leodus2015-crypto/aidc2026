@@ -1,6 +1,12 @@
 aidc 静态站点归档
-版本：v2026.07.09
-日期：2026-07-09
+版本：v2026.08.12（build 19）
+日期：2026-08-12
+
+本版要点（v19）
+──────────────
+  · 3D 案例 A/B：embed 模式恢复 Cooling 视角工具条；侧栏「视图」亦可切换
+  · 3D 案例 A/B：Dark 模式热通道红色提亮；配置来源优先云端（修复总显示「本地缓存」）
+  · ROI（v18）：全成本单卡吞吐、占比分摊、双端 t/s 同步、公式与盈亏平衡修复
 
 包含
 ────
@@ -66,8 +72,10 @@ aidc 静态站点归档
   全站采用方案 B（单 HTML + i18n/*.json）；英文通过 ?lang=en 或页内语言切换。
   Light / Dark 与语言维度分离；主题存入 aidc-theme，并通过 postMessage 同步嵌套 iframe。
   例外：ai-dc-layout_37.html 仍使用页内 EN{} 与 AidcLocaleBridge，未完全迁到方案 B。
-  3D 案例默认配置见 data/dc3d-case-a.defaults.json / dc3d-case-b.defaults.json。
-  embed 模式：子页 URL 加 ?embed=1，样式见 css/embed.css、js/embed-mode.js。
+  3D 案例默认配置见 data/dc3d-case-a.defaults.json / dc3d-case-b.defaults.json；
+  云端配置键 dc3d.case_a / dc3d.case_b（MySQL app_config JSON，非逐字段建表）。
+  embed 模式：子页 URL 加 ?embed=1，样式见 css/embed.css、js/embed-mode.js；
+  embed 下保留精简顶栏（俯视/水平/透视/Cooling），隐藏 Logo 与主题切换。
 
 本地预览
 ────────

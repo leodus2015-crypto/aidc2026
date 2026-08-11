@@ -142,17 +142,29 @@ html.aidc-embed .room-layout-iframe {
   height: auto !important;
 }
 
-/* 3D 设计器 iframe */
+/* 3D 设计器 iframe：保留视角 / Cooling 工具条，隐藏站点级 chrome */
 html.aidc-embed #topbar {
+  height: 36px;
+  padding: 0 8px;
+  gap: 4px;
+}
+
+html.aidc-embed #topbar .logo,
+html.aidc-embed #lang-switch-root,
+html.aidc-embed #theme-switch-root {
   display: none !important;
 }
 
+html.aidc-embed #sidebar-toggle {
+  margin-left: auto;
+}
+
 html.aidc-embed #sidebar {
-  top: 0;
+  top: 36px;
 }
 
 html.aidc-embed #container3d {
-  top: 0;
+  top: 36px;
 }
 
 /* layout_37 iframe */

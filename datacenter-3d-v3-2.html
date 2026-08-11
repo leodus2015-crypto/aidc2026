@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DataCenter 3D 设计器 · 案例B（风冷超节点）</title>
-<script src="js/aidc-theme.js?v=18"></script>
-<script src="js/embed-mode.js?v=18"></script>
-<script src="js/theme-switch.js?v=18"></script>
-<link rel="stylesheet" href="css/embed.css?v=18" />
-<link rel="stylesheet" href="css/theme.css?v=18" />
+<script src="js/aidc-theme.js?v=19"></script>
+<script src="js/embed-mode.js?v=19"></script>
+<script src="js/theme-switch.js?v=19"></script>
+<link rel="stylesheet" href="css/embed.css?v=19" />
+<link rel="stylesheet" href="css/theme.css?v=19" />
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -474,6 +474,15 @@
     <!-- VIEWS -->
     <div class="sb-panel" id="panel-views">
       <div class="sbf-group">
+        <div class="sbf-label" data-dc-i18n="视角模式">视角模式</div>
+        <div class="tb-group" style="width:100%;justify-content:space-between;">
+          <button class="tb-btn active" data-view="top" data-dc-i18n="俯视">俯视</button>
+          <button class="tb-btn" data-view="horiz" data-dc-i18n="水平">水平</button>
+          <button class="tb-btn" data-view="angle" data-dc-i18n="透视">透视</button>
+          <button class="tb-btn" data-view="cooling">Cooling</button>
+        </div>
+      </div>
+      <div class="sbf-group">
         <div class="sbf-label" data-dc-i18n="已保存视角">已保存视角</div>
         <div class="view-list" id="view-list"></div>
         <div class="save-view-form">
@@ -555,8 +564,8 @@
 </div>
 
 <!-- ===== Three.js ===== -->
-  <script src="js/aidc-asset-version.js?v=18"></script>
-<script src="js/config-loader.js?v=18"></script>
+  <script src="js/aidc-asset-version.js?v=19"></script>
+<script src="js/config-loader.js?v=19"></script>
 <script type="importmap">
 {
   "imports": {
@@ -646,9 +655,11 @@ const store = {
 // ======================================================================
 const STORAGE_KEY = 'dc3d_state';
 
-function saveState() {
+function saveState(userOverride = false) {
   try {
+    const prev = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
     const data = {
+      userOverride: userOverride || !!prev.userOverride,
       C: {
         rows: C.rows, cols: C.cols,
         rackW: C.rackW, rackD: C.rackD, rackU: C.rackU, uMm: C.uMm,
@@ -671,7 +682,11 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return false;
     const data = JSON.parse(raw);
-    if (data.C) Object.assign(C, data.C);
+    let applied = false;
+    if (data.userOverride && data.C) {
+      Object.assign(C, data.C);
+      applied = true;
+    }
     if (C.rowSpacing != null && C.coldAisleSpacing == null) C.coldAisleSpacing = C.rowSpacing;
     if (C.rowSpacing != null && C.hotAisleSpacing == null) C.hotAisleSpacing = C.rowSpacing;
     if (C.coldAisleSpacing == null) C.coldAisleSpacing = 1.6;
@@ -679,11 +694,14 @@ function loadState() {
     delete C.rowSpacing;
     C.defaultPower = { ai: 14600, bus: 16800, normal: 250, empty: 0, ...(C.defaultPower || {}) };
     if (data.store) {
-      if (data.store.rules) store.rules = data.store.rules;
+      if (data.userOverride && data.store.rules) {
+        store.rules = data.store.rules;
+        applied = true;
+      }
       if (data.store.viewIdx) store.viewIdx = data.store.viewIdx;
       if (data.store.savedViews) store.savedViews = data.store.savedViews;
     }
-    return true;
+    return applied;
   } catch (e) { return false; }
 }
 
@@ -732,12 +750,14 @@ function updateConfigSourceBadge() {
   const el = document.getElementById('configSourceBadge');
   if (!el) return;
   const { source, fromLocalStorage } = configLoadMeta;
-  if (fromLocalStorage) {
+  if (source === 'database') {
+    el.textContent = fromLocalStorage
+      ? L('配置来源：云数据库（已合并本地修改）')
+      : L('配置来源：云数据库');
+    el.className = 'config-source-badge database';
+  } else if (fromLocalStorage) {
     el.textContent = L('配置来源：本地缓存');
     el.className = 'config-source-badge cache';
-  } else if (source === 'database') {
-    el.textContent = L('配置来源：云数据库');
-    el.className = 'config-source-badge database';
   } else {
     el.textContent = L('配置来源：本地默认');
     el.className = 'config-source-badge local';
@@ -844,11 +864,40 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(
   document.documentElement.dataset.theme === 'dark' ? 0x07111f : 0xf4f3ef
 );
+function isDarkTheme() {
+  return document.documentElement.dataset.theme === 'dark';
+}
+
+function getAisleFloorStyle(kind) {
+  if (isDarkTheme()) {
+    return kind === 'hot'
+      ? { color: 0xf87171, opacity: 0.44 }
+      : { color: 0x38bdf8, opacity: 0.38 };
+  }
+  return kind === 'hot'
+    ? { color: 0xdc2626, opacity: 0.3 }
+    : { color: 0x0ea5e9, opacity: 0.3 };
+}
+
+function getAisleLabelStyle(kind) {
+  if (isDarkTheme()) {
+    return kind === 'hot'
+      ? { color: '#fca5a5', shadow: '0 1px 3px rgba(0,0,0,0.65)' }
+      : { color: '#7dd3fc', shadow: '0 1px 3px rgba(0,0,0,0.65)' };
+  }
+  return kind === 'hot'
+    ? { color: '#dc2626', shadow: '0 1px 2px rgba(255,255,255,0.9)' }
+    : { color: '#2563eb', shadow: '0 1px 2px rgba(255,255,255,0.9)' };
+}
+
 window.addEventListener('aidc-theme-change', (event) => {
   const dark = event.detail?.theme === 'dark';
   scene.background.set(dark ? 0x07111f : 0xf4f3ef);
   if (floorMesh) floorMesh.material.color.set(dark ? 0x1e293b : 0xe7e5e4);
   makeGrid();
+  buildHotAisles();
+  buildColdAisles();
+  rebuildI18nLabels();
 });
 
 const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 500);
@@ -1256,12 +1305,13 @@ function buildHotAisles() {
   }
 
   const { rackD } = C;
+  const hotStyle = getAisleFloorStyle('hot');
   const floorMat = new THREE.MeshStandardMaterial({
-    color: 0xdc2626,
+    color: hotStyle.color,
     roughness: 0.82,
     metalness: 0,
     transparent: true,
-    opacity: 0.3,
+    opacity: hotStyle.opacity,
     depthWrite: false,
   });
 
@@ -1304,12 +1354,13 @@ function buildColdAisles() {
   }
 
   const { rackD } = C;
+  const coldStyle = getAisleFloorStyle('cold');
   const floorMat = new THREE.MeshStandardMaterial({
-    color: 0x0ea5e9,
+    color: coldStyle.color,
     roughness: 0.82,
     metalness: 0,
     transparent: true,
-    opacity: 0.3,
+    opacity: coldStyle.opacity,
     depthWrite: false,
   });
 
@@ -1914,7 +1965,6 @@ function buildScene() {
   applyRowFilter();
   updateStats();
   updateViewList();
-  saveState();
 }
 
 function disposeGroup(g) {
@@ -1958,14 +2008,15 @@ function clearLabelGroup() {
   }
 }
 
-function addAisleFloatLabel(text, zCenter) {
+function addAisleFloatLabel(text, zCenter, kind = 'cold') {
+  const style = getAisleLabelStyle(kind);
   const floatEl = document.createElement('div');
   floatEl.textContent = text;
-  floatEl.style.color = '#2563eb';
+  floatEl.style.color = style.color;
   floatEl.style.fontSize = '12px';
   floatEl.style.fontWeight = '700';
   floatEl.style.fontFamily = 'monospace';
-  floatEl.style.textShadow = '0 1px 2px rgba(255,255,255,0.9)';
+  floatEl.style.textShadow = style.shadow;
   floatEl.style.whiteSpace = 'nowrap';
   const floatLb = new CSS2DObject(floatEl);
   floatLb.position.set(0, getRackBaseY() + C.rackH * 0.34, zCenter);
@@ -1994,14 +2045,14 @@ function buildAisleFloatLabels() {
     const zBack = getRackPos(r, 0).z + rackD / 2;
     const zFront = getRackPos(r + 1, 0).z - rackD / 2;
     const zCenter = (zBack + zFront) / 2;
-    addAisleFloatLabel(Lp('热通道={v}m', { v: hotAisleSpacing }), zCenter);
+    addAisleFloatLabel(Lp('热通道={v}m', { v: hotAisleSpacing }), zCenter, 'hot');
   }
   for (let r = 0; r < C.rows - 1; r++) {
     if (r % 2 === 0) continue;
     const zBack = getRackPos(r, 0).z + rackD / 2;
     const zFront = getRackPos(r + 1, 0).z - rackD / 2;
     const zCenter = (zBack + zFront) / 2;
-    addAisleFloatLabel(Lp('冷通道={v}m', { v: coldAisleSpacing }), zCenter);
+    addAisleFloatLabel(Lp('冷通道={v}m', { v: coldAisleSpacing }), zCenter, 'cold');
   }
 }
 
@@ -2342,7 +2393,7 @@ function rebuildAfterRuleChange() {
   recolorRacks();
   applyRowFilter();
   updateStats();
-  saveState();
+  saveState(true);
 }
 
 function rebuildFull() {
@@ -2411,7 +2462,6 @@ async function waitForI18n(maxMs = 5000) {
 
 async function boot() {
   await waitForI18n();
-  const loaded = loadState();
   let configSource = 'local';
   let configVersion = null;
 
@@ -2420,12 +2470,12 @@ async function boot() {
     unlockPassword = pwdResult.data.password;
   }
 
-  if (!loaded) {
-    const result = await AidcConfig.load(CONFIG_KEY, LOCAL_DC3D_DEFAULTS);
-    configSource = result.source;
-    configVersion = result.version;
-    applyRemoteConfig(result.data);
-  }
+  const result = await AidcConfig.load(CONFIG_KEY, LOCAL_DC3D_DEFAULTS);
+  configSource = result.source;
+  configVersion = result.version;
+  applyRemoteConfig(result.data);
+
+  const loaded = loadState();
   configLoadMeta = {
     source: configSource,
     version: configVersion,
@@ -2450,9 +2500,11 @@ function animate() {
 // ======================================================================
 document.querySelectorAll('[data-view]').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    setView(btn.dataset.view, true);
+    const view = btn.dataset.view;
+    document.querySelectorAll('[data-view]').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
+    setView(view, true);
   });
 });
 
@@ -2514,7 +2566,7 @@ document.getElementById('btn-apply-layout').addEventListener('click', () => {
 
   rebuildFull();
   renderRules();
-  saveState();
+  saveState(true);
   setLayoutInputsLocked(true);
   toast(L('布局已更新并保存'));
 });
@@ -2640,10 +2692,10 @@ console.log(L('• 悬停查看机柜信息'));
 console.log(L('• 配置自动保存到 localStorage'));
 </script>
 
-  <script src="js/aidc-locale-bridge.js?v=18"></script>
-  <script src="js/i18n.js?v=18"></script>
-  <script src="js/lang-switch.js?v=18"></script>
-  <script src="js/i18n-bootstrap.js?v=18"></script>
+  <script src="js/aidc-locale-bridge.js?v=19"></script>
+  <script src="js/i18n.js?v=19"></script>
+  <script src="js/lang-switch.js?v=19"></script>
+  <script src="js/i18n-bootstrap.js?v=19"></script>
   <script>
     AidcI18nBootstrap.bootstrap('datacenter-3d-v3-2', {
       onReady: function () { globalThis.__aidcPageRefreshI18n?.(); },
