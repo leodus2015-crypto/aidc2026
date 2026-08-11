@@ -6,9 +6,9 @@
   <meta name="description" content="AI 数据中心 Token 服务投资收益分析：昇腾 NPU CAPEX/OPEX 与公有云 API 比价。" />
   <meta name="theme-color" content="#f8fafc" />
   <title>Token 投资收益 · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=17"></script>
-  <script src="js/embed-mode.js?v=17"></script>
-  <script src="js/theme-switch.js?v=17"></script>
+  <script src="js/aidc-theme.js?v=18"></script>
+  <script src="js/embed-mode.js?v=18"></script>
+  <script src="js/theme-switch.js?v=18"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     #roiForm select {
@@ -39,8 +39,8 @@
       html.aidc-embed main { padding-top: 1.5rem; }
     }
   </style>
-  <link rel="stylesheet" href="css/theme.css?v=17" />
-  <link rel="stylesheet" href="css/embed.css?v=17" />
+  <link rel="stylesheet" href="css/theme.css?v=18" />
+  <link rel="stylesheet" href="css/embed.css?v=18" />
   <script>
     try {
       if (window.self !== window.top) document.documentElement.classList.add('aidc-embed');
@@ -73,7 +73,7 @@
       <div>
         <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="page.eyebrow">Investment ROI</p>
         <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1">Token 服务投资收益分析</h1>
-        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="page.introHtml">以<strong class="font-semibold text-slate-800">算力规模（P）</strong>与<strong class="font-semibold text-slate-800">集群功率（MW）</strong>联动建模，左侧 CAPEX、右侧 OPEX，中部比价图实时反映竞争力。</p>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="page.introHtml">以<strong class="font-semibold text-slate-800">算力规模（P）</strong>与<strong class="font-semibold text-slate-800">集群 IT 功率（MW）</strong>分别建模（可独立输入），左侧 CAPEX、右侧 OPEX，下方全成本与云公开价逐类对比。</p>
         <p id="configSourceBadge" class="mt-2 text-xs font-medium text-slate-500" aria-live="polite"></p>
       </div>
 
@@ -125,30 +125,20 @@
               <p id="pctSumHint" class="mt-2 text-xs text-emerald-600">三项合计 100%</p>
             </div>
           </div>
-          <div class="mt-auto flex min-h-[11.75rem] flex-col rounded-2xl bg-slate-950 p-5 text-white">
+          <div class="mt-auto rounded-2xl bg-slate-950 p-5 text-white">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">CAPEX 结果</p>
-            <dl class="mt-3 flex flex-1 flex-col">
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <dt class="text-xs text-slate-400">总投资</dt>
-                  <dd id="keyTotalCapex" class="mt-0.5 text-lg font-bold tabular-nums text-blue-300">—</dd>
-                </div>
-                <div>
-                  <dt class="text-xs text-slate-400">IT 设备投资</dt>
-                  <dd id="keyItCapex" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
-                </div>
-                <div>
-                  <dt class="text-xs text-slate-400">年折旧</dt>
-                  <dd id="keyAnnualDep" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
-                </div>
-                <div aria-hidden="true" class="invisible">
-                  <dt class="text-xs">—</dt>
-                  <dd class="mt-0.5 text-lg font-bold">—</dd>
-                </div>
+            <dl class="mt-3 grid grid-cols-2 gap-3">
+              <div>
+                <dt class="text-xs text-slate-400">总投资</dt>
+                <dd id="keyTotalCapex" class="mt-0.5 text-lg font-bold tabular-nums text-blue-300">—</dd>
               </div>
-              <div class="mt-auto border-t border-white/10 pt-3">
-                <dt class="text-xs text-slate-400">CAPEX 摊销（元/百万输出 Token）</dt>
-                <dd id="keyCapexPerM" class="mt-0.5 text-2xl font-bold tabular-nums text-amber-300">—</dd>
+              <div>
+                <dt class="text-xs text-slate-400">IT 设备投资</dt>
+                <dd id="keyItCapex" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-slate-400">年折旧</dt>
+                <dd id="keyAnnualDep" class="mt-0.5 text-lg font-bold tabular-nums text-amber-300">—</dd>
               </div>
             </dl>
           </div>
@@ -187,67 +177,144 @@
               </div>
             </div>
             <div class="aidc-inset-panel rounded-xl p-3">
-              <p class="text-xs font-semibold text-slate-700">单卡吞吐（tokens/s）</p>
-              <div class="mt-3 grid gap-3 sm:grid-cols-3">
+              <p class="text-xs font-semibold text-slate-700" data-i18n="年运维（固定+维保）">年运维（固定+维保）</p>
+              <div class="mt-3 grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label for="tpsInputMiss" class="block text-xs font-medium text-slate-600">输入·未命中</label>
-                  <input id="tpsInputMiss" type="number" min="0" step="1" value="900"
+                  <label for="annualFixedOpex" class="block text-xs font-medium text-slate-600" data-i18n="固定运维（万元/年）">固定运维（万元/年）</label>
+                  <input id="annualFixedOpex" type="number" min="0" step="1" value="800"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
                 <div>
-                  <label for="tpsInputHit" class="block text-xs font-medium text-slate-600">输入·命中</label>
-                  <input id="tpsInputHit" type="number" min="0" step="1" value="3600"
-                    class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
-                </div>
-                <div>
-                  <label for="tpsOutput" class="block text-xs font-medium text-slate-600">输出</label>
-                  <input id="tpsOutput" type="number" min="0.1" step="0.1" value="28"
+                  <label for="capexOpexPct" class="block text-xs font-medium text-slate-600" data-i18n="CAPEX 年维保（%）">CAPEX 年维保（%）</label>
+                  <input id="capexOpexPct" type="number" min="0" step="0.1" value="3"
                     class="mt-1 h-10 w-full rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
                 </div>
               </div>
+              <p class="mt-2 text-xs leading-5 text-slate-500" data-i18n-html="opexMaintNote">
+                年维保 = 总投资 × 年维保%（<span id="keyAnnualMaint" class="font-medium text-slate-700">—</span>）· 年运维 = 固定运维 + 年维保
+              </p>
             </div>
-            <p class="text-xs leading-5 text-slate-500" data-i18n="算力规模与 IT 功率可独立填写；电费按 MW × PUE × 利用率估算。比价区直接对比云公开价与自建全成本。">算力规模与 IT 功率可独立填写；电费按 MW × PUE × 利用率估算。比价区直接对比云公开价与自建全成本。</p>
+            <p class="text-xs leading-5 text-slate-500" data-i18n="算力规模与 IT 功率可独立填写；电费按 MW × PUE × 利用率估算。">算力规模与 IT 功率可独立填写；电费按 MW × PUE × 利用率估算。</p>
           </div>
-          <div class="mt-auto flex min-h-[11.75rem] flex-col rounded-2xl bg-slate-950 p-5 text-white">
+          <div class="mt-auto rounded-2xl bg-slate-950 p-5 text-white">
             <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">OPEX 结果</p>
-            <dl class="mt-3 flex flex-1 flex-col">
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <dt class="text-xs text-slate-400">年电费</dt>
-                  <dd id="keyAnnualPower" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-300">—</dd>
-                </div>
-                <div>
-                  <dt class="text-xs text-slate-400">年运维（固定+维保）</dt>
-                  <dd id="keyAnnualOps" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
-                </div>
-                <div>
-                  <dt class="text-xs text-slate-400">年 OPEX 合计</dt>
-                  <dd id="keyAnnualOpexTotal" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-200">—</dd>
-                </div>
-                <div aria-hidden="true" class="invisible">
-                  <dt class="text-xs">—</dt>
-                  <dd class="mt-0.5 text-lg font-bold">—</dd>
-                </div>
+            <dl class="mt-3 grid grid-cols-2 gap-3">
+              <div>
+                <dt class="text-xs text-slate-400">年电费</dt>
+                <dd id="keyAnnualPower" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-300">—</dd>
               </div>
-              <div class="mt-auto border-t border-white/10 pt-3">
-                <dt class="text-xs text-slate-400">OPEX 合计（元/百万输出 Token）</dt>
-                <dd id="keyOpexPerM" class="mt-0.5 text-2xl font-bold tabular-nums text-emerald-300">—</dd>
+              <div>
+                <dt class="text-xs text-slate-400">年运维（固定+维保）</dt>
+                <dd id="keyAnnualOps" class="mt-0.5 text-lg font-bold tabular-nums">—</dd>
+              </div>
+              <div class="sm:col-span-2">
+                <dt class="text-xs text-slate-400">年 OPEX 合计</dt>
+                <dd id="keyAnnualOpexTotal" class="mt-0.5 text-lg font-bold tabular-nums text-emerald-200">—</dd>
               </div>
             </dl>
           </div>
         </div>
 
-        <input type="hidden" id="npuCount" value="512" />
-        <input type="hidden" id="annualFixedOpex" value="800" />
-        <input type="hidden" id="capexOpexPct" value="3" />
+        <input type="hidden" id="npuCount" value="768" />
       </form>
+
+      <!-- 全成本 · 单卡吞吐 · 三类 Token 自建成本 -->
+      <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6 lg:p-8">
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-amber-600" data-i18n="totalCost.tag">Total Cost</p>
+            <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="totalCost.title">全成本 · 单卡吞吐</h2>
+          </div>
+        </div>
+        <div class="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+          <div class="rounded-2xl bg-slate-950 p-5 text-white">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-400" data-i18n="totalCost.annualLabel">全成本合计</p>
+            <p id="keyAnnualCostTotal" class="mt-2 text-2xl font-bold tabular-nums text-amber-300 sm:text-3xl">—</p>
+            <p id="keyAnnualCostPerDay" class="mt-3 text-lg font-semibold tabular-nums text-amber-200/90 sm:mt-4">—</p>
+            <p class="mt-2 text-xs leading-5 text-slate-400" data-i18n="totalCost.annualNote">年折旧 + 年电费 + 年运维</p>
+          </div>
+          <div class="aidc-inset-panel rounded-2xl p-4">
+            <div>
+              <label for="serviceModel" class="block text-xs font-medium text-slate-600" data-i18n="服务模型档位">服务模型档位</label>
+              <select id="serviceModel" class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-9 text-sm">
+                <option value="ds-v4" selected data-i18n="DeepSeek V4-Flash 级">DeepSeek V4-Flash 级</option>
+                <option value="glm-52" data-i18n="GLM-5.2 级">GLM-5.2 级</option>
+                <option value="custom" data-i18n="自定义吞吐">自定义吞吐</option>
+              </select>
+            </div>
+            <div class="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
+              <div class="min-w-0">
+                <label for="dailyYiInputMiss" class="block truncate text-xs font-medium text-slate-600" data-i18n="输入·未命中">输入·未命中</label>
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="dailyYiInputMiss" type="number" min="0" step="0.0001" value="0.7776"
+                    class="h-9 w-full min-w-0 rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                  <span class="w-[4.25rem] shrink-0 text-right text-[10px] leading-tight text-slate-500 sm:text-xs" data-i18n="亿Tokens/天">亿Tokens/天</span>
+                </div>
+                <label for="pctMixMiss" class="mt-2 block truncate text-xs font-medium text-slate-500" data-i18n="占比">占比</label>
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="pctMixMiss" type="number" min="0" max="100" step="0.1" value="3.5"
+                    class="h-9 w-full min-w-0 rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                  <span class="w-[4.25rem] shrink-0 text-right text-[10px] text-slate-500 sm:text-xs">%</span>
+                </div>
+              </div>
+              <div class="min-w-0">
+                <label for="dailyYiInputHit" class="block truncate text-xs font-medium text-slate-600" data-i18n="输入·命中">输入·命中</label>
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="dailyYiInputHit" type="number" min="0" step="0.0001" value="3.1104"
+                    class="h-9 w-full min-w-0 rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                  <span class="w-[4.25rem] shrink-0 text-right text-[10px] leading-tight text-slate-500 sm:text-xs" data-i18n="亿Tokens/天">亿Tokens/天</span>
+                </div>
+                <label for="pctMixHit" class="mt-2 block truncate text-xs font-medium text-slate-500" data-i18n="占比">占比</label>
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="pctMixHit" type="number" min="0" max="100" step="0.1" value="31.5"
+                    class="h-9 w-full min-w-0 rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                  <span class="w-[4.25rem] shrink-0 text-right text-[10px] text-slate-500 sm:text-xs">%</span>
+                </div>
+              </div>
+              <div class="min-w-0">
+                <label for="dailyYiOutput" class="block truncate text-xs font-medium text-slate-600" data-i18n="输出">输出</label>
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="dailyYiOutput" type="number" min="0" step="0.0001" value="0.024192"
+                    class="h-9 w-full min-w-0 rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                  <span class="w-[4.25rem] shrink-0 text-right text-[10px] leading-tight text-slate-500 sm:text-xs" data-i18n="亿Tokens/天">亿Tokens/天</span>
+                </div>
+                <label for="pctMixOut" class="mt-2 block truncate text-xs font-medium text-slate-500" data-i18n="占比">占比</label>
+                <div class="mt-1 flex items-center gap-1">
+                  <input id="pctMixOut" type="number" min="0" max="100" step="0.1" value="65"
+                    class="h-9 w-full min-w-0 rounded-lg border border-slate-200 px-2 text-sm outline-none focus:border-blue-500" />
+                  <span class="w-[4.25rem] shrink-0 text-right text-[10px] text-slate-500 sm:text-xs">%</span>
+                </div>
+              </div>
+            </div>
+            <p id="pctMixSumHint" class="mt-1.5 text-xs text-emerald-600" data-i18n="三项占比合计 100%">三项占比合计 100%</p>
+          </div>
+        </div>
+        <div class="mt-5 grid gap-4 sm:grid-cols-3">
+          <div class="aidc-inset-panel rounded-2xl p-4 text-center">
+            <p class="text-xs font-medium text-slate-500" data-i18n="输入 · 未命中">输入 · 未命中</p>
+            <p class="mt-2 text-2xl font-bold tabular-nums text-amber-600"><span id="keyCostPerMMiss">—</span></p>
+            <p class="mt-1 text-xs text-slate-500" data-i18n="元/百万 Token（自建）">元/百万 Token（自建）</p>
+          </div>
+          <div class="aidc-inset-panel rounded-2xl p-4 text-center">
+            <p class="text-xs font-medium text-slate-500" data-i18n="输入 · 命中">输入 · 命中</p>
+            <p class="mt-2 text-2xl font-bold tabular-nums text-amber-600"><span id="keyCostPerMHit">—</span></p>
+            <p class="mt-1 text-xs text-slate-500" data-i18n="元/百万 Token（自建）">元/百万 Token（自建）</p>
+          </div>
+          <div class="aidc-inset-panel rounded-2xl p-4 text-center">
+            <p class="text-xs font-medium text-slate-500" data-i18n="输出">输出</p>
+            <p class="mt-2 text-2xl font-bold tabular-nums text-amber-600"><span id="keyCostPerMOut">—</span></p>
+            <p class="mt-1 text-xs text-slate-500" data-i18n="元/百万 Token（自建）">元/百万 Token（自建）</p>
+          </div>
+        </div>
+        <p class="mt-4 text-xs leading-5 text-slate-500" data-i18n="totalCost.formulaNote">自建成本（某类）= 年全成本 × 占比 ÷ 该类年 Token 量；年 Token = P × 单卡 t/s × 86400 × 365 × 利用率。</p>
+      </div>
 
       <!-- 比价 -->
       <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/70 sm:p-6 lg:p-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p class="text-xs font-semibold uppercase tracking-[0.14em] text-violet-600">Price Compare</p>
-            <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl">公有云公开价 vs 自建全成本</h2>
+            <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="公有云公开价 vs 自建成本">公有云公开价 vs 自建成本</h2>
           </div>
           <div class="inline-flex gap-1 rounded-2xl bg-slate-100 p-1" role="tablist">
             <button type="button" data-scenario="ds-v4" class="cmp-tab rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm bg-white">DeepSeek V4</button>
@@ -256,14 +323,18 @@
         </div>
         <div class="aidc-inset-panel mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2 rounded-2xl px-4 py-3">
           <div>
-            <span class="text-xs text-slate-500">自建全成本</span>
-            <span id="cmpSelfCost" class="ml-2 text-xl font-bold tabular-nums text-amber-600">—</span>
-            <span class="text-sm text-slate-500">元/百万 Token</span>
+            <span class="text-xs text-slate-500" data-i18n="自建成本">自建成本</span>
+            <span id="cmpSelfMiss" class="ml-2 text-lg font-bold tabular-nums text-amber-600">—</span>
+            <span class="text-slate-400">/</span>
+            <span id="cmpSelfHit" class="text-lg font-bold tabular-nums text-amber-600">—</span>
+            <span class="text-slate-400">/</span>
+            <span id="cmpSelfOut" class="text-lg font-bold tabular-nums text-amber-600">—</span>
+            <span class="ml-1 text-sm text-slate-500" data-i18n="未命中 / 命中 / 输出">未命中 / 命中 / 输出</span>
           </div>
           <div>
-            <span class="text-xs text-slate-500">云最低公开价</span>
+            <span class="text-xs text-slate-500" data-i18n="云最低公开价">云最低公开价</span>
             <span id="cmpRefEff" class="ml-2 text-lg font-semibold tabular-nums text-blue-700">—</span>
-            <span class="text-sm text-slate-500">未命中 / 命中 / 输出</span>
+            <span class="text-sm text-slate-500" data-i18n="未命中 / 命中 / 输出">未命中 / 命中 / 输出</span>
           </div>
           <div id="cmpVerdict" class="w-full text-sm font-semibold text-slate-700 sm:w-auto">—</div>
         </div>
@@ -276,115 +347,18 @@
         <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Full Model</p>
         <h2 class="mt-1 text-xl font-bold text-slate-950 sm:text-2xl">全部参数与计算公式</h2>
 
-        <div class="mt-6 grid gap-6 lg:grid-cols-2">
-          <fieldset class="aidc-inset-panel space-y-4 rounded-2xl p-4">
-            <legend class="px-2 text-sm font-bold text-slate-900">CAPEX 全部参数</legend>
-            <div class="grid gap-3 sm:grid-cols-2">
-              <div class="sm:col-span-2">
-                <label class="block text-xs font-medium text-slate-600">昇腾 NPU 型号</label>
-                <input id="npuModelReadonly" type="text" readonly value="2026H2型号（1P/卡）"
-                  class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700" />
-              </div>
-              <div>
-                <label for="fullNpuCount" class="block text-xs font-medium text-slate-600">NPU 数量（= P）</label>
-                <input id="fullNpuCount" type="number" readonly class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullClusterMw" class="block text-xs font-medium text-slate-600">集群 IT 功率（MW）</label>
-                <input id="fullClusterMw" type="number" step="0.001" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullComputeP" class="block text-xs font-medium text-slate-600">算力规模（P）</label>
-                <input id="fullComputeP" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullNpuPrice" class="block text-xs font-medium text-slate-600">单卡价（万元）</label>
-                <input id="fullNpuPrice" type="number" step="0.1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullAscendItPct" class="block text-xs font-medium text-slate-600">IT 内昇腾（%）</label>
-                <input id="fullAscendItPct" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullNetItPct" class="block text-xs font-medium text-slate-600">IT 内网络/存储（%）</label>
-                <input id="fullNetItPct" type="number" readonly class="mt-1 h-10 w-full cursor-default rounded-xl border border-slate-200 bg-white px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullPctIt" class="block text-xs font-medium text-slate-600">IT 设备占比（%）</label>
-                <input id="fullPctIt" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullPctPower" class="block text-xs font-medium text-slate-600">供电/散热占比（%）</label>
-                <input id="fullPctPower" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullPctLand" class="block text-xs font-medium text-slate-600">土地/建筑占比（%）</label>
-                <input id="fullPctLand" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullDeprecYears" class="block text-xs font-medium text-slate-600">折旧年限（年）</label>
-                <input id="fullDeprecYears" type="number" min="1" value="5" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset class="aidc-inset-panel space-y-4 rounded-2xl p-4">
-            <legend class="px-2 text-sm font-bold text-slate-900">OPEX 全部参数</legend>
-            <div class="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label for="fullPue" class="block text-xs font-medium text-slate-600">PUE</label>
-                <input id="fullPue" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullElecPrice" class="block text-xs font-medium text-slate-600">电价（元/kWh）</label>
-                <input id="fullElecPrice" type="number" step="0.01" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullUtil" class="block text-xs font-medium text-slate-600">利用率（%）</label>
-                <input id="fullUtil" type="number" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullFixedOpex" class="block text-xs font-medium text-slate-600">固定运维（万元/年）</label>
-                <input id="fullFixedOpex" type="number" value="800" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullCapexOpexPct" class="block text-xs font-medium text-slate-600">CAPEX 年维保（%）</label>
-                <input id="fullCapexOpexPct" type="number" step="0.5" value="3" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div class="sm:col-span-2">
-                <label for="serviceModel" class="block text-xs font-medium text-slate-600">服务模型档位</label>
-                <select id="serviceModel" class="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white pl-3 pr-9 text-sm">
-                  <option value="ds-v4" selected>DeepSeek V4-Flash 级</option>
-                  <option value="glm-52">GLM-5.2 级</option>
-                  <option value="custom">自定义吞吐</option>
-                </select>
-              </div>
-              <div>
-                <label for="fullTpsInputMiss" class="block text-xs font-medium text-slate-600">单卡输入·未命中（t/s）</label>
-                <input id="fullTpsInputMiss" type="number" step="1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullTpsInputHit" class="block text-xs font-medium text-slate-600">单卡输入·命中（t/s）</label>
-                <input id="fullTpsInputHit" type="number" step="1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-              <div>
-                <label for="fullTpsOutput" class="block text-xs font-medium text-slate-600">单卡输出（t/s）</label>
-                <input id="fullTpsOutput" type="number" step="0.1" class="mt-1 h-10 w-full rounded-xl border border-slate-200 px-3 text-sm" />
-              </div>
-            </div>
-          </fieldset>
-        </div>
-
         <div class="aidc-inset-panel mt-6 rounded-2xl p-4 text-sm leading-7">
           <strong class="font-semibold">公式：</strong>
           <ul class="mt-2 list-inside list-disc space-y-1">
             <li><code>集群 IT 功率（MW）</code> 为独立输入；<code>年电费</code> = MW × 1000 × 8760 × PUE × 利用率 × 电价</li>
             <li><code>昇腾采购</code> = P × 单卡价；<code>IT 设备投资</code> = 昇腾采购 ÷ IT 内昇腾占比</li>
             <li><code>总投资 CAPEX</code> = IT 设备投资 ÷ IT 设备工程占比</li>
-            <li><code>年 Token 合计</code> = 年输入未命中 + 年输入命中 + 年输出</li>
-            <li><code>自建均摊价/M</code> = (年折旧 + 年电费 + 年运维) ÷ (年 Token 合计 / 10⁶)</li>
-            <li><code>云均摊价/M</code> = 入未命中价 × 占比 + 入命中价 × 占比 + 出价 × 占比（占比 = 各 t/s ÷ 三类 t/s 合计）</li>
-            <li><code>CAPEX/OPEX 摊销/M</code> = 分项成本 ÷ (年输出 Token / 10⁶)（结果区仍按输出 Token 口径）</li>
+            <li><code>年维保</code> = 总投资 CAPEX × 年维保（%）</li>
+            <li><code>年运维</code> = 固定运维 + 年维保</li>
+            <li><code>年全成本</code> = 年折旧 + 年电费 + 年运维</li>
+            <li><code>年 Token（某类）</code> = P × 单卡 t/s × 86400 × 365 × 利用率</li>
+            <li><code>自建成本/M（某类）</code> = 年全成本 × 占比 ÷ (该类年 Token / 10⁶)</li>
+            <li><code>云公开价</code>：各平台按输入未命中、输入命中、输出三类分别标价（元/百万 Token）</li>
           </ul>
           <p class="aidc-inset-note mt-3 text-xs">逐步计算明细见页面底部「关键参数」解锁后的计算过程表。</p>
         </div>
@@ -420,6 +394,35 @@
                 <label for="netStorageInItPct" class="block text-sm font-medium text-slate-700">IT 内 · 网络/存储占比（%）</label>
                 <input id="netStorageInItPct" type="number" min="0" max="100" step="1" value="15" readonly
                   class="mt-2 h-11 w-full cursor-default rounded-xl border border-slate-200 bg-slate-50 px-3 text-base text-slate-600" />
+              </div>
+            </div>
+            <div class="mt-4 border-t border-slate-100 pt-4">
+              <p class="text-sm font-semibold text-slate-900" data-i18n="单卡吞吐（tokens/s）">单卡吞吐（tokens/s）</p>
+              <div class="mt-3 grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label for="tpsInputMiss" class="block text-sm font-medium text-slate-700" data-i18n="输入·未命中">输入·未命中</label>
+                  <div class="mt-2 flex items-center gap-2">
+                    <input id="tpsInputMiss" type="number" min="0" step="1" value="900"
+                      class="h-11 w-full rounded-xl border border-slate-200 px-3 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                    <span class="shrink-0 text-sm text-slate-500">t/s</span>
+                  </div>
+                </div>
+                <div>
+                  <label for="tpsInputHit" class="block text-sm font-medium text-slate-700" data-i18n="输入·命中">输入·命中</label>
+                  <div class="mt-2 flex items-center gap-2">
+                    <input id="tpsInputHit" type="number" min="0" step="1" value="3600"
+                      class="h-11 w-full rounded-xl border border-slate-200 px-3 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                    <span class="shrink-0 text-sm text-slate-500">t/s</span>
+                  </div>
+                </div>
+                <div>
+                  <label for="tpsOutput" class="block text-sm font-medium text-slate-700" data-i18n="输出">输出</label>
+                  <div class="mt-2 flex items-center gap-2">
+                    <input id="tpsOutput" type="number" min="0.1" step="0.1" value="28"
+                      class="h-11 w-full rounded-xl border border-slate-200 px-3 text-base outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                    <span class="shrink-0 text-sm text-slate-500">t/s</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4">
@@ -472,14 +475,14 @@
     </div>
   </div>
 
-    <script src="js/aidc-asset-version.js?v=17"></script>
-  <script src="js/config-loader.js?v=17"></script>
-  <script src="js/aidc-investment-roi-init.js?v=17"></script>
-  <script src="js/aidc-investment-roi-page.js?v=17"></script>
-  <script src="js/aidc-locale-bridge.js?v=17"></script>
-  <script src="js/i18n.js?v=17"></script>
-  <script src="js/lang-switch.js?v=17"></script>
-  <script src="js/i18n-bootstrap.js?v=17"></script>
+    <script src="js/aidc-asset-version.js?v=18"></script>
+  <script src="js/config-loader.js?v=18"></script>
+  <script src="js/aidc-investment-roi-init.js?v=18"></script>
+  <script src="js/aidc-investment-roi-page.js?v=18"></script>
+  <script src="js/aidc-locale-bridge.js?v=18"></script>
+  <script src="js/i18n.js?v=18"></script>
+  <script src="js/lang-switch.js?v=18"></script>
+  <script src="js/i18n-bootstrap.js?v=18"></script>
   <script>
     AidcI18nBootstrap.bootstrap('aidc-investment-roi', {
       onReady: function () {

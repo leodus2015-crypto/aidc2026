@@ -73,6 +73,71 @@
     }
     return fmtNum(y / 10000, 1) + ' ' + L('万元');
   };
+  const fmtMoneyWanPerYear = (y) => {
+    if (getLocale() === 'en') {
+      const abs = Math.abs(y);
+      if (abs >= 1e9) return '$' + fmtNum(y / 1e9, 2) + 'B/yr';
+      if (abs >= 1e6) return '$' + fmtNum(y / 1e6, 2) + 'M/yr';
+      return '$' + fmtNum(y / 1e3, 1) + 'K/yr';
+    }
+    return fmtNum(y / 10000, 1) + ' ' + L('万元/年');
+  };
+  const fmtMoneyWanPerDay = (y) => {
+    if (getLocale() === 'en') {
+      const daily = y / 365;
+      const abs = Math.abs(daily);
+      if (abs >= 1e9) return '$' + fmtNum(daily / 1e9, 2) + 'B/day';
+      if (abs >= 1e6) return '$' + fmtNum(daily / 1e6, 2) + 'M/day';
+      return '$' + fmtNum(daily / 1e3, 1) + 'K/day';
+    }
+    return fmtNum(y / 10000 / 365, 2) + ' ' + L('万元/天');
+  };
+  const SEC_PER_DAY = 86400;
+  const YI = 1e8;
+
+  function roundTps(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return '';
+    if (Math.abs(n - Math.round(n)) < 1e-6) return String(Math.round(n));
+    return fmtNum(n, 4);
+  }
+
+  function formatYiPerDay(tps) {
+    const yi = Number(tps) * SEC_PER_DAY / YI;
+    if (!Number.isFinite(yi)) return '';
+    if (yi >= 100) return fmtNum(yi, 2);
+    if (yi >= 1) return fmtNum(yi, 4);
+    return fmtNum(yi, 6);
+  }
+
+  function syncTpsToDailyYi() {
+    if (syncLock) return;
+    syncLock = true;
+    if ($('dailyYiInputMiss')) $('dailyYiInputMiss').value = formatYiPerDay($('tpsInputMiss').value);
+    if ($('dailyYiInputHit')) $('dailyYiInputHit').value = formatYiPerDay($('tpsInputHit').value);
+    if ($('dailyYiOutput')) $('dailyYiOutput').value = formatYiPerDay($('tpsOutput').value);
+    syncLock = false;
+  }
+
+  function syncDailyYiToTps() {
+    if (syncLock) return;
+    syncLock = true;
+    if ($('tpsInputMiss')) $('tpsInputMiss').value = roundTps(Number($('dailyYiInputMiss').value) * YI / SEC_PER_DAY);
+    if ($('tpsInputHit')) $('tpsInputHit').value = roundTps(Number($('dailyYiInputHit').value) * YI / SEC_PER_DAY);
+    if ($('tpsOutput')) $('tpsOutput').value = roundTps(Number($('dailyYiOutput').value) * YI / SEC_PER_DAY);
+    syncLock = false;
+  }
+
+  function onTpsInputChange() {
+    syncTpsToDailyYi();
+    renderAll();
+  }
+
+  function onDailyYiInputChange() {
+    syncDailyYiToTps();
+    renderAll();
+  }
+
   const fmtTokens = (n) => {
     if (n >= 1e12) return fmtNum(n / 1e12, 2) + ' T';
     if (n >= 1e9) return fmtNum(n / 1e9, 2) + ' B';
@@ -106,13 +171,22 @@
   }
 
   function blendedRefPrice(sc, mix) {
-    return mix.miss * sc.refInputMiss + mix.hit * sc.refInputHit + mix.out * sc.refOutput;
+    const refMiss = sc.refInputMiss ?? Math.min(...sc.clouds.map((c) => c.inputMiss));
+    const refHit = sc.refInputHit ?? Math.min(...sc.clouds.map((c) => c.inputHit));
+    const refOut = sc.refOutput ?? Math.min(...sc.clouds.map((c) => c.output));
+    return mix.miss * refMiss + mix.hit * refHit + mix.out * refOut;
   }
 
   function cloudPriceByType(cloud, type) {
     if (type === 'miss') return cloud.inputMiss;
     if (type === 'hit') return cloud.inputHit;
     return cloud.output;
+  }
+
+  function selfCostByType(s, type) {
+    if (type === 'miss') return s.costPerMMiss;
+    if (type === 'hit') return s.costPerMHit;
+    return s.costPerMOut;
   }
 
   function applyRoiConfig(cfg) {
@@ -136,6 +210,9 @@
     setNum('tpsInputMiss', cfg.tpsInputMiss);
     setNum('tpsInputHit', cfg.tpsInputHit);
     setNum('tpsOutput', cfg.tpsOutput);
+    setNum('pctMixMiss', cfg.pctMixMiss);
+    setNum('pctMixHit', cfg.pctMixHit);
+    setNum('pctMixOut', cfg.pctMixOut);
     if (cfg.annualFixedOpex != null) $('annualFixedOpex').value = cfg.annualFixedOpex;
     if (cfg.capexOpexPct != null) $('capexOpexPct').value = cfg.capexOpexPct;
     if (cfg.serviceModel) $('serviceModel').value = cfg.serviceModel;
@@ -158,6 +235,9 @@
       tpsInputMiss: Number($('tpsInputMiss').value),
       tpsInputHit: Number($('tpsInputHit').value),
       tpsOutput: Number($('tpsOutput').value),
+      pctMixMiss: Number($('pctMixMiss').value),
+      pctMixHit: Number($('pctMixHit').value),
+      pctMixOut: Number($('pctMixOut').value),
       annualFixedOpex: Number($('annualFixedOpex').value),
       capexOpexPct: Number($('capexOpexPct').value),
       serviceModel: $('serviceModel').value,
@@ -242,6 +322,9 @@
     const tpsInputMiss = Number($('tpsInputMiss').value);
     const tpsInputHit = Number($('tpsInputHit').value);
     const tpsOutput = Number($('tpsOutput').value);
+    const pctMixMiss = Number($('pctMixMiss').value) / 100;
+    const pctMixHit = Number($('pctMixHit').value) / 100;
+    const pctMixOut = Number($('pctMixOut').value) / 100;
 
     const annualMissTokens = npuCount * tpsInputMiss * 86400 * 365 * utilization;
     const annualHitTokens = npuCount * tpsInputHit * 86400 * 365 * utilization;
@@ -253,10 +336,13 @@
     const annualOps = annualFixedOpexYuan + annualMaint;
     const annualCost = annualDep + annualPower + annualOps;
 
+    const missTokensM = annualMissTokens / 1e6;
+    const hitTokensM = annualHitTokens / 1e6;
     const outputTokensM = annualOutputTokens / 1e6;
     const totalTokensM = annualTotalTokens / 1e6;
-    const capexPerM = outputTokensM > 0 ? annualDep / outputTokensM : NaN;
-    const opexPerM = outputTokensM > 0 ? (annualPower + annualOps) / outputTokensM : NaN;
+    const costPerMMiss = missTokensM > 0 ? (annualCost * pctMixMiss) / missTokensM : NaN;
+    const costPerMHit = hitTokensM > 0 ? (annualCost * pctMixHit) / hitTokensM : NaN;
+    const costPerMOut = outputTokensM > 0 ? (annualCost * pctMixOut) / outputTokensM : NaN;
     const costPerM = outputTokensM > 0 ? annualCost / outputTokensM : NaN;
     const costPerMBlended = totalTokensM > 0 ? annualCost / totalTokensM : NaN;
 
@@ -265,10 +351,11 @@
     const refBlended = blendedRefPrice(sc, mix);
     const revenue = totalTokensM * refBlended;
     const profit = revenue - annualCost;
-    const revFull = totalTokensM * refBlended;
-    const powerFull = clusterMw * 1000 * 8760 * pue * elecPrice;
     const fixed = annualDep + annualOps;
-    const breakeven = revFull > powerFull ? fixed / (revFull - powerFull) : NaN;
+    const tokensBaseM = utilization > 0 ? totalTokensM / utilization : 0;
+    const powerBase = utilization > 0 ? annualPower / utilization : annualPower;
+    const marginal = refBlended * tokensBaseM - powerBase;
+    const breakeven = marginal > 0 ? fixed / marginal : NaN;
     const payback = profit > 0 ? totalCapex / profit : NaN;
 
     return {
@@ -276,12 +363,26 @@
       powerCapex: totalCapex * powerPct, landCapex: totalCapex * landPct,
       annualDep, annualPower, annualOps, annualCost,
       annualMissTokens, annualHitTokens, annualTokens: annualOutputTokens, annualTotalTokens,
-      capexPerM, opexPerM, costPerM, costPerMBlended, refBlended, tokenMix: mix,
+      costPerMMiss, costPerMHit, costPerMOut, costPerM, costPerMBlended, refBlended, tokenMix: mix,
       refInputMiss: sc.refInputMiss, refInputHit: sc.refInputHit, refOutput: sc.refOutput,
       revenue, profit, breakeven, payback,
       deprecYears, utilization, pue, elecPrice, tpsInputMiss, tpsInputHit, tpsOutput,
+      pctMixMiss: pctMixMiss * 100, pctMixHit: pctMixHit * 100, pctMixOut: pctMixOut * 100,
       annualFixedOpexYuan, annualMaint, itPct, powerPct, landPct, ascendPct,
     };
+  }
+
+  function updatePctMixHint() {
+    const sum = Number($('pctMixMiss').value) + Number($('pctMixHit').value) + Number($('pctMixOut').value);
+    const el = $('pctMixSumHint');
+    if (!el) return;
+    if (Math.abs(sum - 100) < 0.05) {
+      el.textContent = L('三项占比合计 100%');
+      el.className = 'mt-1.5 text-xs text-emerald-600';
+    } else {
+      el.textContent = Lp('三项占比合计 {sum}%（应为 100%）', { sum: fmtNum(sum, 1) });
+      el.className = 'mt-1.5 text-xs text-rose-600';
+    }
   }
 
   function updatePctSumHint() {
@@ -302,8 +403,6 @@
     } else if (changed === 'net') {
       $('ascendInItPct').value = 100 - Number($('netStorageInItPct').value);
     }
-    $('fullAscendItPct').value = $('ascendInItPct').value;
-    $('fullNetItPct').value = $('netStorageInItPct').value;
   }
 
   function rebalanceProjectPct(changedId) {
@@ -318,7 +417,6 @@
       $('pctLandBuild').value = Math.max(0, 100 - it - power);
     }
     updatePctSumHint();
-    syncKeyToFull();
   }
 
   function syncFromComputeP() {
@@ -326,7 +424,6 @@
     syncLock = true;
     $('npuCount').value = Math.round(Number($('computeP').value));
     syncLock = false;
-    syncKeyToFull();
     syncScalePresetHighlight();
     renderAll();
   }
@@ -337,79 +434,37 @@
     $('computeP').value = fmtNum(preset.computeP, preset.computeP % 1 === 0 ? 0 : 2);
     $('clusterMw').value = fmtNum(preset.clusterMw, 4);
     $('npuCount').value = Math.round(preset.computeP);
-    syncKeyToFull();
     syncScalePresetHighlight();
-    renderAll();
-  }
-
-  function syncKeyToFull() {
-    if (syncLock) return;
-    syncLock = true;
-    $('fullComputeP').value = $('computeP').value;
-    $('fullClusterMw').value = $('clusterMw').value;
-    $('fullNpuCount').value = $('npuCount').value;
-    $('fullNpuPrice').value = $('npuUnitPrice').value;
-    $('fullPctIt').value = $('pctItDevice').value;
-    $('fullPctPower').value = $('pctPowerCool').value;
-    $('fullPctLand').value = $('pctLandBuild').value;
-    $('fullAscendItPct').value = $('ascendInItPct').value;
-    $('fullNetItPct').value = $('netStorageInItPct').value;
-    $('fullPue').value = $('pue').value;
-    $('fullElecPrice').value = $('elecPrice').value;
-    $('fullUtil').value = $('utilization').value;
-    $('fullTpsInputMiss').value = $('tpsInputMiss').value;
-    $('fullTpsInputHit').value = $('tpsInputHit').value;
-    $('fullTpsOutput').value = $('tpsOutput').value;
-    $('fullDeprecYears').value = $('deprecYears').value;
-    $('fullFixedOpex').value = $('annualFixedOpex').value;
-    $('fullCapexOpexPct').value = $('capexOpexPct').value;
-    syncLock = false;
-  }
-
-  function syncFullToKey() {
-    if (syncLock) return;
-    syncLock = true;
-    $('computeP').value = $('fullComputeP').value;
-    $('clusterMw').value = $('fullClusterMw').value;
-    $('npuCount').value = $('fullNpuCount').value;
-    $('npuUnitPrice').value = $('fullNpuPrice').value;
-    $('pctItDevice').value = $('fullPctIt').value;
-    $('pctPowerCool').value = $('fullPctPower').value;
-    $('pctLandBuild').value = $('fullPctLand').value;
-    $('ascendInItPct').value = $('fullAscendItPct').value;
-    $('netStorageInItPct').value = $('fullNetItPct').value;
-    $('pue').value = $('fullPue').value;
-    $('elecPrice').value = $('fullElecPrice').value;
-    $('utilization').value = $('fullUtil').value;
-    $('tpsInputMiss').value = $('fullTpsInputMiss').value;
-    $('tpsInputHit').value = $('fullTpsInputHit').value;
-    $('tpsOutput').value = $('fullTpsOutput').value;
-    $('deprecYears').value = $('fullDeprecYears').value;
-    $('annualFixedOpex').value = $('fullFixedOpex').value;
-    $('capexOpexPct').value = $('fullCapexOpexPct').value;
-    syncLock = false;
-    updatePctSumHint();
     renderAll();
   }
 
   function renderAll() {
     const s = readState();
+    updatePctMixHint();
     $('keyTotalCapex').textContent = fmtMoney(s.totalCapex);
     $('keyItCapex').textContent = fmtMoney(s.itEquipment);
     $('keyAnnualDep').textContent = fmtMoney(s.annualDep);
-    $('keyCapexPerM').textContent = fmtNum(s.capexPerM, 2) + ' ' + L('元/M');
     $('keyAnnualPower').textContent = fmtMoney(s.annualPower);
+    const maintEl = $('keyAnnualMaint');
+    if (maintEl) maintEl.textContent = fmtMoney(s.annualMaint);
     $('keyAnnualOps').textContent = fmtMoney(s.annualOps);
     $('keyAnnualOpexTotal').textContent = fmtMoney(s.annualPower + s.annualOps);
-    $('keyOpexPerM').textContent = fmtNum(s.opexPerM, 2) + ' ' + L('元/M');
+    $('keyAnnualCostTotal').textContent = fmtMoneyWanPerYear(s.annualCost);
+    const perDayEl = $('keyAnnualCostPerDay');
+    if (perDayEl) perDayEl.textContent = fmtMoneyWanPerDay(s.annualCost);
+    $('keyCostPerMMiss').textContent = fmtNum(s.costPerMMiss, 2);
+    $('keyCostPerMHit').textContent = fmtNum(s.costPerMHit, 2);
+    $('keyCostPerMOut').textContent = fmtNum(s.costPerMOut, 2);
 
-    $('cmpSelfCost').textContent = fmtNum(s.costPerMBlended, 2);
+    $('cmpSelfMiss').textContent = fmtNum(s.costPerMMiss, 2);
+    $('cmpSelfHit').textContent = fmtNum(s.costPerMHit, 2);
+    $('cmpSelfOut').textContent = fmtNum(s.costPerMOut, 2);
     const sc = CLOUD_COMPARE[activeScenario];
     const total = sc.clouds.length;
     const cheaperByType = {
-      miss: sc.clouds.filter((c) => s.costPerMBlended > c.inputMiss).length,
-      hit: sc.clouds.filter((c) => s.costPerMBlended > c.inputHit).length,
-      out: sc.clouds.filter((c) => s.costPerMBlended > c.output).length,
+      miss: sc.clouds.filter((c) => s.costPerMMiss > c.inputMiss).length,
+      hit: sc.clouds.filter((c) => s.costPerMHit > c.inputHit).length,
+      out: sc.clouds.filter((c) => s.costPerMOut > c.output).length,
     };
     const refEl = $('cmpRefEff');
     if (refEl) {
@@ -429,7 +484,7 @@
   }
 
   function renderComparePanel(title, unitLabel, s, sc, type) {
-    const selfCost = s.costPerMBlended;
+    const selfCost = selfCostByType(s, type);
     const items = sc.clouds.map((c) => ({
       name: c.name,
       price: cloudPriceByType(c, type),
@@ -449,7 +504,7 @@
               : 'bg-gradient-to-r from-blue-400 to-blue-600';
             const cheaper = item.isSelf ? null : item.price < selfCost;
             const hint = item.isSelf
-              ? L('全成本（三类 Token 合计）')
+              ? L('自建（该类 Token）')
               : (cheaper ? L('低于自建') : L('高于自建'));
             const hintCls = item.isSelf
               ? 'text-slate-400'
@@ -477,13 +532,15 @@
     }
     $('compareChart').innerHTML = `
       <p class="text-sm font-semibold text-slate-800">${L(sc.title)}${L(' · 三类 Token 公开价对比')}</p>
-      <p class="mt-1 text-xs text-slate-500">${Lp('自建全成本 {cost} 元/百万 Token · 云侧为各平台公开价（元/百万 Token）', {
-        cost: fmtNum(s.costPerMBlended, 2),
+      <p class="mt-1 text-xs text-slate-500">${Lp('自建 {miss} / {hit} / {out} 元/百万 Token · 云侧为各平台公开价', {
+        miss: fmtNum(s.costPerMMiss, 2),
+        hit: fmtNum(s.costPerMHit, 2),
+        out: fmtNum(s.costPerMOut, 2),
       })}</p>
       <div class="mt-4 grid gap-4 lg:grid-cols-3">
-        ${renderComparePanel(L('输入 · 未命中'), L('元/百万 Token（云公开价 vs 自建全成本）'), s, sc, 'miss')}
-        ${renderComparePanel(L('输入 · 命中'), L('元/百万 Token（云公开价 vs 自建全成本）'), s, sc, 'hit')}
-        ${renderComparePanel(L('输出'), L('元/百万 Token（云公开价 vs 自建全成本）'), s, sc, 'out')}
+        ${renderComparePanel(L('输入 · 未命中'), L('元/百万 Token（云公开价 vs 自建）'), s, sc, 'miss')}
+        ${renderComparePanel(L('输入 · 命中'), L('元/百万 Token（云公开价 vs 自建）'), s, sc, 'hit')}
+        ${renderComparePanel(L('输出'), L('元/百万 Token（云公开价 vs 自建）'), s, sc, 'out')}
       </div>`;
   }
 
@@ -504,8 +561,10 @@
       [L('输入/输出 t/s'), `${fmtNum(s.tpsInputMiss, 0)} / ${fmtNum(s.tpsInputHit, 0)} / ${fmtNum(s.tpsOutput, 1)}`, L('未命中 / 命中 / 输出')],
       [L('年折旧'), fmtMoney(s.annualDep), Lp('{years} 年', { years: s.deprecYears })],
       [L('年电费'), fmtMoney(s.annualPower), L('MW × 8760 × PUE × u × 电价')],
-      [L('自建均摊 / M'), fmtNum(s.costPerMBlended, 3) + ' ' + L('元'), L('全成本 ÷ 三类 Token 合计')],
-      [L('自建输出摊销 / M'), fmtNum(s.costPerM, 3) + ' ' + L('元'), L('全成本 ÷ 年输出 Token')],
+      [L('年全成本'), fmtMoney(s.annualCost), L('年折旧 + 年电费 + 年运维')],
+      [L('自建·未命中 / M'), fmtNum(s.costPerMMiss, 3) + ' ' + L('元'), L('年全成本 × 未命中占比 ÷ 年未命中 Token')],
+      [L('自建·命中 / M'), fmtNum(s.costPerMHit, 3) + ' ' + L('元'), L('年全成本 × 命中占比 ÷ 年命中 Token')],
+      [L('自建·输出 / M'), fmtNum(s.costPerMOut, 3) + ' ' + L('元'), L('年全成本 × 输出占比 ÷ 年输出 Token')],
       [L('对标均摊价'), fmtNum(s.refBlended, 2) + ' ' + L('元/M'), L('按 t/s 占比加权云价')],
       [L('年净利润（对标）'), fmtMoney(s.profit), Lp('对标均摊 {price} 元/M', { price: fmtNum(s.refBlended, 2) })],
       [L('盈亏平衡利用率'), Number.isFinite(s.breakeven) && s.breakeven <= 1 ? fmtNum(s.breakeven * 100, 1) + '%' : '—', L('固定 ÷ 边际')],
@@ -525,7 +584,6 @@
       $('tpsOutput').value = preset.tpsOutput;
       activeScenario = svc;
     } else {
-      syncKeyToFull();
       renderAll();
       return;
     }
@@ -533,7 +591,7 @@
       const on = b.dataset.scenario === activeScenario;
       b.className = 'cmp-tab rounded-xl px-4 py-2 text-sm font-semibold transition ' + (on ? 'text-blue-700 shadow-sm bg-white' : 'text-slate-600 hover:bg-white/80');
     });
-    syncKeyToFull();
+    syncTpsToDailyYi();
     renderAll();
   }
 
@@ -555,13 +613,6 @@
     $('keyParamsPanel').classList.toggle('hidden', !visible);
     $('calcProcessPanel').classList.toggle('hidden', !visible);
     $('keyParamsToggle').checked = visible;
-    const ro = !visible;
-    ['fullNpuPrice', 'fullAscendItPct'].forEach((id) => {
-      $(id).readOnly = ro;
-      $(id).classList.toggle('cursor-default', ro);
-      $(id).classList.toggle('bg-white', !ro);
-      $(id).classList.toggle('bg-slate-50', ro);
-    });
   }
 
   function bindEvents() {
@@ -590,7 +641,7 @@
     $('pwdInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('pwdOk').click(); });
 
     $('computeP').addEventListener('input', syncFromComputeP);
-    $('clusterMw').addEventListener('input', () => { syncKeyToFull(); syncScalePresetHighlight(); renderAll(); });
+    $('clusterMw').addEventListener('input', () => { syncScalePresetHighlight(); renderAll(); });
 
     document.querySelectorAll('.scale-preset').forEach((btn) => {
       btn.addEventListener('click', () => applyScalePreset(btn.dataset.preset));
@@ -603,27 +654,19 @@
 
     $('ascendInItPct').addEventListener('input', () => { syncAscendNet('ascend'); renderAll(); });
 
-    ['pue', 'elecPrice', 'utilization', 'tpsInputMiss', 'tpsInputHit', 'tpsOutput', 'deprecYears', 'npuUnitPrice'].forEach((id) => {
-      $(id).addEventListener('input', () => { syncKeyToFull(); renderAll(); });
+    ['pue', 'elecPrice', 'utilization', 'annualFixedOpex', 'capexOpexPct', 'pctMixMiss', 'pctMixHit', 'pctMixOut', 'deprecYears', 'npuUnitPrice'].forEach((id) => {
+      $(id).addEventListener('input', renderAll);
     });
 
-    ['fullComputeP', 'fullClusterMw', 'fullNpuPrice', 'fullPctIt', 'fullPctPower', 'fullPctLand',
-      'fullAscendItPct', 'fullPue', 'fullElecPrice', 'fullUtil',
-      'fullTpsInputMiss', 'fullTpsInputHit', 'fullTpsOutput',
-      'fullDeprecYears', 'fullFixedOpex', 'fullCapexOpexPct'
-    ].forEach((id) => {
-      $(id).addEventListener('input', () => {
-        if (id === 'fullComputeP') { syncFullToKey(); syncFromComputeP(); return; }
-        if (id === 'fullClusterMw') { syncFullToKey(); renderAll(); return; }
-        syncFullToKey();
-      });
+    ['tpsInputMiss', 'tpsInputHit', 'tpsOutput'].forEach((id) => {
+      $(id).addEventListener('input', onTpsInputChange);
     });
 
-    $('fullAscendItPct').addEventListener('input', () => {
-      $('ascendInItPct').value = $('fullAscendItPct').value;
-      syncAscendNet('ascend');
-      renderAll();
+    ['dailyYiInputMiss', 'dailyYiInputHit', 'dailyYiOutput'].forEach((id) => {
+      $(id).addEventListener('input', onDailyYiInputChange);
     });
+
+    $('serviceModel').addEventListener('change', applyServiceModel);
 
     document.querySelectorAll('.cmp-tab').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -632,7 +675,6 @@
         applyServiceModel();
       });
     });
-    $('serviceModel').addEventListener('change', applyServiceModel);
     $('syncConfigBtn').addEventListener('click', syncConfigToCloud);
   }
 
@@ -646,12 +688,8 @@
     mergeCloudCompare(cloudResult.data);
     applyRoiConfig(defaultsResult.data);
     activeScenario = $('serviceModel').value === 'glm-52' ? 'glm-52' : 'ds-v4';
-    ['fullNpuPrice', 'fullAscendItPct'].forEach((id) => {
-      $(id).readOnly = true;
-      $(id).classList.add('cursor-default', 'bg-slate-50');
-    });
     syncAscendNet('ascend');
-    syncKeyToFull();
+    syncTpsToDailyYi();
     document.querySelectorAll('.cmp-tab').forEach((b) => {
       const on = b.dataset.scenario === activeScenario;
       b.className = 'cmp-tab rounded-xl px-4 py-2 text-sm font-semibold transition ' + (on ? 'text-blue-700 shadow-sm bg-white' : 'text-slate-600 hover:bg-white/80');

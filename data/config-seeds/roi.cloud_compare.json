@@ -4,6 +4,9 @@
     "title": "DeepSeek V4 档",
     "updatedAt": "2026-08-01",
     "pricingNote": "DeepSeek-V4-Flash 公开价；各平台按官网/百炼等公开价目整理，单位元/百万 Token",
+    "refInputMiss": 1.0,
+    "refInputHit": 0.02,
+    "refOutput": 2.0,
     "clouds": [
       { "name": "DeepSeek 官方", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
       { "name": "硅基流动", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
