@@ -49,7 +49,7 @@
     pPerCard: 1,
     defaultUnitPriceWan: LOCAL_ROI_DEFAULTS.npuUnitPrice ?? 60,
     presets: {
-      'ds-v4': { tpsInputMiss: 900, tpsInputHit: 3600, tpsOutput: 28 },
+      'ds-v4': { tpsInputMiss: 700, tpsInputHit: 6300, tpsOutput: 400 },
       'glm-52': { tpsInputMiss: 400, tpsInputHit: 1600, tpsOutput: 12 },
     },
   };
@@ -582,6 +582,9 @@
       $('tpsInputMiss').value = preset.tpsInputMiss;
       $('tpsInputHit').value = preset.tpsInputHit;
       $('tpsOutput').value = preset.tpsOutput;
+      if (LOCAL_ROI_DEFAULTS.pctMixMiss != null) $('pctMixMiss').value = LOCAL_ROI_DEFAULTS.pctMixMiss;
+      if (LOCAL_ROI_DEFAULTS.pctMixHit != null) $('pctMixHit').value = LOCAL_ROI_DEFAULTS.pctMixHit;
+      if (LOCAL_ROI_DEFAULTS.pctMixOut != null) $('pctMixOut').value = LOCAL_ROI_DEFAULTS.pctMixOut;
       activeScenario = svc;
     } else {
       renderAll();
