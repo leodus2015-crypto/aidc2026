@@ -81,10 +81,10 @@ def query_summary(days: int = 30) -> Dict[str, Any]:
             raw_ips = [{"ip": r["ip"], "hits": int(r["hits"])} for r in cur.fetchall()]
             from geo_lookup import enrich_ip_rows, is_excluded_ip
 
-            # UV/PV 历史若已含美国 IP，展示侧至少排除 IP Top；完整校正需 --full 重解析
-            ips = enrich_ip_rows(raw_ips, mask_fn=mask_ip, use_network=True, exclude_us=True)[:50]
+            # API 路径禁用联网地理查询，避免 Nginx 504；缓存/前缀足够展示与粗排美国 IP
+            ips = enrich_ip_rows(raw_ips, mask_fn=mask_ip, use_network=False, exclude_us=True)[:50]
             excluded_ips = {
-                r["ip"] for r in raw_ips if is_excluded_ip(str(r["ip"]), use_network=True)
+                r["ip"] for r in raw_ips if is_excluded_ip(str(r["ip"]), use_network=False)
             }
             if excluded_ips:
                 cur.execute(

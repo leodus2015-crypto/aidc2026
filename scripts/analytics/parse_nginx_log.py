@@ -132,7 +132,18 @@ def iter_log_lines(path: Path, start_offset: int = 0) -> Tuple[Iterable[str], in
     return gen(), st.st_size, inode
 
 
-def aggregate_lines(lines: Iterable[str], skip_bots: bool, skip_us: bool = True) -> Dict[str, Any]:
+def aggregate_lines(
+    lines: Iterable[str],
+    skip_bots: bool,
+    skip_us: bool = True,
+    *,
+    geo_network: bool = False,
+) -> Dict[str, Any]:
+    """聚合访问行。
+
+    geo_network=False（默认）：排除美国时只用本地缓存/前缀提示，避免全量解析时
+    对每个 IP 串行请求 ip-api（50MB+ 日志会卡数小时）。展示侧仍可对 IP Top 做网络补全。
+    """
     daily_pv: Dict[date, int] = defaultdict(int)
     daily_html: Dict[date, int] = defaultdict(int)
     daily_ips: Dict[date, Dict[str, int]] = defaultdict(lambda: defaultdict(int))
@@ -168,7 +179,9 @@ def aggregate_lines(lines: Iterable[str], skip_bots: bool, skip_us: bool = True)
         ip = m.group("ip")
         ua = m.group("ua") or ""
 
-        if skip_us and is_excluded_ip is not None and is_excluded_ip(ip, use_network=True, memo=us_memo):
+        if skip_us and is_excluded_ip is not None and is_excluded_ip(
+            ip, use_network=geo_network, memo=us_memo
+        ):
             skipped_us += 1
             skipped += 1
             continue
@@ -530,6 +543,11 @@ def main() -> int:
         action="store_true",
         help="parse log and write summary.json only (no MySQL; for local smoke test)",
     )
+    parser.add_argument(
+        "--geo-network",
+        action="store_true",
+        help="解析时对每个 IP 联网查国家（慢；默认仅用缓存/前缀提示排除美国）",
+    )
     args = parser.parse_args()
 
     if args.json_only:
@@ -541,7 +559,9 @@ def main() -> int:
             print(f"✗ 日志文件不存在: {log_path}", file=sys.stderr)
             return 1
         buffered = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
-        agg = aggregate_lines(buffered, skip_bots=not args.include_bots)
+        agg = aggregate_lines(
+            buffered, skip_bots=not args.include_bots, geo_network=args.geo_network
+        )
         out = write_snapshot(build_snapshot_from_agg(agg, args.days))
         print(
             f"✓ json-only parsed={agg['parsed']} skipped={agg['skipped']} "
@@ -584,7 +604,11 @@ def main() -> int:
         print(f"✓ snapshot → {out}")
         return 0
 
-    agg = aggregate_lines(buffered, skip_bots=not args.include_bots)
+    if not args.geo_network:
+        print("· geo: offline（缓存/前缀）；需要全量联网排除美国请加 --geo-network")
+    agg = aggregate_lines(
+        buffered, skip_bots=not args.include_bots, geo_network=args.geo_network
+    )
     if args.full:
         # full rebuild: wipe then insert — safer to truncate related tables for overlapping days
         from db import db_connection
