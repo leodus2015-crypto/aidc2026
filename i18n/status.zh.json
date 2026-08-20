@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "站点状态 · AIDC（内部）",
+    "description": "AIDC 站点访问观测（内部）"
+  },
+  "gate": {
+    "eyebrow": "Internal",
+    "title": "站点状态",
+    "hint": "请输入管理口令（与 API ADMIN_TOKEN 相同）。",
+    "placeholder": "口令",
+    "error": "口令错误或接口未授权",
+    "enter": "进入"
+  },
+  "page": {
+    "eyebrow": "AIDC · Internal",
+    "h1": "站点状态",
+    "subtitle": "访问观测",
+    "loading": "加载中…",
+    "window": "窗口",
+    "days7": "近 7 天",
+    "days14": "近 14 天",
+    "days30": "近 30 天",
+    "days90": "近 90 天",
+    "refresh": "刷新",
+    "logout": "退出",
+    "backAbout": "返回 About US"
+  },
+  "kpi": {
+    "pvEn": "Page Views",
+    "pvZh": "页面浏览量",
+    "uvEn": "Unique Visitors",
+    "uvZh": "独立访客",
+    "total": "总计",
+    "dailyAvg": "每日平均",
+    "source": "数据源"
+  },
+  "charts": {
+    "daily": "每日 Page Views / Unique Visitors",
+    "pages": "页面 Top",
+    "status": "状态码分布",
+    "pageViews": "Page Views",
+    "uniqueVisitors": "Unique Visitors",
+    "hits": "Hits"
+  },
+  "statusCodes": {
+    "200": "200 · 成功",
+    "301": "301 · 永久重定向",
+    "302": "302 · 临时重定向",
+    "304": "304 · 未修改（缓存）",
+    "400": "400 · 请求错误",
+    "401": "401 · 未授权",
+    "403": "403 · 禁止访问",
+    "404": "404 · 未找到",
+    "500": "500 · 服务器错误",
+    "502": "502 · 网关错误",
+    "503": "503 · 服务不可用"
+  },
+  "table": {
+    "title": "IP Top（已脱敏）",
+    "ip": "IP",
+    "hits": "Hits",
+    "country": "国家",
+    "city": "城市",
+    "empty": "暂无 IP 数据"
+  },
+  "footerNote": "访问数据来自 Nginx access.log 聚合 · 不在主导航公开 · 建议配合 Nginx auth_basic",
+  "metaLine": "区间 {start} ~ {end} · 生成于 {generated}"
+}

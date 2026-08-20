@@ -310,3 +310,70 @@ html[data-theme='dark'] .shadow-sm {
     transition: none;
   }
 }
+
+/* About US · 头像悬停 2s 后变为可点「站点状态」入口 */
+.aidc-status-avatar {
+  position: relative;
+  cursor: default;
+  text-decoration: none;
+  transition: transform 200ms ease, box-shadow 200ms ease, ring-color 200ms ease;
+}
+
+.aidc-status-avatar__ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: conic-gradient(var(--aidc-accent) var(--aidc-status-progress, 0%), transparent 0);
+  opacity: 0;
+  transition: opacity 160ms ease;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+}
+
+.aidc-status-avatar.is-charging .aidc-status-avatar__ring {
+  opacity: 1;
+}
+
+.aidc-status-avatar__badge {
+  position: absolute;
+  left: 50%;
+  bottom: -0.15rem;
+  z-index: 2;
+  transform: translate(-50%, 40%) scale(0.85);
+  border-radius: 9999px;
+  background: var(--aidc-accent);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px var(--aidc-shadow);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.aidc-status-avatar.is-armed {
+  cursor: pointer;
+  transform: scale(1.06);
+  box-shadow: 0 0 0 2px var(--aidc-accent), 0 6px 16px var(--aidc-shadow);
+}
+
+.aidc-status-avatar.is-armed .aidc-status-avatar__badge {
+  opacity: 1;
+  transform: translate(-50%, 55%) scale(1);
+}
+
+.aidc-status-avatar.is-armed .aidc-status-avatar__ring {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aidc-status-avatar,
+  .aidc-status-avatar__badge,
+  .aidc-status-avatar__ring {
+    transition: none;
+  }
+}

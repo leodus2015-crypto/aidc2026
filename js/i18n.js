@@ -183,7 +183,8 @@
   }
 
   function getLookupText(zh) {
-    if (locale === 'zh' || !messages.lookup) return zh;
+    // zh 同样查表：部分中文长文案以 key 形式（如 dp.synFoot）存放在 lookup 内
+    if (!messages.lookup) return zh;
     const v = messages.lookup[zh];
     return v != null ? v : zh;
   }

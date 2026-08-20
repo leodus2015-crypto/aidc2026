@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "Site Status · AIDC (Internal)",
+    "description": "AIDC site traffic analytics (internal)"
+  },
+  "gate": {
+    "eyebrow": "Internal",
+    "title": "Site Status",
+    "hint": "Enter the admin token (same as API ADMIN_TOKEN).",
+    "placeholder": "Password",
+    "error": "Invalid token or unauthorized",
+    "enter": "Enter"
+  },
+  "page": {
+    "eyebrow": "AIDC · Internal",
+    "h1": "Site Status",
+    "subtitle": "Traffic analytics",
+    "loading": "Loading…",
+    "window": "Window",
+    "days7": "Last 7 days",
+    "days14": "Last 14 days",
+    "days30": "Last 30 days",
+    "days90": "Last 90 days",
+    "refresh": "Refresh",
+    "logout": "Sign out",
+    "backAbout": "Back to About US"
+  },
+  "kpi": {
+    "pvEn": "Page Views",
+    "pvZh": "Page views",
+    "uvEn": "Unique Visitors",
+    "uvZh": "Unique visitors",
+    "total": "Total",
+    "dailyAvg": "Daily avg",
+    "source": "Data source"
+  },
+  "charts": {
+    "daily": "Daily Page Views / Unique Visitors",
+    "pages": "Top pages",
+    "status": "Status codes",
+    "pageViews": "Page Views",
+    "uniqueVisitors": "Unique Visitors",
+    "hits": "Hits"
+  },
+  "statusCodes": {
+    "200": "200 · OK",
+    "301": "301 · Moved Permanently",
+    "302": "302 · Found (redirect)",
+    "304": "304 · Not Modified (cache)",
+    "400": "400 · Bad Request",
+    "401": "401 · Unauthorized",
+    "403": "403 · Forbidden",
+    "404": "404 · Not Found",
+    "500": "500 · Server Error",
+    "502": "502 · Bad Gateway",
+    "503": "503 · Unavailable"
+  },
+  "table": {
+    "title": "Top IPs (masked)",
+    "ip": "IP",
+    "hits": "Hits",
+    "country": "Country",
+    "city": "City",
+    "empty": "No IP data yet"
+  },
+  "footerNote": "Aggregated from Nginx access.log · not linked in main nav · use Nginx auth_basic in production",
+  "metaLine": "Range {start} ~ {end} · generated {generated}"
+}

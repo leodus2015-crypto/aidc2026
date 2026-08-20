@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from analytics import empty_summary, load_summary_file, query_summary
 from db import fetch_config, get_db_error, ping_database, upsert_config
 from settings import ADMIN_TOKEN, ALLOWED_CONFIG_KEYS, CORS_ORIGINS, API_HOST, API_PORT
 
@@ -18,6 +19,12 @@ app.add_middleware(
     allow_methods=["GET", "PUT", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+
+def require_admin(authorization: Optional[str]) -> None:
+    token = (authorization or "").removeprefix("Bearer").strip()
+    if not token or token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="未授权")
 
 
 class ConfigPayload(BaseModel):
@@ -56,9 +63,7 @@ def put_config(
 ):
     if config_key not in ALLOWED_CONFIG_KEYS:
         raise HTTPException(status_code=404, detail="未知配置键")
-    token = (authorization or "").removeprefix("Bearer").strip()
-    if not token or token != ADMIN_TOKEN:
-        raise HTTPException(status_code=401, detail="未授权")
+    require_admin(authorization)
     if not ping_database():
         raise HTTPException(status_code=503, detail=get_db_error() or "数据库不可用")
     if not isinstance(body.data, dict):
@@ -67,6 +72,58 @@ def put_config(
         return upsert_config(config_key, body.data, updated_by="admin")
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.get("/api/analytics/summary")
+def analytics_summary(
+    days: int = Query(default=30, ge=1, le=90),
+    authorization: Optional[str] = Header(default=None),
+):
+    """日 PV/UV、页面 Top、IP Top（脱敏）、状态码分布。需 Bearer ADMIN_TOKEN。"""
+    require_admin(authorization)
+    return _analytics_payload(days)
+
+
+def _analytics_payload(days: int) -> Dict[str, Any]:
+    if ping_database():
+        try:
+            return query_summary(days)
+        except Exception as exc:  # noqa: BLE001
+            file_data = load_summary_file()
+            if file_data:
+                file_data = dict(file_data)
+                file_data["source"] = "json-fallback"
+                file_data["warning"] = str(exc)
+                return file_data
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+    file_data = load_summary_file()
+    if file_data:
+        file_data = dict(file_data)
+        file_data["source"] = "json"
+        return file_data
+    return empty_summary(days)
+
+
+@app.get("/api/analytics/pages")
+def analytics_pages(
+    days: int = Query(default=7, ge=1, le=90),
+    authorization: Optional[str] = Header(default=None),
+):
+    require_admin(authorization)
+    data = _analytics_payload(days)
+    return {"range": data.get("range"), "pages": data.get("pages") or []}
+
+
+@app.get("/api/analytics/ips")
+def analytics_ips(
+    days: int = Query(default=7, ge=1, le=90),
+    limit: int = Query(default=50, ge=1, le=100),
+    authorization: Optional[str] = Header(default=None),
+):
+    require_admin(authorization)
+    data = _analytics_payload(days)
+    ips = (data.get("ips") or [])[:limit]
+    return {"range": data.get("range"), "ips": ips}
 
 
 if __name__ == "__main__":

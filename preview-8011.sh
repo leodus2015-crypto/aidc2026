@@ -43,7 +43,7 @@ esac
 
 if lsof -nP -iTCP:"${PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
   echo "Preview server already listening on ${BIND}:${PORT}" >&2
-  echo "Open: http://${BIND}:${PORT}/aidc/index.html" >&2
+  echo "Open: http://${BIND}:${PORT}/aidc/ai-dc-design.html" >&2
   echo "停止预览可执行: $(basename "$0") --stop" >&2
   exit 0
 fi
@@ -52,7 +52,7 @@ echo "Starting preview server:" >&2
 echo "  root : ${ROOT_DIR}" >&2
 echo "  bind : ${BIND}" >&2
 echo "  port : ${PORT}" >&2
-echo "  url  : http://${BIND}:${PORT}/aidc/index.html" >&2
+echo "  url  : http://${BIND}:${PORT}/aidc/ai-dc-design.html" >&2
 
 cd "${ROOT_DIR}"
 exec python3 -m http.server "${PORT}" --bind "${BIND}"

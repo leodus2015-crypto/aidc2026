@@ -422,6 +422,81 @@ function initAboutUsPage() {
     if (lastUsageData) renderUsage(lastUsageData);
     if (lastReleaseData) renderRelease(lastReleaseData);
   };
+
+  initStatusEntryAvatar();
+}
+
+function initStatusEntryAvatar() {
+  const el = document.getElementById('status-entry-avatar');
+  if (!el) return;
+
+  const HOLD_MS = 2000;
+  let timer = null;
+  let raf = null;
+  let start = 0;
+  let armed = false;
+
+  function setArmed(next) {
+    armed = next;
+    el.classList.toggle('is-armed', armed);
+    el.setAttribute('aria-disabled', armed ? 'false' : 'true');
+    if (armed) {
+      el.style.removeProperty('--aidc-status-progress');
+      el.classList.remove('is-charging');
+    }
+  }
+
+  function clearCharge() {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = null;
+    }
+    el.classList.remove('is-charging');
+    el.style.removeProperty('--aidc-status-progress');
+  }
+
+  function tick(now) {
+    const p = Math.min(100, ((now - start) / HOLD_MS) * 100);
+    el.style.setProperty('--aidc-status-progress', `${p}%`);
+    if (p < 100) raf = requestAnimationFrame(tick);
+  }
+
+  function beginCharge() {
+    if (armed) return;
+    clearCharge();
+    start = performance.now();
+    el.classList.add('is-charging');
+    raf = requestAnimationFrame(tick);
+    timer = setTimeout(() => {
+      setArmed(true);
+      clearCharge();
+    }, HOLD_MS);
+  }
+
+  function resetCharge() {
+    clearCharge();
+    setArmed(false);
+  }
+
+  el.addEventListener('pointerenter', beginCharge);
+  el.addEventListener('pointerleave', resetCharge);
+  el.addEventListener('blur', resetCharge);
+  el.addEventListener('click', (e) => {
+    if (!armed) {
+      e.preventDefault();
+      return;
+    }
+    const locale = window.AidcI18n?.getLocale?.() || 'zh';
+    const url = new URL(el.href, location.href);
+    if (locale === 'en') url.searchParams.set('lang', 'en');
+    else url.searchParams.delete('lang');
+    e.preventDefault();
+    location.href = url.pathname + url.search + url.hash;
+  });
 }
 
 window.initAboutUsPage = initAboutUsPage;

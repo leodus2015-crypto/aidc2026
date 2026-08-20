@@ -31,6 +31,7 @@
 | **后训练** | 大模型后训练流程示意 |
 | **白皮书** | AI DC 白皮书与 2.0 讨论稿 |
 | **About US** | 代码量、Token 用量、团队与开源信息 |
+| **站点状态** | 内部页 `status.html`（访问观测）；About US 头像悬停 2s 入口；见 `deploy/ANALYTICS.md` |
 
 ## 技术栈
 
@@ -55,7 +56,7 @@
 
 ```bash
 ./preview-8011.sh
-# http://127.0.0.1:8011/aidc/index.html
+# http://127.0.0.1:8011/aidc/ai-dc-design.html
 ```
 
 ## 版本
@@ -66,16 +67,19 @@
 
 ```
 aidc/
-├── index.html              首页
-├── ai-dc-design.html       AI DC 规划（Tab + iframe）
+├── index.html              Agentic 推理（裸开会跳转至机房布局）
+├── ai-dc-design.html       默认入口 · AI DC 规划（默认 Tab：机房布局）
 ├── about-us.html           About US
+├── status.html             站点状态页（访问观测；内部，不在主导航）
 ├── data/
 │   ├── site-release.json   站点版本（部署时更新）
+│   ├── analytics/          Nginx 日志聚合快照
 │   └── ai-usage.json       Token 用量统计
 ├── i18n/                   页面文案
 ├── js/                     页面逻辑与 i18n 引导
 ├── scripts/
 │   ├── deploy.sh           一键提交 + 部署
+│   ├── analytics/          访问日志解析
 │   └── merge-usage-events-csv.py
 └── preview-8011.sh         本地预览
 ```

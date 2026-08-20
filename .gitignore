@@ -1,6 +1,8 @@
 .DS_Store
 assets/*.pdf
 data/ai-usage.json.lock
+data/analytics/sample-access.log
+data/analytics/geo-cache.json
 .env
 deploy.env
 api/__pycache__/

@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="AI 数据中心部署分布、推理性能、算存协同与算云协同特性演示。">
 <title>AI DC · 部署 &amp; 协同特性</title>
-<script src="js/aidc-theme.js?v=21"></script>
-<script src="js/theme-switch.js?v=21"></script>
-<script src="js/aidc-asset-version.js?v=21"></script>
-<script src="js/embed-mode.js?v=21"></script>
-<link rel="stylesheet" href="css/embed.css?v=21" />
+<script src="js/aidc-theme.js?v=64"></script>
+<script src="js/theme-switch.js?v=64"></script>
+<script src="js/aidc-asset-version.js?v=64"></script>
+<script src="js/embed-mode.js?v=64"></script>
+<link rel="stylesheet" href="css/embed.css?v=64" />
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -29,7 +29,6 @@ html[data-theme="dark"]{
   --shadow:0 4px 16px rgba(0,0,0,.3);
 }
 html[lang="en"] .pr-lbl{width:128px}
-html[lang="en"] .synergy-left{width:320px}
 html[lang="en"] .cc-phase-txt{min-width:88px}
 html[lang="en"] .cc-util-lbl{width:64px}
 body{
@@ -88,15 +87,22 @@ body{
 .pr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
 .pr-std{background:linear-gradient(130deg,rgba(29,111,229,.04),var(--bg2));}
 .pr-std::before{background:linear-gradient(180deg,#1447b5,var(--ai));}
-.pr-ep{background:linear-gradient(130deg,rgba(236,72,153,.05),var(--bg2));}
-.pr-ep::before{background:linear-gradient(180deg,var(--ep),#1447b5);}
+.pr-ep{background:linear-gradient(130deg,rgba(29,111,229,.04),var(--bg2));}
+.pr-ep::before{background:linear-gradient(180deg,#1447b5,var(--ai));}
 .pr-lbl{width:110px;flex-shrink:0;}
 .pr-title{font-size:14px;font-weight:800;color:var(--text);font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
 .pr-pdsub{font-size:10px;font-weight:700;color:var(--t2);margin-top:2px;font-family:'Microsoft YaHei',sans-serif;}
 .pr-chip{font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:4px;display:inline-block;
   font-family:'Arial Narrow',Arial,sans-serif;}
 .chip-std{background:rgba(29,111,229,.1);color:var(--ai);border:1px solid rgba(29,111,229,.22);}
-.chip-ep{background:rgba(236,72,153,.1);color:var(--ep);border:1px solid rgba(236,72,153,.3);}
+.chip-ep{background:rgba(29,111,229,.1);color:var(--ai);border:1px solid rgba(29,111,229,.22);}
+.pr-cmp{background:linear-gradient(130deg,rgba(139,92,246,.05),var(--bg2));}
+.pr-cmp::before{background:linear-gradient(180deg,var(--cmp),#1447b5);}
+.chip-cmp{background:rgba(139,92,246,.1);color:var(--cmp);border:1px solid rgba(139,92,246,.26);}
+.pr-bus{background:linear-gradient(130deg,rgba(16,185,129,.05),var(--bg2));}
+.pr-bus::before{background:linear-gradient(180deg,var(--bus),#1447b5);}
+.chip-bus{background:rgba(16,185,129,.1);color:var(--bus);border:1px solid rgba(16,185,129,.26);}
+html[data-theme="dark"] .pr-bus{background:linear-gradient(130deg,rgba(52,211,153,.09),var(--bg2));}
 .pr-cabs{flex:1;min-width:0;}
 .pr-cabs-svg{overflow:visible;display:block;}
 .pr-cabs-legend{font-size:10px;color:var(--t3);margin-top:5px;font-family:'Microsoft YaHei',Arial,sans-serif;}
@@ -106,7 +112,7 @@ body{
 .pr-total-lbl{font-size:10px;color:var(--t3);font-family:'Microsoft YaHei',Arial,sans-serif;margin-top:7px;}
 .pr-total{font-size:14px;font-weight:800;font-family:Arial,sans-serif;letter-spacing:.3px;}
 
-/* ── SLO queues ── */
+/* ── 算云协同 ── */
 .ccs-card{margin-top:16px;}
 .ccs-section{margin-top:14px;}
 .ccs-sec-title{font-size:9.5px;color:var(--t3);letter-spacing:1.5px;
@@ -115,41 +121,11 @@ body{
 .ccs-sec-title::before{content:'';width:3px;height:12px;border-radius:2px;
   background:var(--bus);display:inline-block;}
 .ccs-sec-title.cmp::before{background:var(--cmp);}
-.slo-wrapper{border-radius:8px;border:1px solid var(--bd);background:var(--inset);overflow:hidden;}
-.slo-inner{display:grid;grid-template-columns:1fr 44px 1fr;}
-.slo-col{padding:10px 10px 6px;}
-.slo-col-title{font-size:8px;font-weight:700;letter-spacing:.8px;color:var(--t3);
-  text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:7px;text-align:center;}
-.slo-item{border-radius:5px;padding:5px 8px;font-size:8.5px;font-weight:700;
-  margin-bottom:4px;border:1px solid transparent;
-  font-family:'Microsoft YaHei','微软雅黑',sans-serif;
-  transition:all .35s cubic-bezier(.4,0,.2,1);line-height:1.3;}
-.slo-l1{background:rgba(220,38,38,.1);color:#b91c1c;border-color:rgba(220,38,38,.25);}
-.slo-l2{background:rgba(217,119,6,.1);color:#b45309;border-color:rgba(217,119,6,.22);}
-.slo-l3{background:rgba(29,111,229,.09);color:var(--ai);border-color:rgba(29,111,229,.2);}
-.slo-l4{background:rgba(100,116,139,.08);color:#4a6888;border-color:rgba(100,116,139,.18);}
-.slo-free{background:rgba(16,185,129,.1);color:#047857;border-color:rgba(16,185,129,.25);
-  animation:slo-pulse 2.2s ease infinite;}
-.slo-busy{background:rgba(245,158,58,.08);color:#92400e;border-color:rgba(245,158,58,.2);opacity:.6;}
-@keyframes slo-pulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 7px rgba(16,185,129,.28)}}
-.slo-flash{animation:slo-pop .45s ease-out!important;}
-@keyframes slo-pop{0%{transform:scale(1.05);opacity:1}100%{transform:scale(1);opacity:1}}
-.slo-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;}
-.slo-footer{display:flex;gap:6px;padding:7px 10px;border-top:1px solid var(--bd);
-  background:rgba(16,185,129,.03);flex-wrap:wrap;}
-.slo-badge{font-size:8.5px;font-weight:700;padding:3px 8px;border-radius:4px;
-  font-family:'Microsoft YaHei','微软雅黑',sans-serif;}
-.slo-bg{background:rgba(16,185,129,.1);color:#047857;border:1px solid rgba(16,185,129,.22);}
-.slo-bb{background:rgba(29,111,229,.09);color:var(--ai);border:1px solid rgba(29,111,229,.2);}
-.slo-bp{background:rgba(139,92,246,.09);color:var(--cmp);border:1px solid rgba(139,92,246,.18);}
 
-/* ── 算存协同 split layout ── */
-.synergy-wrap{display:flex;gap:16px;align-items:stretch;}
-.synergy-left{width:300px;flex-shrink:0;border-right:1px solid var(--bd);padding-right:14px;display:flex;flex-direction:column;}
-.syn-diag-fill{flex:1;display:flex;align-items:stretch;min-height:260px;}
-.syn-diag-fill svg{width:100%;}
-.synergy-left .syn-foot{margin-top:auto;padding-top:10px;}
-.synergy-right{flex:1;min-width:0;}
+/* ── 算存协同 stacked layout（存算架构行 + KV Cache 演示） ── */
+.synergy-wrap{display:flex;flex-direction:column;gap:12px;align-items:stretch;}
+.syn-diag-fill{display:block;}
+.syn-diag-fill svg{display:block;max-width:100%;}
 .syn-sec-title{font-size:9.5px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;
   font-family:'Arial Narrow',Arial,sans-serif;font-weight:700;margin-bottom:10px;
   display:flex;align-items:center;gap:6px;}
@@ -235,31 +211,18 @@ body{
 .cc-leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
 
 @media(max-width:860px){
-  .synergy-wrap{flex-direction:column;align-items:stretch;}
-  .synergy-left{width:100%;border-right:none;border-bottom:1px solid var(--bd);padding-right:0;padding-bottom:12px;}
-  .synergy-right{width:100%;}
+  .pr-cmp{flex-direction:column;align-items:stretch;gap:10px;}
+  .pr-cmp .pr-stats{width:100%;text-align:left;border-left:none;border-top:1px solid var(--bd);padding-left:0;padding-top:10px;}
   body{padding:14px 12px 36px}
 }
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
 
 /* Dark: inline-style panels → transparent inset */
-html[data-theme="dark"] #sn-phase-bar{background:var(--inset)!important;border-color:var(--bd)!important;}
-html[data-theme="dark"] #sn-ph-tag{background:var(--bg2)!important;border-color:var(--bd)!important;}
-html[data-theme="dark"] #sn-tier-npu{background:linear-gradient(135deg,rgba(96,165,250,.08),var(--bg2))!important;}
-html[data-theme="dark"] #sn-tier-ssd{background:linear-gradient(135deg,rgba(245,158,11,.08),var(--bg2))!important;}
-html[data-theme="dark"] #sn-tier-ais{background:linear-gradient(135deg,rgba(167,139,250,.08),var(--bg2))!important;}
-html[data-theme="dark"] #sn-badge-npu,
-html[data-theme="dark"] #sn-badge-ssd{background:var(--bg2)!important;border-color:var(--bd)!important;}
-html[data-theme="dark"] #sn-gap1,
-html[data-theme="dark"] #sn-gap2{background:var(--bg2)!important;border-color:var(--bd)!important;}
-html[data-theme="dark"] .synergy-right [style*="background:#fff"],
-html[data-theme="dark"] .synergy-right [style*="background: #fff"]{background:var(--bg2)!important;}
-html[data-theme="dark"] .synergy-right [style*="background:#f8fafc"],
-html[data-theme="dark"] .synergy-right [style*="background: #f8fafc"]{background:var(--inset)!important;}
 html[data-theme="dark"] .pr-std{background:linear-gradient(130deg,rgba(96,165,250,.06),var(--bg2));}
-html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(244,114,182,.08),var(--bg2));}
+html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(96,165,250,.06),var(--bg2));}
+html[data-theme="dark"] .pr-cmp{background:linear-gradient(130deg,rgba(167,139,250,.09),var(--bg2));}
 </style>
-<link rel="stylesheet" href="css/theme.css?v=21" />
+<link rel="stylesheet" href="css/theme.css?v=64" />
 </head>
 <body data-i18n-page="ai-dc-deployment-perf">
 
@@ -356,7 +319,7 @@ html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(244,114,18
     <div class="pr pr-ep">
       <div class="pr-lbl">
         <div class="pr-title" data-dp-i18n="4机大EP">4机大EP</div>
-        <div class="pr-pdsub" style="color:var(--ep)" data-dp-i18n="PD 分离">PD 分离</div>
+        <div class="pr-pdsub" style="color:var(--ai)" data-dp-i18n="PD 分离">PD 分离</div>
         <div class="pr-chip chip-ep" data-dp-i18n="4柜/实例 · 32卡">4柜/实例 · 32卡</div>
       </div>
       <div class="pr-cabs">
@@ -364,10 +327,10 @@ html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(244,114,18
         <div class="pr-cabs-legend" data-dp-i18n="12 × 智算柜 · 每 4 柜 1 实例，共 3 实例">12 × 智算柜 &nbsp;·&nbsp; 每 4 柜 1 实例，共 3 实例</div>
       </div>
       <div class="pr-stats">
-        <div class="pr-total" style="color:var(--ep);font-size:22px;">32.45B</div>
+        <div class="pr-total" style="color:var(--ai);font-size:22px;">32.45B</div>
         <div class="pr-unit"><span data-dp-i18n="Token / 天">Token / 天</span> &nbsp;<span style="color:var(--t3);font-weight:400;" data-dp-i18n="(12柜合计)">(12柜合计)</span></div>
         <div style="height:8px;"></div>
-        <div class="pr-rate" style="color:var(--ep);font-size:18px;">338M</div>
+        <div class="pr-rate" style="color:var(--ai);font-size:18px;">338M</div>
         <div class="pr-unit" data-dp-i18n="Token / 卡 / 天">Token / 卡 / 天</div>
       </div>
     </div>
@@ -386,178 +349,35 @@ html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(244,114,18
 
   <div class="synergy-wrap">
 
-    <!-- Left: 5-cabinet diagram -->
-    <div class="synergy-left">
-      <div class="syn-sec-title" data-dp-i18n="存算架构 · 1通算柜 + 4智算柜">存算架构 · 1通算柜 + 4智算柜</div>
-      <div class="syn-diag-fill">
-        <svg id="syn-svg" style="display:block;overflow:visible;"></svg>
+    <!-- Row: 存算架构（4智算柜 + AI存储）— 与「4机大EP」同一形式 -->
+    <div class="pr pr-cmp">
+      <div class="pr-lbl">
+        <div class="pr-title" data-dp-i18n="4机大EP + AI存储">4机大EP + AI存储</div>
+        <div class="pr-pdsub" style="color:var(--cmp)">KV Cache UCM</div>
+        <div class="pr-chip chip-cmp" data-dp-i18n="4柜/实例 · 32卡 · 1AI存储">4柜/实例 · 32卡 · 1AI存储</div>
       </div>
-      <p class="syn-foot" style="font-size:10.5px;color:var(--t2);line-height:1.8;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.synFoot">
-        AI 存储<strong>持久化写入 KV Cache</strong>；同前缀请求到来，直接从存储<strong>多级缓存召回</strong>，<strong>跳过完整 Prefill</strong>，128K 输入/1K 输出场景下 TTFT 从 9100 ms 降至 4400 ms（降幅 52%），算力 100% 投入 Decode。
-      </p>
-    </div>
-
-    <!-- Right: 3-tier KV Cache demo -->
-    <div class="synergy-right">
-      <div class="syn-sec-title" data-dp-i18n="KV Cache 三级缓存 · 查询数据流（实时演示）">KV Cache 三级缓存 · 查询数据流（实时演示）</div>
-
-      <!-- Phase banner (shortened to diagram width) + scenario condition (right) -->
-      <div style="display:flex;gap:10px;align-items:stretch;margin-bottom:10px;">
-        <div id="sn-phase-bar" style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:7px 12px;background:#f8fafc;border:1px solid var(--bd);border-radius:7px;min-height:40px;">
-          <div id="sn-ph-icon" style="font-size:15px;flex-shrink:0;width:18px;text-align:center;">⏳</div>
-          <div style="flex:1;min-width:0;">
-            <div id="sn-ph-name" style="font-size:10px;font-weight:800;color:var(--text);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="等待推理请求...">等待推理请求...</div>
-            <div id="sn-ph-desc" style="font-size:8px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;margin-top:1px;" data-dp-i18n="NPU 就绪，KV Cache 服务运行中">NPU 就绪，KV Cache 服务运行中</div>
-          </div>
-          <div id="sn-ph-tag" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:#fff;color:var(--t3);white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;transition:all .3s;flex-shrink:0;" data-dp-i18n="待机">待机</div>
+      <div class="pr-cabs">
+        <div id="syn-diag" class="syn-diag-fill">
+          <svg id="syn-svg" style="display:block;overflow:visible;"></svg>
         </div>
-        <!-- 场景输入条件：以下所有具体指标的测试口径 -->
-        <div style="width:136px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:6px 9px;border:1px dashed rgba(139,92,246,.4);border-radius:7px;background:rgba(139,92,246,.04);">
-          <div style="font-size:6.5px;font-weight:700;color:var(--cmp);letter-spacing:.5px;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:2px;" data-dp-i18n="📐 测试场景">📐 测试场景</div>
-          <div style="font-size:8.5px;font-weight:800;color:var(--text);font-family:Arial,sans-serif;" data-dp-i18n="128K 输入 / 1K 输出">128K 输入 / 1K 输出</div>
-          <div style="font-size:7px;color:var(--t2);margin-top:1px;font-family:'Microsoft YaHei',sans-serif;">DeepSeek-V4-Flash</div>
-        </div>
+        <div class="pr-cabs-legend" data-dp-i18n="12 × 智算柜 · 每 4 柜 1 实例，共 3 实例 · 叠加 1 × AI 存储（SSD 池持久化 KV Cache）">12 × 智算柜 &nbsp;·&nbsp; 每 4 柜 1 实例，共 3 实例 &nbsp;·&nbsp; 叠加 1 × AI 存储（SSD 池持久化 KV Cache）</div>
       </div>
-
-      <!-- Two-column: diagram + metrics -->
-      <div style="display:flex;gap:10px;align-items:stretch;">
-
-        <!-- 3-tier diagram -->
-        <div id="sn-diag" style="flex:1;min-width:0;position:relative;display:flex;flex-direction:column;">
-          <canvas id="sn-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;"></canvas>
-
-          <!-- Tier 1: NPU + HBM -->
-          <div id="sn-tier-npu" style="border-radius:8px;border:2px solid rgba(29,111,229,.28);padding:10px 12px;background:linear-gradient(135deg,#f0f5ff,#fff);transition:border-color .4s,box-shadow .4s;position:relative;z-index:1;">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
-              <span style="font-size:13px;flex-shrink:0;">🔮</span>
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:11px;font-weight:800;color:var(--ai);" data-dp-i18n="NPU · HBM L1 缓存">NPU · HBM L1 缓存</div>
-                <div style="font-size:7px;color:var(--t3);font-family:Arial,sans-serif;margin-top:1px;">96GB HBM · 4 TB/s · &lt;1μs</div>
-              </div>
-              <div id="sn-badge-npu" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:#fff;opacity:0;transition:all .3s;white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;">检索中</div>
-            </div>
-            <div id="sn-hbm-bars" style="display:flex;gap:2px;align-items:flex-end;height:22px;"></div>
-            <div style="display:flex;justify-content:space-between;margin-top:3px;">
-              <span style="font-size:7px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="HBM 占用（KV Cache 近满）">HBM 占用（KV Cache 近满）</span>
-              <span style="font-size:7px;font-weight:700;color:var(--ai);font-family:Arial,sans-serif;">~93%</span>
-            </div>
-          </div>
-
-          <!-- Gap 1 -->
-          <div style="height:38px;position:relative;display:flex;align-items:center;justify-content:center;">
-            <div id="sn-gap1" style="font-size:7.5px;font-weight:700;color:var(--t3);background:#fff;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);position:relative;z-index:2;transition:color .35s,border-color .35s;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="HBM 溢出 → SSD L2">HBM 溢出 → SSD L2</div>
-          </div>
-
-          <!-- Tier 2: SSD -->
-          <div id="sn-tier-ssd" style="border-radius:8px;border:2px solid rgba(245,158,11,.28);padding:10px 12px;background:linear-gradient(135deg,#fffbf0,#fff);transition:border-color .4s,box-shadow .4s;position:relative;z-index:1;">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
-              <span style="font-size:13px;flex-shrink:0;">💾</span>
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:11px;font-weight:800;color:var(--ssd);" data-dp-i18n="NVMe SSD · L2 缓存">NVMe SSD · L2 缓存</div>
-                <div style="font-size:7px;color:var(--t3);font-family:Arial,sans-serif;margin-top:1px;">4 × 3.84TB · 28 GB/s · ~80μs</div>
-              </div>
-              <div id="sn-badge-ssd" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);background:#fff;opacity:0;transition:all .3s;white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;">检索中</div>
-            </div>
-            <div id="sn-ssd-row" style="display:flex;gap:4px;"></div>
-          </div>
-
-          <!-- Gap 2 -->
-          <div style="height:38px;position:relative;display:flex;align-items:center;justify-content:center;">
-            <div id="sn-gap2" style="font-size:7.5px;font-weight:700;color:var(--t3);background:#fff;padding:2px 7px;border-radius:4px;border:1px solid var(--bd);position:relative;z-index:2;transition:color .35s,border-color .35s;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="SSD 未命中 → AI 存储 L3">SSD 未命中 → AI 存储 L3</div>
-          </div>
-
-          <!-- Tier 3: AI Storage (grows to fill — bottom aligns with right Prefill box) -->
-          <div id="sn-tier-ais" style="flex:1;display:flex;flex-direction:column;border-radius:8px;border:2px solid rgba(139,92,246,.28);padding:10px 12px;background:linear-gradient(135deg,#f8f5ff,#fff);transition:border-color .4s,box-shadow .4s;position:relative;z-index:1;">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
-              <span style="font-size:13px;flex-shrink:0;">🗄️</span>
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:11px;font-weight:800;color:var(--cmp);" data-dp-i18n="OceanStor AI 存储 · L3">OceanStor AI 存储 · L3</div>
-                <div style="font-size:7px;color:var(--t3);font-family:Arial,sans-serif;margin-top:1px;" data-dp-i18n="KV Cache Pool · PB级 · 500 GB/s · ~1ms">KV Cache Pool · PB级 · 500 GB/s · ~1ms</div>
-              </div>
-              <div id="sn-badge-ais" style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;border:1px solid rgba(16,185,129,.25);background:rgba(16,185,129,.08);color:#047857;opacity:0;transition:all .3s;white-space:nowrap;font-family:'Microsoft YaHei',sans-serif;">✓ 命中！</div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center;flex:1;">
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:7px;color:var(--t3);margin-bottom:3px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="KV Cache 持久化存储块">KV Cache 持久化存储块</div>
-                <div id="sn-kv-grid" style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;"></div>
-              </div>
-              <div style="text-align:center;flex-shrink:0;min-width:42px;">
-                <div style="font-size:17px;font-weight:900;font-family:Arial,sans-serif;color:var(--bus);" id="sn-hit-rate">90%</div>
-                <div style="font-size:7px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="命中率">命中率</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Metrics column -->
-        <div style="width:136px;flex-shrink:0;display:flex;flex-direction:column;gap:7px;">
-
-          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#fff;">
-            <div style="font-size:7.5px;color:var(--t3);letter-spacing:.7px;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:4px;" data-dp-i18n="TTFT 首Token延迟">TTFT 首Token延迟</div>
-            <div style="display:flex;align-items:baseline;gap:2px;"><span style="font-size:28px;font-weight:900;font-family:Arial,sans-serif;line-height:1;color:var(--bus);">↓52</span><span style="font-size:14px;font-weight:900;color:var(--bus);font-family:Arial,sans-serif;">%</span></div>
-            <div style="font-size:7.5px;color:var(--t2);margin-top:2px;" data-dp-i18n="TTFT 降低（以查代算）">TTFT 降低（以查代算）</div>
-            <div style="height:1px;background:var(--bd);margin:5px 0;"></div>
-            <div style="font-size:7.5px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;line-height:1.65;" data-dp-i18n-html="无缓存 <strong style=\"color:var(--t2)\">9100ms</strong> → 缓存命中 <strong style=\"color:var(--bus)\">4400ms</strong>">无缓存 <strong style="color:var(--t2);">9100ms</strong> → 缓存命中 <strong style="color:var(--bus);">4400ms</strong></div>
-          </div>
-
-          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#fff;">
-            <div style="font-size:7.5px;color:var(--t3);letter-spacing:.7px;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:4px;" data-dp-i18n="E2E 吞吐">E2E 吞吐</div>
-            <div style="font-size:22px;font-weight:900;font-family:Arial,sans-serif;line-height:1;color:var(--cmp);">568M</div>
-            <div style="font-size:7.5px;color:var(--t2);margin-top:2px;" data-dp-i18n="Token / 卡 / 天">Token / 卡 / 天</div>
-            <div style="font-size:7px;color:var(--cmp);font-weight:700;margin-top:3px;font-family:Arial,sans-serif;">54.53B <span style="color:var(--t3);font-weight:400;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="Token/天 (12柜96卡)">Token/天 (12柜96卡)</span></div>
-            <div style="height:1px;background:var(--bd);margin:5px 0;"></div>
-            <div style="font-size:7.5px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;line-height:1.65;" data-dp-i18n-html="无缓存：<strong style=\"color:var(--t2)\">338M</strong> / 卡 · <strong style=\"color:var(--t2)\">32.45B</strong>/天<br>提升 <strong style=\"color:var(--cmp)\">↑68%</strong>">无缓存：<strong style="color:var(--t2);">338M</strong> / 卡 · <strong style="color:var(--t2);">32.45B</strong>/天<br>提升 <strong style="color:var(--cmp);">↑68%</strong></div>
-          </div>
-
-          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#fff;">
-            <div style="font-size:7.5px;color:var(--t3);letter-spacing:.5px;margin-bottom:6px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="缓存命中路径">缓存命中路径</div>
-            <div style="display:flex;align-items:center;gap:5px;padding:2px 0;">
-              <div style="width:6px;height:6px;border-radius:50%;background:var(--ai);flex-shrink:0;"></div>
-              <span style="font-size:7.5px;color:var(--t2);flex:1;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="HBM L1">HBM L1</span>
-              <span style="font-size:8px;font-weight:700;color:var(--miss);font-family:Arial,sans-serif;" id="sn-pr-hbm">MISS</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:5px;padding:2px 0;">
-              <div style="width:6px;height:6px;border-radius:50%;background:var(--ssd);flex-shrink:0;"></div>
-              <span style="font-size:7.5px;color:var(--t2);flex:1;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="SSD L2">SSD L2</span>
-              <span style="font-size:8px;font-weight:700;color:var(--miss);font-family:Arial,sans-serif;" id="sn-pr-ssd">MISS</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:5px;padding:2px 0;">
-              <div style="width:6px;height:6px;border-radius:50%;background:var(--cmp);flex-shrink:0;"></div>
-              <span style="font-size:7.5px;color:var(--t2);flex:1;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="AI 存储 L3">AI 存储 L3</span>
-              <span style="font-size:8px;font-weight:700;color:var(--bus);font-family:Arial,sans-serif;" id="sn-pr-ais">HIT ✓</span>
-            </div>
-            <div style="height:1px;background:var(--bd);margin:5px 0;"></div>
-            <div style="font-size:9px;font-weight:800;color:var(--bus);font-family:'Microsoft YaHei',sans-serif;transition:color .3s;" id="sn-mode-lbl">✦ 以查代算</div>
-          </div>
-
-          <div style="border:1px solid var(--bd);border-radius:8px;padding:9px 11px;background:#f8fafc;">
-            <div style="font-size:7.5px;color:var(--t3);margin-bottom:5px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="Prefill 跳过">Prefill 跳过</div>
-            <div style="display:flex;align-items:baseline;gap:3px;margin-bottom:3px;">
-              <span style="font-size:12px;font-weight:800;font-family:Arial,sans-serif;color:var(--bus);">128K</span>
-              <span style="font-size:7px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="Token 前缀">Token 前缀</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:3px;">
-              <span style="font-size:12px;font-weight:800;font-family:Arial,sans-serif;color:var(--cmp);">100%</span>
-              <span style="font-size:7px;color:var(--t2);font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="算力投入 Decode">算力投入 Decode</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Legend (below the two-column block, full width) -->
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;">
-        <div style="display:flex;align-items:center;gap:4px;font-size:7.5px;color:var(--t2);">
-          <div style="width:16px;height:2.5px;background:rgba(29,111,229,.6);border-radius:2px;"></div><span data-dp-i18n="Cache 查询（下行）">Cache 查询（下行）</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px;font-size:7.5px;color:var(--t2);">
-          <div style="width:16px;height:2.5px;background:var(--ret);border-radius:2px;"></div><span data-dp-i18n="以查代算 回程">以查代算 回程</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px;font-size:7.5px;color:var(--t2);">
-          <div style="width:8px;height:8px;border-radius:50%;background:var(--bus);flex-shrink:0;"></div><span data-dp-i18n="命中块">命中块</span>
-        </div>
+      <div class="pr-stats">
+        <div class="pr-total" style="color:var(--cmp);font-size:22px;">54.53B</div>
+        <div class="pr-unit"><span data-dp-i18n="Token / 天">Token / 天</span> &nbsp;<span style="color:var(--t3);font-weight:400;" data-dp-i18n="(12柜合计)">(12柜合计)</span></div>
+        <div style="height:8px;"></div>
+        <div class="pr-rate" style="color:var(--cmp);font-size:18px;">568M</div>
+        <div class="pr-unit" data-dp-i18n="Token / 卡 / 天">Token / 卡 / 天</div>
+        <div style="height:6px;"></div>
+        <div style="font-size:9.5px;font-weight:800;color:var(--bus);font-family:Arial,sans-serif;">↑68% <span style="color:var(--t3);font-weight:400;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="vs. 4机大EP 338M">vs. 4机大EP 338M</span></div>
+        <div style="font-size:9px;color:var(--t3);font-family:'Microsoft YaHei',sans-serif;margin-top:2px;">TTFT <span style="color:var(--bus);font-weight:800;font-family:Arial,sans-serif;">↓52%</span></div>
       </div>
     </div>
+
+    <p class="syn-foot" style="font-size:10.5px;color:var(--t2);line-height:1.8;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.synFoot">
+      AI 存储<strong>持久化写入 KV Cache</strong>；同前缀请求到来，直接从存储<strong>多级缓存召回</strong>，<strong>跳过完整 Prefill</strong>，128K 输入/1K 输出场景下 TTFT 从 9100 ms 降至 4400 ms（降幅 52%），算力 100% 投入 Decode。
+    </p>
+
   </div>
 </div>
 
@@ -570,117 +390,54 @@ html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(244,114,18
     <div class="ctitle-line"></div>
   </div>
 
-  <!-- Feature 1: Cabinet-level day/night visual -->
+  <!-- Feature 1: 系统启动态 —— AI Coding 占用两组大 EP -->
   <div class="ccs-section">
-    <div class="ccs-sec-title" data-dp-i18n="特性一 · 算力动态弹性 · 白天推理 / 夜间训练">特性一 &nbsp;·&nbsp; 算力动态弹性 · 白天推理 / 夜间训练</div>
-    <div class="cc-visual-wrap" style="padding:12px;">
-      <!-- 左右对比面板 -->
-      <div class="cc-compare-wrap">
-        <!-- 左：传统方案 -->
-        <div class="cc-side cc-side-bad">
-          <div class="cc-side-hd" style="color:#64748b;">
-            <span style="font-size:13px;line-height:1;">◈</span><span data-dp-i18n="传统方案（无算云协同）">传统方案（无算云协同）</span>
-          </div>
-          <div class="cc-metric-row">
-            <span class="cc-num-big" id="cc-util-trad" style="color:#64748b;">26%</span>
-            <div class="cc-num-lbl" data-dp-i18n-html="dp.ccTradLbl">平均算力利用率<br><span style="color:#94a3b8;font-weight:700;font-size:8px;">训练/推理各自独占 · 互不调配 · 大量闲置</span></div>
-          </div>
-          <div class="cc-chart-box">
-            <canvas id="cc-canvas-trad"></canvas>
-          </div>
-          <div style="font-size:8px;font-weight:700;color:var(--t3);margin-bottom:4px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="12 × 算力柜（静态独占）">12 × 算力柜（静态独占）</div>
-          <div class="cc-grid-compare" id="cc-grid-trad"></div>
-        </div>
-
-        <!-- VS divider -->
-        <div class="cc-vs-col"><div class="cc-vs-txt">VS</div></div>
-
-        <!-- 右：算云协同 -->
-        <div class="cc-side cc-side-good">
-          <div class="cc-side-hd" style="color:#10b981;">
-            <span style="font-size:13px;line-height:1;">✦</span><span data-dp-i18n="算云协同方案">算云协同方案</span>
-          </div>
-          <div class="cc-metric-row">
-            <span class="cc-num-big" id="cc-util-new" style="color:#10b981;">65%</span>
-            <div class="cc-num-lbl">
-              <span data-dp-i18n-html="dp.ccNewLbl">平均算力利用率 <strong style="color:#10b981;">↑2×</strong></span><br>
-              <span id="cc-elastic-lbl" style="color:#f59e0b;font-weight:700;font-size:8px;"></span>
-            </div>
-          </div>
-          <div class="cc-chart-box">
-            <canvas id="cc-canvas-new"></canvas>
-          </div>
-          <div style="font-size:8px;font-weight:700;color:var(--t3);margin-bottom:4px;font-family:'Microsoft YaHei',sans-serif;" data-dp-i18n="12 × 算力柜（弹性调度）">12 × 算力柜（弹性调度）</div>
-          <div class="cc-grid-compare" id="cc-grid-new"></div>
-        </div>
+    <div class="ccs-sec-title" data-dp-i18n="特性一 · 算力虚拟化 · 多模型部署 / 安全隔离">特性一 &nbsp;·&nbsp; 算力虚拟化 · 多模型部署 / 安全隔离</div>
+    <div class="pr pr-bus">
+      <div class="pr-lbl">
+        <div class="pr-title" data-dp-i18n="资源虚拟化">资源虚拟化</div>
       </div>
-
-      <!-- 时间轴 + 控制 -->
-      <div class="cc-timebar">
-        <span class="cc-time-disp" id="cc-time-disp">00:00</span>
-        <div class="cc-time-track"><div class="cc-time-prog" id="cc-time-prog" style="width:0%"></div></div>
-        <span class="cc-phase-txt" id="cc-phase-txt" style="color:var(--cmp);">🌙 夜间训练</span>
-        <button class="cc-replay-btn" onclick="ccReplay()" data-dp-i18n="▶ 重播">▶ 重播</button>
+      <div class="pr-cabs">
+        <div id="cc-diag" class="syn-diag-fill">
+          <svg id="cc-svg" style="display:block;overflow:visible;"></svg>
+        </div>
+        <div class="pr-cabs-legend" data-dp-i18n="系统启动态 · 场景3 AI Coding 覆盖两组大 EP（柜5–12）">系统启动态 &nbsp;·&nbsp; 场景3 AI Coding 覆盖两组大 EP（柜5–12）</div>
       </div>
-
-      <!-- 图例 -->
-      <div class="cc-legend-row">
-        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:#1d6fe5;"></div><span data-dp-i18n="推理运行（白天）">推理运行（白天）</span></div>
-        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:#8b5cf6;"></div><span data-dp-i18n="训练运行（夜间）">训练运行（夜间）</span></div>
-        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:#f59e0b;"></div><span data-dp-i18n="弹性扩容峰值">弹性扩容峰值</span></div>
-        <div class="cc-leg-item"><div class="cc-leg-dot" style="background:rgba(148,163,184,.3);border:1px solid rgba(148,163,184,.3);"></div><span data-dp-i18n="空闲浪费">空闲浪费</span></div>
+      <div class="pr-stats">
+        <div class="pr-total" style="color:var(--bus);font-size:22px;">50–80%</div>
+        <div class="pr-unit" data-dp-i18n="算力利用率">算力利用率</div>
+        <div style="height:8px;"></div>
+        <div class="pr-rate" style="color:var(--bus);font-size:18px;">↑2×</div>
+        <div class="pr-unit" data-dp-i18n="vs. 静态独占 &lt;30%">vs. 静态独占 &lt;30%</div>
       </div>
     </div>
-    <p style="margin-top:7px;font-size:9.5px;color:var(--t2);line-height:1.75;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.cloudPara">
-      白天（08–22时）多用户弹性扩容推理实例，NPU 利用率实时跟随业务量；业务峰值时自动<strong>按需扩容</strong>；夜间（22–08时）闲置推理算力<strong>无缝切换训练任务</strong>。传统方案训练与推理独占各自服务器、互不调配，白天仅推理柜运行、夜间仅训练柜运行，综合算力利用率不足 <strong style="color:#64748b">30%</strong>；算云协同将同一套硬件利用率稳定控制在 <strong style="color:var(--bus)">50–80%</strong> 区间，提升 <strong style="color:var(--bus)">2×</strong> 以上。
+    <p style="margin-top:7px;font-size:9.5px;color:var(--t2);line-height:1.75;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.cloudParaBoot">
+      <strong>系统启动态</strong>：手机银行、风险控制分别占用柜 1–2、柜 3–4；场景3 AI Coding 覆盖柜 5–8 与柜 9–12 两组大 EP（各 64×NPU · DeepSeek V4-Flash）。上层 HCS+ModelArts 按场景负载均衡调度，实现多模型共存与安全隔离。
     </p>
   </div>
 
-  <!-- Feature 2: SLO Dual-Queue -->
+  <!-- Feature 2: 手机银行流量增加后的弹性调度 -->
   <div class="ccs-section">
-    <div class="ccs-sec-title" data-dp-i18n="特性二 · 基于 SLO 弹性调度 · 双队列动态匹配">特性二 &nbsp;·&nbsp; 基于 SLO 弹性调度 &nbsp;·&nbsp; 双队列动态匹配</div>
-    <div class="slo-wrapper">
-      <div class="slo-inner">
-        <div class="slo-col">
-          <div class="slo-col-title" data-dp-i18n="📋 请求队列（SLO 等级排序）">📋 请求队列（SLO 等级排序）</div>
-          <div id="req-queue">
-            <div class="slo-item slo-l1">🔴 L1 · 实时交易风控</div>
-            <div class="slo-item slo-l1">🔴 L1 · 实时欺诈监测</div>
-            <div class="slo-item slo-l2">🟠 L2 · 智能投顾建议</div>
-            <div class="slo-item slo-l2">🟠 L2 · 客户身份验证</div>
-            <div class="slo-item slo-l3">🔵 L3 · 智能营销推荐</div>
-            <div class="slo-item slo-l4">⚪ L4 · 市场趋势预测</div>
-          </div>
-        </div>
-        <div class="slo-divider">
-          <svg width="32" height="100" viewBox="0 0 32 100" fill="none">
-            <path d="M16,0 L16,84" stroke="#1d6fe5" stroke-width="1.5" stroke-dasharray="4 3" opacity=".4">
-              <animate attributeName="stroke-dashoffset" values="0;-14" dur="1s" repeatCount="indefinite"/>
-            </path>
-            <polygon points="10,75 16,88 22,75" fill="#1d6fe5" opacity=".55"/>
-          </svg>
-          <div id="slo-status" style="font-size:8px;color:var(--ai);font-weight:700;font-family:Arial,sans-serif;text-align:center;letter-spacing:.5px;margin-top:2px;">匹配中</div>
-        </div>
-        <div class="slo-col">
-          <div class="slo-col-title" data-dp-i18n="🖥️ 推理实例队列（闲→忙排序）">🖥️ 推理实例队列（闲→忙排序）</div>
-          <div id="inst-queue">
-            <div class="slo-item slo-free">🟢 实例 1 · 空闲</div>
-            <div class="slo-item slo-free">🟢 实例 2 · 空闲</div>
-            <div class="slo-item slo-free">🟢 实例 3 · 空闲</div>
-            <div class="slo-item slo-busy">🟡 实例 4 · 处理中</div>
-            <div class="slo-item slo-busy">🟡 实例 5 · 处理中</div>
-            <div class="slo-item slo-busy" style="opacity:.45">🔴 实例 6 · 高负载</div>
-          </div>
-        </div>
+    <div class="ccs-sec-title" data-dp-i18n="特性二 · 弹性调度 · 任务优先级 / 模型快速加载">特性二 &nbsp;·&nbsp; 弹性调度 · 任务优先级 / 模型快速加载</div>
+    <div class="pr pr-bus">
+      <div class="pr-lbl">
+        <div class="pr-title" data-dp-i18n="弹性调度">弹性调度</div>
       </div>
-      <div class="slo-footer">
-        <span class="slo-badge slo-bg" data-dp-i18n="高 SLO 等级后到先得 · L1 直接插队">高 SLO 等级后到先得 · L1 直接插队</span>
-        <span class="slo-badge slo-bb" data-dp-i18n="空闲实例优先承接请求">空闲实例优先承接请求</span>
-        <span class="slo-badge slo-bp" data-dp-i18n="ModelArts 请求调度器">ModelArts 请求调度器</span>
+      <div class="pr-cabs">
+        <div id="cc-diag-2" class="syn-diag-fill">
+          <svg id="cc-svg-2" style="display:block;overflow:visible;"></svg>
+        </div>
+        <div class="pr-cabs-legend" data-dp-i18n="弹性调度态 · 手机银行扩容占用柜5–8，AI Coding 收拢至柜9–12">弹性调度态 &nbsp;·&nbsp; 手机银行扩容占用柜5–8，AI Coding 收拢至柜9–12</div>
+      </div>
+      <div class="pr-stats">
+        <div class="pr-total" style="color:var(--bus);font-size:15px;letter-spacing:-0.2px;white-space:nowrap;" data-dp-i18n="小时级–分钟级">小时级–分钟级</div>
+        <div class="pr-unit" data-dp-i18n="模型启动时间">模型启动时间</div>
+        <div style="height:8px;"></div>
+        <div class="pr-rate" style="color:var(--bus);font-size:18px;" data-dp-i18n="下降10×">下降10×</div>
       </div>
     </div>
-    <p style="margin-top:7px;font-size:9.5px;color:var(--t2);line-height:1.75;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.sloPara">
-      请求遵循<strong>高 SLO 等级后到先得</strong>，L1 实时请求无需排队直接优先处理；推理实例按忙闲排序，<strong>空闲实例靠前</strong>优先承接；双队列匹配机制保障 SLO 达成率稳定在 <strong style="color:var(--bus)">98%+</strong>，同时支持多业务场景共用模型实例，算力利用率提升 <strong style="color:var(--ai)">40%</strong>。
+    <p style="margin-top:7px;font-size:9.5px;color:var(--t2);line-height:1.75;font-family:'Microsoft YaHei','微软雅黑',sans-serif;" data-dp-i18n-html="dp.cloudParaScale">
+      <strong>弹性调度态</strong>：当手机银行流量上升，ModelArts 按任务优先级将柜 5–8 快速加载为 Qwen-32B 承接扩容流量；场景3 AI Coding 收缩至柜 9–12 一组大 EP。对比特性一启动态，同一套智算柜在不增硬件前提下完成弹性再分配。
     </p>
   </div>
 
@@ -729,18 +486,12 @@ function applyDpStaticI18n() {
     el.textContent = L(key);
   });
 }
-let _snRefreshPhase = null;
-let _sloRefreshQueues = null;
-let _ccRefreshLabels = null;
-
 function refreshDeploymentPerfI18n() {
   applyDpStaticI18n();
   if (typeof drawFrontView === 'function') drawFrontView();
   if (typeof initPerfRows === 'function') initPerfRows();
   if (typeof initSynCard === 'function') initSynCard();
-  if (_snRefreshPhase) _snRefreshPhase();
-  if (_sloRefreshQueues) _sloRefreshQueues();
-  if (_ccRefreshLabels) _ccRefreshLabels();
+  if (typeof initCloudRack === 'function') initCloudRack();
 }
 globalThis.__aidcPageRefreshI18n = refreshDeploymentPerfI18n;
 
@@ -911,9 +662,7 @@ function bootDeploymentPerf() {
   drawFrontView();
   initPerfRows();
   initSynCard();
-  initSynCacheDemo();
-  initCloudAnim();
-  initSLOAnim();
+  initCloudRack();
 }
 let _dpBooted = false;
 function bootDeploymentPerfOnce() {
@@ -924,7 +673,7 @@ function bootDeploymentPerfOnce() {
 window.addEventListener('load', () => {
   setTimeout(() => { if (!window.AidcI18n?.isActive?.()) bootDeploymentPerfOnce(); }, 800);
 });
-window.addEventListener('resize', ()=>{ drawFrontView(); initPerfRows(); initSynCard(); });
+window.addEventListener('resize', ()=>{ drawFrontView(); initPerfRows(); initSynCard(); initCloudRack(); });
 
 // ══ PERF ROWS: 智算柜-style cabs + DeepSeek instance overlays ══
 // Cab style matches the main 机柜部署分布图 智算柜
@@ -948,7 +697,7 @@ function initPerfRows(){
   const configs = [
     {id:'pcabs-single', group:1, color:'#1d6fe5'},
     {id:'pcabs-dual',   group:2, color:'#1d6fe5'},
-    {id:'pcabs-ep',     group:4, color:'#db2777'},
+    {id:'pcabs-ep',     group:4, color:'#1d6fe5'},
   ];
 
   configs.forEach(cfg => {
@@ -1042,675 +791,434 @@ function initPerfRows(){
   });
 }
 
-// ══ 算存协同: 5-cabinet diagram — vertical layout (4 AI cabs top, 1 CMP bottom) ══
+// ══ 算存协同: 存算架构 — 4 智算柜（AI服务器 · HBM/DRAM/SSD）+ 下方 AI 存储（SSD 池） ══
+// Wide row layout, matching the 4机大EP performance row.
+function synTextW(str, fz){
+  let w = 0;
+  for(const ch of String(str)) w += /[\u2e80-\u9fff\uff00-\uffef]/.test(ch) ? fz : fz*0.56;
+  return w;
+}
+
 function initSynCard(){
   const svgEl = document.getElementById('syn-svg');
   if(!svgEl) return;
 
-  // Fill the whole left column so the diagram tracks the height of the
-  // right-hand 3-tier panel (智算柜→HBM/SSD on top, 通算柜→AI存储 at bottom).
-  const fillEl = svgEl.parentElement;   // .syn-diag-fill
-  const W = Math.max(200, fillEl.clientWidth || 260);
-  const targetH = Math.max(300, fillEl.clientHeight || 340);
-  const margin = 6, aiGap = 5, n = 4;
+  const wrap = svgEl.parentElement;   // #syn-diag
+  const W = Math.max(360, wrap.clientWidth || wrap.parentElement?.clientWidth || 700);
 
-  // 4 AI cabinets in top row (side by side)
-  const aiCabW = Math.floor((W - 2*margin - (n-1)*aiGap) / n);
+  // 继承「4机大EP」：12 柜 · 每 4 柜 1 实例 · 共 3 实例（与双机部署同色 --ai）
+  const epC = '#1d6fe5', cmpC = '#8b5cf6';
+  const N = 12, group = 4, nGroups = N / group;
+  const cabGap = 3;
+  const grpGap = Math.max(12, Math.round(W * 0.023));
+  const totalGaps = (N-1)*cabGap + (nGroups-1)*grpGap;
+  const cabW = Math.max(16, Math.floor((W - totalGaps) / N));
+  const rowW = cabW*N + totalGaps;
+  const x0   = Math.max(0, Math.round((W - rowW) / 2));
+  const cabH = Math.max(150, Math.min(216, Math.round(cabW * 3.4)));
 
-  // CMP cabinet: full width, spans all 4 AI cabs + their gaps
-  const cmpCabW = aiCabW * n + (n-1)*aiGap;
+  // Vertical bands: 智算柜 → 卸载间隙 → AI 存储 → 图例
+  const topY    = 2;
+  const linkH   = 46;
+  const stTopY  = topY + cabH + linkH;
+  const stHdrH  = 22;
 
-  // Vertical distribution to fill targetH:
-  //   智算柜(上, HBM+SSD) ≈56%  ·  连接间隙 ≈14%  ·  通算柜(下, AI存储) ≈30%
-  const topY       = 2;          // tiny top margin (no header label above)
-  const botLegendH = 28;         // bottom legend row
-  const usableH    = targetH - topY - botLegendH;
-  let aiCabH  = Math.round(usableH * 0.56);
-  let vertGap = Math.round(usableH * 0.14);
-  // keep AI cabinet from becoming too tall/narrow on very tall columns
-  const aiCapH = Math.round(aiCabW * 2.7);
-  if(aiCabH > aiCapH){ vertGap += (aiCabH - aiCapH); aiCabH = aiCapH; }
-  let cmpCabH = usableH - aiCabH - vertGap;
+  // ── 机柜内部几何（上半：AI服务器 + DeepSeek 实例；下半：HBM/DRAM/SSD） ──
+  const capH = 5, plinth = 4;
+  const hdrY  = topY + capH + 3;
+  const hdrH  = Math.max(11, Math.round(cabH * 0.075));
+  const tierH = Math.max(13, Math.round(cabH * 0.095));
+  const tierGap = Math.max(4, Math.round(cabH * 0.026));
+  const tiersH = tierH*3 + tierGap*2;
+  const tiersY = topY + cabH - plinth - 4 - tiersH;
+  const compY1 = tiersY - 4;                     // AI服务器 机箱底边
+  const hdrFz  = Math.min(7.5, Math.max(5, Math.round(cabW * 0.145)));
+  const tierFz = Math.min(7, Math.max(4.8, cabW * 0.125));
+  const cabX = (i) => x0 + i*(cabW + cabGap) + Math.floor(i/group)*grpGap;
+  // 本地 SSD 右侧留出通道：KV Cache 由 DRAM 直连 AI 存储，越过本地 SSD
+  const chanW  = Math.max(8, Math.round(cabW * 0.17));
+  const tierW  = cabW - 6;
+  const ssdW   = tierW - chanW;
+  const chanX  = (cX) => Math.round(cX + 3 + ssdW + chanW/2);
 
-  const cmpTopY = topY + aiCabH + vertGap;
-  const svgH    = targetH;
+  // AI 存储：SSD 盘位与 AI服务器 内 SSD 同尺寸
+  const ssdRowH = tierH;
+  const stH     = stHdrH + ssdRowH + 15;
+  const legendY = stTopY + stH + 17;
+  const H       = legendY + 7;
 
   svgEl.setAttribute('width', W);
-  svgEl.setAttribute('height', svgH);
+  svgEl.setAttribute('height', H);
 
   let s = '';
-  const aiC = '#1d6fe5', cmpC = '#8b5cf6';
-  const cmpX = margin;
 
-  // ── CMP interior geometry (horizontal bands top→bottom) ──
-  const cmpInnerH = cmpCabH - 13;
-  const swH  = Math.round(cmpInnerH * 0.24);
-  const svrH = Math.round(cmpInnerH * 0.30);
-  const stH  = Math.max(18, cmpInnerH - swH - svrH - 8);
-  const swY  = cmpTopY + 7;
-  const svrY = swY + swH + 4;
-  const stY  = svrY + svrH + 4;
+  // ── Pass 1: 12 机柜（外壳 + AI服务器 机箱 + 三级本地缓存） ──
+  for(let i=0; i<N; i++){
+    const cX = cabX(i);
+    const cx = cX + cabW/2;
 
-  // ── AI cabinet interior geometry (shared for all 4) ──
-  const _innerH = aiCabH - 16;
-  const _asvH   = Math.round(_innerH * 0.88);
-  const _asvY   = topY + 8 + Math.round((_innerH - _asvH) / 2);
-  const _hdrH   = Math.max(9, Math.round(_asvH * 0.14));
-  const _aiCntH = _asvH - _hdrH - 8;
-  const _aiCntY = _asvY + _hdrH + 4;
-  const _aiVGap = Math.max(5, Math.round(_aiCntH * 0.12));
-  const _aiHbmH = Math.round(_aiCntH * 0.25);
-  const _aiHbmY = _aiCntY;
-  const _aiSsdH = Math.round(_aiCntH * 0.30);
-  const _aiSsdY = _aiHbmY + _aiHbmH + _aiVGap;
+    s += `<rect x="${cX}" y="${topY}" width="${cabW}" height="${cabH}" rx="2.5" fill="${epC}" opacity=".1" stroke="${epC}" stroke-width="1.4"/>`;
+    s += `<rect x="${cX}" y="${topY}" width="${cabW}" height="${capH}" rx="1.5" fill="${epC}" opacity=".42"/>`;
+    s += `<rect x="${cX+2}" y="${topY+cabH-plinth}" width="${cabW-4}" height="${plinth}" rx="1" fill="${epC}" opacity=".2"/>`;
 
-  // ── 4 AI Cabinets (top row) ──
-  for(let ai=0; ai<4; ai++){
-    const aiX = cmpX + ai*(aiCabW + aiGap);
-    const cx  = aiX + aiCabW/2;
+    // AI服务器 机箱（上半部分，DeepSeek 实例覆盖其上）
+    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${compY1-hdrY}" rx="2" fill="${epC}" opacity=".14" stroke="${epC}" stroke-width="1.1"/>`;
+    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${hdrH}" rx="2" fill="${epC}" opacity=".5"/>`;
 
-    // Shell
-    s += `<rect x="${aiX}" y="${topY}" width="${aiCabW}" height="${aiCabH}" rx="3" fill="rgba(29,111,229,.12)" stroke="${aiC}" stroke-width="1.6"/>`;
-    s += `<rect x="${aiX}" y="${topY}" width="${aiCabW}" height="5" rx="1.5" fill="${aiC}" opacity=".42"/>`;
-    s += `<rect x="${aiX+3}" y="${topY+aiCabH-4}" width="${aiCabW-6}" height="4" rx="1" fill="${aiC}" opacity=".2"/>`;
+    // 三级本地缓存 HBM → DRAM → SSD（SSD 右侧留出 KV Cache 直连通道）
+    [{t:'HBM',op:.34},{t:'DRAM',op:.24},{t:'SSD',op:.15}].forEach((b, bi) => {
+      const bY = tiersY + bi*(tierH + tierGap);
+      const bW = bi === 2 ? ssdW : tierW;
+      const bCx = cX + 3 + bW/2;
+      s += `<rect x="${cX+3}" y="${bY}" width="${bW}" height="${tierH}" rx="1.5" fill="${epC}" opacity="${b.op}" stroke="${epC}" stroke-width=".7"/>`;
+      s += `<text x="${bCx}" y="${bY+tierH/2+tierFz*.36}" text-anchor="middle" font-size="${tierFz}" font-weight="700" fill="${epC}" font-family="Arial,sans-serif">${b.t}</text>`;
+      if(bi === 0){
+        const aX = Math.round(cx), aY = bY + tierH;
+        const headW = Math.max(5, Math.round(cabW*.16));
+        s += `<polygon points="${aX-headW/2},${aY+1} ${aX+headW/2},${aY+1} ${aX},${bY+tierH+tierGap}" fill="${epC}" opacity=".4"/>`;
+      }
+    });
 
-    // AI服务器 box
-    s += `<rect x="${aiX+3}" y="${_asvY}" width="${aiCabW-6}" height="${_asvH}" rx="2" fill="rgba(29,111,229,.11)" stroke="${aiC}" stroke-width="1.2"/>`;
-    s += `<rect x="${aiX+3}" y="${_asvY}" width="${aiCabW-6}" height="${_hdrH}" rx="2" fill="${aiC}" opacity=".38"/>`;
-    const hdrFz = Math.min(9, Math.max(5.5, Math.round(_hdrH * 0.62)));
-    s += `<text x="${cx}" y="${_asvY+Math.round(_hdrH*.68)}" text-anchor="middle" font-size="${hdrFz}" font-weight="700" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`;
-
-    // HBM block
-    s += `<rect x="${aiX+5}" y="${_aiHbmY}" width="${aiCabW-10}" height="${_aiHbmH}" rx="1.5" fill="${aiC}" opacity=".32" stroke="${aiC}" stroke-width=".8"/>`;
-    const hbmFz = Math.min(9, Math.max(5, Math.round(_aiHbmH*.40)));
-    s += `<text x="${cx}" y="${_aiHbmY+_aiHbmH/2+hbmFz*.4}" text-anchor="middle" font-size="${hbmFz}" font-weight="700" fill="${aiC}" font-family="Arial,sans-serif">HBM</text>`;
-
-    // HBM→SSD mini-arrow
-    const vAX = Math.round(cx), vAY0 = _aiHbmY+_aiHbmH;
-    const vSW = Math.max(3,Math.round(aiCabW*.09)), vHW = Math.max(7,Math.round(aiCabW*.18));
-    const vSH = Math.max(2, _aiVGap-4);
-    s += `<rect x="${vAX-vSW/2}" y="${vAY0}" width="${vSW}" height="${vSH}" rx=".5" fill="${aiC}" opacity=".32"/>`;
-    s += `<polygon points="${vAX-vHW/2},${vAY0+vSH} ${vAX+vHW/2},${vAY0+vSH} ${vAX},${_aiSsdY}" fill="${aiC}" opacity=".40"/>`;
-
-    // SSD block
-    s += `<rect x="${aiX+5}" y="${_aiSsdY}" width="${aiCabW-10}" height="${_aiSsdH}" rx="1.5" fill="${aiC}" opacity=".17" stroke="${aiC}" stroke-width=".8"/>`;
-    const ssdFz = Math.min(9, Math.max(5, Math.round(_aiSsdH*.32)));
-    s += `<text x="${cx}" y="${_aiSsdY+_aiSsdH/2+ssdFz*.4}" text-anchor="middle" font-size="${ssdFz}" font-weight="700" fill="${aiC}" font-family="Arial,sans-serif">SSD</text>`;
-
-    // ── Offload arrow: SSD bottom → straight down → into AI存储 top ──
-    const ssdBotX = Math.round(cx);
-    const ssdBotY = _aiSsdY + _aiSsdH;
-    s += `<path d="M ${ssdBotX},${ssdBotY} V ${stY}" fill="none" stroke="${cmpC}" stroke-width="4" stroke-opacity=".14" stroke-linecap="round"/>`;
-    s += `<path d="M ${ssdBotX},${ssdBotY} V ${stY}" fill="none" stroke="${cmpC}" stroke-width="1.8" stroke-opacity=".58" stroke-dasharray="5 4" stroke-linecap="round">
-      <animate attributeName="stroke-dashoffset" values="18;0" dur="${0.62+ai*.08}s" repeatCount="indefinite" calcMode="linear"/>
-    </path>`;
-    // Arrowhead pointing down into AI存储
-    s += `<polygon points="${ssdBotX-4},${stY-6} ${ssdBotX+4},${stY-6} ${ssdBotX},${stY}" fill="${cmpC}" opacity=".75"/>`;
+    // ── KV Cache 读写：仅 Prefill（每组前 3 柜）；下行写入 → 停 1s → 上行召回 ──
+    if(i % group < 3){
+      const dramBotY = tiersY + (tierH + tierGap) + tierH;
+      // 通道内左右分列，间距约为原间隔的 2 倍，且不压到 SSD
+      const chanLeft = cX + 3 + ssdW;
+      const chanRight = cX + cabW - 3;
+      const sep = Math.min(
+        Math.max(6, Math.round(chanW * 0.7)),
+        Math.max(4, chanRight - chanLeft - 4)
+      );
+      const mid = (chanLeft + chanRight) / 2;
+      const dxW = Math.round(mid - sep / 2);
+      const dxR = Math.round(mid + sep / 2);
+      const yTop = dramBotY + 5.5;   // 线顶端（靠 DRAM）
+      const yBot = stTopY;           // 贴住 AI 存储顶边
+      const downD = 0.75;
+      const pause = 1.0;
+      const upD = 0.75;
+      const cycle = downD + pause + upD;
+      const tDownEnd = (downD / cycle).toFixed(4);
+      const tUpStart = ((downD + pause) / cycle).toFixed(4);
+      const tUpEnd = ((downD + pause + upD) / cycle).toFixed(4);
+      // 下行（写入）：先动，随后静默
+      s += `<path d="M ${dxW},${yTop} V ${yBot}" fill="none" stroke="${cmpC}" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="4 3.5" stroke-dashoffset="16" stroke-opacity=".25">
+        <animate attributeName="stroke-dashoffset" values="16;0;0;16" keyTimes="0;${tDownEnd};${tUpEnd};1" dur="${cycle}s" repeatCount="indefinite" calcMode="linear"/>
+        <animate attributeName="stroke-opacity" values=".7;.7;.25;.25;.7" keyTimes="0;${tDownEnd};${tDownEnd};${tUpEnd};1" dur="${cycle}s" repeatCount="indefinite" calcMode="linear"/>
+      </path>`;
+      s += `<polygon points="${dxW-3.5},${stTopY-5.5} ${dxW+3.5},${stTopY-5.5} ${dxW},${stTopY}" fill="${cmpC}" opacity=".3">
+        <animate attributeName="opacity" values=".8;.8;.3;.3;.8" keyTimes="0;${tDownEnd};${tDownEnd};${tUpEnd};1" dur="${cycle}s" repeatCount="indefinite" calcMode="linear"/>
+      </polygon>`;
+      // 上行（读取）：贴 AI 存储顶边出发，下行+停顿后再动
+      s += `<path d="M ${dxR},${yBot} V ${yTop}" fill="none" stroke="${cmpC}" stroke-width="1.25" stroke-linecap="round" stroke-dasharray="4 3.5" stroke-dashoffset="16" stroke-opacity=".25">
+        <animate attributeName="stroke-dashoffset" values="16;16;0;0;16" keyTimes="0;${tUpStart};${tUpEnd};${tUpEnd};1" dur="${cycle}s" repeatCount="indefinite" calcMode="linear"/>
+        <animate attributeName="stroke-opacity" values=".25;.25;.7;.7;.25" keyTimes="0;${tUpStart};${tUpStart};${tUpEnd};1" dur="${cycle}s" repeatCount="indefinite" calcMode="linear"/>
+      </path>`;
+      s += `<polygon points="${dxR-3.5},${dramBotY+5.5} ${dxR+3.5},${dramBotY+5.5} ${dxR},${dramBotY}" fill="${cmpC}" opacity=".3">
+        <animate attributeName="opacity" values=".3;.3;.8;.8;.3" keyTimes="0;${tUpStart};${tUpStart};${tUpEnd};1" dur="${cycle}s" repeatCount="indefinite" calcMode="linear"/>
+      </polygon>`;
+    }
   }
 
-  // ── Mid-gap label (KV Cache UCM) ──
-  const midGY = topY + aiCabH + vertGap/2;
-  s += `<text x="${cmpX+cmpCabW/2}" y="${midGY-4}" text-anchor="middle" font-size="9.5" font-weight="800" fill="${cmpC}" font-family="Arial Narrow,Arial,sans-serif" opacity=".92">${L('KV Cache UCM 多级缓存协同')}</text>`;
-  s += `<text x="${cmpX+cmpCabW/2}" y="${midGY+9}" text-anchor="middle" font-size="8" fill="${cmpC}" font-family="Arial Narrow,Arial,sans-serif" opacity=".65">${L('SSD KV Cache 卸载至 AI 存储持久化')}</text>`;
+  // ── Pass 2: DeepSeek-V4-Flash 实例覆盖（每 4 柜 1 实例）+ 机柜标签 ──
+  for(let g=0; g<nGroups; g++){
+    const gX = cabX(g*group);
+    const gW = group*cabW + (group-1)*cabGap;
+    const gCx = gX + gW/2;
 
-  // ── CMP Cabinet (bottom, full width) ──
-  s += `<rect x="${cmpX}" y="${cmpTopY}" width="${cmpCabW}" height="${cmpCabH}" rx="3" fill="rgba(139,92,246,.12)" stroke="${cmpC}" stroke-width="1.5"/>`;
-  s += `<rect x="${cmpX}" y="${cmpTopY}" width="${cmpCabW}" height="5" rx="1.5" fill="${cmpC}" opacity=".4"/>`;
-  s += `<rect x="${cmpX+2}" y="${cmpTopY+cmpCabH-4}" width="${cmpCabW-4}" height="4" rx="1" fill="${cmpC}" opacity=".2"/>`;
+    // 实例覆盖（仅机柜上半部分）
+    s += `<rect x="${gX-1}" y="${topY}" width="${gW+2}" height="${compY1-topY+2}" rx="3" fill="${epC}" opacity=".14" stroke="${epC}" stroke-width="1.7"/>`;
 
-  const cmpIW = cmpCabW - 6;
-  // 交换机 band
-  s += `<rect x="${cmpX+3}" y="${swY}" width="${cmpIW}" height="${swH}" rx="2" fill="rgba(139,92,246,.2)" stroke="${cmpC}" stroke-width="1"/>`;
-  const swFz = Math.min(9, Math.max(7, Math.round(swH*.32)));
-  s += `<text x="${cmpX+cmpCabW/2}" y="${swY+swH/2+swFz*.4}" text-anchor="middle" font-size="${swFz}" font-weight="700" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('交换机')}</text>`;
-  // 通用服务器 band
-  s += `<rect x="${cmpX+3}" y="${svrY}" width="${cmpIW}" height="${svrH}" rx="2" fill="rgba(139,92,246,.15)" stroke="${cmpC}" stroke-width="1"/>`;
-  const svrFz = Math.min(9, Math.max(7, Math.round(svrH*.26)));
-  s += `<text x="${cmpX+cmpCabW/2}" y="${svrY+svrH/2+svrFz*.4}" text-anchor="middle" font-size="${svrFz}" font-weight="700" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('通用服务器')}</text>`;
-  // AI存储 band (prominent)
-  s += `<rect x="${cmpX+2}" y="${stY}" width="${cmpCabW-4}" height="${stH}" rx="2" fill="rgba(139,92,246,.28)" stroke="${cmpC}" stroke-width="1.4"/>`;
-  const stFz = Math.min(13, Math.max(8, Math.round(stH*.22)));
-  s += `<text x="${cmpX+cmpCabW/2}" y="${stY+stH/2+stFz*.38}" text-anchor="middle" font-size="${stFz}" font-weight="900" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 存储')}</text>`;
+    // DeepSeek 药丸（与 4机大EP 同形式，横跨 4 台 AI服务器）
+    const pillFz = Math.min(9, Math.max(5.5, gW * 0.05));
+    const lineH  = pillFz + 2;
+    const pillW  = gW - 6;
+    const pillH  = lineH*2 + 7;
+    const pillY  = hdrY + hdrH + Math.round(((compY1 - hdrY - hdrH) - pillH) / 2) - 4;
+    s += `<rect x="${gCx-pillW/2}" y="${pillY}" width="${pillW}" height="${pillH}" rx="4" fill="${epC}" opacity=".85"/>`;
+    s += `<text x="${gCx}" y="${pillY+lineH}" text-anchor="middle" font-size="${pillFz}" fill="white" font-family="Arial,sans-serif" font-weight="800">DeepSeek</text>`;
+    s += `<text x="${gCx}" y="${pillY+lineH*2+2}" text-anchor="middle" font-size="${pillFz}" fill="white" font-family="Arial,sans-serif" font-weight="800">V4-Flash</text>`;
 
-  // ── Bottom legend (文字在最下面) ──
-  const lblY = cmpTopY + cmpCabH + 16;
-  const halfW = cmpCabW / 2;
-  s += `<rect x="${cmpX+2}" y="${lblY-8}" width="9" height="9" rx="2" fill="${aiC}" opacity=".55"/>`;
-  s += `<text x="${cmpX+14}" y="${lblY}" font-size="8.5" font-weight="700" fill="${aiC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 智算柜 ×4')}</text>`;
-  s += `<rect x="${cmpX+halfW+4}" y="${lblY-8}" width="9" height="9" rx="2" fill="${cmpC}" opacity=".55"/>`;
-  s += `<text x="${cmpX+halfW+16}" y="${lblY}" font-size="8.5" font-weight="700" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('通算柜（OceanStor）')}</text>`;
+    // 实例 N（药丸下方，仍在机柜上半部分内）
+    const instFz = Math.min(8, Math.max(6, gW * 0.042));
+    s += `<text x="${gCx}" y="${pillY+pillH+instFz+4}" text-anchor="middle" font-size="${instFz}" font-weight="700" fill="${epC}" font-family="Arial,sans-serif" opacity=".85">${Lp('实例 {n}', {n: g+1})}</text>`;
+
+    // 每柜「AI服务器」标签（覆盖层之后绘制，保证可见）
+    for(let ci=0; ci<group; ci++){
+      const lx = cabX(g*group + ci) + cabW/2;
+      s += `<text x="${lx}" y="${hdrY+Math.round(hdrH*.74)}" text-anchor="middle" font-size="${hdrFz}" font-weight="700" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`;
+    }
+  }
+
+  // ── 间隙中央的 UCM 标签（实底药丸，压住虚线） ──
+  const ucmTxt = L('KV Cache UCM 多级缓存协同');
+  const ucmFz  = 9.5;
+  const ucmW   = synTextW(ucmTxt, ucmFz) + 18;
+  const ucmH   = 17;
+  const ucmY   = topY + cabH + Math.round((linkH - ucmH)/2);
+  s += `<rect x="${W/2-ucmW/2}" y="${ucmY}" width="${ucmW}" height="${ucmH}" rx="${ucmH/2}" fill="${cmpC}" opacity=".92"/>`;
+  s += `<text x="${W/2}" y="${ucmY+ucmH/2+ucmFz*.36}" text-anchor="middle" font-size="${ucmFz}" font-weight="800" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${ucmTxt}</text>`;
+
+  // ── AI 存储机柜（下方，与智算柜等宽） ──
+  s += `<rect x="${x0}" y="${stTopY}" width="${rowW}" height="${stH}" rx="3" fill="rgba(139,92,246,.12)" stroke="${cmpC}" stroke-width="1.6"/>`;
+  s += `<rect x="${x0}" y="${stTopY}" width="${rowW}" height="${stHdrH}" rx="2.5" fill="${cmpC}" opacity=".78"/>`;
+  const stFz = Math.min(13, Math.max(9, Math.round(stHdrH*.55)));
+  s += `<text x="${x0+11}" y="${stTopY+stHdrH/2+stFz*.36}" font-size="${stFz}" font-weight="800" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 存储')}</text>`;
+  const stSubTxt = L('OceanStor · KV Cache 持久化池');
+  if(rowW > synTextW(stSubTxt, 8.5) + synTextW(L('AI 存储'), stFz) + 40){
+    s += `<text x="${x0+rowW-11}" y="${stTopY+stHdrH/2+3}" text-anchor="end" font-size="8.5" font-weight="700" fill="white" fill-opacity=".9" font-family="Microsoft YaHei,Arial,sans-serif">${stSubTxt}</text>`;
+  }
+
+  // SSD 池：盘位尺寸与机柜内 SSD 一致，逐柜对齐
+  const ssdY = stTopY + stHdrH + 8;
+  for(let i=0; i<N; i++){
+    const sx = cabX(i) + 3;
+    s += `<rect x="${sx}" y="${ssdY}" width="${ssdW}" height="${ssdRowH}" rx="1.5" fill="${cmpC}" opacity=".22" stroke="${cmpC}" stroke-width=".8"/>`;
+    s += `<text x="${sx+ssdW/2}" y="${ssdY+ssdRowH/2+tierFz*.36}" text-anchor="middle" font-size="${tierFz}" font-weight="700" fill="${cmpC}" font-family="Arial,sans-serif">SSD</text>`;
+  }
+
+  // ── 底部图例 ──
+  const halfW = rowW / 2;
+  s += `<rect x="${x0+2}" y="${legendY-8}" width="9" height="9" rx="2" fill="${epC}" opacity=".55"/>`;
+  s += `<text x="${x0+14}" y="${legendY}" font-size="8.5" font-weight="700" fill="${epC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 智算柜 ×12（4机大EP · 3 实例）')}</text>`;
+  s += `<rect x="${x0+halfW+4}" y="${legendY-8}" width="9" height="9" rx="2" fill="${cmpC}" opacity=".55"/>`;
+  s += `<text x="${x0+halfW+16}" y="${legendY}" font-size="8.5" font-weight="700" fill="${cmpC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI 存储（通算柜 · OceanStor）')}</text>`;
 
   svgEl.innerHTML = s;
 }
 
-// ══ 算存协同: 三级缓存 KV Cache 查询流 演示 ══
-function initSynCacheDemo(){
-  const diagEl = document.getElementById('sn-diag');
-  if(!diagEl) return;
-
-  // Build HBM bars
-  const hbmWrap = document.getElementById('sn-hbm-bars');
-  if(hbmWrap && !hbmWrap.children.length){
-    [94,91,96,93,88,95,92,97,90,94,89,93,95,91,96,92,88,94,93,96].forEach(p=>{
-      const bar = document.createElement('div');
-      bar.style.cssText = `flex:1;border-radius:2px 2px 0 0;background:rgba(29,111,229,.1);border:1px solid rgba(29,111,229,.2);position:relative;overflow:hidden;`;
-      const fill = document.createElement('div');
-      fill.style.cssText = `position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(29,111,229,.55),#1d6fe5);border-radius:1px;height:${p}%;`;
-      bar.appendChild(fill);
-      hbmWrap.appendChild(bar);
-    });
-  }
-
-  // Build SSD boxes
-  const ssdRow = document.getElementById('sn-ssd-row');
-  if(ssdRow && !ssdRow.children.length){
-    [{n:'SSD 1',w:62},{n:'SSD 2',w:71},{n:'SSD 3',w:58},{n:'SSD 4',w:67}].forEach(d=>{
-      ssdRow.innerHTML += `<div style="flex:1;border-radius:6px;border:1px solid rgba(245,158,11,.25);background:rgba(245,158,11,.05);padding:5px 4px;text-align:center;">
-        <div style="font-size:7.5px;font-weight:700;color:var(--ssd);display:block;margin-bottom:4px;font-family:Arial,sans-serif;">${d.n}</div>
-        <div style="height:4px;border-radius:3px;background:rgba(245,158,11,.1);overflow:hidden;margin-bottom:2px;"><div style="height:100%;border-radius:3px;background:var(--ssd);width:${d.w}%;"></div></div>
-        <div style="font-size:6.5px;color:var(--t3);font-family:Arial,sans-serif;">3.84 TB</div>
-      </div>`;
-    });
-  }
-
-  // Build KV grid
-  const kvGrid = document.getElementById('sn-kv-grid');
-  const SN_HIT = new Set([1,3,5,8,11,14,16,19,22,25,27,30,33,36,38,41,44,46,49,52,55,57,60,62,65,68,70]);
-  if(kvGrid && !kvGrid.children.length){
-    for(let i=0;i<72;i++){
-      const c = document.createElement('div');
-      c.id = 'sn-kvc-'+i;
-      const base = `height:8px;border-radius:1.5px;border:1px solid;transition:background .3s,border-color .3s,box-shadow .3s;`;
-      c.style.cssText = SN_HIT.has(i)
-        ? base+'background:rgba(139,92,246,.35);border-color:rgba(139,92,246,.4);'
-        : base+'background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.14);';
-      kvGrid.appendChild(c);
-    }
-  }
-
-  // Canvas
-  const canvas = document.getElementById('sn-canvas');
-  const ctx = canvas.getContext('2d');
-  const tierNpu = document.getElementById('sn-tier-npu');
-  const tierSsd = document.getElementById('sn-tier-ssd');
-  const tierAis = document.getElementById('sn-tier-ais');
-
-  function snRect(el){
-    const dc=diagEl.getBoundingClientRect(), er=el.getBoundingClientRect();
-    return { cx:er.left-dc.left+er.width/2, cy:er.top-dc.top+er.height/2,
-             top:er.top-dc.top, bot:er.top-dc.top+er.height,
-             x:er.left-dc.left, w:er.width, h:er.height };
-  }
-
-  let snParticles = [];
-  function snSpawn(fromEl, toEl, color, n, up){
-    const fr=snRect(fromEl), to=snRect(toEl);
-    for(let i=0;i<n;i++){
-      const ox=(Math.random()-.5)*28;
-      snParticles.push({
-        sx:fr.cx+ox, sy:up?to.bot-4:fr.bot-4,
-        ex:fr.cx+ox, ey:up?fr.top+4:to.top+4,
-        color, size:2.5+Math.random()*2, prog:-Math.random()*.45,
-        speed:0.007+Math.random()*.007, alpha:0.75+Math.random()*.25, done:false
-      });
-    }
-  }
-
-  // Helpers
-  function snBadge(id,txt,type){
-    const b=document.getElementById('sn-badge-'+id); if(!b)return;
-    b.textContent=txt; b.style.opacity='1';
-    const styles={
-      search:'background:rgba(29,111,229,.08);color:#1d6fe5;border-color:rgba(29,111,229,.2);',
-      ssrch:'background:rgba(245,158,11,.08);color:#b45309;border-color:rgba(245,158,11,.28);',
-      aisrch:'background:rgba(139,92,246,.08);color:#8b5cf6;border-color:rgba(139,92,246,.22);',
-      miss:'background:rgba(148,163,184,.08);color:#94a3b8;border-color:rgba(148,163,184,.25);',
-      hit:'background:rgba(16,185,129,.08);color:#047857;border-color:rgba(16,185,129,.25);'
-    };
-    b.style.cssText += styles[type]||'';
-  }
-  function snGlow(el,c){ el.style.boxShadow=`0 0 0 3px ${c}`; }
-  function snG1(c,bc){ const g=document.getElementById('sn-gap1'); if(g){g.style.color=c;g.style.borderColor=bc||c;} }
-  function snG2(c,bc){ const g=document.getElementById('sn-gap2'); if(g){g.style.color=c;g.style.borderColor=bc||c;} }
-  function snPR(id,t,c){ const e=document.getElementById('sn-pr-'+id); if(e){e.textContent=t;e.style.color=c;} }
-  function snKVHit(){ SN_HIT.forEach((ci,idx)=>{setTimeout(()=>{
-    const c=document.getElementById('sn-kvc-'+ci);
-    if(c)c.style.cssText='height:8px;border-radius:1.5px;border:1px solid var(--bus);background:var(--bus);box-shadow:0 0 4px rgba(16,185,129,.4);transition:all .3s;';
-  },idx*25);}); }
-  function snKVReset(){ for(let i=0;i<72;i++){
-    const c=document.getElementById('sn-kvc-'+i);
-    if(c) c.style.cssText=SN_HIT.has(i)
-      ? 'height:8px;border-radius:1.5px;border:1px solid rgba(139,92,246,.4);background:rgba(139,92,246,.35);transition:all .3s;'
-      : 'height:8px;border-radius:1.5px;border:1px solid rgba(139,92,246,.14);background:rgba(139,92,246,.08);transition:all .3s;';
-  }}
-  function snReset(){
-    snParticles=[];
-    [tierNpu,tierSsd,tierAis].forEach(t=>{t.style.boxShadow='';});
-    ['npu','ssd','ais'].forEach(id=>{const b=document.getElementById('sn-badge-'+id);if(b)b.style.opacity='0';});
-    snG1('var(--t3)','var(--bd)'); snG2('var(--t3)','var(--bd)');
-    snPR('hbm',L('MISS'),'var(--miss)'); snPR('ssd',L('MISS'),'var(--miss)'); snPR('ais',L('HIT ✓'),'var(--bus)');
-    const m=document.getElementById('sn-mode-lbl'); if(m){m.textContent=L('✦ 以查代算');m.style.color='var(--bus)';}
-    const t=document.getElementById('sn-ph-tag'); if(t){t.style.background='';t.style.color='';t.style.borderColor='';}
-    snKVReset();
-  }
-
-  let snScanTmr=null;
-  function snKVScan(){
-    let i=0; snScanTmr=setInterval(()=>{
-      if(i>=72){clearInterval(snScanTmr);return;}
-      const c=document.getElementById('sn-kvc-'+i);
-      if(c){c.style.background='rgba(139,92,246,.55)';setTimeout(()=>{c.style.background='';},180);}
-      i++;
-    },10);
-  }
-
-  const SN_PHASES=[
-    {dur:800,  icon:'⏳',name:'系统就绪 · 等待推理请求',     desc:'HBM KV Cache 已满，SSD + AI 存储在线',       tag:'待机',  fn:()=>snReset()},
-    {dur:700,  icon:'📥',name:'推理请求进入 NPU 队列',       desc:'新请求到来，开始查找 KV Cache 前缀...',      tag:'请求',  fn:()=>snGlow(tierNpu,'rgba(29,111,229,.2)')},
-    {dur:1100, icon:'🔍',name:'查询 HBM L1 · 搜索中',       desc:'片上 HBM 高速搜索 KV Cache 前缀块...',      tag:'L1检索',fn:()=>{snBadge('npu',L('检索中...'),'search');snGlow(tierNpu,'rgba(29,111,229,.22)');}},
-    {dur:750,  icon:'❌',name:'HBM L1 未命中',               desc:'HBM 近满 93%，目标 KV Cache 已被淘汰',      tag:'L1 MISS',fn:()=>{snBadge('npu',L('✗ 未命中'),'miss');snPR('hbm',L('MISS'),'var(--miss)');}},
-    {dur:650,  icon:'⬇',name:'下行至 SSD L2',               desc:'查询路径延伸至本地 NVMe SSD 层...',          tag:'→ SSD', fn:()=>{snG1('var(--ssd)');snSpawn(tierNpu,tierSsd,'rgba(29,111,229,.7)',9,false);}},
-    {dur:1000, icon:'🔍',name:'查询 SSD L2 · 并行扫描',     desc:'并行扫描 4 路 NVMe SSD KV Cache...',        tag:'L2检索',fn:()=>{snBadge('ssd',L('检索中...'),'ssrch');snGlow(tierSsd,'rgba(245,158,11,.2)');snPR('ssd',L('查询...'),'var(--ssd)');}},
-    {dur:700,  icon:'❌',name:'SSD L2 未命中',               desc:'SSD 无匹配 KV Cache，升级至 AI 存储层',      tag:'L2 MISS',fn:()=>{snBadge('ssd',L('✗ 未命中'),'miss');snPR('ssd',L('MISS'),'var(--miss)');}},
-    {dur:600,  icon:'⬇',name:'下行至 OceanStor AI 存储',    desc:'查询路径延伸至远端 AI 存储池（~1ms）...',    tag:'→ L3',  fn:()=>{snG2('var(--cmp)');snSpawn(tierSsd,tierAis,'rgba(245,158,11,.7)',9,false);}},
-    {dur:1200, icon:'🔍',name:'查询 AI 存储 L3 · 扫描中',   desc:'OceanStor KV Cache Pool 持久化前缀检索...',  tag:'L3检索',fn:()=>{snBadge('ais',L('检索中...'),'aisrch');snGlow(tierAis,'rgba(139,92,246,.2)');snPR('ais',L('查询...'),'var(--cmp)');snKVScan();}},
-    {dur:1000, icon:'✅',name:'AI 存储 L3 命中！',           desc:'KV Cache 命中！前缀命中率 90%，以查代算激活', tag:'✓ HIT',fn:()=>{
-      snBadge('ais',L('✓ 命中！'),'hit');snGlow(tierAis,'rgba(16,185,129,.22)');snPR('ais',L('HIT ✓'),'var(--bus)');snKVHit();
-      const m=document.getElementById('sn-mode-lbl');if(m){m.textContent=L('✦ 以查代算 激活');m.style.color='var(--bus)';}
-      const tag=document.getElementById('sn-ph-tag');if(tag){tag.style.background='rgba(16,185,129,.1)';tag.style.color='#047857';tag.style.borderColor='rgba(16,185,129,.3)';}
-    }},
-    {dur:1300, icon:'⬆',name:'以查代算 · KV Cache 回传',    desc:'命中数据高速回传：AI存储→SSD→HBM→NPU Decode', tag:'回程',fn:()=>{
-      snG2('var(--ret)'); snG1('var(--ret)');
-      snSpawn(tierAis,tierSsd,'#22d3ee',8,true);
-      setTimeout(()=>snSpawn(tierSsd,tierNpu,'#22d3ee',8,true),500);
-      const tag=document.getElementById('sn-ph-tag');if(tag){tag.style.background='rgba(34,211,238,.1)';tag.style.color='#0891b2';tag.style.borderColor='rgba(34,211,238,.3)';}
-    }},
-    {dur:900,  icon:'🚀',name:'推理结果输出',                desc:'TTFT 4400ms · Prefill 跳过 · Decode 吞吐满载',tag:'完成',  fn:()=>{snGlow(tierNpu,'rgba(16,185,129,.22)');snBadge('npu',L('✓ 输出完成'),'hit');}},
-  ];
-
-  let snPhIdx=0, snLastT=0;
-  function snSetPhase(idx){
-    snPhIdx=((idx%SN_PHASES.length)+SN_PHASES.length)%SN_PHASES.length;
-    const ph=SN_PHASES[snPhIdx];
-    const icon=document.getElementById('sn-ph-icon');const name=document.getElementById('sn-ph-name');
-    const desc=document.getElementById('sn-ph-desc');const tag=document.getElementById('sn-ph-tag');
-    if(icon)icon.textContent=ph.icon;
-    if(name)name.textContent=L(ph.name);
-    if(desc)desc.textContent=L(ph.desc);
-    if(tag)tag.textContent=L(ph.tag);
-    ph.fn();
-  }
-
-  let snAnimId=null;
-  function snResizeCanvas(){ const r=diagEl.getBoundingClientRect(); canvas.width=r.width; canvas.height=r.height; }
-
-  function snLoop(ts){
-    snResizeCanvas();
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    if(ts-snLastT > SN_PHASES[snPhIdx].dur){ snLastT=ts; snSetPhase(snPhIdx+1); }
-
-    // Background dashed guide lines
-    const rnpu=snRect(tierNpu), rssd=snRect(tierSsd), rais=snRect(tierAis);
-    [[rnpu,rssd,'#1d6fe5'],[rssd,rais,'#8b5cf6']].forEach(([a,b,c])=>{
-      ctx.save(); ctx.setLineDash([3,5]); ctx.strokeStyle=c; ctx.lineWidth=1.5; ctx.globalAlpha=.16;
-      ctx.beginPath(); ctx.moveTo(a.cx,a.bot); ctx.lineTo(b.cx,b.top); ctx.stroke(); ctx.restore();
-    });
-
-    // Particles
-    snParticles=snParticles.filter(p=>!p.done);
-    snParticles.forEach(p=>{
-      p.prog+=p.speed; if(p.prog<0)return; if(p.prog>=1){p.done=true;return;}
-      const ease=p.prog<.5?2*p.prog*p.prog:1-Math.pow(-2*p.prog+2,2)/2;
-      const cx=p.sx+(p.ex-p.sx)*ease, cy=p.sy+(p.ey-p.sy)*ease;
-      const alpha=p.prog>.85?(1-p.prog)/.15:Math.min(1,p.prog*5);
-      ctx.save(); ctx.globalAlpha=p.alpha*alpha; ctx.fillStyle=p.color;
-      ctx.shadowBlur=8; ctx.shadowColor=p.color;
-      ctx.beginPath(); ctx.arc(cx,cy,p.size,0,Math.PI*2); ctx.fill(); ctx.restore();
-    });
-    snAnimId=requestAnimationFrame(snLoop);
-  }
-
-  if(snAnimId)cancelAnimationFrame(snAnimId);
-  snResizeCanvas(); snSetPhase(0); snLastT=performance.now();
-  snAnimId=requestAnimationFrame(snLoop);
-  _snRefreshPhase = () => snSetPhase(snPhIdx);
+// ══ 算云协同: HCS+ModelArts（上）+ 智算柜（下）—— 对齐算存协同机柜风格 ══
+function initCloudRack(){
+  drawCloudRack('cc-svg', 'boot');   // 特性一：系统启动态
+  drawCloudRack('cc-svg-2', 'scale'); // 特性二：手机银行流量增加后弹性调度
 }
+function drawCloudRack(svgId, mode){
+  const svgEl = document.getElementById(svgId);
+  if(!svgEl) return;
+  const isScale = mode === 'scale';
 
-// ══ 算云协同: 左右对比动态演示 ══
-let _ccAnimId = null;
-window.ccReplay = function(){ _ccSlot = 0; };
-let _ccSlot = 0;
+  const wrap = svgEl.parentElement;
+  const W = Math.max(360, wrap.clientWidth || wrap.parentElement?.clientWidth || 700);
 
-function initCloudAnim(){
-  const canvT   = document.getElementById('cc-canvas-trad');
-  const canvN   = document.getElementById('cc-canvas-new');
-  const gridT   = document.getElementById('cc-grid-trad');
-  const gridN   = document.getElementById('cc-grid-new');
-  const elUtilT = document.getElementById('cc-util-trad');
-  const elUtilN = document.getElementById('cc-util-new');
-  const elTime  = document.getElementById('cc-time-disp');
-  const elProg  = document.getElementById('cc-time-prog');
-  const elPhase = document.getElementById('cc-phase-txt');
-  const elElast = document.getElementById('cc-elastic-lbl');
-  if(!canvT || !canvN || !gridT || !gridN) return;
+  const epC = '#1d6fe5', busC = '#10b981', cmpC = '#8b5cf6';
+  const N = 12, group = 4, nGroups = N / group;
+  const cabGap = 3;
+  const grpGap = Math.max(12, Math.round(W * 0.023));
+  const totalGaps = (N-1)*cabGap + (nGroups-1)*grpGap;
+  const cabW = Math.max(16, Math.floor((W - totalGaps) / N));
+  const rowW = cabW*N + totalGaps;
+  const x0   = Math.max(0, Math.round((W - rowW) / 2));
+  const cabH = Math.max(150, Math.min(216, Math.round(cabW * 3.4)));
 
-  // 48 half-hour slots (00:00–23:30)
-  // Traditional: inference-dedicated cabs (blue, daytime) + training-dedicated cabs (purple, nighttime)
-  // Not interchangeable — each group lies idle when the other is active → combined util < 30%
-  const tradInfD = [  // inference (dedicated cabs, blue): active daytime only
-    .00,.00,.00,.00,.00,.00,.00,.00,  // 00:00–04:00 night — inference idle
-    .02,.05,.12,.20,.26,.28,.27,.26,  // 04:00–08:00 dawn ramp-up
-    .28,.30,.31,.32,.31,.30,.29,.30,  // 08:00–12:00 daytime
-    .30,.31,.32,.31,.30,.32,.30,.29,  // 12:00–16:00 daytime
-    .27,.22,.16,.10,.06,.03,.01,.00,  // 16:00–20:00 dusk ramp-down
-    .00,.00,.00,.00,.00,.00,.00,.00   // 20:00–24:00 night — inference idle
+  const scenIdxFz  = Math.min(8.5, Math.max(7, Math.round(cabW * 0.16)));
+  const scenNameFz = Math.min(10, Math.max(8, Math.round(cabW * 0.2)));
+  const scenH   = Math.round(scenIdxFz + scenNameFz + 10);
+  const scenY   = 2;
+  const scenGap = 18;
+  const topY    = scenY + scenH + scenGap;
+  const stHdrH  = 22;
+  const cellH   = Math.max(28, Math.round(cabH * 0.14));
+  const hcsH    = stHdrH + cellH + 15;
+  const linkH   = 52;
+  const cabTopY = topY + hcsH + linkH;
+  const legendY = cabTopY + cabH + 17;
+  const H       = legendY + 7;
+
+  svgEl.setAttribute('width', W);
+  svgEl.setAttribute('height', H);
+
+  let s = '';
+  const capH = 5, plinth = 4;
+  const hdrY  = cabTopY + capH + 3;
+  const hdrH  = Math.max(11, Math.round(cabH * 0.075));
+  const hdrFz  = Math.min(7.5, Math.max(5, Math.round(cabW * 0.145)));
+  const cabX = (i) => x0 + i*(cabW + cabGap) + Math.floor(i/group)*grpGap;
+  const cellW = cabW - 6;
+  const spanLeft  = (a) => cabX(a);
+  const spanRight = (b) => cabX(b) + cabW;
+  const spanW     = (a, b) => spanRight(b) - spanLeft(a);
+  const spanCx    = (a, b) => Math.round((spanLeft(a) + spanRight(b)) / 2);
+  const cabMid = (i) => Math.round(cabX(i) + cabW/2);
+
+  // boot：AI Coding 覆盖两组大 EP；scale：手机银行占用柜5–8，AI Coding 仅柜9–12
+  // 手机银行用紫色（同 AI 存储），便于对比启动态 / 扩容态机柜变化
+  const scenes = isScale ? [
+    {n: 1, lab: L('手机银行'), a: 0, b: 1, c: cmpC},
+    {n: 2, lab: L('风险控制'), a: 2, b: 3, c: busC},
+    {n: 1, lab: L('手机银行'), a: 4, b: 5, c: cmpC},
+    {n: 1, lab: L('手机银行'), a: 6, b: 7, c: cmpC},
+    {n: 3, lab: L('AI Coding'), a: 8, b: 11, c: busC},
+  ] : [
+    {n: 1, lab: L('手机银行'), a: 0, b: 1, c: cmpC},
+    {n: 2, lab: L('风险控制'), a: 2, b: 3, c: busC},
+    {n: 3, lab: L('AI Coding'), a: 4, b: 11, c: busC},
   ];
-  const tradTrnD = [  // training (dedicated cabs, purple): active nighttime only
-    .22,.22,.23,.23,.22,.22,.21,.20,  // 00:00–04:00 night training
-    .18,.14,.10,.06,.02,.00,.00,.00,  // 04:00–08:00 ramp-down as dawn breaks
-    .00,.00,.00,.00,.00,.00,.00,.00,  // 08:00–12:00 training idle
-    .00,.00,.00,.00,.00,.00,.00,.02,  // 12:00–16:00 training idle
-    .06,.10,.14,.18,.20,.22,.23,.23,  // 16:00–20:00 evening ramp-up
-    .23,.23,.22,.22,.22,.23,.23,.23   // 20:00–24:00 night training
-  ];
-  // 算云协同: utilization held in the 50–80% band (never above 80%),
-  // blue=infer day, purple=train night, amber=elastic peak
-  const newD = [
-    .58,.59,.60,.60,.59,.58,.57,.56,  // 00:00–04:00 night train
-    .57,.58,.60,.62,.61,.60,.58,.60,  // 04:00–08:00
-    .64,.68,.72,.74,.73,.71,.68,.70,  // 08:00–12:00 day
-    .72,.74,.76,.78,.80,.79,.77,.75,  // 12:00–16:00 day (peak 0.80)
-    .72,.70,.67,.64,.62,.60,.58,.59,  // 16:00–20:00
-    .61,.63,.64,.63,.61,.60,.59,.58   // 20:00–24:00 night
-  ];
+  scenes.forEach((sc) => {
+    const sx = spanLeft(sc.a);
+    const sw = spanW(sc.a, sc.b);
+    const cx = spanCx(sc.a, sc.b);
+    const rx = Math.min(8, Math.max(4, Math.round(scenH * 0.28)));
+    const scC = sc.c || busC;
+    s += `<rect x="${sx}" y="${scenY}" width="${sw}" height="${scenH}" rx="${rx}" fill="${scC}" opacity=".92"/>`;
+    s += `<text x="${cx}" y="${scenY+4+scenIdxFz}" text-anchor="middle" font-size="${scenIdxFz}" font-weight="700" fill="white" fill-opacity=".88" font-family="Microsoft YaHei,Arial,sans-serif">${Lp('场景 {n}', {n: sc.n})}</text>`;
+    s += `<text x="${cx}" y="${scenY+scenH-5}" text-anchor="middle" font-size="${scenNameFz}" font-weight="800" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${sc.lab}</text>`;
+  });
 
-  const N = 48;
-  const N_CABS = 12;
-  const isDay  = s => s >= 16 && s < 44;               // 08:00–22:00 = slots 16–43
-  const isPeak = s => (s>=18&&s<=21)||(s>=28&&s<=33);  // 09–11, 14–17
-
-  // Build cabinet grids
-  function buildGrid(el){
-    el.innerHTML = '';
-    const fills = [];
-    for(let i=0;i<N_CABS;i++){
-      const c = document.createElement('div');
-      c.className = 'cc-cab-c';
-      const f = document.createElement('div');
-      f.className = 'cc-cab-fill';
-      c.appendChild(f);
-      el.appendChild(c);
-      fills.push({c, f});
-    }
-    return fills;
+  s += `<rect x="${x0}" y="${topY}" width="${rowW}" height="${hcsH}" rx="3" fill="rgba(16,185,129,.12)" stroke="${busC}" stroke-width="1.6"/>`;
+  s += `<rect x="${x0}" y="${topY}" width="${rowW}" height="${stHdrH}" rx="2.5" fill="${busC}" opacity=".82"/>`;
+  const hcsFz = Math.min(13, Math.max(9, Math.round(stHdrH*.55)));
+  s += `<text x="${x0+11}" y="${topY+stHdrH/2+hcsFz*.36}" font-size="${hcsFz}" font-weight="800" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${L('HCS+ModelArts')}</text>`;
+  const hcsSub = L('弹性推理调度 · CPU 服务器池');
+  if(rowW > synTextW(hcsSub, 8.5) + synTextW(L('HCS+ModelArts'), hcsFz) + 40){
+    s += `<text x="${x0+rowW-11}" y="${topY+stHdrH/2+3}" text-anchor="end" font-size="8.5" font-weight="700" fill="white" fill-opacity=".9" font-family="Microsoft YaHei,Arial,sans-serif">${hcsSub}</text>`;
   }
-  const cabsT = buildGrid(gridT);
-  const cabsN = buildGrid(gridN);
+  const cellY = topY + stHdrH + 8;
+  const cpuFz = Math.min(6.5, Math.max(4.5, cellW * 0.12));
+  for(let i=0; i<N; i++){
+    const sx = cabX(i) + 3;
+    s += `<rect x="${sx}" y="${cellY}" width="${cellW}" height="${cellH}" rx="1.5" fill="${busC}" opacity=".2" stroke="${busC}" stroke-width=".8"/>`;
+    s += `<text x="${sx+cellW/2}" y="${cellY+cellH/2-cpuFz*0.15}" text-anchor="middle" font-size="${cpuFz}" font-weight="700" fill="${busC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('CPU')}</text>`;
+    s += `<text x="${sx+cellW/2}" y="${cellY+cellH/2+cpuFz*1.05}" text-anchor="middle" font-size="${cpuFz}" font-weight="700" fill="${busC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('服务器')}</text>`;
+  }
 
-  // Update traditional grid: cabs 0-6 = inference-dedicated (blue), cabs 7-11 = training-dedicated (purple)
-  // Neither group can use the other's idle time — shows the "siloed" waste
-  function updateGridTrad(slot){
-    const infUtil = tradInfD[slot];
-    const trnUtil = tradTrnD[slot];
-    const INF_CABS = 7;  // first 7 = inference-dedicated
-    cabsT.forEach(({c, f}, i)=>{
-      if(i < INF_CABS){
-        // Inference cabinet (blue) — active during daytime
-        if(infUtil > 0.02){
-          f.style.background = '#1d6fe5'; f.style.opacity='.48';
-          c.style.borderColor = 'rgba(29,111,229,.28)';
-        } else {
-          f.style.background = 'rgba(148,163,184,.14)'; f.style.opacity='1';
-          c.style.borderColor = 'rgba(148,163,184,.2)';
-        }
-      } else {
-        // Training cabinet (purple) — active during nighttime
-        if(trnUtil > 0.02){
-          f.style.background = '#8b5cf6'; f.style.opacity='.42';
-          c.style.borderColor = 'rgba(139,92,246,.28)';
-        } else {
-          f.style.background = 'rgba(148,163,184,.14)'; f.style.opacity='1';
-          c.style.borderColor = 'rgba(148,163,184,.2)';
-        }
-      }
+  const scenBot = scenY + scenH;
+  const hcsBot = topY + hcsH;
+  const lbTxt = L('负载均衡');
+  const lbFz = 9.5;
+  const lbW = synTextW(lbTxt, lbFz) + 18;
+  const lbH = 17;
+  const lbY = hcsBot + Math.round((linkH - lbH) / 2);
+  const drawLbFork = (a, b, destXs, pi, strokeC) => {
+    const lbC = strokeC || busC;
+    const lbCx = spanCx(a, b);
+    s += `<path d="M ${lbCx},${scenBot} V ${lbY}" fill="none" stroke="${lbC}" stroke-width="1.5" stroke-opacity=".7" stroke-dasharray="4 3.5" stroke-linecap="round">
+      <animate attributeName="stroke-dashoffset" values="15;0" dur="${0.75+pi*.05}s" repeatCount="indefinite" calcMode="linear"/>
+    </path>`;
+    s += `<rect x="${lbCx-lbW/2}" y="${lbY}" width="${lbW}" height="${lbH}" rx="${lbH/2}" fill="${lbC}" opacity=".92"/>`;
+    s += `<text x="${lbCx}" y="${lbY+lbH/2+lbFz*.36}" text-anchor="middle" font-size="${lbFz}" font-weight="800" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${lbTxt}</text>`;
+    const forkY = lbY + lbH;
+    const splitY = forkY + Math.max(6, Math.round((cabTopY - forkY) * 0.28));
+    s += `<path d="M ${lbCx},${forkY} V ${splitY}" fill="none" stroke="${lbC}" stroke-width="1.5" stroke-opacity=".65" stroke-linecap="round"/>`;
+    destXs.forEach((tx, ti) => {
+      s += `<path d="M ${lbCx},${splitY} L ${tx},${cabTopY-6}" fill="none" stroke="${lbC}" stroke-width="1.4" stroke-opacity=".6" stroke-dasharray="4 3.5" stroke-linecap="round">
+        <animate attributeName="stroke-dashoffset" values="15;0" dur="${0.7+ti*.08}s" repeatCount="indefinite" calcMode="linear"/>
+      </path>`;
+      s += `<polygon points="${tx-3.5},${cabTopY-5.5} ${tx+3.5},${cabTopY-5.5} ${tx},${cabTopY}" fill="${lbC}" opacity=".75"/>`;
     });
-  }
-
-  // Update new grid (inference day=blue, training night=purple, peak=amber)
-  function updateGridNew(slot){
-    const util    = newD[slot];
-    const day     = isDay(slot);
-    const peak    = isPeak(slot);
-    const nActive = Math.round(util * N_CABS);
-    const nPeak   = peak ? Math.min(2, N_CABS - nActive + 1) : 0;
-    elElast.textContent = peak ? L('⚡ 弹性扩容中') : '';
-    cabsN.forEach(({c, f}, i)=>{
-      let bg, bc;
-      if(i < nActive - nPeak){
-        bg = day ? '#1d6fe5' : '#8b5cf6';
-        bc = day ? 'rgba(29,111,229,.32)' : 'rgba(139,92,246,.32)';
-        f.style.opacity = '.65';
-      } else if(i < nActive){
-        bg = '#f59e0b'; bc = 'rgba(245,158,11,.38)'; f.style.opacity='.80';
-      } else {
-        bg = 'rgba(148,163,184,.1)'; bc = 'rgba(148,163,184,.18)'; f.style.opacity='1';
-      }
-      f.style.background = bg; c.style.borderColor = bc;
-    });
-  }
-
-  // Draw area chart on canvas (segment-by-segment for per-slot coloring)
-  // For isTrad: infD = tradInfD, trnD = tradTrnD → draws stacked blue (inference) + purple (training)
-  // For !isTrad: infD = newD, trnD = null → original single-color rendering
-  function drawChart(canvas, infD, endSlot, isTrad, trnD){
-    const W = canvas.clientWidth; const H = canvas.clientHeight;
-    if(!W || !H) return;
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0,0,W,H);
-
-    // Grid lines
-    ctx.setLineDash([2,3]);
-    ctx.strokeStyle = 'rgba(0,0,0,.07)';
-    ctx.lineWidth = 1;
-    [.25,.50,.75,1.0].forEach(v => {
-      const y = Math.round(H - v*H*0.86 - 6);
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
-    });
-    ctx.setLineDash([]);
-
-    // Ghost full curve (shows total)
-    const ghostD = trnD ? infD.map((v,i)=>v+trnD[i]) : infD;
-    ctx.beginPath();
-    ghostD.forEach((v,i)=>{ const x=(i/(N-1))*W, y=H-v*H*0.86-6; i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
-    ctx.strokeStyle='rgba(0,0,0,.06)'; ctx.lineWidth=1; ctx.stroke();
-
-    if(endSlot < 1) return;
-    const end = Math.min(endSlot, N-1);
-    const baseY = H - 3;
-
-    if(isTrad && trnD){
-      // Stacked: purple (training) at bottom, blue (inference) stacked on top
-      for(let i=1; i<=end; i++){
-        const x0 = ((i-1)/(N-1))*W, x1 = (i/(N-1))*W;
-        const ip = infD[i-1], ic = infD[i];
-        const tp = trnD[i-1], tc = trnD[i];
-        const yTrnP = H - tp*H*0.86 - 6,  yTrnC = H - tc*H*0.86 - 6;
-        const yTotP = H - (ip+tp)*H*0.86 - 6, yTotC = H - (ic+tc)*H*0.86 - 6;
-
-        // Training fill (purple, bottom layer)
-        if(tc > 0.005 || tp > 0.005){
-          ctx.beginPath();
-          ctx.moveTo(x0,baseY); ctx.lineTo(x0,yTrnP); ctx.lineTo(x1,yTrnC); ctx.lineTo(x1,baseY);
-          ctx.closePath(); ctx.fillStyle='rgba(139,92,246,.18)'; ctx.fill();
-          ctx.beginPath(); ctx.moveTo(x0,yTrnP); ctx.lineTo(x1,yTrnC);
-          ctx.strokeStyle='#8b5cf6'; ctx.lineWidth=1.5; ctx.stroke();
-        }
-        // Inference fill (blue, stacked on top of training)
-        if(ic > 0.005 || ip > 0.005){
-          ctx.beginPath();
-          ctx.moveTo(x0,yTrnP); ctx.lineTo(x0,yTotP); ctx.lineTo(x1,yTotC); ctx.lineTo(x1,yTrnC);
-          ctx.closePath(); ctx.fillStyle='rgba(29,111,229,.18)'; ctx.fill();
-          ctx.beginPath(); ctx.moveTo(x0,yTotP); ctx.lineTo(x1,yTotC);
-          ctx.strokeStyle='#1d6fe5'; ctx.lineWidth=1.5; ctx.stroke();
-        }
-      }
-      // Dot at combined top
-      const dotX = (end/(N-1))*W;
-      const dotY = H - (infD[end]+trnD[end])*H*0.86 - 6;
-      ctx.beginPath(); ctx.arc(dotX,dotY,3.5,0,Math.PI*2);
-      ctx.fillStyle = trnD[end] > infD[end] ? '#8b5cf6' : '#1d6fe5'; ctx.fill();
-    } else {
-      // New scheme: original segment-by-segment coloring
-      for(let i=1; i<=end; i++){
-        const x0 = ((i-1)/(N-1))*W, y0 = H - infD[i-1]*H*0.86 - 6;
-        const x1 = (i/(N-1))*W,     y1 = H - infD[i]  *H*0.86 - 6;
-        const day  = isDay(i), peak = isPeak(i);
-        const fillC = peak?'rgba(245,158,11,.22)':(day?'rgba(29,111,229,.20)':'rgba(139,92,246,.22)');
-        const lineC = peak?'#f59e0b':(day?'#1d6fe5':'#8b5cf6');
-        ctx.beginPath();
-        ctx.moveTo(x0,baseY); ctx.lineTo(x0,y0); ctx.lineTo(x1,y1); ctx.lineTo(x1,baseY);
-        ctx.closePath(); ctx.fillStyle=fillC; ctx.fill();
-        ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1);
-        ctx.strokeStyle=lineC; ctx.lineWidth=2; ctx.stroke();
-      }
-      const dotX=(end/(N-1))*W, dotY=H-infD[end]*H*0.86-6;
-      ctx.beginPath(); ctx.arc(dotX,dotY,3.5,0,Math.PI*2);
-      const dotDay=isDay(end), dotPk=isPeak(end);
-      ctx.fillStyle=dotPk?'#f59e0b':dotDay?'#1d6fe5':'#8b5cf6'; ctx.fill();
-    }
-
-    // % labels on right
-    ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.font = '9px Arial'; ctx.textAlign = 'right';
-    ['100%','75%','50%','25%'].forEach((lbl,i)=>{
-      ctx.fillText(lbl, W-2, Math.round(H*0.07 + i*(H*0.86*0.333)));
-    });
-  }
-
-  // Running average up to current slot (optional arr2 for stacked sum)
-  function avg(arr, n, arr2){ const d=arr2?arr.map((v,i)=>v+arr2[i]):arr; return Math.round(d.slice(0,n+1).reduce((a,b)=>a+b,0)/(n+1)*100); }
-
-  // Animation loop: one slot per 140ms → 48×140 = ~6.7s per cycle
-  const STEP_MS = 140;
-  let lastT = 0;
-  function loop(t){
-    if(t - lastT >= STEP_MS){
-      lastT = t;
-      const s = _ccSlot;
-      const hh = Math.floor(s/2), mm = (s%2)*30;
-      elTime.textContent = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
-      elProg.style.width = `${(s/(N-1))*100}%`;
-      const day = isDay(s), peak = isPeak(s);
-      elPhase.textContent = peak ? L('⚡ 弹性扩容') : (day ? L('☀ 白天推理') : L('🌙 夜间训练'));
-      elPhase.style.color = peak ? '#f59e0b' : (day ? 'var(--ai)' : 'var(--cmp)');
-
-      elUtilT.textContent = avg(tradInfD, s, tradTrnD) + '%';
-      elUtilN.textContent = avg(newD,  s) + '%';
-
-      drawChart(canvT, tradInfD, s, true, tradTrnD);
-      drawChart(canvN, newD,  s, false);
-      updateGridTrad(s);
-      updateGridNew(s);
-
-      _ccSlot = (s + 1) % N;
-    }
-    _ccAnimId = requestAnimationFrame(loop);
-  }
-  if(_ccAnimId) cancelAnimationFrame(_ccAnimId);
-  _ccAnimId = requestAnimationFrame(loop);
-  _ccRefreshLabels = function () {
-    const s = _ccSlot;
-    const day = isDay(s), peak = isPeak(s);
-    if (elPhase) {
-      elPhase.textContent = peak ? L('⚡ 弹性扩容') : (day ? L('☀ 白天推理') : L('🌙 夜间训练'));
-      elPhase.style.color = peak ? '#f59e0b' : (day ? 'var(--ai)' : 'var(--cmp)');
-    }
-    if (elElast) elElast.textContent = peak ? L('⚡ 弹性扩容中') : '';
   };
-}
-
-// ══ SLO DUAL-QUEUE ANIMATION ══
-function initSLOAnim(){
-  const reqQ   = document.getElementById('req-queue');
-  const instQ  = document.getElementById('inst-queue');
-  const statEl = document.getElementById('slo-status');
-  if(!reqQ || !instQ) return;
-
-  const reqData = [
-    {cls:'slo-l1', label:'🔴 L1 · 实时交易风控'},
-    {cls:'slo-l1', label:'🔴 L1 · 实时欺诈监测'},
-    {cls:'slo-l2', label:'🟠 L2 · 智能投顾建议'},
-    {cls:'slo-l2', label:'🟠 L2 · 客户身份验证'},
-    {cls:'slo-l3', label:'🔵 L3 · 智能营销推荐'},
-    {cls:'slo-l3', label:'🔵 L3 · 投资组合分析'},
-    {cls:'slo-l4', label:'⚪ L4 · 市场趋势预测'},
-    {cls:'slo-l4', label:'⚪ L4 · 合规报告生成'},
-  ];
-
-  const instStates = [
-    [{f:true,l:'🟢 实例 1 · 空闲'},{f:true,l:'🟢 实例 2 · 空闲'},{f:true,l:'🟢 实例 3 · 空闲'},{f:false,l:'🟡 实例 4 · 处理中'},{f:false,l:'🟡 实例 5 · 处理中'},{f:false,l:'🔴 实例 6 · 高负载'}],
-    [{f:true,l:'🟢 实例 2 · 空闲'},{f:true,l:'🟢 实例 5 · 空闲'},{f:false,l:'🟡 实例 1 · 处理中'},{f:false,l:'🟡 实例 3 · 处理中'},{f:false,l:'🟡 实例 4 · 处理中'},{f:false,l:'🔴 实例 6 · 高负载'}],
-    [{f:true,l:'🟢 实例 3 · 空闲'},{f:true,l:'🟢 实例 4 · 空闲'},{f:true,l:'🟢 实例 6 · 空闲'},{f:false,l:'🟡 实例 1 · 处理中'},{f:false,l:'🟡 实例 2 · 处理中'},{f:false,l:'🟡 实例 5 · 处理中'}],
-    [{f:true,l:'🟢 实例 1 · 空闲'},{f:false,l:'🟡 实例 2 · 处理中'},{f:false,l:'🟡 实例 3 · 处理中'},{f:false,l:'🟡 实例 4 · 处理中'},{f:false,l:'🟡 实例 5 · 处理中'},{f:false,l:'🔴 实例 6 · 高负载'}],
-  ];
-
-  let instIdx = 0, reqOffset = 0;
-
-  function renderQueues(){
-    reqQ.innerHTML = '';
-    for(let i=0;i<6;i++){
-      const d = reqData[(reqOffset+i)%reqData.length];
-      const el = document.createElement('div');
-      el.className = 'slo-item '+d.cls;
-      el.textContent = L(d.label);
-      reqQ.appendChild(el);
-    }
-    instQ.innerHTML = '';
-    const state = instStates[instIdx%instStates.length];
-    state.forEach(s=>{
-      const el = document.createElement('div');
-      el.className = 'slo-item '+(s.f?'slo-free':'slo-busy');
-      el.textContent = L(s.l);
-      instQ.appendChild(el);
-    });
+  drawLbFork(0, 1, [cabMid(0), cabMid(1)], 0, cmpC);
+  drawLbFork(2, 3, [cabMid(2), cabMid(3)], 1, busC);
+  if(isScale){
+    drawLbFork(4, 5, [cabMid(4), cabMid(5)], 2, cmpC);
+    drawLbFork(6, 7, [cabMid(6), cabMid(7)], 3, cmpC);
+    drawLbFork(8, 11, [
+      Math.round((cabX(8)+cabX(9)+cabW)/2),
+      Math.round((cabX(10)+cabX(11)+cabW)/2),
+    ], 4, busC);
+  } else {
+    drawLbFork(4, 11, [
+      Math.round((cabX(4)+cabX(7)+cabW)/2),
+      Math.round((cabX(8)+cabX(11)+cabW)/2),
+    ], 2, busC);
   }
 
-  function doMatch(){
-    const reqItems  = reqQ.querySelectorAll('.slo-item');
-    const instItems = instQ.querySelectorAll('.slo-item');
-    const freeInst  = [...instItems].filter(el=>el.classList.contains('slo-free'));
-    let delay = 0;
-    const pairCount = Math.min(reqItems.length, freeInst.length, 3);
-    for(let i=0;i<pairCount;i++){
-      const ri=reqItems[i], ii=freeInst[i];
-      setTimeout(()=>{
-        ri.classList.add('slo-flash'); ii.classList.add('slo-flash');
-        statEl.textContent = Lp('L{idx}→实例 匹配', { idx: i+1 });
-        setTimeout(()=>{ ri.classList.remove('slo-flash'); ii.classList.remove('slo-flash'); }, 400);
-      }, delay);
-      delay += 380;
+  for(let i=0; i<N; i++){
+    const cX = cabX(i);
+    const cx = cX + cabW/2;
+    const isBankCab = (i < 2) || (isScale && i >= 4 && i < 8);
+    const cabC = isBankCab ? cmpC : epC;
+    s += `<rect x="${cX}" y="${cabTopY}" width="${cabW}" height="${cabH}" rx="2.5" fill="${cabC}" opacity=".1" stroke="${cabC}" stroke-width="1.4"/>`;
+    s += `<rect x="${cX}" y="${cabTopY}" width="${cabW}" height="${capH}" rx="1.5" fill="${cabC}" opacity=".42"/>`;
+    s += `<rect x="${cX+2}" y="${cabTopY+cabH-plinth}" width="${cabW-4}" height="${plinth}" rx="1" fill="${cabC}" opacity=".2"/>`;
+    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${(cabTopY+cabH-plinth-4)-hdrY}" rx="2" fill="${cabC}" opacity=".14" stroke="${cabC}" stroke-width="1.1"/>`;
+    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${hdrH}" rx="2" fill="${cabC}" opacity=".5"/>`;
+    s += `<text x="${cx}" y="${hdrY+Math.round(hdrH*.74)}" text-anchor="middle" font-size="${hdrFz}" font-weight="700" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`;
+
+    const bodyY = hdrY + hdrH + 4;
+    const bodyBot = cabTopY + cabH - plinth - 5;
+    const bodyH = bodyBot - bodyY;
+    const npuN = 8, npuGap = 2;
+    const npuH = Math.max(8, Math.floor((bodyH - (npuN-1)*npuGap) / npuN));
+    const npuW = cabW - 10;
+    const npuX = cX + 5;
+    const npuFz = Math.min(6.5, Math.max(4.5, npuW * 0.18));
+    const npuYs = [];
+    for(let n=0; n<npuN; n++){
+      const ny = bodyY + n*(npuH + npuGap);
+      npuYs.push(ny);
+      s += `<rect x="${npuX}" y="${ny}" width="${npuW}" height="${npuH}" rx="1.5" fill="${cabC}" opacity=".32" stroke="${cabC}" stroke-width=".8"/>`;
+      s += `<text x="${cx}" y="${ny+npuH/2+npuFz*.36}" text-anchor="middle" font-size="${npuFz}" font-weight="700" fill="${cabC}" font-family="Arial,sans-serif">NPU</text>`;
     }
-    setTimeout(()=>{ statEl.textContent = L('✅ SLO 98%+'); }, delay);
-    setTimeout(()=>{ statEl.textContent = L('匹配中'); }, delay+1500);
+    const isQwen32 = isScale ? ((i < 2) || (i >= 4 && i < 8)) : (i < 2);
+    const isQwen72 = (i === 2 || i === 3);
+    if(isQwen32 || isQwen72){
+      const pad = 1.5;
+      const qFz = Math.min(7.5, Math.max(5, cabW * 0.16));
+      const qC = isQwen32 ? cmpC : epC;
+      if(isQwen32){
+        for(let q=0; q<2; q++){
+          const y0 = npuYs[q*4];
+          const y1 = npuYs[q*4+3] + npuH;
+          s += `<rect x="${npuX-pad}" y="${y0-pad}" width="${npuW+pad*2}" height="${y1-y0+pad*2}" rx="2.5" fill="none" stroke="${qC}" stroke-width="1.3" stroke-dasharray="3.5 2.5" opacity=".9"/>`;
+          const midY = (y0 + y1) / 2;
+          const lab = 'Qwen-32B';
+          const labW = Math.min(npuW - 4, synTextW(lab, qFz) + 8);
+          const labH = qFz + 5;
+          s += `<rect x="${cx-labW/2}" y="${midY-labH/2}" width="${labW}" height="${labH}" rx="3" fill="${qC}" opacity=".82"/>`;
+          s += `<text x="${cx}" y="${midY+qFz*.36}" text-anchor="middle" font-size="${qFz}" font-weight="800" fill="white" font-family="Arial,sans-serif">Qwen-32B</text>`;
+        }
+      } else {
+        const y0 = npuYs[0];
+        const y1 = npuYs[7] + npuH;
+        s += `<rect x="${npuX-pad}" y="${y0-pad}" width="${npuW+pad*2}" height="${y1-y0+pad*2}" rx="2.5" fill="none" stroke="${qC}" stroke-width="1.3" stroke-dasharray="3.5 2.5" opacity=".9"/>`;
+        const midY = (y0 + y1) / 2;
+        const lab = 'Qwen-72B';
+        const labW = Math.min(npuW - 4, synTextW(lab, qFz) + 8);
+        const labH = qFz + 5;
+        s += `<rect x="${cx-labW/2}" y="${midY-labH/2}" width="${labW}" height="${labH}" rx="3" fill="${qC}" opacity=".82"/>`;
+        s += `<text x="${cx}" y="${midY+qFz*.36}" text-anchor="middle" font-size="${qFz}" font-weight="800" fill="white" font-family="Arial,sans-serif">Qwen-72B</text>`;
+      }
+    }
   }
 
-  renderQueues();
-  setTimeout(doMatch, 800);
-  _sloRefreshQueues = renderQueues;
-  setInterval(()=>{
-    reqOffset = (reqOffset+2)%reqData.length;
-    instIdx++;
-    renderQueues();
-    setTimeout(doMatch, 400);
-  }, 4200);
+  const dsBodyTop = hdrY + hdrH + 2;
+  const dsBodyBot = cabTopY + cabH - plinth - 4;
+  const dsGroups = isScale ? [2] : [1, 2];
+  dsGroups.forEach((g) => {
+    const gX = cabX(g*group);
+    const gW = group*cabW + (group-1)*cabGap;
+    const gCx = gX + gW/2;
+    s += `<rect x="${gX-1}" y="${cabTopY}" width="${gW+2}" height="${dsBodyBot-cabTopY+1}" rx="3" fill="${epC}" opacity=".1" stroke="${epC}" stroke-width="1.7"/>`;
+    const pillFz2 = Math.min(9, Math.max(5.5, gW * 0.05));
+    const lineH  = pillFz2 + 2;
+    const pillW2 = Math.max(gW - 6, 36);
+    const pillH2 = lineH*2 + 7;
+    const pillY2 = dsBodyTop + Math.round(((dsBodyBot - dsBodyTop) - pillH2) / 2) - 6;
+    s += `<rect x="${gCx-pillW2/2}" y="${pillY2}" width="${pillW2}" height="${pillH2}" rx="4" fill="${epC}" opacity=".85"/>`;
+    s += `<text x="${gCx}" y="${pillY2+lineH}" text-anchor="middle" font-size="${pillFz2}" fill="white" font-family="Arial,sans-serif" font-weight="800">DeepSeek</text>`;
+    s += `<text x="${gCx}" y="${pillY2+lineH*2+2}" text-anchor="middle" font-size="${pillFz2}" fill="white" font-family="Arial,sans-serif" font-weight="800">V4-Flash</text>`;
+    const npuLab = L('64×NPU');
+    const npuLabFz = Math.min(8, Math.max(6, gW * 0.042));
+    s += `<text x="${gCx}" y="${pillY2+pillH2+npuLabFz+4}" text-anchor="middle" font-size="${npuLabFz}" font-weight="700" fill="${epC}" font-family="Arial,sans-serif" opacity=".85">${npuLab}</text>`;
+  });
+
+  const halfW = rowW / 2;
+  s += `<rect x="${x0+2}" y="${legendY-8}" width="9" height="9" rx="2" fill="${busC}" opacity=".55"/>`;
+  s += `<text x="${x0+14}" y="${legendY}" font-size="8.5" font-weight="700" fill="${busC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('HCS+ModelArts（CPU 服务器）')}</text>`;
+  s += `<rect x="${x0+halfW+4}" y="${legendY-8}" width="9" height="9" rx="2" fill="${epC}" opacity=".55"/>`;
+  const legendAi = isScale
+    ? L('AI 智算柜 ×12（手机银行扩容 · 弹性调度）')
+    : L('AI 智算柜 ×12（4机大EP · 系统启动态）');
+  s += `<text x="${x0+halfW+16}" y="${legendY}" font-size="8.5" font-weight="700" fill="${epC}" font-family="Microsoft YaHei,Arial,sans-serif">${legendAi}</text>`;
+
+  svgEl.innerHTML = s;
 }
 </script>
 
-<script src="js/aidc-locale-bridge.js?v=21"></script>
-<script src="js/i18n.js?v=21"></script>
-<script src="js/lang-switch.js?v=21"></script>
-<script src="js/i18n-bootstrap.js?v=21"></script>
+<script src="js/aidc-locale-bridge.js?v=64"></script>
+<script src="js/i18n.js?v=64"></script>
+<script src="js/lang-switch.js?v=64"></script>
+<script src="js/i18n-bootstrap.js?v=64"></script>
 <script>
   AidcI18nBootstrap.bootstrap('ai-dc-deployment-perf', {
     onReady: function () {

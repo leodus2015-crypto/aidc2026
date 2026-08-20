@@ -1,6 +1,16 @@
 aidc 静态站点归档
-版本：v2026.08.12（build 21）
-日期：2026-08-12
+版本：v2026.08.21（build 见 data/site-release.json；部署时 bump）
+日期：2026-08-21
+
+本版要点（v22 / build 64+）
+──────────────
+  · 产品协同 · 算云协同：特性一「算力虚拟化 / 多模型部署·安全隔离」（系统启动态）
+    与特性二「弹性调度 / 任务优先级·模型快速加载」（手机银行扩容态）双态示意
+  · 12 柜 × 8 NPU：boot 态柜 1–2 手机银行、3–4 风控、5–12 AI Coding 两组 DeepSeek EP；
+    scale 态手机银行扩至柜 5–8，AI Coding 收拢柜 9–12；手机银行场景/机柜紫色高亮
+  · 站点状态页 status.html（About US 头像悬停 2s 入口）+ /api/analytics/*
+  · Nginx 日志解析 → MySQL analytics_* 表；口令 = ADMIN_TOKEN（默认 aidc2026）
+  · 全站解锁密码种子 site.unlock_password = aidc2026（与 ADMIN_TOKEN 对齐）
 
 本版要点（v21）
 ──────────────
@@ -47,6 +57,9 @@ aidc 静态站点归档
   capacity.html           → index.html#capacity
   docs.html               → index.html#docs
 
+【内部 / 运维页】
+  status.html             站点状态（访问观测）；i18n/status.{zh,en}.json、js/status-page.js
+
 【资源与脚本】
   preview-8011.sh
   assets/（团队头像等）
@@ -64,6 +77,9 @@ aidc 静态站点归档
   scripts/merge-usage-events-csv.py     About US Token CSV 增量合并与代码量刷新
   README.md                             仓库说明（含站点 Logo）
   deploy/nginx-static-cache.conf、deploy/CACHE.md
+  deploy/nginx-analytics.conf、deploy/ANALYTICS.md  访问观测（Nginx 日志看板）
+  sql/analytics.sql、scripts/analytics/parse_nginx_log.py、api/analytics.py、api/geo_lookup.py
+  data/analytics/.gitkeep（summary.json 可由解析脚本生成，勿提交敏感明细）
 
 站点结构
 ────────
@@ -88,12 +104,15 @@ aidc 静态站点归档
   云端配置键 dc3d.case_a / dc3d.case_b（MySQL app_config JSON，非逐字段建表）。
   embed 模式：子页 URL 加 ?embed=1，样式见 css/embed.css、js/embed-mode.js；
   embed 下保留精简顶栏（俯视/水平/透视/Cooling），隐藏 Logo 与主题切换。
+  站点状态：status.html（内部页；About US 头像悬停 2s 入口）+ deploy/ANALYTICS.md。
+  云端 MySQL：部署后执行 python3 scripts/seed-config.py；首次访问观测需 mysql < sql/analytics.sql。
 
 本地预览
 ────────
   ./preview-8011.sh
   http://127.0.0.1:8011/aidc/index.html
   AI DC 规划：http://127.0.0.1:8011/aidc/ai-dc-design.html
+  站点状态：http://127.0.0.1:8011/aidc/status.html（口令 aidc2026）
 
 部署（GitHub → 云服务器 aidc2026.cn）
 ────────────────────────────────────
@@ -101,6 +120,11 @@ aidc 静态站点归档
   ./scripts/deploy.sh --full-reset "全量同步"   # 首次：清空服务器再 rsync
   ./scripts/deploy.sh "说明"                    # 日常：commit + push + rsync
   push 到 main 且配置 GitHub Secrets 后，Actions 自动部署（.github/workflows/deploy.yml）
+  部署后（服务器项目根）：
+    python3 scripts/seed-config.py              # 同步 app_config 种子
+    mysql -u … -p aidc < sql/analytics.sql      # 首次建访问观测表
+    # 确认 .env：ADMIN_TOKEN=aidc2026、DATABASE_*、ANALYTICS_LOG=…
+    ./start-api-prod.sh                         # 重启 API
 
 已移除（勿再引用）
 ──────────────────

@@ -57,6 +57,8 @@
     "m1Name": "来自大城市的人 · 版主",
     "m1Role": "网站负责人、整体规划和设计",
     "m1Alt": "来自大城市的人",
+    "statusEntryBadge": "状态",
+    "statusEntryAria": "悬停约 2 秒后可进入站点状态",
     "m2Name": "Cursor Agent · 程序员",
     "m2Role": "组织若干个大模型，将产品经理的构想落地",
     "m2Alt": "Cursor",

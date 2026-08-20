@@ -1,0 +1,176 @@
+{
+  "generated_at": "2026-08-16T11:04:29",
+  "source": "json-only",
+  "range": {
+    "start": "2026-08-03",
+    "end": "2026-08-16",
+    "days": 14
+  },
+  "totals": {
+    "pv": 180,
+    "uv": 5,
+    "uv_sum_daily": 62
+  },
+  "daily": [
+    {
+      "day": "2026-08-03",
+      "pv": 7,
+      "uv": 2,
+      "html_pv": 7
+    },
+    {
+      "day": "2026-08-04",
+      "pv": 15,
+      "uv": 5,
+      "html_pv": 15
+    },
+    {
+      "day": "2026-08-05",
+      "pv": 11,
+      "uv": 4,
+      "html_pv": 11
+    },
+    {
+      "day": "2026-08-06",
+      "pv": 10,
+      "uv": 5,
+      "html_pv": 10
+    },
+    {
+      "day": "2026-08-07",
+      "pv": 5,
+      "uv": 4,
+      "html_pv": 5
+    },
+    {
+      "day": "2026-08-08",
+      "pv": 9,
+      "uv": 4,
+      "html_pv": 9
+    },
+    {
+      "day": "2026-08-09",
+      "pv": 8,
+      "uv": 5,
+      "html_pv": 8
+    },
+    {
+      "day": "2026-08-10",
+      "pv": 15,
+      "uv": 5,
+      "html_pv": 15
+    },
+    {
+      "day": "2026-08-11",
+      "pv": 13,
+      "uv": 4,
+      "html_pv": 13
+    },
+    {
+      "day": "2026-08-12",
+      "pv": 10,
+      "uv": 4,
+      "html_pv": 10
+    },
+    {
+      "day": "2026-08-13",
+      "pv": 18,
+      "uv": 5,
+      "html_pv": 18
+    },
+    {
+      "day": "2026-08-14",
+      "pv": 16,
+      "uv": 5,
+      "html_pv": 16
+    },
+    {
+      "day": "2026-08-15",
+      "pv": 20,
+      "uv": 5,
+      "html_pv": 20
+    },
+    {
+      "day": "2026-08-16",
+      "pv": 23,
+      "uv": 5,
+      "html_pv": 23
+    }
+  ],
+  "pages": [
+    {
+      "path": "/about-us.html",
+      "hits": 32
+    },
+    {
+      "path": "/post-training.html",
+      "hits": 29
+    },
+    {
+      "path": "/ai-dc-deployment-perf.html",
+      "hits": 27
+    },
+    {
+      "path": "/status.html",
+      "hits": 27
+    },
+    {
+      "path": "/index.html",
+      "hits": 27
+    },
+    {
+      "path": "/white-paper.html",
+      "hits": 20
+    },
+    {
+      "path": "/ai-dc-design.html",
+      "hits": 18
+    }
+  ],
+  "ips": [
+    {
+      "ip": "111.229.*.*",
+      "hits": 43,
+      "country": "中国",
+      "city": "上海"
+    },
+    {
+      "ip": "36.112.*.*",
+      "hits": 43,
+      "country": "中国",
+      "city": "北京"
+    },
+    {
+      "ip": "120.36.*.*",
+      "hits": 34,
+      "country": "中国",
+      "city": "厦门市"
+    },
+    {
+      "ip": "114.55.*.*",
+      "hits": 30,
+      "country": "中国",
+      "city": "杭州"
+    },
+    {
+      "ip": "58.210.*.*",
+      "hits": 30,
+      "country": "中国",
+      "city": "苏州市"
+    }
+  ],
+  "status": [
+    {
+      "status": 200,
+      "hits": 273
+    },
+    {
+      "status": 304,
+      "hits": 18
+    },
+    {
+      "status": 404,
+      "hits": 10
+    }
+  ]
+}

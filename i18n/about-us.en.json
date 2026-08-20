@@ -57,6 +57,8 @@
     "m1Name": "Urban Native · Moderator",
     "m1Role": "Site lead, overall planning and design",
     "m1Alt": "Urban Native",
+    "statusEntryBadge": "Status",
+    "statusEntryAria": "Hover about 2 seconds, then click to open site status",
     "m2Name": "Cursor Agent · Developer",
     "m2Role": "Orchestrates multiple LLMs to ship the product vision",
     "m2Alt": "Cursor",

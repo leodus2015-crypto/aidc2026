@@ -6,10 +6,10 @@
   <meta name="description" content="About US · AIDC 2026 站点使命、AI 使用与开发团队介绍。" />
   <meta name="theme-color" content="#f8fafc" />
   <title>About US · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=21"></script>
-  <script src="js/theme-switch.js?v=21"></script>
+  <script src="js/aidc-theme.js?v=64"></script>
+  <script src="js/theme-switch.js?v=64"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/theme.css?v=21" />
+  <link rel="stylesheet" href="css/theme.css?v=64" />
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="about-us">
   <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -18,7 +18,7 @@
       data-i18n-aria-label="nav.aria"
       aria-label="主导航"
     >
-      <a href="index.html" class="flex min-w-0 shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
+      <a href="ai-dc-design.html" class="flex min-w-0 shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
         <img src="aidc2026-logo.svg" alt="AIDC 2026 · AI Data Center" width="593" height="118" class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10" />
       </a>
 
@@ -31,6 +31,7 @@
           <li><a href="about-us.html" class="inline-block border-b-2 border-blue-600 pb-1 text-blue-700" aria-current="page" data-i18n="nav.aboutUs">About US</a></li>
         </ul>
         <div id="lang-switch-root" class="shrink-0"></div>
+        <div id="theme-switch-root" class="shrink-0"></div>
       </div>
     </nav>
   </header>
@@ -154,9 +155,18 @@
           </div>
           <ul class="mt-6 space-y-4">
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
-              <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
-                <img src="assets/avatar_tech_cto_head_only.png" data-i18n-alt="team.m1Alt" alt="来自大城市的人" width="48" height="48" class="h-full w-full object-cover" />
-              </div>
+              <a
+                href="status.html"
+                id="status-entry-avatar"
+                class="aidc-status-avatar group relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-slate-200"
+                data-i18n-aria-label="team.statusEntryAria"
+                aria-label="悬停约 2 秒后可进入站点状态"
+                aria-disabled="true"
+              >
+                <span class="aidc-status-avatar__ring" aria-hidden="true"></span>
+                <img src="assets/avatar_tech_cto_head_only.png" data-i18n-alt="team.m1Alt" alt="来自大城市的人" width="48" height="48" class="relative z-[1] h-full w-full object-cover" />
+                <span class="aidc-status-avatar__badge" data-i18n="team.statusEntryBadge">状态</span>
+              </a>
               <div class="min-w-0">
                 <p class="font-semibold text-slate-900" data-i18n="team.m1Name"></p>
                 <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m1Role"></p>
@@ -264,11 +274,11 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=21"></script>
-<script src="js/i18n.js?v=21"></script>
-  <script src="js/lang-switch.js?v=21"></script>
-  <script src="js/i18n-bootstrap.js?v=21"></script>
-  <script src="js/about-us-page.js?v=21"></script>
+    <script src="js/aidc-asset-version.js?v=64"></script>
+<script src="js/i18n.js?v=64"></script>
+  <script src="js/lang-switch.js?v=64"></script>
+  <script src="js/i18n-bootstrap.js?v=64"></script>
+  <script src="js/about-us-page.js?v=64"></script>
   <script>
     AidcI18nBootstrap.bootstrap('about-us', { onReady: function () { initAboutUsPage(); } });
   </script>
