@@ -64,9 +64,24 @@
       const res = await fetch(apiUrl(`/api/analytics/summary?days=${days}`), {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.status === 401) throw new Error('unauthorized');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (res.status === 401) {
+        const error = new Error('unauthorized');
+        error.code = 'unauthorized';
+        throw error;
+      }
+      if (!res.ok) {
+        const error = new Error(`HTTP ${res.status}`);
+        error.code = 'unavailable';
+        throw error;
+      }
       return res.json();
+    }
+
+    function showGateError(key) {
+      const error = $('pwdError');
+      if (!error) return;
+      error.textContent = t(key);
+      error.classList.remove('hidden');
     }
 
     function destroyCharts() {
@@ -206,14 +221,22 @@
 
     async function load() {
       const days = Number($('daysSel')?.value) || 30;
+      let data;
       try {
-        const data = await fetchSummary(days);
-        showApp();
-        render(data);
-        $('pwdError')?.classList.add('hidden');
-      } catch (_) {
+        data = await fetchSummary(days);
+      } catch (error) {
         showGate();
-        $('pwdError')?.classList.remove('hidden');
+        showGateError(error?.code === 'unauthorized' ? 'gate.errorUnauthorized' : 'gate.errorUnavailable');
+        return;
+      }
+
+      showApp();
+      $('pwdError')?.classList.add('hidden');
+      try {
+        render(data);
+      } catch (error) {
+        console.error('[status] render failed', error);
+        if ($('metaLine')) $('metaLine').textContent = t('page.renderError');
       }
     }
 

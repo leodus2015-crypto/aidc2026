@@ -9,6 +9,8 @@
     "hint": "请输入管理口令（与 API ADMIN_TOKEN 相同）。",
     "placeholder": "口令",
     "error": "口令错误或接口未授权",
+    "errorUnauthorized": "口令错误，请重新输入",
+    "errorUnavailable": "接口暂时不可用，请稍后重试",
     "enter": "进入"
   },
   "page": {
@@ -16,6 +18,7 @@
     "h1": "站点状态",
     "subtitle": "访问观测",
     "loading": "加载中…",
+    "renderError": "认证成功，但图表渲染失败；请刷新页面或检查浏览器控制台。",
     "window": "窗口",
     "days7": "近 7 天",
     "days14": "近 14 天",

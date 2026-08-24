@@ -9,6 +9,8 @@
     "hint": "Enter the admin token (same as API ADMIN_TOKEN).",
     "placeholder": "Password",
     "error": "Invalid token or unauthorized",
+    "errorUnauthorized": "Incorrect password. Please try again.",
+    "errorUnavailable": "The API is temporarily unavailable. Please try again later.",
     "enter": "Enter"
   },
   "page": {
@@ -16,6 +18,7 @@
     "h1": "Site Status",
     "subtitle": "Traffic analytics",
     "loading": "Loading…",
+    "renderError": "Authentication succeeded, but chart rendering failed. Refresh the page or check the browser console.",
     "window": "Window",
     "days7": "Last 7 days",
     "days14": "Last 14 days",
