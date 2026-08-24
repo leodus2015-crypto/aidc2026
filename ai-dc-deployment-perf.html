@@ -5,11 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="AI 数据中心部署分布、推理性能、算存协同与算云协同特性演示。">
 <title>AI DC · 部署 &amp; 协同特性</title>
-<script src="js/aidc-theme.js?v=64"></script>
-<script src="js/theme-switch.js?v=64"></script>
-<script src="js/aidc-asset-version.js?v=64"></script>
-<script src="js/embed-mode.js?v=64"></script>
-<link rel="stylesheet" href="css/embed.css?v=64" />
+<script src="js/aidc-theme.js?v=65"></script>
+<script src="js/theme-switch.js?v=65"></script>
+<script src="js/aidc-asset-version.js?v=65"></script>
+<script src="js/embed-mode.js?v=65"></script>
+<link rel="stylesheet" href="css/embed.css?v=65" />
+<link rel="stylesheet" href="css/aidc-replay-control.css?v=65" />
+<script src="js/aidc-replay-control.js?v=65"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -221,8 +223,12 @@ html[data-theme="dark"] .pr-bus{background:linear-gradient(130deg,rgba(52,211,15
 html[data-theme="dark"] .pr-std{background:linear-gradient(130deg,rgba(96,165,250,.06),var(--bg2));}
 html[data-theme="dark"] .pr-ep{background:linear-gradient(130deg,rgba(96,165,250,.06),var(--bg2));}
 html[data-theme="dark"] .pr-cmp{background:linear-gradient(130deg,rgba(167,139,250,.09),var(--bg2));}
+#cc-diag-2{position:relative;padding-bottom:30px;}
+.cc-scale-replay-btn{
+  position:absolute;right:4px;bottom:0;z-index:3;
+}
 </style>
-<link rel="stylesheet" href="css/theme.css?v=64" />
+<link rel="stylesheet" href="css/theme.css?v=65" />
 </head>
 <body data-i18n-page="ai-dc-deployment-perf">
 
@@ -426,6 +432,9 @@ html[data-theme="dark"] .pr-cmp{background:linear-gradient(130deg,rgba(167,139,2
       <div class="pr-cabs">
         <div id="cc-diag-2" class="syn-diag-fill">
           <svg id="cc-svg-2" style="display:block;overflow:visible;"></svg>
+          <button type="button" id="cc-scale-replay" class="aidc-replay-btn cc-scale-replay-btn" data-state="idle" aria-live="polite">
+            <span data-dp-i18n="▶ 重播">▶ 重播</span>
+          </button>
         </div>
         <div class="pr-cabs-legend" data-dp-i18n="弹性调度态 · 手机银行扩容占用柜5–8，AI Coding 收拢至柜9–12">弹性调度态 &nbsp;·&nbsp; 手机银行扩容占用柜5–8，AI Coding 收拢至柜9–12</div>
       </div>
@@ -491,7 +500,10 @@ function refreshDeploymentPerfI18n() {
   if (typeof drawFrontView === 'function') drawFrontView();
   if (typeof initPerfRows === 'function') initPerfRows();
   if (typeof initSynCard === 'function') initSynCard();
-  if (typeof initCloudRack === 'function') initCloudRack();
+  drawCloudRack('cc-svg', 'boot');
+  if(cloudAnimState) drawCloudRack('cc-svg-2', 'boot', cloudAnimState);
+  else drawCloudRack('cc-svg-2', cloudAnimPhase);
+  setCloudReplayBtnState(cloudAnimPlaying ? (cloudAnimPaused ? 'paused' : 'playing') : 'idle');
 }
 globalThis.__aidcPageRefreshI18n = refreshDeploymentPerfI18n;
 
@@ -673,7 +685,14 @@ function bootDeploymentPerfOnce() {
 window.addEventListener('load', () => {
   setTimeout(() => { if (!window.AidcI18n?.isActive?.()) bootDeploymentPerfOnce(); }, 800);
 });
-window.addEventListener('resize', ()=>{ drawFrontView(); initPerfRows(); initSynCard(); initCloudRack(); });
+window.addEventListener('resize', ()=>{
+  drawFrontView();
+  initPerfRows();
+  initSynCard();
+  drawCloudRack('cc-svg', 'boot');
+  if(cloudAnimState) drawCloudRack('cc-svg-2', 'boot', cloudAnimState);
+  else drawCloudRack('cc-svg-2', cloudAnimPhase);
+});
 
 // ══ PERF ROWS: 智算柜-style cabs + DeepSeek instance overlays ══
 // Cab style matches the main 机柜部署分布图 智算柜
@@ -988,14 +1007,211 @@ function initSynCard(){
 }
 
 // ══ 算云协同: HCS+ModelArts（上）+ 智算柜（下）—— 对齐算存协同机柜风格 ══
-function initCloudRack(){
-  drawCloudRack('cc-svg', 'boot');   // 特性一：系统启动态
-  drawCloudRack('cc-svg-2', 'scale'); // 特性二：手机银行流量增加后弹性调度
+let cloudAnimPhase = 'boot';
+let cloudAnimState = null;
+let cloudAnimPlaying = false;
+let cloudAnimPaused = false;
+let cloudAnimRaf = null;
+let cloudAnimRunId = 0;
+let cloudAnimPauseResume = null;
+
+function defaultCloudAnimState(){
+  return {
+    scene3Shrink: 0,
+    scene3LbLeft: 1,
+    scene3LbRight: 1,
+    cabRelease: [0, 0, 0, 0],
+    bankCabs: [0, 0, 0, 0],
+    bankScene: 0,
+    bankLb: 0,
+  };
 }
-function drawCloudRack(svgId, mode){
+
+function easeInOutCubic(t){
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function lerp(a, b, t){ return a + (b - a) * t; }
+function lerpArr(from, to, t){
+  return from.map((v, i) => lerp(v, to[i], t));
+}
+
+function cloneCloudAnimState(src){
+  const s = src || defaultCloudAnimState();
+  return {
+    scene3Shrink: s.scene3Shrink,
+    scene3LbLeft: s.scene3LbLeft,
+    scene3LbRight: s.scene3LbRight,
+    cabRelease: s.cabRelease.slice(),
+    bankCabs: s.bankCabs.slice(),
+    bankScene: s.bankScene,
+    bankLb: s.bankLb,
+  };
+}
+
+function stopCloudAnimRaf(){
+  if(cloudAnimRaf){ cancelAnimationFrame(cloudAnimRaf); cloudAnimRaf = null; }
+}
+
+function setCloudReplayBtnState(state){
+  const btn = document.getElementById('cc-scale-replay');
+  if(!btn) return;
+  if(window.AidcReplayControl) window.AidcReplayControl.setState(btn, state);
+  else btn.dataset.state = state;
+  const span = btn.querySelector('span');
+  const label = state === 'playing' ? L('⏸ 暂停')
+    : state === 'paused' ? L('▶ 继续')
+    : L('▶ 重播');
+  if(span) span.textContent = label;
+  else btn.textContent = label;
+}
+
+function tweenCloudAnim(targetPartial, duration){
+  const runId = cloudAnimRunId;
+  const from = cloneCloudAnimState(cloudAnimState);
+  return new Promise((resolve) => {
+    const start = performance.now();
+    let pauseStart = 0;
+    let totalPaused = 0;
+    const tick = (now) => {
+      if(runId !== cloudAnimRunId) return resolve();
+      if(cloudAnimPaused){
+        if(!pauseStart) pauseStart = now;
+        cloudAnimPauseResume = () => {
+          if(pauseStart) totalPaused += performance.now() - pauseStart;
+          pauseStart = 0;
+          cloudAnimPauseResume = null;
+          cloudAnimRaf = requestAnimationFrame(tick);
+        };
+        return;
+      }
+      const elapsed = now - start - totalPaused;
+      const p = Math.min(1, elapsed / duration);
+      const e = easeInOutCubic(p);
+      const next = cloneCloudAnimState(from);
+      if(targetPartial.scene3Shrink != null) next.scene3Shrink = lerp(from.scene3Shrink, targetPartial.scene3Shrink, e);
+      if(targetPartial.scene3LbLeft != null) next.scene3LbLeft = lerp(from.scene3LbLeft, targetPartial.scene3LbLeft, e);
+      if(targetPartial.scene3LbRight != null) next.scene3LbRight = lerp(from.scene3LbRight, targetPartial.scene3LbRight, e);
+      if(targetPartial.cabRelease) next.cabRelease = lerpArr(from.cabRelease, targetPartial.cabRelease, e);
+      if(targetPartial.bankCabs) next.bankCabs = lerpArr(from.bankCabs, targetPartial.bankCabs, e);
+      if(targetPartial.bankScene != null) next.bankScene = lerp(from.bankScene, targetPartial.bankScene, e);
+      if(targetPartial.bankLb != null) next.bankLb = lerp(from.bankLb, targetPartial.bankLb, e);
+      cloudAnimState = next;
+      cloudAnimPhase = 'anim';
+      drawCloudRack('cc-svg-2', 'boot', cloudAnimState);
+      if(p < 1) cloudAnimRaf = requestAnimationFrame(tick);
+      else resolve();
+    };
+    stopCloudAnimRaf();
+    cloudAnimRaf = requestAnimationFrame(tick);
+  });
+}
+
+function delayCloudAnim(ms){
+  const runId = cloudAnimRunId;
+  return new Promise((resolve) => {
+    const start = performance.now();
+    let pauseStart = 0;
+    let totalPaused = 0;
+    const tick = (now) => {
+      if(runId !== cloudAnimRunId) return resolve();
+      if(cloudAnimPaused){
+        if(!pauseStart) pauseStart = now;
+        cloudAnimPauseResume = () => {
+          if(pauseStart) totalPaused += performance.now() - pauseStart;
+          pauseStart = 0;
+          cloudAnimPauseResume = null;
+          cloudAnimRaf = requestAnimationFrame(tick);
+        };
+        return;
+      }
+      if(now - start - totalPaused >= ms) resolve();
+      else cloudAnimRaf = requestAnimationFrame(tick);
+    };
+    stopCloudAnimRaf();
+    cloudAnimRaf = requestAnimationFrame(tick);
+  });
+}
+
+async function runCloudRackAnimation(){
+  cloudAnimRunId += 1;
+  const runId = cloudAnimRunId;
+  stopCloudAnimRaf();
+  cloudAnimPaused = false;
+  cloudAnimPauseResume = null;
+  cloudAnimPlaying = true;
+  setCloudReplayBtnState('playing');
+  cloudAnimState = defaultCloudAnimState();
+  cloudAnimPhase = 'boot';
+  drawCloudRack('cc-svg-2', 'boot', cloudAnimState);
+
+  await delayCloudAnim(1800);
+  if(runId !== cloudAnimRunId) return;
+
+  await tweenCloudAnim({ scene3LbLeft: 0 }, 750);
+  if(runId !== cloudAnimRunId) return;
+
+  await tweenCloudAnim({ scene3Shrink: 1, cabRelease: [1, 1, 1, 1] }, 1700);
+  if(runId !== cloudAnimRunId) return;
+
+  await delayCloudAnim(350);
+  if(runId !== cloudAnimRunId) return;
+
+  await tweenCloudAnim({ bankCabs: [1, 1, 1, 1] }, 1100);
+  if(runId !== cloudAnimRunId) return;
+
+  await tweenCloudAnim({ bankScene: 1 }, 550);
+  if(runId !== cloudAnimRunId) return;
+
+  await tweenCloudAnim({ bankLb: 1 }, 650);
+  if(runId !== cloudAnimRunId) return;
+
+  cloudAnimPlaying = false;
+  cloudAnimPaused = false;
+  cloudAnimPhase = 'scale';
+  cloudAnimState = null;
+  drawCloudRack('cc-svg-2', 'scale');
+  setCloudReplayBtnState('idle');
+}
+
+function pauseCloudAnim(){
+  if(!cloudAnimPlaying || cloudAnimPaused) return;
+  cloudAnimPaused = true;
+  setCloudReplayBtnState('paused');
+}
+
+function resumeCloudAnim(){
+  if(!cloudAnimPlaying || !cloudAnimPaused) return;
+  cloudAnimPaused = false;
+  setCloudReplayBtnState('playing');
+  if(cloudAnimPauseResume) cloudAnimPauseResume();
+}
+
+function toggleCloudAnim(){
+  if(cloudAnimPlaying){
+    if(cloudAnimPaused) resumeCloudAnim();
+    else pauseCloudAnim();
+    return;
+  }
+  runCloudRackAnimation();
+}
+
+function initCloudRack(){
+  drawCloudRack('cc-svg', 'boot');
+  runCloudRackAnimation();
+  const replayBtn = document.getElementById('cc-scale-replay');
+  if(replayBtn && !replayBtn.dataset.bound){
+    replayBtn.dataset.bound = '1';
+    replayBtn.addEventListener('click', toggleCloudAnim);
+  }
+}
+
+function drawCloudRack(svgId, mode, animState){
   const svgEl = document.getElementById(svgId);
   if(!svgEl) return;
-  const isScale = mode === 'scale';
+  const anim = animState || null;
+  const isScale = !anim && mode === 'scale';
+  const isRelease = !anim && mode === 'release';
 
   const wrap = svgEl.parentElement;
   const W = Math.max(360, wrap.clientWidth || wrap.parentElement?.clientWidth || 700);
@@ -1042,11 +1258,27 @@ function drawCloudRack(svgId, mode){
 
   // boot：AI Coding 覆盖两组大 EP；scale：手机银行占用柜5–8，AI Coding 仅柜9–12
   // 手机银行用紫色（同 AI 存储），便于对比启动态 / 扩容态机柜变化
-  const scenes = isScale ? [
+  const scenes = anim ? (() => {
+    const list = [
+      {n: 1, lab: L('手机银行'), a: 0, b: 1, c: cmpC, op: 1},
+      {n: 2, lab: L('风险控制'), a: 2, b: 3, c: busC, op: 1},
+    ];
+    if(anim.bankScene > 0.02){
+      list.push({n: 1, lab: L('手机银行'), a: 4, b: 5, c: cmpC, op: anim.bankScene});
+      list.push({n: 1, lab: L('手机银行'), a: 6, b: 7, c: cmpC, op: anim.bankScene});
+    }
+    const s3a = 4 + (8 - 4) * anim.scene3Shrink;
+    list.push({n: 3, lab: L('AI Coding'), a: s3a, b: 11, c: busC, op: 1});
+    return list;
+  })() : isScale ? [
     {n: 1, lab: L('手机银行'), a: 0, b: 1, c: cmpC},
     {n: 2, lab: L('风险控制'), a: 2, b: 3, c: busC},
     {n: 1, lab: L('手机银行'), a: 4, b: 5, c: cmpC},
     {n: 1, lab: L('手机银行'), a: 6, b: 7, c: cmpC},
+    {n: 3, lab: L('AI Coding'), a: 8, b: 11, c: busC},
+  ] : isRelease ? [
+    {n: 1, lab: L('手机银行'), a: 0, b: 1, c: cmpC},
+    {n: 2, lab: L('风险控制'), a: 2, b: 3, c: busC},
     {n: 3, lab: L('AI Coding'), a: 8, b: 11, c: busC},
   ] : [
     {n: 1, lab: L('手机银行'), a: 0, b: 1, c: cmpC},
@@ -1059,9 +1291,11 @@ function drawCloudRack(svgId, mode){
     const cx = spanCx(sc.a, sc.b);
     const rx = Math.min(8, Math.max(4, Math.round(scenH * 0.28)));
     const scC = sc.c || busC;
-    s += `<rect x="${sx}" y="${scenY}" width="${sw}" height="${scenH}" rx="${rx}" fill="${scC}" opacity=".92"/>`;
-    s += `<text x="${cx}" y="${scenY+4+scenIdxFz}" text-anchor="middle" font-size="${scenIdxFz}" font-weight="700" fill="white" fill-opacity=".88" font-family="Microsoft YaHei,Arial,sans-serif">${Lp('场景 {n}', {n: sc.n})}</text>`;
-    s += `<text x="${cx}" y="${scenY+scenH-5}" text-anchor="middle" font-size="${scenNameFz}" font-weight="800" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${sc.lab}</text>`;
+    const scOp = sc.op != null ? sc.op : 1;
+    if(scOp < 0.02) return;
+    s += `<rect x="${sx}" y="${scenY}" width="${sw}" height="${scenH}" rx="${rx}" fill="${scC}" opacity="${(0.92 * scOp).toFixed(3)}"/>`;
+    s += `<text x="${cx}" y="${scenY+4+scenIdxFz}" text-anchor="middle" font-size="${scenIdxFz}" font-weight="700" fill="white" fill-opacity="${(0.88 * scOp).toFixed(3)}" font-family="Microsoft YaHei,Arial,sans-serif">${Lp('场景 {n}', {n: sc.n})}</text>`;
+    s += `<text x="${cx}" y="${scenY+scenH-5}" text-anchor="middle" font-size="${scenNameFz}" font-weight="800" fill="white" fill-opacity="${scOp.toFixed(3)}" font-family="Microsoft YaHei,Arial,sans-serif">${sc.lab}</text>`;
   });
 
   s += `<rect x="${x0}" y="${topY}" width="${rowW}" height="${hcsH}" rx="3" fill="rgba(16,185,129,.12)" stroke="${busC}" stroke-width="1.6"/>`;
@@ -1088,33 +1322,84 @@ function drawCloudRack(svgId, mode){
   const lbW = synTextW(lbTxt, lbFz) + 18;
   const lbH = 17;
   const lbY = hcsBot + Math.round((linkH - lbH) / 2);
-  const drawLbFork = (a, b, destXs, pi, strokeC) => {
+  const drawLbFork = (a, b, destXs, pi, strokeC, op = 1, flow = true) => {
+    if(op < 0.02) return;
     const lbC = strokeC || busC;
     const lbCx = spanCx(a, b);
-    s += `<path d="M ${lbCx},${scenBot} V ${lbY}" fill="none" stroke="${lbC}" stroke-width="1.5" stroke-opacity=".7" stroke-dasharray="4 3.5" stroke-linecap="round">
-      <animate attributeName="stroke-dashoffset" values="15;0" dur="${0.75+pi*.05}s" repeatCount="indefinite" calcMode="linear"/>
-    </path>`;
-    s += `<rect x="${lbCx-lbW/2}" y="${lbY}" width="${lbW}" height="${lbH}" rx="${lbH/2}" fill="${lbC}" opacity=".92"/>`;
-    s += `<text x="${lbCx}" y="${lbY+lbH/2+lbFz*.36}" text-anchor="middle" font-size="${lbFz}" font-weight="800" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${lbTxt}</text>`;
+    const dashAnim = flow
+      ? `<animate attributeName="stroke-dashoffset" values="15;0" dur="${0.75+pi*.05}s" repeatCount="indefinite" calcMode="linear"/>`
+      : '';
+    s += `<path d="M ${lbCx},${scenBot} V ${lbY}" fill="none" stroke="${lbC}" stroke-width="1.5" stroke-opacity="${(0.7*op).toFixed(3)}" stroke-dasharray="4 3.5" stroke-linecap="round">${dashAnim}</path>`;
+    s += `<rect x="${lbCx-lbW/2}" y="${lbY}" width="${lbW}" height="${lbH}" rx="${lbH/2}" fill="${lbC}" opacity="${(0.92*op).toFixed(3)}"/>`;
+    s += `<text x="${lbCx}" y="${lbY+lbH/2+lbFz*.36}" text-anchor="middle" font-size="${lbFz}" font-weight="800" fill="white" fill-opacity="${op.toFixed(3)}" font-family="Microsoft YaHei,Arial,sans-serif">${lbTxt}</text>`;
     const forkY = lbY + lbH;
     const splitY = forkY + Math.max(6, Math.round((cabTopY - forkY) * 0.28));
-    s += `<path d="M ${lbCx},${forkY} V ${splitY}" fill="none" stroke="${lbC}" stroke-width="1.5" stroke-opacity=".65" stroke-linecap="round"/>`;
+    s += `<path d="M ${lbCx},${forkY} V ${splitY}" fill="none" stroke="${lbC}" stroke-width="1.5" stroke-opacity="${(0.65*op).toFixed(3)}" stroke-linecap="round"/>`;
     destXs.forEach((tx, ti) => {
-      s += `<path d="M ${lbCx},${splitY} L ${tx},${cabTopY-6}" fill="none" stroke="${lbC}" stroke-width="1.4" stroke-opacity=".6" stroke-dasharray="4 3.5" stroke-linecap="round">
-        <animate attributeName="stroke-dashoffset" values="15;0" dur="${0.7+ti*.08}s" repeatCount="indefinite" calcMode="linear"/>
-      </path>`;
-      s += `<polygon points="${tx-3.5},${cabTopY-5.5} ${tx+3.5},${cabTopY-5.5} ${tx},${cabTopY}" fill="${lbC}" opacity=".75"/>`;
+      const forkAnim = flow
+        ? `<animate attributeName="stroke-dashoffset" values="15;0" dur="${0.7+ti*.08}s" repeatCount="indefinite" calcMode="linear"/>`
+        : '';
+      s += `<path d="M ${lbCx},${splitY} L ${tx},${cabTopY-6}" fill="none" stroke="${lbC}" stroke-width="1.4" stroke-opacity="${(0.6*op).toFixed(3)}" stroke-dasharray="4 3.5" stroke-linecap="round">${forkAnim}</path>`;
+      s += `<polygon points="${tx-3.5},${cabTopY-5.5} ${tx+3.5},${cabTopY-5.5} ${tx},${cabTopY}" fill="${lbC}" opacity="${(0.75*op).toFixed(3)}"/>`;
     });
+  };
+  const drawScene3SplitLb = (s3a, s3b) => {
+    const lbCx = spanCx(s3a, s3b);
+    const pillOp = Math.max(anim.scene3LbLeft, anim.scene3LbRight);
+    if(pillOp < 0.02) return;
+    s += `<path d="M ${lbCx},${scenBot} V ${lbY}" fill="none" stroke="${busC}" stroke-width="1.5" stroke-opacity="${(0.7*pillOp).toFixed(3)}" stroke-dasharray="4 3.5" stroke-linecap="round">
+      <animate attributeName="stroke-dashoffset" values="15;0" dur="0.85s" repeatCount="indefinite" calcMode="linear"/>
+    </path>`;
+    s += `<rect x="${lbCx-lbW/2}" y="${lbY}" width="${lbW}" height="${lbH}" rx="${lbH/2}" fill="${busC}" opacity="${(0.92*pillOp).toFixed(3)}"/>`;
+    s += `<text x="${lbCx}" y="${lbY+lbH/2+lbFz*.36}" text-anchor="middle" font-size="${lbFz}" font-weight="800" fill="white" fill-opacity="${pillOp.toFixed(3)}" font-family="Microsoft YaHei,Arial,sans-serif">${lbTxt}</text>`;
+    const forkY = lbY + lbH;
+    const splitY = forkY + Math.max(6, Math.round((cabTopY - forkY) * 0.28));
+    s += `<path d="M ${lbCx},${forkY} V ${splitY}" fill="none" stroke="${busC}" stroke-width="1.5" stroke-opacity="${(0.65*pillOp).toFixed(3)}" stroke-linecap="round"/>`;
+    if(anim.scene3LbLeft > 0.02){
+      const leftDests = [cabMid(4), cabMid(5)];
+      const lop = anim.scene3LbLeft;
+      leftDests.forEach((tx, ti) => {
+        s += `<path d="M ${lbCx},${splitY} L ${tx},${cabTopY-6}" fill="none" stroke="${busC}" stroke-width="1.4" stroke-opacity="${(0.6*lop).toFixed(3)}" stroke-dasharray="4 3.5" stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" values="15;0" dur="${0.75+ti*.08}s" repeatCount="indefinite" calcMode="linear"/>
+        </path>`;
+        s += `<polygon points="${tx-3.5},${cabTopY-5.5} ${tx+3.5},${cabTopY-5.5} ${tx},${cabTopY}" fill="${busC}" opacity="${(0.75*lop).toFixed(3)}"/>`;
+      });
+    }
+    if(anim.scene3LbRight > 0.02){
+      const rightDests = [
+        Math.round((cabX(8)+cabX(9)+cabW)/2),
+        Math.round((cabX(10)+cabX(11)+cabW)/2),
+      ];
+      const rop = anim.scene3LbRight;
+      rightDests.forEach((tx, ti) => {
+        s += `<path d="M ${lbCx},${splitY} L ${tx},${cabTopY-6}" fill="none" stroke="${busC}" stroke-width="1.4" stroke-opacity="${(0.6*rop).toFixed(3)}" stroke-dasharray="4 3.5" stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" values="15;0" dur="${0.8+ti*.08}s" repeatCount="indefinite" calcMode="linear"/>
+        </path>`;
+        s += `<polygon points="${tx-3.5},${cabTopY-5.5} ${tx+3.5},${cabTopY-5.5} ${tx},${cabTopY}" fill="${busC}" opacity="${(0.75*rop).toFixed(3)}"/>`;
+      });
+    }
   };
   drawLbFork(0, 1, [cabMid(0), cabMid(1)], 0, cmpC);
   drawLbFork(2, 3, [cabMid(2), cabMid(3)], 1, busC);
-  if(isScale){
+  if(anim){
+    const s3a = 4 + (8 - 4) * anim.scene3Shrink;
+    drawScene3SplitLb(s3a, 11);
+    if(anim.bankLb > 0.02){
+      drawLbFork(4, 5, [cabMid(4), cabMid(5)], 2, cmpC, anim.bankLb);
+      drawLbFork(6, 7, [cabMid(6), cabMid(7)], 3, cmpC, anim.bankLb);
+    }
+  } else if(isScale){
     drawLbFork(4, 5, [cabMid(4), cabMid(5)], 2, cmpC);
     drawLbFork(6, 7, [cabMid(6), cabMid(7)], 3, cmpC);
     drawLbFork(8, 11, [
       Math.round((cabX(8)+cabX(9)+cabW)/2),
       Math.round((cabX(10)+cabX(11)+cabW)/2),
     ], 4, busC);
+  } else if(isRelease){
+    drawLbFork(8, 11, [
+      Math.round((cabX(8)+cabX(9)+cabW)/2),
+      Math.round((cabX(10)+cabX(11)+cabW)/2),
+    ], 2, busC);
   } else {
     drawLbFork(4, 11, [
       Math.round((cabX(4)+cabX(7)+cabW)/2),
@@ -1122,17 +1407,73 @@ function drawCloudRack(svgId, mode){
     ], 2, busC);
   }
 
+  const grayC = '#94a3b8';
+  const cabReleaseIdx = (i) => (anim && i >= 4 && i < 8) ? anim.cabRelease[i - 4] : 0;
+  const bankCabIdx = (i) => (anim && i >= 4 && i < 8) ? anim.bankCabs[i - 4] : 0;
   for(let i=0; i<N; i++){
     const cX = cabX(i);
     const cx = cX + cabW/2;
-    const isBankCab = (i < 2) || (isScale && i >= 4 && i < 8);
-    const cabC = isBankCab ? cmpC : epC;
-    s += `<rect x="${cX}" y="${cabTopY}" width="${cabW}" height="${cabH}" rx="2.5" fill="${cabC}" opacity=".1" stroke="${cabC}" stroke-width="1.4"/>`;
-    s += `<rect x="${cX}" y="${cabTopY}" width="${cabW}" height="${capH}" rx="1.5" fill="${cabC}" opacity=".42"/>`;
-    s += `<rect x="${cX+2}" y="${cabTopY+cabH-plinth}" width="${cabW-4}" height="${plinth}" rx="1" fill="${cabC}" opacity=".2"/>`;
-    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${(cabTopY+cabH-plinth-4)-hdrY}" rx="2" fill="${cabC}" opacity=".14" stroke="${cabC}" stroke-width="1.1"/>`;
-    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${hdrH}" rx="2" fill="${cabC}" opacity=".5"/>`;
-    s += `<text x="${cx}" y="${hdrY+Math.round(hdrH*.74)}" text-anchor="middle" font-size="${hdrFz}" font-weight="700" fill="white" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`;
+    let isReleasedCab = isRelease && i >= 4 && i < 8;
+    let isBankCab = (i < 2) || (isScale && i >= 4 && i < 8);
+    let cabC = isReleasedCab ? grayC : (isBankCab ? cmpC : epC);
+    let cabFillOp = isReleasedCab ? 0.55 : 0.1;
+    let capOp = isReleasedCab ? 0.35 : 0.42;
+    let plinthOp = isReleasedCab ? 0.15 : 0.2;
+    let bodyOp = isReleasedCab ? 0.08 : 0.14;
+    let hdrOp = isReleasedCab ? 0.28 : 0.5;
+    let hdrTxt = isReleasedCab ? grayC : 'white';
+    let dashStroke = isReleasedCab;
+    let showNpu = !isReleasedCab;
+    let showReleaseTxt = isReleasedCab;
+    let qwen32 = isScale ? ((i < 2) || (i >= 4 && i < 8)) : (i < 2);
+    let qwen72 = (i === 2 || i === 3);
+
+    if(anim && i >= 4 && i < 8){
+      const rel = cabReleaseIdx(i);
+      const bank = bankCabIdx(i);
+      if(bank > 0.02){
+        isReleasedCab = false;
+        isBankCab = true;
+        cabC = cmpC;
+        cabFillOp = lerp(0.55, 0.1, bank);
+        capOp = lerp(0.35, 0.42, bank);
+        plinthOp = lerp(0.15, 0.2, bank);
+        bodyOp = lerp(0.08, 0.14, bank);
+        hdrOp = lerp(0.28, 0.5, bank);
+        hdrTxt = bank > 0.45 ? 'white' : grayC;
+        dashStroke = false;
+        showNpu = bank > 0.25;
+        showReleaseTxt = bank < 0.35;
+        qwen32 = bank > 0.55;
+        qwen72 = false;
+      } else if(rel > 0.02){
+        isReleasedCab = rel > 0.35;
+        isBankCab = false;
+        cabC = grayC;
+        cabFillOp = lerp(0.1, 0.55, rel);
+        capOp = lerp(0.42, 0.35, rel);
+        plinthOp = lerp(0.2, 0.15, rel);
+        bodyOp = lerp(0.14, 0.08, rel);
+        hdrOp = lerp(0.5, 0.28, rel);
+        hdrTxt = rel > 0.4 ? grayC : 'white';
+        dashStroke = rel > 0.25;
+        showNpu = rel < 0.45;
+        showReleaseTxt = rel > 0.2;
+        qwen32 = false;
+        qwen72 = false;
+      } else {
+        isReleasedCab = false;
+        isBankCab = false;
+        cabC = epC;
+      }
+    }
+
+    s += `<rect x="${cX}" y="${cabTopY}" width="${cabW}" height="${cabH}" rx="2.5" fill="${cabC}" opacity="${cabFillOp.toFixed(3)}" stroke="${cabC}" stroke-width="1.4"${dashStroke ? ' stroke-dasharray="4 3"' : ''}/>`;
+    s += `<rect x="${cX}" y="${cabTopY}" width="${cabW}" height="${capH}" rx="1.5" fill="${cabC}" opacity="${capOp.toFixed(3)}"/>`;
+    s += `<rect x="${cX+2}" y="${cabTopY+cabH-plinth}" width="${cabW-4}" height="${plinth}" rx="1" fill="${cabC}" opacity="${plinthOp.toFixed(3)}"/>`;
+    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${(cabTopY+cabH-plinth-4)-hdrY}" rx="2" fill="${cabC}" opacity="${bodyOp.toFixed(3)}" stroke="${cabC}" stroke-width="1.1"/>`;
+    s += `<rect x="${cX+2}" y="${hdrY}" width="${cabW-4}" height="${hdrH}" rx="2" fill="${cabC}" opacity="${hdrOp.toFixed(3)}"/>`;
+    s += `<text x="${cx}" y="${hdrY+Math.round(hdrH*.74)}" text-anchor="middle" font-size="${hdrFz}" font-weight="700" fill="${hdrTxt}" font-family="Microsoft YaHei,Arial,sans-serif">${L('AI服务器')}</text>`;
 
     const bodyY = hdrY + hdrH + 4;
     const bodyBot = cabTopY + cabH - plinth - 5;
@@ -1143,14 +1484,15 @@ function drawCloudRack(svgId, mode){
     const npuX = cX + 5;
     const npuFz = Math.min(6.5, Math.max(4.5, npuW * 0.18));
     const npuYs = [];
+    if(showNpu){
     for(let n=0; n<npuN; n++){
       const ny = bodyY + n*(npuH + npuGap);
       npuYs.push(ny);
       s += `<rect x="${npuX}" y="${ny}" width="${npuW}" height="${npuH}" rx="1.5" fill="${cabC}" opacity=".32" stroke="${cabC}" stroke-width=".8"/>`;
       s += `<text x="${cx}" y="${ny+npuH/2+npuFz*.36}" text-anchor="middle" font-size="${npuFz}" font-weight="700" fill="${cabC}" font-family="Arial,sans-serif">NPU</text>`;
     }
-    const isQwen32 = isScale ? ((i < 2) || (i >= 4 && i < 8)) : (i < 2);
-    const isQwen72 = (i === 2 || i === 3);
+    const isQwen32 = qwen32;
+    const isQwen72 = qwen72;
     if(isQwen32 || isQwen72){
       const pad = 1.5;
       const qFz = Math.min(7.5, Math.max(5, cabW * 0.16));
@@ -1179,46 +1521,71 @@ function drawCloudRack(svgId, mode){
         s += `<text x="${cx}" y="${midY+qFz*.36}" text-anchor="middle" font-size="${qFz}" font-weight="800" fill="white" font-family="Arial,sans-serif">Qwen-72B</text>`;
       }
     }
+    } else if(showReleaseTxt){
+      const relFz = Math.min(7.5, Math.max(5.5, cabW * 0.15));
+      const relOp = anim ? Math.min(1, Math.max(cabReleaseIdx(i), 0.35)) : 0.85;
+      s += `<text x="${cx}" y="${hdrY+Math.round((cabTopY+cabH-plinth-hdrY)/2)+relFz*.3}" text-anchor="middle" font-size="${relFz}" font-weight="700" fill="${grayC}" font-family="Microsoft YaHei,Arial,sans-serif" opacity="${relOp.toFixed(3)}">${L('资源释放')}</text>`;
+    }
   }
 
   const dsBodyTop = hdrY + hdrH + 2;
   const dsBodyBot = cabTopY + cabH - plinth - 4;
-  const dsGroups = isScale ? [2] : [1, 2];
+  const dsGroups = anim ? (() => {
+    const groups = [2];
+    const g1Alive = anim.cabRelease.some((v) => v < 0.92);
+    if(g1Alive) groups.unshift(1);
+    return groups;
+  })() : isScale ? [2] : isRelease ? [2] : [1, 2];
   dsGroups.forEach((g) => {
     const gX = cabX(g*group);
     const gW = group*cabW + (group-1)*cabGap;
     const gCx = gX + gW/2;
-    s += `<rect x="${gX-1}" y="${cabTopY}" width="${gW+2}" height="${dsBodyBot-cabTopY+1}" rx="3" fill="${epC}" opacity=".1" stroke="${epC}" stroke-width="1.7"/>`;
+    let dsOp = 1;
+    if(anim && g === 1){
+      const relAvg = anim.cabRelease.reduce((a, b) => a + b, 0) / 4;
+      const bankAvg = anim.bankCabs.reduce((a, b) => a + b, 0) / 4;
+      dsOp = Math.max(0, 1 - relAvg - bankAvg * 0.5);
+      if(dsOp < 0.03) return;
+    }
+    s += `<rect x="${gX-1}" y="${cabTopY}" width="${gW+2}" height="${dsBodyBot-cabTopY+1}" rx="3" fill="${epC}" opacity="${(0.1*dsOp).toFixed(3)}" stroke="${epC}" stroke-width="1.7"/>`;
     const pillFz2 = Math.min(9, Math.max(5.5, gW * 0.05));
     const lineH  = pillFz2 + 2;
     const pillW2 = Math.max(gW - 6, 36);
     const pillH2 = lineH*2 + 7;
     const pillY2 = dsBodyTop + Math.round(((dsBodyBot - dsBodyTop) - pillH2) / 2) - 6;
-    s += `<rect x="${gCx-pillW2/2}" y="${pillY2}" width="${pillW2}" height="${pillH2}" rx="4" fill="${epC}" opacity=".85"/>`;
-    s += `<text x="${gCx}" y="${pillY2+lineH}" text-anchor="middle" font-size="${pillFz2}" fill="white" font-family="Arial,sans-serif" font-weight="800">DeepSeek</text>`;
-    s += `<text x="${gCx}" y="${pillY2+lineH*2+2}" text-anchor="middle" font-size="${pillFz2}" fill="white" font-family="Arial,sans-serif" font-weight="800">V4-Flash</text>`;
+    s += `<rect x="${gCx-pillW2/2}" y="${pillY2}" width="${pillW2}" height="${pillH2}" rx="4" fill="${epC}" opacity="${(0.85*dsOp).toFixed(3)}"/>`;
+    s += `<text x="${gCx}" y="${pillY2+lineH}" text-anchor="middle" font-size="${pillFz2}" fill="white" fill-opacity="${dsOp.toFixed(3)}" font-family="Arial,sans-serif" font-weight="800">DeepSeek</text>`;
+    s += `<text x="${gCx}" y="${pillY2+lineH*2+2}" text-anchor="middle" font-size="${pillFz2}" fill="white" fill-opacity="${dsOp.toFixed(3)}" font-family="Arial,sans-serif" font-weight="800">V4-Flash</text>`;
     const npuLab = L('64×NPU');
     const npuLabFz = Math.min(8, Math.max(6, gW * 0.042));
-    s += `<text x="${gCx}" y="${pillY2+pillH2+npuLabFz+4}" text-anchor="middle" font-size="${npuLabFz}" font-weight="700" fill="${epC}" font-family="Arial,sans-serif" opacity=".85">${npuLab}</text>`;
+    s += `<text x="${gCx}" y="${pillY2+pillH2+npuLabFz+4}" text-anchor="middle" font-size="${npuLabFz}" font-weight="700" fill="${epC}" font-family="Arial,sans-serif" opacity="${(0.85*dsOp).toFixed(3)}">${npuLab}</text>`;
   });
 
   const halfW = rowW / 2;
   s += `<rect x="${x0+2}" y="${legendY-8}" width="9" height="9" rx="2" fill="${busC}" opacity=".55"/>`;
   s += `<text x="${x0+14}" y="${legendY}" font-size="8.5" font-weight="700" fill="${busC}" font-family="Microsoft YaHei,Arial,sans-serif">${L('HCS+ModelArts（CPU 服务器）')}</text>`;
   s += `<rect x="${x0+halfW+4}" y="${legendY-8}" width="9" height="9" rx="2" fill="${epC}" opacity=".55"/>`;
-  const legendAi = isScale
+  const legendAi = anim
+    ? (anim.bankLb > 0.5
+      ? L('AI 智算柜 ×12（手机银行扩容 · 弹性调度）')
+      : anim.cabRelease.some((v) => v > 0.05)
+        ? L('AI 智算柜 ×12（柜5–8 资源释放 · 场景3 收拢）')
+        : L('AI 智算柜 ×12（4机大EP · 系统启动态）'))
+    : isScale
     ? L('AI 智算柜 ×12（手机银行扩容 · 弹性调度）')
-    : L('AI 智算柜 ×12（4机大EP · 系统启动态）');
+    : isRelease
+      ? L('AI 智算柜 ×12（柜5–8 资源释放 · 场景3 收拢）')
+      : L('AI 智算柜 ×12（4机大EP · 系统启动态）');
   s += `<text x="${x0+halfW+16}" y="${legendY}" font-size="8.5" font-weight="700" fill="${epC}" font-family="Microsoft YaHei,Arial,sans-serif">${legendAi}</text>`;
 
   svgEl.innerHTML = s;
 }
 </script>
 
-<script src="js/aidc-locale-bridge.js?v=64"></script>
-<script src="js/i18n.js?v=64"></script>
-<script src="js/lang-switch.js?v=64"></script>
-<script src="js/i18n-bootstrap.js?v=64"></script>
+<script src="js/aidc-locale-bridge.js?v=65"></script>
+<script src="js/i18n.js?v=65"></script>
+<script src="js/lang-switch.js?v=65"></script>
+<script src="js/i18n-bootstrap.js?v=65"></script>
 <script>
   AidcI18nBootstrap.bootstrap('ai-dc-deployment-perf', {
     onReady: function () {

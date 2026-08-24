@@ -83,6 +83,8 @@ EN: dict[str, str] = {
     "算云协同方案": "Compute–cloud synergy",
     "12 × 算力柜（弹性调度）": "12 × compute racks (elastic scheduling)",
     "▶ 重播": "▶ Replay",
+    "⏸ 暂停": "⏸ Pause",
+    "▶ 继续": "▶ Resume",
     "推理运行（白天）": "Inference (daytime)",
     "训练运行（夜间）": "Training (nighttime)",
     "弹性扩容峰值": "Elastic scale-out peak",

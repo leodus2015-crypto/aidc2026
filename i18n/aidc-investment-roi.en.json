@@ -85,6 +85,7 @@
     "低于自建": "Below self-built",
     "高于自建": "Above self-built",
     "更新 {date}": "Updated {date}",
+    "DeepSeek-V4-Flash 高峰时段公开价（api-docs.deepseek.com/zh-cn）；各平台按 2026-08 峰谷调价后高峰价目整理，单位元/百万 Token": "DeepSeek-V4-Flash peak-hour list prices per api-docs.deepseek.com (Aug 2026); USD/M tokens for overseas clouds.",
     "DeepSeek-V4-Flash 公开价；各平台按官网/百炼等公开价目整理，单位元/百万 Token": "DeepSeek-V4-Flash list prices from official docs and major cloud catalogs (USD/M tokens).",
     "GLM-5.2 公开价；智谱 AI 开放平台 open.bigmodel.cn 价目，单位元/百万 Token": "GLM-5.2 list prices from Z.AI / Zhipu open platform (open.bigmodel.cn); USD/M tokens.",
     "OPEX 结果": "OPEX results",

@@ -1,0 +1,53 @@
+.aidc-replay-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  padding: 4px 10px;
+  border: 1px solid var(--bd, var(--line, #cbd5e1));
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--t2, var(--muted, #475569));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  font: 700 9px "Microsoft YaHei", "微软雅黑", sans-serif;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.aidc-replay-btn:hover {
+  color: var(--bus, #059669);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.aidc-replay-btn[data-state="playing"] {
+  color: var(--bus, #059669);
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.aidc-replay-btn[data-state="paused"] {
+  color: var(--ai, #7c3aed);
+  border-color: rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.aidc-replay-btn [data-replay-label] {
+  display: none;
+}
+
+.aidc-replay-btn[data-state="idle"] [data-replay-label="idle"],
+.aidc-replay-btn[data-state="playing"] [data-replay-label="playing"],
+.aidc-replay-btn[data-state="paused"] [data-replay-label="paused"] {
+  display: inline;
+}
+
+html[data-theme="dark"] .aidc-replay-btn {
+  background: rgba(30, 41, 59, 0.92);
+}
+
+.aidc-animation-paused,
+.aidc-animation-paused * {
+  animation-play-state: paused !important;
+}

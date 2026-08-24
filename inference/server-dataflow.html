@@ -6,8 +6,8 @@
   <meta name="description" content="推理服务七阶段数据流：未启动、空载启动、模型加载、Question、Prefill、Decode、Answer。8 PD分离，4 Prefill + 4 Decode。" />
   <meta name="theme-color" content="#f8fafc" />
   <title>推理服务数据流 · Agentic 推理 · AI Data Center</title>
-  <script src="../js/aidc-theme.js?v=64"></script>
-  <script src="../js/embed-mode.js?v=64"></script>
+  <script src="../js/aidc-theme.js?v=65"></script>
+  <script src="../js/embed-mode.js?v=65"></script>
   <script>
     (function () {
       if (window.AidcEmbedMode?.isEmbed?.()) return;
@@ -20,16 +20,19 @@
     })();
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css?v=64" />
-  <link rel="stylesheet" href="../css/theme.css?v=64" />
+  <link rel="stylesheet" href="styles.css?v=65" />
+  <link rel="stylesheet" href="../css/theme.css?v=65" />
+  <link rel="stylesheet" href="../css/aidc-replay-control.css?v=65" />
+  <script src="../js/aidc-replay-control.js?v=65"></script>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900 inference-doc inference-embed-body" data-i18n-page="inference-dataflow">
   <main class="inference-embed-main min-w-0 w-full">
     <section class="inference-page-hdr mb-8 w-full max-w-3xl xl:max-w-4xl">
       <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl" data-i18n="page.h1">推理服务七阶段数据流</h1>
       <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n-html="page.lead">
-        以下用<strong>同一台推理服务器</strong>（CPU + DDR + 本地 SSD + 8×NPU/HBM，<strong>PD分离</strong>：上排 4 卡 Prefill、下排 4 卡 Decode）从上到下串联七个阶段：
+        以下用<strong>同一台推理服务器</strong>（CPU + DRAM + 本地 SSD + 8×NPU/HBM，<strong>PD分离</strong>：上排 4 卡 Prefill、下排 4 卡 Decode）从上到下串联七个阶段：
         未启动 → 空载启动 → 加载模型 → Question 到达 → Prefill → Decode → Answer 返回。每节保留相同的服务器结构，只叠加本阶段的数据流高亮。
+        CPU/DRAM 中常驻<strong>两个 Docker 容器与两个独立 vLLM 实例</strong>：Prefill 绑定 NPU 0–3，Decode 绑定 NPU 4–7。
         <strong>灰色</strong>表示空闲，<strong>彩色</strong>表示运行态或已有文件。
       </p>
     </section>
@@ -42,7 +45,7 @@
           <span class="stage-badge">0</span>
           <h2 data-i18n="stages.s0.title">服务器未启动</h2>
         </div>
-        <p class="stage-summary" data-i18n-html="stages.s0.summary">整机处于<strong>空闲态</strong>：CPU、DDR、NPU、HBM 均未参与推理；本地 SSD 上可已挂载 OS、驱动、容器镜像与模型权重文件，但服务进程尚未拉起。</p>
+        <p class="stage-summary" data-i18n-html="stages.s0.summary">整机处于<strong>空闲态</strong>：CPU、DRAM、NPU、HBM 均未参与推理；本地 SSD 上可已挂载 OS、驱动、Docker 镜像与模型权重文件，但服务进程尚未拉起。</p>
         <svg class="diagram server-diagram" viewBox="0 0 920 458" role="img" data-i18n-aria-label="aria.stage0" aria-label="阶段0 服务器未启动">
           <defs><marker id="arrL2-s0" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 z" fill="#d97706" /></marker></defs>
           <rect x="30" y="28" width="860" height="412" rx="22" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
@@ -50,13 +53,13 @@
           <rect x="55" y="68" width="230" height="300" rx="16" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <rect x="75" y="96" width="190" height="48" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
           <text x="170" y="125" text-anchor="middle" class="srv-core" data-i18n="svg.cpuIdle">CPU （空闲）</text>
-          <rect x="75" y="152" width="190" height="52" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
-          <text x="170" y="182" text-anchor="middle" class="srv-core" data-i18n="svg.ddrIdle">DDR（空闲）</text>
-          <rect x="75" y="212" width="190" height="138" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="238" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
-          <text x="170" y="258" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.ssdMounted">OS + 驱动 + 容器镜像 + 模型权重（挂载）</text>
-          <path d="M 90 274 C 90 272, 120 269, 128 269 L 143 269 C 145 269, 145 266, 146 266 C 147 266, 147 269, 149 269 L 168 269 C 176 269, 250 272, 250 274" class="srv-brace"/>
-          <text x="170" y="284" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
+          <rect x="75" y="152" width="190" height="92" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+          <text x="170" y="182" text-anchor="middle" class="srv-core" data-i18n="svg.dramIdle">DRAM（空闲）</text>
+          <rect x="75" y="252" width="190" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="276" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
+          <text x="170" y="296" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.ssdMounted">OS + 驱动 + 容器镜像 + 模型权重（挂载）</text>
+          <path d="M 90 312 C 90 310, 120 307, 128 307 L 143 307 C 145 307, 145 304, 146 304 C 147 304, 147 307, 149 307 L 168 307 C 176 307, 250 310, 250 312" class="srv-brace"/>
+          <text x="170" y="322" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
           <rect x="310" y="58" width="555" height="366" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <text x="587" y="82" text-anchor="middle" class="srv-title" fill="#64748b" data-i18n="svg.npuPoolTitle">8 × NPU资源池 · 上排 Prefill · 下排 Decode</text>
           <g>
@@ -103,19 +106,11 @@
           </g>
           <path d="M288 192 H306" stroke="#d97706" stroke-width="1.5" marker-end="url(#arrL2-s0)"/>
           <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#94a3b8" data-i18n="svg.serverIdle">全部核心部件空闲 · 尚未启动推理服务</text>
-          <foreignObject x="828" y="388" width="28" height="28">
-            <button type="button" class="stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-i18n-aria-label="replay.stage0" aria-label="重新播放本阶段动画" disabled>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                <polyline points="3 4 3 10 9 10"/>
-              </svg>
-            </button>
-          </foreignObject>
         </svg>
         <ol class="step-list">
           <li data-i18n-html="stages.s0.l1"><strong>CPU 空闲。</strong> 推理引擎主进程、调度器、Tokenizer 均未运行。</li>
-          <li data-i18n-html="stages.s0.l2"><strong>DDR 空闲。</strong> 主存中无请求与 token 中转数据。</li>
-          <li data-i18n-html="stages.s0.l3"><strong>SSD 已有文件。</strong> OS、驱动、容器镜像与模型权重已挂载（蓝色），等待启动后加载至 HBM。</li>
+          <li data-i18n-html="stages.s0.l2"><strong>DRAM 空闲。</strong> 主存中无请求与 token 中转数据。</li>
+          <li data-i18n-html="stages.s0.l3"><strong>SSD 已有文件。</strong> OS、驱动、容器镜像与模型权重已挂载（蓝色），等待启动后加载。</li>
           <li data-i18n-html="stages.s0.l4"><strong>NPU / HBM 空闲。</strong> 8 卡资源池尚未参与任何计算。</li>
         </ol>
         <div class="flow-legend">
@@ -131,7 +126,7 @@
           <span class="stage-badge">1</span>
           <h2 data-i18n="stages.s1.title">服务器启动（未加载模型）</h2>
         </div>
-        <p class="stage-summary" data-i18n-html="stages.s1.summary">推理服务进程已启动：CPU 中运行<strong>主进程</strong>，DDR 中驻留<strong>推理引擎主进程</strong>；8 张 NPU 已上电，容器镜像从本地 SSD 加载至各卡 HBM 底部（约 10%），<strong>尚无模型权重</strong>。</p>
+        <p class="stage-summary" data-i18n-html="stages.s1.summary">推理服务已启动：<strong>两个 Docker 容器、两个独立 vLLM 实例</strong>驻留 CPU + DRAM；Prefill 实例绑定 NPU 0–3，Decode 实例绑定 NPU 4–7。8 张 NPU 已上电，但 <strong>HBM 仍为空</strong>，<strong>尚无模型权重</strong>。</p>
         <svg class="diagram server-diagram" viewBox="0 0 920 458" role="img" data-i18n-aria-label="aria.stage1" aria-label="阶段1 空载启动">
           <defs>                        <clipPath id="s1-fw"><rect width="82" height="7" rx="2"/></clipPath>
             <clipPath id="s1-wt"><rect width="82" height="10" rx="3"/></clipPath>
@@ -143,21 +138,34 @@
           <rect x="75" y="96" width="190" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
           <text x="170" y="114" text-anchor="middle" class="srv-core" data-i18n="svg.cpu">CPU</text>
           <text x="170" y="128" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.mainProcess">主进程</text>
-          <rect x="75" y="152" width="190" height="52" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.ddr">DDR</text>
-          <text x="170" y="182" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.inferenceEngine">推理引擎主进程</text>
-          <rect x="75" y="212" width="190" height="138" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="238" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
+          <rect x="75" y="152" width="190" height="92" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.dram">DRAM</text>
+          <g class="s1-rt-target" transform="translate(79,198)" style="--s1-card:0">
+            <g class="s1-rt-instance" style="--s1-instance:0">
+              <rect class="s1-rt-fill" width="88" height="40" rx="6" fill="#bbf7d0"/>
+              <text x="44" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerPrefill">Docker #1 · Prefill</text>
+              <text x="44" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimePrefill">vLLM · NPU 0–3</text>
+              <rect class="s1-rt-outline" width="88" height="40" rx="6" fill="none" stroke="#16a34a" stroke-width="1.4"/>
+            </g>
+            <g class="s1-rt-instance" transform="translate(94,0)" style="--s1-instance:1">
+              <rect class="s1-rt-fill" width="88" height="40" rx="6" fill="#bbf7d0"/>
+              <text x="44" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerDecode">Docker #2 · Decode</text>
+              <text x="44" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimeDecode">vLLM · NPU 4–7</text>
+              <rect class="s1-rt-outline" width="88" height="40" rx="6" fill="none" stroke="#16a34a" stroke-width="1.4"/>
+            </g>
+          </g>
+          <rect x="75" y="252" width="190" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="276" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
           <g class="ssd-mounted" data-ssd-hl="1">
             <rect class="ssd-hl-bg" data-hl="0" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
-            <text y="258" class="srv-desc ssd-mounted-text" fill="#0f172a">
+            <text y="296" class="srv-desc ssd-mounted-text" fill="#0f172a">
               <tspan data-i18n="svg.ssdPrefix">OS + 驱动 + </tspan>
               <tspan class="ssd-hl" data-hl="0" fill="#15803d" font-weight="700" data-i18n="svg.ssdHlContainer">容器镜像</tspan>
               <tspan data-i18n="svg.ssdTail"> + 模型权重（挂载）</tspan>
             </text>
           </g>
-          <path d="M 90 274 C 90 272, 120 269, 128 269 L 143 269 C 145 269, 145 266, 146 266 C 147 266, 147 269, 149 269 L 168 269 C 176 269, 250 272, 250 274" class="srv-brace"/>
-          <text x="170" y="284" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
+          <path d="M 90 312 C 90 310, 120 307, 128 307 L 143 307 C 145 307, 145 304, 146 304 C 147 304, 147 307, 149 307 L 168 307 C 176 307, 250 310, 250 312" class="srv-brace"/>
+          <text x="170" y="322" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
           <rect x="310" y="58" width="555" height="366" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <text x="587" y="82" text-anchor="middle" class="srv-title" fill="#64748b" data-i18n="svg.npuPoolTitle">8 × NPU资源池 · 上排 Prefill · 下排 Decode</text>
           <g>
@@ -166,134 +174,69 @@
             <line x1="380" y1="163" x2="380" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(339,234)" style="--s1-card:0">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
-            </g>
+            <text x="380" y="228" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
             <rect x="454" y="88" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="495" y="129" text-anchor="middle" class="srv-core">NPU</text>
             <line x1="495" y1="163" x2="495" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(454,234)" style="--s1-card:1">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
-            </g>
+            <text x="495" y="228" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
             <rect x="569" y="88" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="610" y="129" text-anchor="middle" class="srv-core">NPU</text>
             <line x1="610" y1="163" x2="610" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(569,234)" style="--s1-card:2">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
-            </g>
+            <text x="610" y="228" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
             <rect x="684" y="88" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="725" y="129" text-anchor="middle" class="srv-core">NPU</text>
             <line x1="725" y1="163" x2="725" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(684,234)" style="--s1-card:3">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
-            </g>
+            <text x="725" y="228" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
             <rect x="339" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="380" y="300" text-anchor="middle" class="srv-core">NPU</text>
             <line x1="380" y1="334" x2="380" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(339,405)" style="--s1-card:4">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
-            </g>
+            <text x="380" y="399" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
             <rect x="454" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="495" y="300" text-anchor="middle" class="srv-core">NPU</text>
             <line x1="495" y1="334" x2="495" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(454,405)" style="--s1-card:5">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
-            </g>
+            <text x="495" y="399" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
             <rect x="569" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="610" y="300" text-anchor="middle" class="srv-core">NPU</text>
             <line x1="610" y1="334" x2="610" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(569,405)" style="--s1-card:6">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
-            </g>
+            <text x="610" y="399" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
             <rect x="684" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="725" y="300" text-anchor="middle" class="srv-core">NPU</text>
             <line x1="725" y1="334" x2="725" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <g class="s1-fw-target" transform="translate(684,405)" style="--s1-card:7">
-              <rect class="s1-fw-fill" width="82" height="7" rx="2" fill="#bbf7d0"/>
-              <g clip-path="url(#s1-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-              <rect class="s1-fw-outline" width="82" height="7" rx="2" fill="none" stroke="#16a34a" stroke-width="2"/>
+            <text x="725" y="399" text-anchor="middle" class="srv-desc" fill="#94a3b8" font-size="8" data-i18n="svg.hbmEmpty">空</text>
+          </g>
+          <path class="s1-rt-route" d="M 153 294 L 170 218" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/>
+          <g class="s1-rt-fly-layer" pointer-events="none">
+            <g class="s1-rt-fly-main">
+              <rect x="-30" y="-7" width="60" height="14" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
+              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.dockerPairLabel">2× Docker</text>
             </g>
           </g>
-          <path class="s1-fw-route" d="M 153 254 L 170 178 L 170 120 L 280 178" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/>
-          <g class="s1-fw-fly-layer" pointer-events="none">
-            <g class="s1-fw-fly-main">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-0" style="--s1-card:0">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-1" style="--s1-card:1">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-2" style="--s1-card:2">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-3" style="--s1-card:3">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-4" style="--s1-card:4">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-5" style="--s1-card:5">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-6" style="--s1-card:6">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-            <g class="s1-fw-fly-card s1-fw-fly-card-7" style="--s1-card:7">
-              <rect x="-22" y="-6.5" width="44" height="13" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
-              <text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" style="font-size:7px" data-i18n="svg.containerImage">容器镜像</text>
-            </g>
-          </g>
-          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS1">NPU 已上电 · HBM 已加载容器镜像（约 10%）</text>
-          <foreignObject x="828" y="388" width="28" height="28">
-            <button type="button" class="stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-i18n-aria-label="replay.stage1" aria-label="重新播放容器镜像加载动画">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                <polyline points="3 4 3 10 9 10"/>
-              </svg>
+          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS1">2× Docker / 2× vLLM · Prefill NPU 0–3 · Decode NPU 4–7 · HBM 空</text>
+          <foreignObject x="790" y="386" width="68" height="30">
+            <button type="button" class="aidc-replay-btn stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-state="idle" aria-live="polite" data-i18n-aria-label="replay.stage1" aria-label="重新播放容器镜像加载动画">
+              <span data-replay-label="idle" data-i18n="replay.idle">▶ 重播</span>
+              <span data-replay-label="playing" data-i18n="replay.pause">⏸ 暂停</span>
+              <span data-replay-label="paused" data-i18n="replay.resume">▶ 继续</span>
             </button>
           </foreignObject>
         </svg>
         <ol class="step-list">
-          <li data-i18n-html="stages.s1.l1"><strong>进程就绪。</strong> CPU 运行主进程；DDR 驻留推理引擎主进程。</li>
-          <li data-i18n-html="stages.s1.l2"><strong>镜像入 HBM。</strong> 容器镜像已加载至各卡 HBM 底部（约 10%），模型权重仍在 SSD。</li>
+          <li data-i18n-html="stages.s1.l1"><strong>两个实例就绪。</strong> Docker #1 运行 Prefill vLLM，Docker #2 运行 Decode vLLM。</li>
+          <li data-i18n-html="stages.s1.l2"><strong>显式资源隔离。</strong> Prefill 使用 NPU 0–3，Decode 使用 NPU 4–7；两个运行时均常驻 DRAM（非 HBM）。</li>
           <li data-i18n-html="stages.s1.l3"><strong>不可推理。</strong> 此时尚未加载模型权重，也未接受用户 Question。</li>
         </ol>
       </article>
@@ -302,9 +245,9 @@
       <article class="card waterfall-stage stage-load">
         <div class="stage-header">
           <span class="stage-badge">2</span>
-          <h2 data-i18n="stages.s2.title">加载模型（SSD → HBM）</h2>
+          <h2 data-i18n="stages.s2.title">加载模型（SSD → DRAM → HBM）</h2>
         </div>
-        <p class="stage-summary" data-i18n-html="stages.s2.summary">CPU 从本地 SSD 读取<strong>模型权重</strong>，分发至 8 张 NPU 的 HBM（PD分离 · 各卡持有相应分片）。在已有<strong>容器镜像</strong>（约 10%）基础上，HBM 新增<strong>模型权重</strong>区域（约 15%），并预留 KV Cache 空间。</p>
+        <p class="stage-summary" data-i18n-html="stages.s2.summary">推理引擎从 SSD 读取<strong>模型权重</strong>至 <strong>DRAM 缓冲</strong>，再分发至 8 张 NPU 的 HBM（PD分离 · 各卡持有相应分片）。HBM 新增<strong>模型权重</strong>区域（约 15%），并预留 KV Cache 空间。</p>
         <svg class="diagram server-diagram" viewBox="0 0 920 458" role="img" data-i18n-aria-label="aria.stage2" aria-label="阶段2 加载模型">
           <defs>
             <marker id="arrL-s2" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 z" fill="#475569" /></marker>
@@ -320,15 +263,27 @@
           <rect x="75" y="96" width="190" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
           <text x="170" y="114" text-anchor="middle" class="srv-core" data-i18n="svg.cpu">CPU</text>
           <text x="170" y="128" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.cpuReadWeights">读取 · 分发权重</text>
-          <rect x="75" y="152" width="190" height="52" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.ddr">DDR</text>
-          <text x="170" y="182" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.ddrBuffer">缓冲（可选）</text>
-          <rect x="75" y="212" width="190" height="138" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="238" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
+          <rect x="75" y="152" width="190" height="92" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.dram">DRAM</text>
+          <g class="s2-dram-target" transform="translate(79,174)">
+            <rect class="s2-dram-fill" width="182" height="20" rx="5" fill="#bbf7d0"/>
+            <text x="91" y="13" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="8" data-i18n="svg.weightBuffer">权重缓冲</text>
+            <rect class="s2-dram-outline" width="182" height="20" rx="5" fill="none" stroke="#16a34a" stroke-width="1.5"/>
+          </g>
+          <g class="dram-runtime" transform="translate(79,198)">
+            <rect width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="44" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerPrefill">Docker #1 · Prefill</text>
+            <text x="44" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimePrefill">vLLM · NPU 0–3</text>
+            <rect x="94" width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="138" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerDecode">Docker #2 · Decode</text>
+            <text x="138" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimeDecode">vLLM · NPU 4–7</text>
+          </g>
+          <rect x="75" y="252" width="190" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="276" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
           <g class="ssd-mounted" data-ssd-hl="2">
             <rect class="ssd-hl-bg" data-hl="0" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
             <rect class="ssd-hl-bg" data-hl="1" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
-            <text y="258" class="srv-desc ssd-mounted-text" fill="#0f172a">
+            <text y="296" class="srv-desc ssd-mounted-text" fill="#0f172a">
               <tspan data-i18n="svg.ssdPrefix">OS + 驱动 + </tspan>
               <tspan class="ssd-hl" data-hl="0" fill="#15803d" font-weight="700" data-i18n="svg.ssdHlContainer">容器镜像</tspan>
               <tspan data-i18n="svg.ssdMid"> + </tspan>
@@ -336,9 +291,9 @@
               <tspan data-i18n="svg.ssdSuffix">（挂载）</tspan>
             </text>
           </g>
-          <path d="M 90 274 C 90 272, 120 269, 128 269 L 143 269 C 145 269, 145 266, 146 266 C 147 266, 147 269, 149 269 L 168 269 C 176 269, 250 272, 250 274" class="srv-brace"/>
-          <text x="170" y="284" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
-          <path d="M170 212 V202" stroke="#475569" stroke-width="1.5" marker-end="url(#arrL-s2)"/>
+          <path d="M 90 312 C 90 310, 120 307, 128 307 L 143 307 C 145 307, 145 304, 146 304 C 147 304, 147 307, 149 307 L 168 307 C 176 307, 250 310, 250 312" class="srv-brace"/>
+          <text x="170" y="322" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
+          <path d="M170 252 V238" stroke="#475569" stroke-width="1.5" marker-end="url(#arrL-s2)"/>
           <path d="M170 152 V142" stroke="#475569" stroke-width="1.5" marker-end="url(#arrL-s2)"/>
           <rect x="310" y="58" width="555" height="366" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <text x="587" y="82" text-anchor="middle" class="srv-title" fill="#64748b" data-i18n="svg.npuPoolTitle">8 × NPU资源池 · 上排 Prefill · 下排 Decode</text>
@@ -348,9 +303,7 @@
             <line x1="380" y1="163" x2="380" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,234)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(339,224)" style="--s2-card:0">
+            <g class="s2-wt-target" transform="translate(339,231)" style="--s2-card:0">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -360,9 +313,7 @@
             <line x1="495" y1="163" x2="495" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,234)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(454,224)" style="--s2-card:1">
+            <g class="s2-wt-target" transform="translate(454,231)" style="--s2-card:1">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -372,9 +323,7 @@
             <line x1="610" y1="163" x2="610" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,234)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(569,224)" style="--s2-card:2">
+            <g class="s2-wt-target" transform="translate(569,231)" style="--s2-card:2">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -384,9 +333,7 @@
             <line x1="725" y1="163" x2="725" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,234)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(684,224)" style="--s2-card:3">
+            <g class="s2-wt-target" transform="translate(684,231)" style="--s2-card:3">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -396,9 +343,7 @@
             <line x1="380" y1="334" x2="380" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,405)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(339,395)" style="--s2-card:4">
+            <g class="s2-wt-target" transform="translate(339,402)" style="--s2-card:4">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -408,9 +353,7 @@
             <line x1="495" y1="334" x2="495" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,405)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(454,395)" style="--s2-card:5">
+            <g class="s2-wt-target" transform="translate(454,402)" style="--s2-card:5">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -420,9 +363,7 @@
             <line x1="610" y1="334" x2="610" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,405)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(569,395)" style="--s2-card:6">
+            <g class="s2-wt-target" transform="translate(569,402)" style="--s2-card:6">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -432,15 +373,14 @@
             <line x1="725" y1="334" x2="725" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,405)" clip-path="url(#s2-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
-            <g class="s2-wt-target" transform="translate(684,395)" style="--s2-card:7">
+            <g class="s2-wt-target" transform="translate(684,402)" style="--s2-card:7">
               <rect class="s2-wt-fill" width="82" height="10" rx="3" fill="#bbf7d0"/>
               <g clip-path="url(#s2-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
               <rect class="s2-wt-outline" width="82" height="10" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
             </g>
           </g>
-          <path class="s2-wt-route" d="M 202 254 L 170 178 L 170 120 L 280 178" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/>
+          <path class="s2-dram-route" d="M 202 294 L 170 184" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/>
+          <path class="s2-wt-route" d="M 170 184 L 280 178" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.55"/>
           <g class="s2-wt-fly-layer" pointer-events="none">
             <g class="s2-wt-fly-main">
               <rect x="-24" y="-7" width="48" height="14" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
@@ -481,19 +421,18 @@
           </g>
           <path d="M288 192 H306" stroke="#d97706" stroke-width="1.5" marker-end="url(#arrL2-s2)"/>
           <text x="297" y="183" text-anchor="middle" class="srv-desc" fill="#d97706" font-weight="800" data-i18n="svg.loadLabel">加载</text>
-          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS2">8 卡 HBM · 容器镜像（10%）+ 模型权重（15%）· 预留 KV Cache</text>
-          <foreignObject x="828" y="388" width="28" height="28">
-            <button type="button" class="stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-i18n-aria-label="replay.stage2" aria-label="重新播放模型权重加载动画">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                <polyline points="3 4 3 10 9 10"/>
-              </svg>
+          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS2">8 卡 HBM · 模型权重（15%）· 预留 KV Cache</text>
+          <foreignObject x="790" y="386" width="68" height="30">
+            <button type="button" class="aidc-replay-btn stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-state="idle" aria-live="polite" data-i18n-aria-label="replay.stage2" aria-label="重新播放模型权重加载动画">
+              <span data-replay-label="idle" data-i18n="replay.idle">▶ 重播</span>
+              <span data-replay-label="playing" data-i18n="replay.pause">⏸ 暂停</span>
+              <span data-replay-label="paused" data-i18n="replay.resume">▶ 继续</span>
             </button>
           </foreignObject>
         </svg>
         <ol class="step-list">
           <li data-i18n-html="stages.s2.l1"><strong>读盘。</strong> CPU 从本地 SSD 读取模型权重（绿色标注）。</li>
-          <li data-i18n-html="stages.s2.l2"><strong>传输。</strong> 权重写入各 NPU HBM，叠加于已有容器镜像之上。</li>
+          <li data-i18n-html="stages.s2.l2"><strong>DRAM → HBM。</strong> 权重 Tensor 经 CUDA 写入各 NPU HBM。</li>
           <li data-i18n-html="stages.s2.l3"><strong>就绪。</strong> 模型权重常驻 HBM（约 15%），可接受推理请求。</li>
         </ol>
       </article>
@@ -504,7 +443,7 @@
           <span class="stage-badge">3</span>
           <h2 data-i18n="stages.s3.title">Question 到达（CPU 侧）</h2>
         </div>
-        <p class="stage-summary" data-i18n-html="stages.s3.summary">用户 Question 经网络进入 CPU；分词后 token 序列写入 DDR，并<strong>送往 NPU</strong> 等待 Prefill。HBM 中<strong>容器镜像</strong>（约 10%）、<strong>模型权重</strong>（约 15%）已就绪，尚未开始 KV 计算。</p>
+        <p class="stage-summary" data-i18n-html="stages.s3.summary">用户 Question 经网络进入 CPU；分词后 token 序列写入 DRAM，并<strong>送往 NPU</strong> 等待 Prefill。HBM 中<strong>模型权重</strong>（约 15%）已就绪，尚未开始 KV 计算。</p>
         <svg class="diagram server-diagram" viewBox="0 0 920 458" role="img" data-i18n-aria-label="aria.stage3" aria-label="阶段3 Question到达">
           <defs>
             <marker id="arr1-s3" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 z" fill="#059669" /></marker>
@@ -521,15 +460,23 @@
           <rect x="75" y="96" width="190" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
           <text x="170" y="114" text-anchor="middle" class="srv-core" data-i18n="svg.cpu">CPU</text>
           <text x="170" y="128" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.cpuScheduleNet">调度 · 分词 · 网络</text>
-          <rect x="75" y="152" width="190" height="52" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.ddr">DDR</text>
+          <rect x="75" y="152" width="190" height="92" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.dram">DRAM</text>
           <text x="170" y="182" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.tokenSequence">token 序列</text>
-          <rect x="75" y="212" width="190" height="138" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="238" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
+          <g class="dram-runtime" transform="translate(79,198)">
+            <rect width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="44" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerPrefill">Docker #1 · Prefill</text>
+            <text x="44" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimePrefill">vLLM · NPU 0–3</text>
+            <rect x="94" width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="138" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerDecode">Docker #2 · Decode</text>
+            <text x="138" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimeDecode">vLLM · NPU 4–7</text>
+          </g>
+          <rect x="75" y="252" width="190" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="276" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
           <g class="ssd-mounted" data-ssd-hl="2">
             <rect class="ssd-hl-bg" data-hl="0" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
             <rect class="ssd-hl-bg" data-hl="1" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
-            <text y="258" class="srv-desc ssd-mounted-text" fill="#0f172a">
+            <text y="296" class="srv-desc ssd-mounted-text" fill="#0f172a">
               <tspan data-i18n="svg.ssdPrefix">OS + 驱动 + </tspan>
               <tspan class="ssd-hl" data-hl="0" fill="#15803d" font-weight="700" data-i18n="svg.ssdHlContainer">容器镜像</tspan>
               <tspan data-i18n="svg.ssdMid"> + </tspan>
@@ -537,8 +484,8 @@
               <tspan data-i18n="svg.ssdSuffix">（挂载）</tspan>
             </text>
           </g>
-          <path d="M 90 274 C 90 272, 120 269, 128 269 L 143 269 C 145 269, 145 266, 146 266 C 147 266, 147 269, 149 269 L 168 269 C 176 269, 250 272, 250 274" class="srv-brace"/>
-          <text x="170" y="284" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
+          <path d="M 90 312 C 90 310, 120 307, 128 307 L 143 307 C 145 307, 145 304, 146 304 C 147 304, 147 307, 149 307 L 168 307 C 176 307, 250 310, 250 312" class="srv-brace"/>
+          <text x="170" y="322" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
           <rect x="310" y="58" width="555" height="366" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <text x="587" y="82" text-anchor="middle" class="srv-title" fill="#64748b" data-i18n="svg.npuPoolTitle">8 × NPU资源池 · 上排 Prefill · 下排 Decode</text>
           <g>
@@ -547,8 +494,6 @@
             <line x1="380" y1="163" x2="380" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,234)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,224)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="454" y="88" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -556,8 +501,6 @@
             <line x1="495" y1="163" x2="495" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,234)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,224)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="569" y="88" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -565,8 +508,6 @@
             <line x1="610" y1="163" x2="610" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,234)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,224)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="684" y="88" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -574,8 +515,6 @@
             <line x1="725" y1="163" x2="725" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,234)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,224)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="339" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -583,8 +522,6 @@
             <line x1="380" y1="334" x2="380" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,405)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,395)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="454" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -592,8 +529,6 @@
             <line x1="495" y1="334" x2="495" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,405)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,395)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="569" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -601,8 +536,6 @@
             <line x1="610" y1="334" x2="610" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,405)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,395)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="684" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -610,8 +543,6 @@
             <line x1="725" y1="334" x2="725" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,405)" clip-path="url(#s3-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,395)" clip-path="url(#s3-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
           </g>
@@ -654,19 +585,18 @@
           <path d="M170 145 V151" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arr1b-s3)"/>
           <path d="M288 192 H306" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arr1b-s3)"/>
           <text x="297" y="183" text-anchor="middle" class="srv-desc" fill="#2563eb" font-weight="800" data-i18n="svg.tokenId">Token ID</text>
-          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS3">8 卡 HBM · 容器镜像（10%）+ 模型权重（15%）· 待 Prefill</text>
-          <foreignObject x="828" y="388" width="28" height="28">
-            <button type="button" class="stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-i18n-aria-label="replay.stage3" aria-label="重新播放 Question 与 Token ID 动画">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                <polyline points="3 4 3 10 9 10"/>
-              </svg>
+          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS3">8 卡 HBM · 模型权重（15%）· 待 Prefill</text>
+          <foreignObject x="790" y="386" width="68" height="30">
+            <button type="button" class="aidc-replay-btn stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-state="idle" aria-live="polite" data-i18n-aria-label="replay.stage3" aria-label="重新播放 Question 与 Token ID 动画">
+              <span data-replay-label="idle" data-i18n="replay.idle">▶ 重播</span>
+              <span data-replay-label="playing" data-i18n="replay.pause">⏸ 暂停</span>
+              <span data-replay-label="paused" data-i18n="replay.resume">▶ 继续</span>
             </button>
           </foreignObject>
         </svg>
         <ol class="step-list">
           <li data-i18n-html="stages.s3.l1"><strong>网络接收。</strong> Question 报文进入 CPU。</li>
-          <li data-i18n-html="stages.s3.l2"><strong>分词。</strong> CPU 将文本转为 token ID 序列，写入 DDR。</li>
+          <li data-i18n-html="stages.s3.l2"><strong>分词。</strong> CPU 将文本转为 token ID 序列，写入 DRAM。</li>
           <li data-i18n-html="stages.s3.l3"><strong>送往 NPU。</strong> token 序列经调度送入 NPU 资源池，等待 Prefill。</li>
         </ol>
       </article>
@@ -694,15 +624,23 @@
           <rect x="75" y="96" width="190" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
           <text x="170" y="114" text-anchor="middle" class="srv-core" data-i18n="svg.cpu">CPU</text>
           <text x="170" y="128" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.cpuSchedulePrefill">调度 Prefill</text>
-          <rect x="75" y="152" width="190" height="52" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.ddr">DDR</text>
+          <rect x="75" y="152" width="190" height="92" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.dram">DRAM</text>
           <text x="170" y="182" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.inputTokenSequence">输入 token 序列</text>
-          <rect x="75" y="212" width="190" height="138" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="238" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
+          <g class="dram-runtime" transform="translate(79,198)">
+            <rect width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="44" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerPrefill">Docker #1 · Prefill</text>
+            <text x="44" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimePrefill">vLLM · NPU 0–3</text>
+            <rect x="94" width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="138" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerDecode">Docker #2 · Decode</text>
+            <text x="138" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimeDecode">vLLM · NPU 4–7</text>
+          </g>
+          <rect x="75" y="252" width="190" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="276" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
           <g class="ssd-mounted" data-ssd-hl="2">
             <rect class="ssd-hl-bg" data-hl="0" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
             <rect class="ssd-hl-bg" data-hl="1" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
-            <text y="258" class="srv-desc ssd-mounted-text" fill="#0f172a">
+            <text y="296" class="srv-desc ssd-mounted-text" fill="#0f172a">
               <tspan data-i18n="svg.ssdPrefix">OS + 驱动 + </tspan>
               <tspan class="ssd-hl" data-hl="0" fill="#15803d" font-weight="700" data-i18n="svg.ssdHlContainer">容器镜像</tspan>
               <tspan data-i18n="svg.ssdMid"> + </tspan>
@@ -710,8 +648,8 @@
               <tspan data-i18n="svg.ssdSuffix">（挂载）</tspan>
             </text>
           </g>
-          <path d="M 90 274 C 90 272, 120 269, 128 269 L 143 269 C 145 269, 145 266, 146 266 C 147 266, 147 269, 149 269 L 168 269 C 176 269, 250 272, 250 274" class="srv-brace"/>
-          <text x="170" y="284" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
+          <path d="M 90 312 C 90 310, 120 307, 128 307 L 143 307 C 145 307, 145 304, 146 304 C 147 304, 147 307, 149 307 L 168 307 C 176 307, 250 310, 250 312" class="srv-brace"/>
+          <text x="170" y="322" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
           <rect x="310" y="58" width="555" height="366" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <text x="587" y="82" text-anchor="middle" class="srv-title" fill="#64748b" data-i18n="svg.npuPoolTitle">8 × NPU资源池 · 上排 Prefill · 下排 Decode</text>
           <g>
@@ -729,8 +667,6 @@
             <text x="380" y="120" text-anchor="middle" class="srv-core" data-i18n="svg.prefill">Prefill</text>
             <rect x="339" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,234)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,224)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g transform="translate(339,224)">
@@ -782,8 +718,6 @@
             <text x="495" y="120" text-anchor="middle" class="srv-core" data-i18n="svg.prefill">Prefill</text>
             <rect x="454" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,234)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,224)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g transform="translate(454,224)">
@@ -835,8 +769,6 @@
             <text x="610" y="120" text-anchor="middle" class="srv-core" data-i18n="svg.prefill">Prefill</text>
             <rect x="569" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,234)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,224)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g transform="translate(569,224)">
@@ -888,8 +820,6 @@
             <text x="725" y="120" text-anchor="middle" class="srv-core" data-i18n="svg.prefill">Prefill</text>
             <rect x="684" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,234)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,224)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g transform="translate(684,224)">
@@ -932,8 +862,6 @@
             <line x1="380" y1="334" x2="380" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,405)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,395)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="454" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -941,8 +869,6 @@
             <line x1="495" y1="334" x2="495" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,405)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,395)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="569" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -950,8 +876,6 @@
             <line x1="610" y1="334" x2="610" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,405)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,395)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="684" y="259" width="82" height="75" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -959,8 +883,6 @@
             <line x1="725" y1="334" x2="725" y2="344" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,405)" clip-path="url(#s4-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,395)" clip-path="url(#s4-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
           </g>
@@ -979,18 +901,17 @@
           <path d="M717 163 V173" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr2v-s4)"/>
           <path d="M733 173 V163" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr2v-s4)"/>
           <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS4">上排 4 卡 Prefill · KV 区域写入 · 下排 Decode 卡待命</text>
-          <foreignObject x="828" y="388" width="28" height="28">
-            <button type="button" class="stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-i18n-aria-label="replay.stage4" aria-label="重新播放 KV Cache 填充动画">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                <polyline points="3 4 3 10 9 10"/>
-              </svg>
+          <foreignObject x="790" y="386" width="68" height="30">
+            <button type="button" class="aidc-replay-btn stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-state="idle" aria-live="polite" data-i18n-aria-label="replay.stage4" aria-label="重新播放 KV Cache 填充动画">
+              <span data-replay-label="idle" data-i18n="replay.idle">▶ 重播</span>
+              <span data-replay-label="playing" data-i18n="replay.pause">⏸ 暂停</span>
+              <span data-replay-label="paused" data-i18n="replay.resume">▶ 继续</span>
             </button>
           </foreignObject>
 
 </svg>
         <ol class="step-list">
-          <li data-i18n-html="stages.s4.l1"><strong>下发。</strong> DDR 中的 token 序列进入 NPU HBM。</li>
+          <li data-i18n-html="stages.s4.l1"><strong>下发。</strong> DRAM 中的 token 序列进入 NPU HBM。</li>
           <li data-i18n-html="stages.s4.l2"><strong>Prefill 计算。</strong> 复用 HBM 中模型权重，<strong>创建 KV Cache</strong>。</li>
           <li data-i18n-html="stages.s4.l3"><strong>首 token。</strong> 得到第一个输出 token，TTFT 结束。</li>
         </ol>
@@ -1017,14 +938,23 @@
           <rect x="75" y="96" width="190" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
           <text x="170" y="114" text-anchor="middle" class="srv-core" data-i18n="svg.cpu">CPU</text>
           <text x="170" y="128" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.cpuScheduleDecode">调度 Decode</text>
-          <rect x="75" y="152" width="190" height="52" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
-          <text x="170" y="182" text-anchor="middle" class="srv-core" data-i18n="svg.ddrIdle">DDR（空闲）</text>
-          <rect x="75" y="212" width="190" height="138" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="238" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
+          <rect x="75" y="152" width="190" height="92" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.dram">DRAM</text>
+          <text x="170" y="182" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.decodeMetadata">调度与请求元数据</text>
+          <g class="dram-runtime" transform="translate(79,198)">
+            <rect width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="44" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerPrefill">Docker #1 · Prefill</text>
+            <text x="44" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimePrefill">vLLM · NPU 0–3</text>
+            <rect x="94" width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="138" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerDecode">Docker #2 · Decode</text>
+            <text x="138" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimeDecode">vLLM · NPU 4–7</text>
+          </g>
+          <rect x="75" y="252" width="190" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="276" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
           <g class="ssd-mounted" data-ssd-hl="2">
             <rect class="ssd-hl-bg" data-hl="0" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
             <rect class="ssd-hl-bg" data-hl="1" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
-            <text y="258" class="srv-desc ssd-mounted-text" fill="#0f172a">
+            <text y="296" class="srv-desc ssd-mounted-text" fill="#0f172a">
               <tspan data-i18n="svg.ssdPrefix">OS + 驱动 + </tspan>
               <tspan class="ssd-hl" data-hl="0" fill="#15803d" font-weight="700" data-i18n="svg.ssdHlContainer">容器镜像</tspan>
               <tspan data-i18n="svg.ssdMid"> + </tspan>
@@ -1032,8 +962,8 @@
               <tspan data-i18n="svg.ssdSuffix">（挂载）</tspan>
             </text>
           </g>
-          <path d="M 90 274 C 90 272, 120 269, 128 269 L 143 269 C 145 269, 145 266, 146 266 C 147 266, 147 269, 149 269 L 168 269 C 176 269, 250 272, 250 274" class="srv-brace"/>
-          <text x="170" y="284" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
+          <path d="M 90 312 C 90 310, 120 307, 128 307 L 143 307 C 145 307, 145 304, 146 304 C 147 304, 147 307, 149 307 L 168 307 C 176 307, 250 310, 250 312" class="srv-brace"/>
+          <text x="170" y="322" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
           <rect x="310" y="58" width="555" height="366" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <text x="587" y="82" text-anchor="middle" class="srv-title" fill="#64748b" data-i18n="svg.npuPoolTitle">8 × NPU资源池 · 上排 Prefill · 下排 Decode</text>
           <g>
@@ -1042,8 +972,6 @@
             <line x1="380" y1="163" x2="380" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,234)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,224)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-source" transform="translate(339,197)" style="--s5-card:0">
@@ -1062,8 +990,6 @@
             <line x1="495" y1="163" x2="495" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,234)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,224)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-source" transform="translate(454,197)" style="--s5-card:1">
@@ -1082,8 +1008,6 @@
             <line x1="610" y1="163" x2="610" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,234)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,224)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-source" transform="translate(569,197)" style="--s5-card:2">
@@ -1102,8 +1026,6 @@
             <line x1="725" y1="163" x2="725" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,234)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,224)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-source" transform="translate(684,197)" style="--s5-card:3">
@@ -1128,8 +1050,6 @@
             <text x="380" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="339" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,405)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,395)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-target" transform="translate(339,368)" style="--s5-card:0">
@@ -1166,8 +1086,6 @@
             <text x="495" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="454" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,405)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,395)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-target" transform="translate(454,368)" style="--s5-card:1">
@@ -1204,8 +1122,6 @@
             <text x="610" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="569" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,405)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,395)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-target" transform="translate(569,368)" style="--s5-card:2">
@@ -1242,8 +1158,6 @@
             <text x="725" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="684" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,405)" clip-path="url(#s5-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,395)" clip-path="url(#s5-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <g class="s5-kv-target" transform="translate(684,368)" style="--s5-card:3">
@@ -1292,12 +1206,11 @@
           <path d="M717 334 V344" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr2v-s5)"/>
           <path d="M733 344 V334" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr2v-s5)"/>
           <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS5">下排 4 卡 Decode · 复用 KV + 模型权重 · 逐 token 生成</text>
-          <foreignObject x="828" y="388" width="28" height="28">
-            <button type="button" class="stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-i18n-aria-label="replay.stage5" aria-label="重新播放 KV 传递与 KV计算 动画">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                <polyline points="3 4 3 10 9 10"/>
-              </svg>
+          <foreignObject x="790" y="386" width="68" height="30">
+            <button type="button" class="aidc-replay-btn stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-state="idle" aria-live="polite" data-i18n-aria-label="replay.stage5" aria-label="重新播放 KV 传递与 KV计算 动画">
+              <span data-replay-label="idle" data-i18n="replay.idle">▶ 重播</span>
+              <span data-replay-label="playing" data-i18n="replay.pause">⏸ 暂停</span>
+              <span data-replay-label="paused" data-i18n="replay.resume">▶ 继续</span>
             </button>
           </foreignObject>
         </svg>
@@ -1314,7 +1227,7 @@
           <span class="stage-badge">6</span>
           <h2 data-i18n="stages.s6.title">Answer 返回（CPU 侧）</h2>
         </div>
-        <p class="stage-summary" data-i18n-html="stages.s6.summary">完整 token 序列从 NPU HBM 回到 DDR；CPU 反分词为 Answer 文本，再经网络返回用户。</p>
+        <p class="stage-summary" data-i18n-html="stages.s6.summary">完整 token 序列从 NPU HBM 回到 DRAM；CPU 反分词为 Answer 文本，再经网络返回用户。</p>
         <svg class="diagram server-diagram" viewBox="0 0 920 458" role="img" data-i18n-aria-label="aria.stage6" aria-label="阶段6 Answer返回">
           <defs>
             <marker id="arr4-s6" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4 z" fill="#2563eb" /></marker>
@@ -1330,15 +1243,23 @@
           <rect x="75" y="96" width="190" height="48" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
           <text x="170" y="114" text-anchor="middle" class="srv-core" data-i18n="svg.cpu">CPU</text>
           <text x="170" y="128" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.detokenize">Detokenize</text>
-          <rect x="75" y="152" width="190" height="52" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.ddr">DDR</text>
+          <rect x="75" y="152" width="190" height="92" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="168" text-anchor="middle" class="srv-core" data-i18n="svg.dram">DRAM</text>
           <text x="170" y="182" text-anchor="middle" class="srv-desc" fill="#1d4ed8" data-i18n="svg.answerTextLabel">Answer 文本</text>
-          <rect x="75" y="212" width="190" height="138" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-          <text x="170" y="238" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
+          <g class="dram-runtime" transform="translate(79,198)">
+            <rect width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="44" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerPrefill">Docker #1 · Prefill</text>
+            <text x="44" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimePrefill">vLLM · NPU 0–3</text>
+            <rect x="94" width="88" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+            <text x="138" y="14" text-anchor="middle" class="srv-desc" fill="#14532d" font-weight="700" font-size="7.5" data-i18n="svg.dockerDecode">Docker #2 · Decode</text>
+            <text x="138" y="29" text-anchor="middle" class="srv-desc" fill="#166534" font-size="6.8" data-i18n="svg.runtimeDecode">vLLM · NPU 4–7</text>
+          </g>
+          <rect x="75" y="252" width="190" height="98" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="170" y="276" text-anchor="middle" class="srv-core" data-i18n="svg.localSsd">本地SSD</text>
           <g class="ssd-mounted" data-ssd-hl="2">
             <rect class="ssd-hl-bg" data-hl="0" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
             <rect class="ssd-hl-bg" data-hl="1" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1" visibility="hidden"/>
-            <text y="258" class="srv-desc ssd-mounted-text" fill="#0f172a">
+            <text y="296" class="srv-desc ssd-mounted-text" fill="#0f172a">
               <tspan data-i18n="svg.ssdPrefix">OS + 驱动 + </tspan>
               <tspan class="ssd-hl" data-hl="0" fill="#15803d" font-weight="700" data-i18n="svg.ssdHlContainer">容器镜像</tspan>
               <tspan data-i18n="svg.ssdMid"> + </tspan>
@@ -1346,8 +1267,8 @@
               <tspan data-i18n="svg.ssdSuffix">（挂载）</tspan>
             </text>
           </g>
-          <path d="M 90 274 C 90 272, 120 269, 128 269 L 143 269 C 145 269, 145 266, 146 266 C 147 266, 147 269, 149 269 L 168 269 C 176 269, 250 272, 250 274" class="srv-brace"/>
-          <text x="170" y="284" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
+          <path d="M 90 312 C 90 310, 120 307, 128 307 L 143 307 C 145 307, 145 304, 146 304 C 147 304, 147 307, 149 307 L 168 307 C 176 307, 250 310, 250 312" class="srv-brace"/>
+          <text x="170" y="322" text-anchor="middle" class="srv-desc" fill="#0f172a" data-i18n="svg.osStack">OS+PyTorch+推理引擎+CANN</text>
           <rect x="310" y="58" width="555" height="366" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
           <text x="587" y="82" text-anchor="middle" class="srv-title" fill="#64748b" data-i18n="svg.npuPoolTitle">8 × NPU资源池 · 上排 Prefill · 下排 Decode</text>
           <g>
@@ -1356,8 +1277,6 @@
             <line x1="380" y1="163" x2="380" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="339" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,234)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,224)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="339" y="197" width="82" height="27" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -1367,8 +1286,6 @@
             <line x1="495" y1="163" x2="495" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="454" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,234)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,224)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="454" y="197" width="82" height="27" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -1378,8 +1295,6 @@
             <line x1="610" y1="163" x2="610" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="569" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,234)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,224)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="569" y="197" width="82" height="27" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -1389,8 +1304,6 @@
             <line x1="725" y1="163" x2="725" y2="173" stroke="#94a3b8" stroke-width="1.2"/>
             <rect x="684" y="173" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="186" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="234" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,234)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="224" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,224)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="684" y="197" width="82" height="27" rx="3" fill="none" stroke="#16a34a" stroke-width="2"/>
@@ -1406,8 +1319,6 @@
             <text x="380" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="339" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="380" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="339" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(339,405)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="339" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(339,395)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="339" y="368" width="82" height="27" rx="3" fill="#86efac" stroke="#16a34a" stroke-width="2"/>
@@ -1441,8 +1352,6 @@
             <text x="495" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="454" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="495" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="454" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(454,405)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="454" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(454,395)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="454" y="368" width="82" height="27" rx="3" fill="#86efac" stroke="#16a34a" stroke-width="2"/>
@@ -1476,8 +1385,6 @@
             <text x="610" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="569" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="610" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="569" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(569,405)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="569" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(569,395)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="569" y="368" width="82" height="27" rx="3" fill="#86efac" stroke="#16a34a" stroke-width="2"/>
@@ -1511,8 +1418,6 @@
             <text x="725" y="291" text-anchor="middle" class="srv-core" data-i18n="svg.decode">Decode</text>
             <rect x="684" y="344" width="82" height="68" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
             <text x="725" y="357" text-anchor="middle" class="srv-core" data-i18n="svg.hbm">HBM</text>
-            <rect x="684" y="405" width="82" height="7" rx="2" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
-            <g transform="translate(684,405)" clip-path="url(#s6-fw)"><text x="41" y="3.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-fw" data-i18n="svg.containerImage">容器镜像</text></g>
             <rect x="684" y="395" width="82" height="10" rx="3" fill="#bbf7d0" stroke="#16a34a" stroke-width="1"/>
             <g transform="translate(684,395)" clip-path="url(#s6-wt)"><text x="41" y="5.5" text-anchor="middle" dominant-baseline="central" class="srv-hbm-wt" data-i18n="svg.modelWeights">模型权重</text></g>
             <rect x="684" y="368" width="82" height="27" rx="3" fill="#86efac" stroke="#16a34a" stroke-width="2"/>
@@ -1591,18 +1496,17 @@
           <path d="M170 145 V151" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arr4-s6)"/>
           <path d="M55 196 H20" stroke="#059669" stroke-width="1.5" marker-end="url(#arr4g-s6)"/>
           <text x="38" y="186" text-anchor="middle" class="srv-desc" fill="#047857" font-weight="800" data-i18n="svg.answer">Answer</text>
-          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS6">Token ID → CPU → DDR → Answer · DC stands for Data Center.</text>
-          <foreignObject x="828" y="388" width="28" height="28">
-            <button type="button" class="stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-i18n-aria-label="replay.stage6" aria-label="重新播放 Answer 输出动画">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 12a9 9 0 1 0 3-6.7"/>
-                <polyline points="3 4 3 10 9 10"/>
-              </svg>
+          <text x="587" y="430" text-anchor="middle" class="srv-desc" fill="#64748b" data-i18n="svg.statusS6">Token ID → CPU → DRAM → Answer · DC stands for Data Center.</text>
+          <foreignObject x="790" y="386" width="68" height="30">
+            <button type="button" class="aidc-replay-btn stage-replay-btn" xmlns="http://www.w3.org/1999/xhtml" data-state="idle" aria-live="polite" data-i18n-aria-label="replay.stage6" aria-label="重新播放 Answer 输出动画">
+              <span data-replay-label="idle" data-i18n="replay.idle">▶ 重播</span>
+              <span data-replay-label="playing" data-i18n="replay.pause">⏸ 暂停</span>
+              <span data-replay-label="paused" data-i18n="replay.resume">▶ 继续</span>
             </button>
           </foreignObject>
         </svg>
         <ol class="step-list">
-          <li data-i18n-html="stages.s6.l1"><strong>回传。</strong> token 序列写入 DDR。</li>
+          <li data-i18n-html="stages.s6.l1"><strong>回传。</strong> token 序列写入 DRAM。</li>
           <li data-i18n-html="stages.s6.l2"><strong>反分词。</strong> CPU 转为 Answer 文本。</li>
           <li data-i18n-html="stages.s6.l3"><strong>交付。</strong> 经网络返回用户。</li>
         </ol>
@@ -1612,13 +1516,13 @@
 
     <section class="card callout" style="margin-bottom:1rem" data-i18n-html="page.summary">
       <strong>七阶段串联：</strong>
-      未启动 → 空载启动 → 加载模型 → Question → <strong>上排 Prefill</strong>（写 KV）→ <strong>下排 Decode</strong>（逐 token）→ Answer。架构为 <strong>8 PD分离</strong>（4 Prefill + 4 Decode）。
+      未启动 → 空载启动（2× Docker / 2× vLLM）→ 加载模型 → Question → <strong>上排 Prefill</strong>（写 KV）→ <strong>下排 Decode</strong>（逐 token）→ Answer。架构为 <strong>8 PD分离</strong>（4 Prefill + 4 Decode）。
     </section>
   </main>
 
-  <script src="../js/aidc-asset-version.js?v=64"></script>
-  <script src="../js/i18n.js?v=64"></script>
-  <script src="../js/inference-dataflow-page.js?v=64"></script>
+  <script src="../js/aidc-asset-version.js?v=65"></script>
+  <script src="../js/i18n.js?v=65"></script>
+  <script src="../js/inference-dataflow-page.js?v=65"></script>
   <script>
     (async function () {
       var params = new URLSearchParams(window.location.search);
@@ -1645,17 +1549,41 @@
         });
       }
 
+      function setReplayState(button, state) {
+        if (window.AidcReplayControl) window.AidcReplayControl.setState(button, state);
+        else if (button) button.dataset.state = state;
+      }
+
+      function bindReplayToggle(button, stage, start, hooks) {
+        if (!button) return;
+        hooks = hooks || {};
+        button.addEventListener("click", function () {
+          var state = button.dataset.state;
+          if (state === "playing") {
+            if (window.AidcReplayControl) window.AidcReplayControl.pause(stage);
+            if (hooks.pause) hooks.pause();
+            setReplayState(button, "paused");
+          } else if (state === "paused") {
+            if (hooks.resume) hooks.resume();
+            if (window.AidcReplayControl) window.AidcReplayControl.resume(stage);
+            setReplayState(button, "playing");
+          } else {
+            start();
+          }
+        });
+      }
+
       function initStageBoot() {
         var stage = document.querySelector(".stage-boot");
         if (!stage) return;
 
         var btn = stage.querySelector(".stage-replay-btn");
-        var lastFill = stage.querySelector('.s1-fw-target[style*="--s1-card:7"] .s1-fw-fill');
-        var animated = stage.querySelectorAll(".s1-fw-fly-main, .s1-fw-fly-card, .s1-fw-fill");
+        var lastFill = stage.querySelector('.s1-rt-instance[style*="--s1-instance:1"] .s1-rt-fill');
+        var animated = stage.querySelectorAll(".s1-rt-fly-main, .s1-rt-fill");
 
         function setRunning(running) {
           stage.classList.toggle("s1-anim-running", running);
-          if (btn) btn.disabled = running;
+          setReplayState(btn, running ? "playing" : "idle");
         }
 
         function finishAnim() {
@@ -1671,22 +1599,23 @@
         function startAnim() {
           if (reducedMotion) {
             stage.classList.add("s1-anim-done");
-            if (btn) btn.disabled = false;
+            setReplayState(btn, "idle");
             return;
           }
+          if (window.AidcReplayControl) window.AidcReplayControl.reset(stage);
           resetAnimState();
           setRunning(true);
         }
 
         if (lastFill) {
           lastFill.addEventListener("animationend", function (e) {
-            if (e.animationName === "s1-fw-fill" && stage.classList.contains("s1-anim-running")) {
+            if (e.animationName === "s1-rt-fill" && stage.classList.contains("s1-anim-running")) {
               finishAnim();
             }
           });
         }
 
-        if (btn) btn.addEventListener("click", startAnim);
+        bindReplayToggle(btn, stage, startAnim);
         startAnim();
       }
 
@@ -1696,11 +1625,11 @@
 
         var btn = stage.querySelector(".stage-replay-btn");
         var lastFill = stage.querySelector('.s2-wt-target[style*="--s2-card:7"] .s2-wt-fill');
-        var animated = stage.querySelectorAll(".s2-wt-fly-main, .s2-wt-fly-card, .s2-wt-fill");
+        var animated = stage.querySelectorAll(".s2-wt-fly-main, .s2-wt-fly-card, .s2-wt-fill, .s2-dram-fill");
 
         function setRunning(running) {
           stage.classList.toggle("s2-anim-running", running);
-          if (btn) btn.disabled = running;
+          setReplayState(btn, running ? "playing" : "idle");
         }
 
         function finishAnim() {
@@ -1716,9 +1645,10 @@
         function startAnim() {
           if (reducedMotion) {
             stage.classList.add("s2-anim-done");
-            if (btn) btn.disabled = false;
+            setReplayState(btn, "idle");
             return;
           }
+          if (window.AidcReplayControl) window.AidcReplayControl.reset(stage);
           resetAnimState();
           setRunning(true);
         }
@@ -1731,7 +1661,7 @@
           });
         }
 
-        if (btn) btn.addEventListener("click", startAnim);
+        bindReplayToggle(btn, stage, startAnim);
         startAnim();
       }
 
@@ -1740,20 +1670,34 @@
         if (!stage) return;
 
         var btn = stage.querySelector(".stage-replay-btn");
+        var lastToken = stage.querySelector(".s3-token-fly-6");
         var animated = stage.querySelectorAll(".s3-question-fly, .s3-token-fly");
 
         function startAnim() {
           if (reducedMotion) {
             stage.classList.remove("s3-anim-running");
             stage.classList.add("s3-anim-done");
+            setReplayState(btn, "idle");
             return;
           }
+          if (window.AidcReplayControl) window.AidcReplayControl.reset(stage);
           stage.classList.remove("s3-anim-done");
           resetAnimated(animated);
           stage.classList.add("s3-anim-running");
+          setReplayState(btn, "playing");
         }
 
-        if (btn) btn.addEventListener("click", startAnim);
+        if (lastToken) {
+          lastToken.addEventListener("animationend", function (e) {
+            if (e.animationName === "s3-token-fly-6" && stage.classList.contains("s3-anim-running")) {
+              stage.classList.remove("s3-anim-running");
+              stage.classList.add("s3-anim-done");
+              setReplayState(btn, "idle");
+            }
+          });
+        }
+
+        bindReplayToggle(btn, stage, startAnim);
         startAnim();
       }
 
@@ -1767,11 +1711,13 @@
         var lastKvFill = stage.querySelector('.s4-kv-target[style*="--s4-card:3"] .s4-kv-cache-fill');
         var animated = stage.querySelectorAll(".s4-wt-fly, .s4-wt-fill, .s4-kv-source-fill, .s4-kv-fly, .s4-kv-cache-fill");
         var pauseTimer = null;
+        var pauseDeadline = 0;
+        var pauseRemaining = 0;
         var KV_PAUSE_MS = 2000;
 
         function setRunning(running) {
           stage.classList.toggle("s4-anim-running", running);
-          if (btn) btn.disabled = running;
+          setReplayState(btn, running ? "playing" : "idle");
         }
 
         function finishAnim() {
@@ -1784,8 +1730,33 @@
             clearTimeout(pauseTimer);
             pauseTimer = null;
           }
+          pauseDeadline = 0;
+          pauseRemaining = 0;
           stage.classList.remove("s4-anim-done", "s4-anim-running", "s4-wt-running", "s4-wt-done", "s4-kv-prime-running", "s4-kv-source-done", "s4-kv-running");
           resetAnimated(animated);
+        }
+
+        function scheduleKvPhase(delay) {
+          pauseRemaining = delay;
+          pauseDeadline = performance.now() + delay;
+          pauseTimer = setTimeout(function () {
+            pauseTimer = null;
+            pauseDeadline = 0;
+            pauseRemaining = 0;
+            startKvPhase();
+          }, delay);
+        }
+
+        function pausePhaseDelay() {
+          if (!pauseTimer) return;
+          clearTimeout(pauseTimer);
+          pauseTimer = null;
+          pauseRemaining = Math.max(0, pauseDeadline - performance.now());
+          pauseDeadline = 0;
+        }
+
+        function resumePhaseDelay() {
+          if (pauseRemaining > 0 && !pauseTimer) scheduleKvPhase(pauseRemaining);
         }
 
         function startKvFlyPhase() {
@@ -1800,9 +1771,10 @@
         function startAnim() {
           if (reducedMotion) {
             stage.classList.add("s4-wt-done", "s4-kv-source-done", "s4-anim-done");
-            if (btn) btn.disabled = false;
+            setReplayState(btn, "idle");
             return;
           }
+          if (window.AidcReplayControl) window.AidcReplayControl.reset(stage);
           resetAnimState();
           setRunning(true);
           stage.classList.add("s4-wt-running");
@@ -1813,7 +1785,7 @@
             if (e.animationName === "s4-wt-fill" && stage.classList.contains("s4-wt-running")) {
               stage.classList.remove("s4-wt-running");
               stage.classList.add("s4-wt-done");
-              pauseTimer = setTimeout(startKvPhase, KV_PAUSE_MS);
+              scheduleKvPhase(KV_PAUSE_MS);
             }
           });
         }
@@ -1834,7 +1806,10 @@
           });
         }
 
-        if (btn) btn.addEventListener("click", startAnim);
+        bindReplayToggle(btn, stage, startAnim, {
+          pause: pausePhaseDelay,
+          resume: resumePhaseDelay
+        });
         startAnim();
       }
 
@@ -1852,7 +1827,7 @@
 
         function setRunning(running) {
           stage.classList.toggle("s5-anim-running", running);
-          if (btn) btn.disabled = running;
+          setReplayState(btn, running ? "playing" : "idle");
         }
 
         function finishAnim() {
@@ -1885,9 +1860,10 @@
         function startAnim() {
           if (reducedMotion) {
             stage.classList.add("s5-kv-compute-done", "s5-anim-done");
-            if (btn) btn.disabled = false;
+            setReplayState(btn, "idle");
             return;
           }
+          if (window.AidcReplayControl) window.AidcReplayControl.reset(stage);
           resetAnimState();
           setRunning(true);
           stage.classList.add("s5-transfer-running");
@@ -1917,7 +1893,7 @@
           });
         }
 
-        if (btn) btn.addEventListener("click", startAnim);
+        bindReplayToggle(btn, stage, startAnim);
         startAnim();
       }
 
@@ -1926,20 +1902,34 @@
         if (!stage) return;
 
         var btn = stage.querySelector(".stage-replay-btn");
-        var animated = stage.querySelectorAll(".s6-token-in, .s6-answer-out, .s6-kv-compute-fill, .s6-kv-compute-fly");
+        var lastAnswer = stage.querySelector(".s6-answer-out-5");
+        var animated = stage.querySelectorAll(".s6-token-in, .s6-answer-out, .s6-kv-compute-fill, .s6-kv-compute-fly, .s6-kv-compute");
 
         function startAnim() {
           if (reducedMotion) {
             stage.classList.remove("s6-anim-running");
             stage.classList.add("s6-anim-done");
+            setReplayState(btn, "idle");
             return;
           }
+          if (window.AidcReplayControl) window.AidcReplayControl.reset(stage);
           stage.classList.remove("s6-anim-done");
           resetAnimated(animated);
           stage.classList.add("s6-anim-running");
+          setReplayState(btn, "playing");
         }
 
-        if (btn) btn.addEventListener("click", startAnim);
+        if (lastAnswer) {
+          lastAnswer.addEventListener("animationend", function (e) {
+            if (e.animationName === "s6-answer-out-5" && stage.classList.contains("s6-anim-running")) {
+              stage.classList.remove("s6-anim-running");
+              stage.classList.add("s6-anim-done");
+              setReplayState(btn, "idle");
+            }
+          });
+        }
+
+        bindReplayToggle(btn, stage, startAnim);
         startAnim();
       }
 

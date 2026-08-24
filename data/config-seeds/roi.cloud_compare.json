@@ -2,18 +2,18 @@
   "schemaVersion": 1,
   "ds-v4": {
     "title": "DeepSeek V4 档",
-    "updatedAt": "2026-08-01",
-    "pricingNote": "DeepSeek-V4-Flash 公开价；各平台按官网/百炼等公开价目整理，单位元/百万 Token",
-    "refInputMiss": 1.0,
-    "refInputHit": 0.02,
-    "refOutput": 2.0,
+    "updatedAt": "2026-08-24",
+    "pricingNote": "DeepSeek-V4-Flash 高峰时段公开价（api-docs.deepseek.com/zh-cn）；各平台按 2026-08 峰谷调价后高峰价目整理，单位元/百万 Token",
+    "refInputMiss": 3.0,
+    "refInputHit": 0.1,
+    "refOutput": 9.0,
     "clouds": [
-      { "name": "DeepSeek 官方", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
+      { "name": "DeepSeek 官方", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
       { "name": "硅基流动", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
-      { "name": "阿里云百炼", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
-      { "name": "火山引擎", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
-      { "name": "腾讯云", "inputMiss": 1.2, "inputHit": 0.024, "output": 2.4 },
-      { "name": "天翼云", "inputMiss": 1.2, "inputHit": 0.024, "output": 2.4 }
+      { "name": "阿里云百炼", "inputMiss": 3.0, "inputHit": 0.3, "output": 9.0 },
+      { "name": "火山引擎", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
+      { "name": "腾讯云", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
+      { "name": "天翼云", "inputMiss": 3.6, "inputHit": 0.12, "output": 10.8 }
     ]
   },
   "glm-52": {

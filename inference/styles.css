@@ -322,154 +322,104 @@ html[data-theme='dark'] .flow-legend {
   fill: #64748b;
 }
 
-/* Stage 1 · 容器镜像 SSD → HBM */
-.stage-boot .s1-fw-fill {
+/* Stage 1 · Docker / 推理运行时 SSD → DRAM（CPU 侧） */
+.stage-boot .s1-rt-fill {
   transform-box: fill-box;
   transform-origin: left center;
   transform: scaleX(0);
 }
 
-.stage-boot.s1-anim-done .s1-fw-fill {
+.stage-boot.s1-anim-done .s1-rt-fill {
   transform: scaleX(1);
 }
 
-.stage-boot.s1-anim-running .s1-fw-fill {
-  animation: s1-fw-fill 0.45s ease-out forwards;
-  animation-delay: calc(2.4s + var(--s1-card, 0) * 0.35s);
+.stage-boot.s1-anim-running .s1-rt-fill {
+  animation: s1-rt-fill 0.65s ease-out forwards;
+  animation-delay: calc(1.35s + var(--s1-instance, 0) * 0.18s);
 }
 
-.stage-boot .s1-fw-outline {
+.stage-boot .s1-rt-outline {
   pointer-events: none;
 }
 
-.stage-boot .s1-fw-fly-main,
-.stage-boot .s1-fw-fly-card {
+.stage-boot .s1-rt-fly-main {
   opacity: 0;
   pointer-events: none;
 }
 
-.stage-boot.s1-anim-running .s1-fw-fly-main {
-  animation: s1-fw-fly-main 2.4s ease-in-out forwards;
+.stage-boot.s1-anim-running .s1-rt-fly-main {
+  animation: s1-rt-fly-main 1.35s ease-in-out forwards;
 }
 
-.stage-boot.s1-anim-running .s1-fw-fly-card {
-  animation-duration: 0.45s;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: forwards;
-  animation-delay: calc(2.4s + var(--s1-card, 0) * 0.35s);
-}
-
-.stage-boot.s1-anim-running .s1-fw-fly-card-0 { animation-name: s1-fw-fly-card-0; }
-.stage-boot.s1-anim-running .s1-fw-fly-card-1 { animation-name: s1-fw-fly-card-1; }
-.stage-boot.s1-anim-running .s1-fw-fly-card-2 { animation-name: s1-fw-fly-card-2; }
-.stage-boot.s1-anim-running .s1-fw-fly-card-3 { animation-name: s1-fw-fly-card-3; }
-.stage-boot.s1-anim-running .s1-fw-fly-card-4 { animation-name: s1-fw-fly-card-4; }
-.stage-boot.s1-anim-running .s1-fw-fly-card-5 { animation-name: s1-fw-fly-card-5; }
-.stage-boot.s1-anim-running .s1-fw-fly-card-6 { animation-name: s1-fw-fly-card-6; }
-.stage-boot.s1-anim-running .s1-fw-fly-card-7 { animation-name: s1-fw-fly-card-7; }
-
-.stage-boot .s1-fw-route {
+.stage-boot .s1-rt-route {
   opacity: 0;
 }
 
-.stage-boot.s1-anim-running .s1-fw-route {
-  animation: s1-fw-route-show 2.4s ease-in-out forwards;
+.stage-boot.s1-anim-running .s1-rt-route {
+  animation: s1-rt-route-show 1.35s ease-in-out forwards;
 }
 
-@keyframes s1-fw-fly-main {
-  0% { transform: translate(153px, 254px); opacity: 1; }
-  28% { transform: translate(170px, 178px); opacity: 1; }
-  52% { transform: translate(170px, 120px); opacity: 1; }
-  88% { transform: translate(280px, 178px); opacity: 1; }
-  100% { transform: translate(280px, 178px); opacity: 0; }
+@keyframes s1-rt-fly-main {
+  0% { transform: translate(153px, 294px); opacity: 1; }
+  35% { transform: translate(170px, 250px); opacity: 1; }
+  75% { transform: translate(170px, 218px); opacity: 1; }
+  100% { transform: translate(170px, 218px); opacity: 0; }
 }
 
-@keyframes s1-fw-fly-card-0 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(380px, 237.5px); opacity: 1; }
-  100% { transform: translate(380px, 237.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fly-card-1 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(495px, 237.5px); opacity: 1; }
-  100% { transform: translate(495px, 237.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fly-card-2 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(610px, 237.5px); opacity: 1; }
-  100% { transform: translate(610px, 237.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fly-card-3 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(725px, 237.5px); opacity: 1; }
-  100% { transform: translate(725px, 237.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fly-card-4 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(380px, 408.5px); opacity: 1; }
-  100% { transform: translate(380px, 408.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fly-card-5 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(495px, 408.5px); opacity: 1; }
-  100% { transform: translate(495px, 408.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fly-card-6 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(610px, 408.5px); opacity: 1; }
-  100% { transform: translate(610px, 408.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fly-card-7 {
-  0% { transform: translate(280px, 178px); opacity: 0; }
-  12% { opacity: 1; }
-  88% { transform: translate(725px, 408.5px); opacity: 1; }
-  100% { transform: translate(725px, 408.5px); opacity: 0; }
-}
-
-@keyframes s1-fw-fill {
+@keyframes s1-rt-fill {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
 
-@keyframes s1-fw-route-show {
+@keyframes s1-rt-route-show {
   0% { opacity: 0; }
-  8% { opacity: 0.55; }
-  92% { opacity: 0.55; }
+  10% { opacity: 0.55; }
+  90% { opacity: 0.55; }
   100% { opacity: 0.35; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stage-boot.s1-anim-running .s1-fw-fly-main,
-  .stage-boot.s1-anim-running .s1-fw-fly-card,
-  .stage-boot.s1-anim-running .s1-fw-route {
+  .stage-boot.s1-anim-running .s1-rt-fly-main,
+  .stage-boot.s1-anim-running .s1-rt-route {
     animation: none;
   }
 
-  .stage-boot .s1-fw-fill,
-  .stage-boot.s1-anim-done .s1-fw-fill {
+  .stage-boot .s1-rt-fill,
+  .stage-boot.s1-anim-done .s1-rt-fill {
     transform: scaleX(1);
   }
 
-  .stage-boot .s1-fw-route {
+  .stage-boot .s1-rt-route {
     opacity: 0.35;
   }
 }
 
-/* Stage 2 · 模型权重 SSD → HBM */
+/* legacy s1-fw selectors kept harmless for old cached HTML */
+.stage-boot .s1-fw-fill { transform: scaleX(1); }
+
+/* Stage 2 · 模型权重 SSD → DRAM → HBM */
+.stage-load .s2-dram-fill {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.stage-load.s2-anim-done .s2-dram-fill {
+  transform: scaleX(1);
+}
+
+.stage-load.s2-anim-running .s2-dram-fill {
+  animation: s2-dram-fill 0.55s ease-out 1.1s forwards;
+}
+
+.stage-load .s2-dram-route {
+  opacity: 0;
+}
+
+.stage-load.s2-anim-running .s2-dram-route {
+  animation: s2-dram-route-show 1.1s ease-in-out forwards;
+}
+
 .stage-load .s2-wt-fill {
   transform-box: fill-box;
   transform-origin: left center;
@@ -482,7 +432,7 @@ html[data-theme='dark'] .flow-legend {
 
 .stage-load.s2-anim-running .s2-wt-fill {
   animation: s2-wt-fill 0.45s ease-out forwards;
-  animation-delay: calc(2.4s + var(--s2-card, 0) * 0.35s);
+  animation-delay: calc(2.0s + var(--s2-card, 0) * 0.35s);
 }
 
 .stage-load .s2-wt-outline {
@@ -496,14 +446,14 @@ html[data-theme='dark'] .flow-legend {
 }
 
 .stage-load.s2-anim-running .s2-wt-fly-main {
-  animation: s2-wt-fly-main 2.4s ease-in-out forwards;
+  animation: s2-wt-fly-main 1.6s ease-in-out 1.1s forwards;
 }
 
 .stage-load.s2-anim-running .s2-wt-fly-card {
   animation-duration: 0.45s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: forwards;
-  animation-delay: calc(2.4s + var(--s2-card, 0) * 0.35s);
+  animation-delay: calc(2.0s + var(--s2-card, 0) * 0.35s);
 }
 
 .stage-load.s2-anim-running .s2-wt-fly-card-0 { animation-name: s2-wt-fly-card-0; }
@@ -520,71 +470,83 @@ html[data-theme='dark'] .flow-legend {
 }
 
 .stage-load.s2-anim-running .s2-wt-route {
-  animation: s2-wt-route-show 2.4s ease-in-out forwards;
+  animation: s2-wt-route-show 1.6s ease-in-out 1.1s forwards;
+}
+
+@keyframes s2-dram-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes s2-dram-route-show {
+  0% { opacity: 0; }
+  10% { opacity: 0.55; }
+  90% { opacity: 0.55; }
+  100% { opacity: 0.35; }
 }
 
 @keyframes s2-wt-fly-main {
-  0% { transform: translate(202px, 254px); opacity: 1; }
-  28% { transform: translate(170px, 178px); opacity: 1; }
-  52% { transform: translate(170px, 120px); opacity: 1; }
-  88% { transform: translate(280px, 178px); opacity: 1; }
+  0% { transform: translate(202px, 294px); opacity: 1; }
+  30% { transform: translate(170px, 250px); opacity: 1; }
+  55% { transform: translate(170px, 184px); opacity: 1; }
+  85% { transform: translate(280px, 178px); opacity: 1; }
   100% { transform: translate(280px, 178px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-0 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(380px, 229px); opacity: 1; }
-  100% { transform: translate(380px, 229px); opacity: 0; }
+  88% { transform: translate(380px, 236px); opacity: 1; }
+  100% { transform: translate(380px, 236px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-1 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(495px, 229px); opacity: 1; }
-  100% { transform: translate(495px, 229px); opacity: 0; }
+  88% { transform: translate(495px, 236px); opacity: 1; }
+  100% { transform: translate(495px, 236px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-2 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(610px, 229px); opacity: 1; }
-  100% { transform: translate(610px, 229px); opacity: 0; }
+  88% { transform: translate(610px, 236px); opacity: 1; }
+  100% { transform: translate(610px, 236px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-3 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(725px, 229px); opacity: 1; }
-  100% { transform: translate(725px, 229px); opacity: 0; }
+  88% { transform: translate(725px, 236px); opacity: 1; }
+  100% { transform: translate(725px, 236px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-4 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(380px, 400px); opacity: 1; }
-  100% { transform: translate(380px, 400px); opacity: 0; }
+  88% { transform: translate(380px, 407px); opacity: 1; }
+  100% { transform: translate(380px, 407px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-5 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(495px, 400px); opacity: 1; }
-  100% { transform: translate(495px, 400px); opacity: 0; }
+  88% { transform: translate(495px, 407px); opacity: 1; }
+  100% { transform: translate(495px, 407px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-6 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(610px, 400px); opacity: 1; }
-  100% { transform: translate(610px, 400px); opacity: 0; }
+  88% { transform: translate(610px, 407px); opacity: 1; }
+  100% { transform: translate(610px, 407px); opacity: 0; }
 }
 
 @keyframes s2-wt-fly-card-7 {
   0% { transform: translate(280px, 178px); opacity: 0; }
   12% { opacity: 1; }
-  88% { transform: translate(725px, 400px); opacity: 1; }
-  100% { transform: translate(725px, 400px); opacity: 0; }
+  88% { transform: translate(725px, 407px); opacity: 1; }
+  100% { transform: translate(725px, 407px); opacity: 0; }
 }
 
 @keyframes s2-wt-fill {
@@ -634,16 +596,16 @@ html[data-theme='dark'] .flow-legend {
 }
 
 .stage-question.s3-anim-running .s3-question-fly {
-  animation: s3-question-fly 12s ease-in-out infinite;
+  animation: s3-question-fly 12s ease-in-out 1 forwards;
 }
 
-.stage-question.s3-anim-running .s3-token-fly-0 { animation: s3-token-fly-0 12s ease-in-out infinite; }
-.stage-question.s3-anim-running .s3-token-fly-1 { animation: s3-token-fly-1 12s ease-in-out infinite; }
-.stage-question.s3-anim-running .s3-token-fly-2 { animation: s3-token-fly-2 12s ease-in-out infinite; }
-.stage-question.s3-anim-running .s3-token-fly-3 { animation: s3-token-fly-3 12s ease-in-out infinite; }
-.stage-question.s3-anim-running .s3-token-fly-4 { animation: s3-token-fly-4 12s ease-in-out infinite; }
-.stage-question.s3-anim-running .s3-token-fly-5 { animation: s3-token-fly-5 12s ease-in-out infinite; }
-.stage-question.s3-anim-running .s3-token-fly-6 { animation: s3-token-fly-6 12s ease-in-out infinite; }
+.stage-question.s3-anim-running .s3-token-fly-0 { animation: s3-token-fly-0 12s ease-in-out 1 forwards; }
+.stage-question.s3-anim-running .s3-token-fly-1 { animation: s3-token-fly-1 12s ease-in-out 1 forwards; }
+.stage-question.s3-anim-running .s3-token-fly-2 { animation: s3-token-fly-2 12s ease-in-out 1 forwards; }
+.stage-question.s3-anim-running .s3-token-fly-3 { animation: s3-token-fly-3 12s ease-in-out 1 forwards; }
+.stage-question.s3-anim-running .s3-token-fly-4 { animation: s3-token-fly-4 12s ease-in-out 1 forwards; }
+.stage-question.s3-anim-running .s3-token-fly-5 { animation: s3-token-fly-5 12s ease-in-out 1 forwards; }
+.stage-question.s3-anim-running .s3-token-fly-6 { animation: s3-token-fly-6 12s ease-in-out 1 forwards; }
 
 @keyframes s3-question-fly {
   0% { transform: translate(20px, 196px); opacity: 0; }
@@ -830,39 +792,10 @@ html[data-theme='dark'] .flow-legend {
 .stage-prefill.s4-kv-running .s4-kv-fly-4 { animation-name: s4-kv-fly-4; }
 
 .waterfall-stage .stage-replay-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--muted);
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 0.08);
-}
-
-.waterfall-stage .stage-replay-btn svg {
-  display: block;
-}
-
-.waterfall-stage .stage-replay-btn:hover:not(:disabled) {
-  border-color: #16a34a;
-  color: #15803d;
-  background: #f0fdf4;
-}
-
-html[data-theme='dark'] .waterfall-stage .stage-replay-btn:hover:not(:disabled) {
-  border-color: #34d399;
-  color: #6ee7b7;
-  background: rgba(52, 211, 153, 0.12);
-}
-
-.waterfall-stage .stage-replay-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+  min-width: 0;
+  padding: 4px 6px;
 }
 
 @keyframes s4-kv-fly-1 {
@@ -1161,7 +1094,7 @@ html[data-theme='dark'] .waterfall-stage .stage-replay-btn:hover:not(:disabled) 
 .stage-answer.s6-anim-running .s6-kv-compute-fly-4 { animation-name: s6-kv-compute-fly-4; }
 
 .stage-answer.s6-anim-running .s6-kv-compute {
-  animation: s6-kv-compute-pulse 15s ease-in-out infinite;
+  animation: s6-kv-compute-pulse 15s ease-in-out 1 forwards;
   animation-delay: calc(var(--s6-card, 0) * 0.15s);
 }
 
@@ -1220,19 +1153,19 @@ html[data-theme='dark'] .waterfall-stage .stage-replay-btn:hover:not(:disabled) 
   pointer-events: none;
 }
 
-.stage-answer.s6-anim-running .s6-token-in-0 { animation: s6-token-in-0 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-token-in-1 { animation: s6-token-in-1 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-token-in-2 { animation: s6-token-in-2 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-token-in-3 { animation: s6-token-in-3 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-token-in-4 { animation: s6-token-in-4 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-token-in-5 { animation: s6-token-in-5 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-token-in-0 { animation: s6-token-in-0 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-token-in-1 { animation: s6-token-in-1 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-token-in-2 { animation: s6-token-in-2 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-token-in-3 { animation: s6-token-in-3 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-token-in-4 { animation: s6-token-in-4 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-token-in-5 { animation: s6-token-in-5 15s ease-in-out 1 forwards; }
 
-.stage-answer.s6-anim-running .s6-answer-out-0 { animation: s6-answer-out-0 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-answer-out-1 { animation: s6-answer-out-1 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-answer-out-2 { animation: s6-answer-out-2 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-answer-out-3 { animation: s6-answer-out-3 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-answer-out-4 { animation: s6-answer-out-4 15s ease-in-out infinite; }
-.stage-answer.s6-anim-running .s6-answer-out-5 { animation: s6-answer-out-5 15s ease-in-out infinite; }
+.stage-answer.s6-anim-running .s6-answer-out-0 { animation: s6-answer-out-0 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-answer-out-1 { animation: s6-answer-out-1 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-answer-out-2 { animation: s6-answer-out-2 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-answer-out-3 { animation: s6-answer-out-3 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-answer-out-4 { animation: s6-answer-out-4 15s ease-in-out 1 forwards; }
+.stage-answer.s6-anim-running .s6-answer-out-5 { animation: s6-answer-out-5 15s ease-in-out 1 forwards; }
 
 @keyframes s6-token-in-0 {
   0%, 1% { transform: translate(306px, 192px); opacity: 0; }
