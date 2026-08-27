@@ -83,10 +83,15 @@
     return selectLayoutTab;
   }
 
+  function initialTabFromUrl() {
+    const tab = new URLSearchParams(global.location.search).get('tab');
+    return ['roomLayout', 'plan', 'synergy', 'a', 'b', 'roi'].includes(tab) ? tab : 'roomLayout';
+  }
+
   global.AidcAiDcDesignPage = {
     init() {
       const selectLayoutTab = initTabs();
-      selectLayoutTab('roomLayout');
+      selectLayoutTab(initialTabFromUrl());
       syncIframes();
     },
     syncIframes,

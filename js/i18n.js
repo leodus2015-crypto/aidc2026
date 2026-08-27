@@ -35,7 +35,8 @@
   }
 
   function t(key, params) {
-    const raw = resolvePath(messages, key);
+    const resolved = resolvePath(messages, key);
+    const raw = resolved == null ? messages?.lookup?.[key] : resolved;
     if (raw == null) return key;
     if (typeof raw === 'string') return interpolate(raw, params);
     return key;
@@ -189,6 +190,10 @@
     return v != null ? v : zh;
   }
 
+  function hasLookupText(key) {
+    return typeof messages?.lookup?.[key] === 'string';
+  }
+
   global.AidcI18n = {
     init,
     setLocale,
@@ -197,6 +202,7 @@
     applyMeta,
     getLocale: () => locale,
     getLookupText,
+    hasLookupText,
     isActive: () => active,
     localeTag: () => (locale === 'en' ? 'en-US' : 'zh-CN'),
   };

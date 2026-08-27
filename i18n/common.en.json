@@ -10,7 +10,27 @@
     "postTraining": "Post-Training",
     "aiDcLayout": "AI DC Design",
     "whitePaper": "White Paper",
-    "aboutUs": "About US"
+    "aboutUs": "About US",
+    "menu": {
+      "open": "Open navigation menu",
+      "close": "Close navigation menu",
+      "design": "Planning & Architecture",
+      "cases": "Air-Cooled Cases",
+      "value": "Value Assessment",
+      "roomLayout": "Room Layout",
+      "rackAir": "Rack (Air-Cooled)",
+      "tokenCentric": "Token Centric",
+      "caseA": "Case A (Air-Cooled)",
+      "caseB": "Case B (Air-Cooled)",
+      "roi": "Investment ROI",
+      "inferenceMechanism": "Inference Mechanics",
+      "deploymentCapacity": "Deployment & Capacity",
+      "principles": "Inference Principles",
+      "dataflow": "Inference Service Dataflow",
+      "mixed": "PD Colocation",
+      "separated": "PD Disaggregation",
+      "kvCache": "KV Cache Calculation"
+    }
   },
   "footer": {
     "miit": "MIIT ICP filing:",

@@ -10,7 +10,27 @@
     "postTraining": "后训练",
     "aiDcLayout": "AI DC规划",
     "whitePaper": "白皮书",
-    "aboutUs": "About US"
+    "aboutUs": "About US",
+    "menu": {
+      "open": "打开导航菜单",
+      "close": "关闭导航菜单",
+      "design": "规划与架构",
+      "cases": "风冷案例",
+      "value": "效益评估",
+      "roomLayout": "机房布局",
+      "rackAir": "机柜（风冷）",
+      "tokenCentric": "Token Centric",
+      "caseA": "案例A（风冷）",
+      "caseB": "案例B（风冷）",
+      "roi": "Investment ROI",
+      "inferenceMechanism": "推理机制",
+      "deploymentCapacity": "部署与容量",
+      "principles": "推理原理",
+      "dataflow": "推理服务数据流",
+      "mixed": "PD混部",
+      "separated": "PD分离",
+      "kvCache": "KV Cache计算"
+    }
   },
   "footer": {
     "miit": "工信部备案号：",

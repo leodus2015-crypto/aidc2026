@@ -15,6 +15,17 @@
     "annualNote": "年折旧 + 年电费 + 年运维",
     "formulaNote": "自建成本（某类）= 年全成本 × 占比 ÷ 该类年 Token 量；年 Token = P × 单卡 t/s × 86400 × 365 × 利用率。"
   },
+  "formulas": {
+    "power": "<code>集群 IT 功率（MW）</code> 为独立输入；<code>年电费</code> = MW × 1000 × 8760 × PUE × 利用率 × 电价",
+    "procurement": "<code>昇腾采购</code> = P × 单卡价；<code>IT 设备投资</code> = 昇腾采购 ÷ IT 内昇腾占比",
+    "capex": "<code>总投资 CAPEX</code> = IT 设备投资 ÷ IT 设备工程占比",
+    "maintenance": "<code>年维保</code> = 总投资 CAPEX × 年维保（%）",
+    "operations": "<code>年运维</code> = 固定运维 + 年维保",
+    "annualCost": "<code>年全成本</code> = 年折旧 + 年电费 + 年运维",
+    "annualTokens": "<code>年 Token（某类）</code> = P × 单卡 t/s × 86400 × 365 × 利用率",
+    "selfBuilt": "<code>自建成本/M（某类）</code> = 年全成本 × 占比 ÷ (该类年 Token / 10⁶)",
+    "cloud": "<code>云公开价</code>：各平台按输入未命中、输入命中、输出三类分别标价（元/百万 Token）"
+  },
   "lookup": {
     "Token 服务投资收益分析": "Token 服务投资收益分析",
     "以": "以",

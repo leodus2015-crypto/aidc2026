@@ -15,6 +15,17 @@
     "annualNote": "Annual depreciation + electricity + operations",
     "formulaNote": "Self-built cost (per type) = total annual cost × share ÷ annual tokens of that type; annual tokens = P × t/s × 86400 × 365 × utilization."
   },
+  "formulas": {
+    "power": "<code>Cluster IT power (MW)</code> is an independent input; <code>annual electricity</code> = MW × 1000 × 8760 × PUE × utilization × electricity price",
+    "procurement": "<code>Ascend procurement</code> = P × per-card price; <code>IT equipment investment</code> = Ascend procurement ÷ Ascend share within IT",
+    "capex": "<code>Total CAPEX</code> = IT equipment investment ÷ IT equipment project share",
+    "maintenance": "<code>Annual maintenance</code> = total CAPEX × annual maintenance (%)",
+    "operations": "<code>Annual operations</code> = fixed operations + annual maintenance",
+    "annualCost": "<code>Total annual cost</code> = annual depreciation + annual electricity + annual operations",
+    "annualTokens": "<code>Annual tokens (per type)</code> = P × per-card t/s × 86400 × 365 × utilization",
+    "selfBuilt": "<code>Self-built cost/M (per type)</code> = total annual cost × share ÷ (annual tokens of that type / 10⁶)",
+    "cloud": "<code>Cloud list price</code>: each platform prices cache-miss input, cache-hit input, and output separately (CNY/M tokens)"
+  },
   "lookup": {
     "Token 服务投资收益分析": "Token Service Investment ROI",
     "以": "Models",

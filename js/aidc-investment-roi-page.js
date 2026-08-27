@@ -38,6 +38,36 @@
   }
 
   const $ = (id) => document.getElementById(id);
+  let staticLookupNodes = null;
+
+  function translateStaticLookupText() {
+    if (!staticLookupNodes) {
+      staticLookupNodes = [];
+      const root = document.body;
+      if (root) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        let node = walker.nextNode();
+        while (node) {
+          const parent = node.parentElement;
+          const raw = node.nodeValue || '';
+          const match = raw.match(/^(\s*)(.*?)(\s*)$/s);
+          const key = match?.[2] || '';
+          if (
+            key &&
+            parent &&
+            !parent.closest('[data-i18n], [data-i18n-html], script, style') &&
+            window.AidcI18n?.hasLookupText?.(key)
+          ) {
+            staticLookupNodes.push({ node, key, before: match[1], after: match[3] });
+          }
+          node = walker.nextNode();
+        }
+      }
+    }
+    staticLookupNodes.forEach(({ node, key, before, after }) => {
+      node.nodeValue = before + L(key) + after;
+    });
+  }
 
   const SCALE_PRESETS = {
     '768': { computeP: 768, clusterMw: 2.5 },
@@ -683,6 +713,7 @@
 
   async function bootPage() {
     applyPageConfig();
+    translateStaticLookupText();
     const [defaultsResult, cloudResult] = await Promise.all([
       AidcConfig.load(configKeys.defaults, LOCAL_ROI_DEFAULTS),
       AidcConfig.load(configKeys.cloudCompare, LOCAL_CLOUD_COMPARE),
