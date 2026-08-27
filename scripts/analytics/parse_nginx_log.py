@@ -56,11 +56,13 @@ STATIC_EXT = {
     ".webm",
     ".json",
 }
-SKIP_PREFIXES = ("/api/health",)
+SKIP_PREFIXES = ("/api/",)
 BOT_UA_HINTS = (
     "bot",
     "spider",
     "crawler",
+    "scanner",
+    "/scan",
     "curl/",
     "wget/",
     "python-requests",
@@ -68,6 +70,14 @@ BOT_UA_HINTS = (
     "scrapy",
     "monitor",
     "uptime",
+    "censys",
+    "zgrab",
+    "masscan",
+    "nmap",
+    "nikto",
+    "infrawatch",
+    "visionheight",
+    "securitytrails",
 )
 
 
@@ -89,11 +99,16 @@ def normalize_path(raw: str) -> str:
 
 
 def is_page_hit(method: str, path: str, status: int) -> bool:
-    if method.upper() not in ("GET", "HEAD"):
+    # HEAD 只探测资源，不代表浏览器实际渲染页面。
+    if method.upper() != "GET":
         return False
-    if status >= 400:
+    # 只统计最终成功页面；3xx 路由跳转由目标页面的 200 请求计数。
+    if status != 200:
         return False
     lower = path.lower()
+    # 根路径仅用于跳转到正式首页，不作为独立页面。
+    if lower == "/":
+        return False
     for prefix in SKIP_PREFIXES:
         if lower.startswith(prefix):
             return False
@@ -110,7 +125,9 @@ def is_html_path(path: str) -> bool:
 
 
 def looks_like_bot(ua: str) -> bool:
-    u = (ua or "").lower()
+    u = (ua or "").strip().lower()
+    if not u or u == "-":
+        return True
     return any(h in u for h in BOT_UA_HINTS)
 
 
