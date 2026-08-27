@@ -58,7 +58,7 @@ jobs:
           OWNER="${DEPLOY_OWNER:-www:www}"
           ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
             "${DEPLOY_USER}@${DEPLOY_HOST}" \
-            "chown -R ${OWNER} '${DEPLOY_PATH}'"
+            "chown ${OWNER} '${DEPLOY_PATH}' && find '${DEPLOY_PATH}' -mindepth 1 ! -name '.user.ini' -exec chown ${OWNER} {} +"
 
       - name: Verify lang-switch.js
         env:
