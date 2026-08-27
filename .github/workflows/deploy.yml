@@ -41,6 +41,8 @@ jobs:
             --exclude 'api/__pycache__/' \
             --exclude '**/__pycache__/' \
             --exclude '*.pyc' \
+            --exclude 'data/analytics/geo-cache.json' \
+            --exclude 'data/analytics/summary.json' \
             -e "ssh -p ${PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 

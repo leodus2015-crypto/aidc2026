@@ -79,6 +79,8 @@ RSYNC_EXCLUDES=(
   --exclude 'api/__pycache__/'
   --exclude '**/__pycache__/'
   --exclude '*.pyc'
+  --exclude 'data/analytics/geo-cache.json'
+  --exclude 'data/analytics/summary.json'
 )
 
 if [[ -n "${DEPLOY_EXTRA_EXCLUDES:-}" ]]; then
