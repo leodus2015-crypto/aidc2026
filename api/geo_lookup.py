@@ -12,8 +12,14 @@ import urllib.request
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
+try:
+    from opencc import OpenCC
+except ImportError:  # pragma: no cover - 启动脚本安装依赖前的安全回退
+    OpenCC = None
+
 ROOT = Path(__file__).resolve().parent.parent
 CACHE_PATH = ROOT / "data" / "analytics" / "geo-cache.json"
+_OPENCC = OpenCC("t2s") if OpenCC else None
 
 # 本地样例 / 离线兜底（按 /16 前缀）
 PREFIX_HINTS = {
@@ -33,18 +39,78 @@ EXCLUDED_COUNTRIES = frozenset(
         "United States of America",
         "US",
         "USA",
+        "台湾",
+        "中国台湾",
+        "台湾地区",
+        "中华民国",
+        "Taiwan",
+        "Taiwan, China",
+        "Republic of China",
+    }
+)
+
+_TRADITIONAL_TO_SIMPLIFIED = str.maketrans(
+    {
+        "華": "华",
+        "國": "国",
+        "臺": "台",
+        "灣": "湾",
+        "廣": "广",
+        "東": "东",
+        "門": "门",
+        "區": "区",
+        "縣": "县",
+        "鄉": "乡",
+        "內": "内",
+        "龍": "龙",
+        "馬": "马",
+        "長": "长",
+        "寧": "宁",
+        "遼": "辽",
+        "雲": "云",
+        "貴": "贵",
+        "閩": "闽",
+        "蘇": "苏",
+        "滬": "沪",
+        "漢": "汉",
+        "慶": "庆",
+        "濟": "济",
+        "鄭": "郑",
+        "瀋": "沈",
+        "陽": "阳",
+        "陰": "阴",
+        "島": "岛",
+        "樂": "乐",
+        "義": "义",
+        "烏": "乌",
+        "魯": "鲁",
+        "贛": "赣",
     }
 )
 
 
+def normalize_geo_name(value: str) -> str:
+    """统一地理名称为简体中文，并收敛常见中国国名。"""
+    normalized = (value or "").strip()
+    if _OPENCC:
+        normalized = _OPENCC.convert(normalized)
+    else:
+        normalized = normalized.translate(_TRADITIONAL_TO_SIMPLIFIED)
+    if normalized in {"中华人民共和国", "中国大陆", "大陆地区"}:
+        return "中国"
+    return normalized
+
+
 def is_excluded_country(country: str) -> bool:
-    c = (country or "").strip()
+    c = normalize_geo_name(country)
     if not c or c == "—":
         return False
     if c in EXCLUDED_COUNTRIES:
         return True
     lower = c.lower()
-    return lower in {"united states", "united states of america", "us", "usa"}
+    if "台湾" in c or c.startswith("中华民国"):
+        return True
+    return lower in {"united states", "united states of america", "us", "usa"} or "taiwan" in lower
 
 
 def _load_cache() -> Dict[str, Dict[str, str]]:
@@ -102,8 +168,8 @@ def lookup_ips(ips: Iterable[str], use_network: bool = True) -> Dict[str, Dict[s
     for ip in unique:
         if ip in cache and (cache[ip].get("country") or cache[ip].get("city")):
             out[ip] = {
-                "country": cache[ip].get("country") or "",
-                "city": cache[ip].get("city") or "",
+                "country": normalize_geo_name(cache[ip].get("country") or ""),
+                "city": normalize_geo_name(cache[ip].get("city") or ""),
             }
         else:
             missing.append(ip)
@@ -113,7 +179,10 @@ def lookup_ips(ips: Iterable[str], use_network: bool = True) -> Dict[str, Dict[s
             country, city = _fetch_one(ip)
             if not country and not city:
                 country, city = _hint(ip)
-            row = {"country": country, "city": city}
+            row = {
+                "country": normalize_geo_name(country),
+                "city": normalize_geo_name(city),
+            }
             out[ip] = row
             cache[ip] = row
             if i + 1 < len(missing):
@@ -122,7 +191,10 @@ def lookup_ips(ips: Iterable[str], use_network: bool = True) -> Dict[str, Dict[s
     else:
         for ip in missing:
             country, city = _hint(ip)
-            out[ip] = {"country": country, "city": city}
+            out[ip] = {
+                "country": normalize_geo_name(country),
+                "city": normalize_geo_name(city),
+            }
             if country or city:
                 cache[ip] = out[ip]
         if missing:
@@ -162,7 +234,7 @@ def enrich_ip_rows(
     for r in rows:
         raw = str(r.get("ip") or "")
         g = geo.get(raw) or {}
-        country = g.get("country") or "—"
+        country = normalize_geo_name(str(g.get("country") or "")) or "—"
         if exclude_us and is_excluded_country(str(country)):
             continue
         enriched.append(
@@ -170,7 +242,7 @@ def enrich_ip_rows(
                 "ip": mask_fn(raw),
                 "hits": int(r.get("hits") or 0),
                 "country": country,
-                "city": g.get("city") or "—",
+                "city": normalize_geo_name(str(g.get("city") or "")) or "—",
             }
         )
     return enriched
