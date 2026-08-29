@@ -7,10 +7,10 @@
   <meta name="theme-color" content="#f8fafc" />
   <link rel="canonical" href="https://www.aidc2026.cn/index.html" />
   <title>Agentic 推理 · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=79"></script>
-  <script src="js/theme-switch.js?v=79"></script>
+  <script src="js/aidc-theme.js?v=80"></script>
+  <script src="js/theme-switch.js?v=80"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/theme.css?v=79" />
+  <link rel="stylesheet" href="css/theme.css?v=80" />
   <style>
     /* 原生 select 在 Safari/macOS 上常为直角；去掉系统外观后与 input 共用 rounded-2xl */
     #hbmForm select,
@@ -98,71 +98,73 @@
 
   <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 xl:max-w-7xl 2xl:px-10">
     <section id="inference" class="flex flex-col gap-6 lg:gap-8">
-      <div class="min-w-0 w-full">
-        <div
-          class="inline-flex flex-wrap gap-1 rounded-2xl bg-slate-100 p-1 shadow-inner shadow-slate-200/60"
-          role="tablist"
-          data-i18n-aria-label="page.tablistAria" aria-label="推理模式"
-        >
-          <button
-            type="button"
-            id="tab-principles"
-            role="tab"
-            data-i18n="page.tabPrinciples"
-            aria-selected="true"
-            aria-controls="panel-principles"
-            class="rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white"
+      <div class="hidden" hidden aria-hidden="true">
+        <div class="min-w-0 w-full">
+          <div
+            class="inline-flex flex-wrap gap-1 rounded-2xl bg-slate-100 p-1 shadow-inner shadow-slate-200/60"
+            role="tablist"
+            data-i18n-aria-label="page.tablistAria" aria-label="推理模式"
           >
-            推理原理
-          </button>
-          <button
-            type="button"
-            id="tab-dataflow"
-            role="tab"
-            data-i18n="page.tabDataflow"
-            aria-selected="false"
-            aria-controls="panel-dataflow"
-            tabindex="-1"
-            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
-          >
-            推理服务数据流
-          </button>
-          <button
-            type="button"
-            id="tab-mixed"
-            role="tab"
-            data-i18n="page.tabMixed"
-            aria-selected="false"
-            aria-controls="panel-mixed"
-            tabindex="-1"
-            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
-          >
-            PD混部
-          </button>
-          <button
-            type="button"
-            id="tab-separated"
-            role="tab"
-            data-i18n="page.tabSeparated"
-            aria-selected="false"
-            aria-controls="panel-separated"
-            tabindex="-1"
-            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
-          >
-            PD分离
-          </button>
-          <button
-            type="button"
-            id="tab-kvcache"
-            role="tab"
-            data-i18n="page.tabKvcache"
-            aria-selected="false"
-            aria-controls="panel-kvcache"
-            tabindex="-1"
-            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
-          >
-            KV Cache计算
-          </button>
+            <button
+              type="button"
+              id="tab-principles"
+              role="tab"
+              data-i18n="page.tabPrinciples"
+              aria-selected="true"
+              aria-controls="panel-principles"
+              class="rounded-xl px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition bg-white"
+            >
+              推理原理
+            </button>
+            <button
+              type="button"
+              id="tab-dataflow"
+              role="tab"
+              data-i18n="page.tabDataflow"
+              aria-selected="false"
+              aria-controls="panel-dataflow"
+              tabindex="-1"
+              class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            >
+              推理服务数据流
+            </button>
+            <button
+              type="button"
+              id="tab-mixed"
+              role="tab"
+              data-i18n="page.tabMixed"
+              aria-selected="false"
+              aria-controls="panel-mixed"
+              tabindex="-1"
+              class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            >
+              PD混部
+            </button>
+            <button
+              type="button"
+              id="tab-separated"
+              role="tab"
+              data-i18n="page.tabSeparated"
+              aria-selected="false"
+              aria-controls="panel-separated"
+              tabindex="-1"
+              class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            >
+              PD分离
+            </button>
+            <button
+              type="button"
+              id="tab-kvcache"
+              role="tab"
+              data-i18n="page.tabKvcache"
+              aria-selected="false"
+              aria-controls="panel-kvcache"
+              tabindex="-1"
+              class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            >
+              KV Cache计算
+            </button>
+          </div>
         </div>
       </div>
 
@@ -546,11 +548,11 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=79"></script>
-<script src="js/i18n.js?v=79"></script>
-  <script src="js/lang-switch.js?v=79"></script>
-  <script src="js/aidc-mega-nav.js?v=79"></script>
-  <script src="js/index-page.js?v=79"></script>
+    <script src="js/aidc-asset-version.js?v=80"></script>
+<script src="js/i18n.js?v=80"></script>
+  <script src="js/lang-switch.js?v=80"></script>
+  <script src="js/aidc-mega-nav.js?v=80"></script>
+  <script src="js/index-page.js?v=80"></script>
   <script>
     (async function bootstrapIndexPage() {
       const params = new URLSearchParams(window.location.search);
