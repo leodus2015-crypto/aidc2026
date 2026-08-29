@@ -6,7 +6,7 @@
   "gate": {
     "eyebrow": "Internal",
     "title": "站点状态",
-    "hint": "请输入管理口令（与 API ADMIN_TOKEN 相同）。",
+    "hint": "请输入服务器环境变量 ADMIN_TOKEN（未在页面写死默认口令）。",
     "placeholder": "口令",
     "error": "口令错误或接口未授权",
     "errorUnauthorized": "口令错误，请重新输入",

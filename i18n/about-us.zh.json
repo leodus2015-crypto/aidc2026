@@ -17,38 +17,36 @@
     "title": "代码量",
     "intro": "统计本仓库内全部源代码文件（HTML、JavaScript、Shell、SVG 等），不含 PDF 等二进制资源与 <code class=\"rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800\">.git</code> 目录。",
     "statLinesLabel": "总代码行数 · Prompt 折算",
-    "statLinesValue": "21,111 行",
-    "statTokensValue": "395K Tokens",
-    "statLinesNote": "若将全部源码一次性作为 Prompt 输入；988,802 字符 ÷ 2.5 字符/Token，区间约 329K–494K。",
+    "statLinesValue": "21,919 行",
+    "statTokensValue": "400K Tokens",
+    "statLinesNote": "若将全部源码一次性作为 Prompt 输入；1,002,372 字符 ÷ 2.5 字符/Token，区间约 334K–501K。",
     "statFilesLabel": "代码文件数",
-    "statFilesValue": "48 个",
+    "statFilesValue": "52 个",
     "statLangLabel": "主要语言",
     "statLangValue": "HTML · JavaScript · Shell · SVG",
     "langChartTitle": "Languages 类型与占比",
-    "langHtmlShare": "16,422 行 · 77.8%",
-    "langHtmlNote": "21 个页面文件（首页、推理原理、推理服务数据流、Agentic 推理、后训练、AI DC 规划、机房布局、3D 案例、ROI、About 等）",
-    "langJsShare": "4,203 行 · 19.9%",
-    "langJsNote": "20 个脚本（i18n、各页逻辑、配置加载与语言桥接等）",
+    "langHtmlShare": "16,598 行 · 75.7%",
+    "langHtmlNote": "22 个页面文件（首页、推理原理、推理服务数据流、Agentic 推理、后训练、AI DC 规划、机房布局、3D 案例、ROI、About 等）",
+    "langJsShare": "4,833 行 · 22.0%",
+    "langJsNote": "23 个脚本（i18n、各页逻辑、配置加载与语言桥接等）",
     "langSvgShare": "104 行 · 0.5%",
     "langSvgNote": "1 个矢量资源（站点 Logo）",
-    "langShellShare": "382 行 · 1.8%",
+    "langShellShare": "384 行 · 1.8%",
     "langShellNote": "6 个脚本（本地预览、部署、API 启动与校验等）"
   },
   "usage": {
     "tag": "Usage",
     "title": "AI Tokens 消耗",
-    "intro": "记录 AIDC 2026 站点在 Cursor 等 AI 辅助工具下的 Token 消耗。数据来自控制台 Included Usage 导出 CSV，按账单周期汇总；重复导入时按事件日期<strong>合并增量</strong>，不替换已有统计。",
+    "intro": "记录 AIDC 2026 站点在 Cursor 等 AI 辅助工具下的 Token 消耗。数据来自控制台 Included Usage 导出 CSV，按账单周期汇总；重复导入时按事件日期<strong>合并增量</strong>。展示为输入（缓存未命中）、输入（缓存命中）、输出三类。",
     "dataSourceLabel": "数据来源：",
     "totalLabel": "累计 Tokens",
     "updatedLabel": "最近更新",
     "periodsTitle": "统计周期",
-    "breakdownTitle": "模型 / 类别分布（{period}）",
-    "note": "各周期 Token 为当期内 Included Usage 快照，请勿跨周期累加；以 Cursor 控制台账单为准。",
-    "catCache": "Cache 缓存",
-    "catApi": "API",
-    "catComposer": "Auto + Composer",
-    "itemCacheRead": "Cache Read 缓存读取",
-    "itemCacheWrite": "Cache Write 缓存写入"
+    "breakdownTitle": "Token 类型分布（累计）",
+    "note": "各周期 Token 为当期 Included Usage 快照，请勿跨周期累加；以 Cursor 控制台账单为准。历史周期若缺少字段明细，按近期实测比例估算三类拆分。",
+    "typeMiss": "输入（缓存未命中）",
+    "typeHit": "输入（缓存命中）",
+    "typeOutput": "输出"
   },
   "team": {
     "tag": "Team",
@@ -88,6 +86,6 @@
   "msg": {
     "noBreakdown": "暂无明细",
     "noEntries": "暂无录入",
-    "categoryLine": "{name} · {tokens} · Included Usage {percent}%"
+    "categoryLine": "{name} · {tokens} · {percent}%"
   }
 }

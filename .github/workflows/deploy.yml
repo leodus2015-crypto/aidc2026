@@ -16,6 +16,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Site static checks
+        run: python3 scripts/check-site.py
+
+      - name: API and formula tests
+        run: |
+          python3 -m pip install -q -r api/requirements.txt -r tests/requirements.txt
+          python3 -m pytest tests -q
+
       - name: Setup SSH key
         run: |
           install -m 700 -d ~/.ssh
@@ -43,6 +51,8 @@ jobs:
             --exclude '*.pyc' \
             --exclude 'data/analytics/geo-cache.json' \
             --exclude 'data/analytics/summary.json' \
+            --exclude '.pytest_cache/' \
+            --exclude '.venv/' \
             -e "ssh -p ${PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
             ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
@@ -71,3 +81,11 @@ jobs:
           ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
             "${DEPLOY_USER}@${DEPLOY_HOST}" \
             "test -f '${DEPLOY_PATH}/js/lang-switch.js'"
+
+      - name: Verify live HTTP 200
+        run: |
+          for path in /ai-dc-design.html /js/lang-switch.js /i18n/common.zh.json; do
+            code="$(curl -s -o /dev/null -w '%{http_code}' "https://www.aidc2026.cn${path}")"
+            echo "${path} → HTTP ${code}"
+            test "${code}" = "200"
+          done

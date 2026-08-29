@@ -2,13 +2,16 @@
 """Merge Cursor usage-events CSV into data/ai-usage.json (incremental by date).
 
 For each billing period already in ai-usage.json, only rows with event date
-strictly after that period's recorded_at are added to totals and categories.
+strictly after that period's recorded_at are added to totals and token types.
 New billing periods are appended from the CSV in full.
 
-Category rules (see data/ai-usage.json notes):
-  Cache = Cache Read + Input (w/ Cache Write)
-  API = gpt* models: Input (w/o Cache Write) + Output
-  Auto + Composer = composer* / auto: Input (w/o Cache Write) + Output
+Token type rules (see data/ai-usage.json notes):
+  input_cache_hit  = Cache Read
+  input_cache_miss = Input (w/ Cache Write) + Input (w/o Cache Write)
+  output           = Output Tokens
+
+Legacy periods that only have Cache / API / Auto+Composer categories are
+converted with proportional split (not exact).
 """
 
 from __future__ import annotations
@@ -30,6 +33,20 @@ SKIP_DIRS = {".git"}
 CODE_EXT = {".html": "HTML", ".js": "JavaScript", ".sh": "Shell", ".svg": "SVG"}
 EXCLUDE_EXT = {".pdf"}
 
+TOKEN_TYPE_ORDER = ("input_cache_miss", "input_cache_hit", "output")
+USAGE_NOTES = (
+    "由 Cursor 导出 CSV 汇总；Included 行按账单周期拆分。"
+    "同一周期重复导入时，仅合并事件日期晚于 recorded_at 的增量。"
+    "input_cache_hit = Cache Read；"
+    "input_cache_miss = Input (w/ Cache Write) + Input (w/o Cache Write)；"
+    "output = Output Tokens。"
+    "历史仅有模型侧分类的周期，按近期实测比例估算三类拆分。"
+)
+
+# Fallback ratios among Input(w/o Cache Write) + Output, from recent CSV sample.
+DEFAULT_INPUT_WO_SHARE = 0.8681
+DEFAULT_OUTPUT_SHARE = 0.1319
+
 
 def now_iso() -> str:
     return datetime.now(TZ_CN).replace(microsecond=0).isoformat()
@@ -44,6 +61,8 @@ def period_bounds(d: date) -> tuple[str, str] | None:
         return ("2026-06-25", "2026-07-25")
     if date(2026, 7, 25) <= d < date(2026, 8, 25):
         return ("2026-07-25", "2026-08-25")
+    if date(2026, 8, 25) <= d < date(2026, 9, 25):
+        return ("2026-08-25", "2026-09-25")
     return None
 
 
@@ -65,7 +84,6 @@ def parse_csv(path: Path) -> list[dict]:
                     "date": dt.date(),
                     "period_start": bounds[0],
                     "period_end": bounds[1],
-                    "model": row.get("Model") or "unknown",
                     "cache_write": int(row.get("Input (w/ Cache Write)", "0") or 0),
                     "input": int(row.get("Input (w/o Cache Write)", "0") or 0),
                     "cache_read": int(row.get("Cache Read", "0") or 0),
@@ -76,99 +94,137 @@ def parse_csv(path: Path) -> list[dict]:
     return rows
 
 
-def model_bucket(model: str) -> str:
-    m = model.lower()
-    if m.startswith("gpt"):
-        return "API"
-    return "Auto + Composer"
+def pct(part: int, total: int) -> float:
+    return round(part * 100 / total, 1) if total else 0.0
+
+
+def build_token_types(miss: int, hit: int, output: int) -> list[dict]:
+    total = miss + hit + output
+    return [
+        {"name": "input_cache_miss", "tokens": miss, "usage_percent": pct(miss, total)},
+        {"name": "input_cache_hit", "tokens": hit, "usage_percent": pct(hit, total)},
+        {"name": "output", "tokens": output, "usage_percent": pct(output, total)},
+    ]
 
 
 def aggregate_rows(rows: list[dict]) -> dict:
-    cache_read = cache_write = 0
-    api_models: dict[str, int] = defaultdict(int)
-    composer_models: dict[str, int] = defaultdict(int)
-
+    miss = hit = output = 0
     for row in rows:
-        cache_read += row["cache_read"]
-        cache_write += row["cache_write"]
-        non_cache = row["input"] + row["output"]
-        if model_bucket(row["model"]) == "API":
-            api_models[row["model"]] += non_cache
-        else:
-            composer_models[row["model"]] += non_cache
-
-    cache_tokens = cache_read + cache_write
-    api_tokens = sum(api_models.values())
-    composer_tokens = sum(composer_models.values())
-    total = cache_tokens + api_tokens + composer_tokens
-
-    def pct(part: int) -> float:
-        return round(part * 100 / total, 1) if total else 0.0
-
-    categories = []
-    if cache_tokens:
-        items = []
-        if cache_read:
-            items.append({"name": "Cache Read", "tokens": cache_read, "usage_percent": pct(cache_read)})
-        if cache_write:
-            items.append({"name": "Cache Write", "tokens": cache_write, "usage_percent": pct(cache_write)})
-        categories.append({"name": "Cache", "tokens": cache_tokens, "usage_percent": pct(cache_tokens), "items": items})
-    if api_tokens:
-        categories.append(
-            {
-                "name": "API",
-                "tokens": api_tokens,
-                "usage_percent": pct(api_tokens),
-                "items": [
-                    {"name": name, "tokens": tokens, "usage_percent": pct(tokens)}
-                    for name, tokens in sorted(api_models.items(), key=lambda x: -x[1])
-                ],
-            }
-        )
-    if composer_tokens:
-        categories.append(
-            {
-                "name": "Auto + Composer",
-                "tokens": composer_tokens,
-                "usage_percent": pct(composer_tokens),
-                "items": [
-                    {"name": name, "tokens": tokens, "usage_percent": pct(tokens)}
-                    for name, tokens in sorted(composer_models.items(), key=lambda x: -x[1])
-                ],
-            }
-        )
-
-    return {"total_tokens": total, "categories": categories}
+        miss += row["cache_write"] + row["input"]
+        hit += row["cache_read"]
+        output += row["output"]
+    total = miss + hit + output
+    return {
+        "total_tokens": total,
+        "token_types": build_token_types(miss, hit, output),
+        "estimated": False,
+    }
 
 
-def merge_categories(existing: list[dict], delta: list[dict]) -> list[dict]:
-    by_name: dict[str, dict] = {}
-    for cat in existing + delta:
-        name = cat["name"]
-        if name not in by_name:
-            by_name[name] = {"name": name, "tokens": 0, "items": {}}
-        by_name[name]["tokens"] += cat.get("tokens", 0)
-        for item in cat.get("items", []):
-            items = by_name[name]["items"]
-            items[item["name"]] = items.get(item["name"], 0) + item.get("tokens", 0)
+def merge_token_types(existing: list[dict], delta: list[dict]) -> list[dict]:
+    totals = {name: 0 for name in TOKEN_TYPE_ORDER}
+    for group in (existing, delta):
+        for item in group or []:
+            name = item.get("name")
+            if name in totals:
+                totals[name] += int(item.get("tokens") or 0)
+    return build_token_types(
+        totals["input_cache_miss"],
+        totals["input_cache_hit"],
+        totals["output"],
+    )
 
-    total = sum(c["tokens"] for c in by_name.values())
 
-    def pct(part: int) -> float:
-        return round(part * 100 / total, 1) if total else 0.0
-
-    out = []
-    order = ["Cache", "API", "Auto + Composer"]
-    for name in order:
-        if name not in by_name or not by_name[name]["tokens"]:
-            continue
-        cat = by_name[name]
-        items = [
-            {"name": n, "tokens": t, "usage_percent": pct(t)}
-            for n, t in sorted(cat["items"].items(), key=lambda x: -x[1])
-        ]
-        out.append({"name": name, "tokens": cat["tokens"], "usage_percent": pct(cat["tokens"]), "items": items})
+def token_type_map(token_types: list[dict] | None) -> dict[str, int]:
+    out = {name: 0 for name in TOKEN_TYPE_ORDER}
+    for item in token_types or []:
+        name = item.get("name")
+        if name in out:
+            out[name] = int(item.get("tokens") or 0)
     return out
+
+
+def shares_from_rows(rows: list[dict]) -> tuple[float, float]:
+    """Among Input(w/o Cache Write)+Output, return (input_wo_share, output_share)."""
+    input_wo = output = 0
+    for row in rows:
+        input_wo += row["input"]
+        output += row["output"]
+    denom = input_wo + output
+    if denom <= 0:
+        return DEFAULT_INPUT_WO_SHARE, DEFAULT_OUTPUT_SHARE
+    return input_wo / denom, output / denom
+
+
+def convert_legacy_categories(
+    categories: list[dict],
+    total_tokens: int,
+    input_wo_share: float,
+    output_share: float,
+) -> tuple[list[dict], bool]:
+    hit = write = other = 0
+    for cat in categories or []:
+        name = cat.get("name")
+        tokens = int(cat.get("tokens") or 0)
+        if name == "Cache":
+            items = {item.get("name"): int(item.get("tokens") or 0) for item in cat.get("items") or []}
+            if items:
+                hit += items.get("Cache Read", 0)
+                write += items.get("Cache Write", 0)
+            else:
+                hit += tokens
+        else:
+            other += tokens
+
+    accounted = hit + write + other
+    if accounted <= 0 and total_tokens > 0:
+        hit_share = 0.95
+        non_hit = total_tokens - int(round(total_tokens * hit_share))
+        miss = int(round(non_hit * input_wo_share / (input_wo_share + output_share)))
+        output = non_hit - miss
+        hit = total_tokens - miss - output
+        return build_token_types(miss, hit, output), True
+
+    if accounted != total_tokens and total_tokens > 0:
+        scale = total_tokens / accounted
+        hit = int(round(hit * scale))
+        write = int(round(write * scale))
+        other = total_tokens - hit - write
+
+    miss_from_other = int(round(other * input_wo_share))
+    output = other - miss_from_other
+    miss = write + miss_from_other
+    current = miss + hit + output
+    if current != total_tokens:
+        hit += total_tokens - current
+    return build_token_types(miss, hit, output), True
+
+
+def ensure_token_types(
+    data: dict,
+    input_wo_share: float = DEFAULT_INPUT_WO_SHARE,
+    output_share: float = DEFAULT_OUTPUT_SHARE,
+) -> int:
+    """Convert legacy category periods to token_types. Returns converted count."""
+    converted = 0
+    for period in data.get("periods", []):
+        if period.get("token_types") and "categories" not in period:
+            continue
+        total = int(period.get("total_tokens") or 0)
+        types, estimated = convert_legacy_categories(
+            period.get("categories") or [],
+            total,
+            input_wo_share,
+            output_share,
+        )
+        period["token_types"] = types
+        period["estimated"] = estimated
+        period.pop("categories", None)
+        period["total_tokens"] = sum(int(x.get("tokens") or 0) for x in types)
+        converted += 1
+    data["notes"] = USAGE_NOTES
+    data["version"] = 3
+    return converted
 
 
 def load_usage() -> dict:
@@ -188,6 +244,8 @@ def merge_csv(csv_path: Path, recorded_at: date | None = None) -> dict:
     recorded_at = recorded_at or datetime.now(TZ_CN).date()
     rows = parse_csv(csv_path)
     data = load_usage()
+    input_wo_share, output_share = shares_from_rows(rows)
+    ensure_token_types(data, input_wo_share, output_share)
     periods_by_key = {(p["period_start"], p["period_end"]): p for p in data.get("periods", [])}
 
     grouped: dict[tuple[str, str], list[dict]] = defaultdict(list)
@@ -205,7 +263,7 @@ def merge_csv(csv_path: Path, recorded_at: date | None = None) -> dict:
                 continue
             delta = aggregate_rows(delta_rows)
             period["total_tokens"] = period.get("total_tokens", 0) + delta["total_tokens"]
-            period["categories"] = merge_categories(period.get("categories", []), delta["categories"])
+            period["token_types"] = merge_token_types(period.get("token_types", []), delta["token_types"])
             period["recorded_at"] = max(r["date"] for r in delta_rows).isoformat()
             merged_delta_tokens += delta["total_tokens"]
         else:
@@ -217,13 +275,16 @@ def merge_csv(csv_path: Path, recorded_at: date | None = None) -> dict:
                 "period_end": end,
                 "recorded_at": recorded_at.isoformat(),
                 "total_tokens": agg["total_tokens"],
-                "categories": agg["categories"],
+                "token_types": agg["token_types"],
+                "estimated": False,
             }
             merged_delta_tokens += agg["total_tokens"]
 
     data["periods"] = sorted(periods_by_key.values(), key=lambda p: p["period_start"])
     data["updated_at"] = now_iso()
     data["source"] = f"Cursor Dashboard · {csv_path.name}"
+    data["notes"] = USAGE_NOTES
+    data["version"] = 3
     save_usage(data)
     return {"merged_delta_tokens": merged_delta_tokens, "periods": len(data["periods"])}
 
@@ -246,7 +307,7 @@ def count_code() -> dict:
             total_lines += n_lines
             total_chars += len(text)
 
-    def pct(n: int) -> str:
+    def lang_pct(n: int) -> str:
         return f"{n * 100 / total_lines:.1f}%" if total_lines else "0%"
 
     mid_tokens = int(total_chars / 2.5)
@@ -259,7 +320,7 @@ def count_code() -> dict:
         "total_chars": total_chars,
         "lines_by_lang": dict(lines_by_lang),
         "files_by_lang": dict(files_by_lang),
-        "pct": {k: pct(lines_by_lang[k]) for k in CODE_EXT.values()},
+        "pct": {k: lang_pct(lines_by_lang[k]) for k in CODE_EXT.values()},
         "tokens_mid_k": mid_tokens // 1000,
         "tokens_low_k": low_tokens // 1000,
         "tokens_high_k": high_tokens // 1000,
@@ -362,23 +423,51 @@ def sync_about_us_fallback() -> None:
     js_path.write_text(text[:start] + "  const fallback = " + json.dumps(data, indent=4) + ";" + text[end:], encoding="utf-8")
 
 
+def migrate_only(csv_path: Path | None = None) -> dict:
+    data = load_usage()
+    input_wo_share, output_share = DEFAULT_INPUT_WO_SHARE, DEFAULT_OUTPUT_SHARE
+    if csv_path:
+        input_wo_share, output_share = shares_from_rows(parse_csv(csv_path))
+    converted = ensure_token_types(data, input_wo_share, output_share)
+    data["updated_at"] = now_iso()
+    data["notes"] = USAGE_NOTES
+    data["version"] = 3
+    if csv_path:
+        data["source"] = f"Cursor Dashboard · {csv_path.name}"
+    save_usage(data)
+    return {
+        "converted_periods": converted,
+        "periods": len(data.get("periods", [])),
+        "input_wo_share": round(input_wo_share, 4),
+        "output_share": round(output_share, 4),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Merge usage-events CSV and refresh code stats JSON snippet.")
     parser.add_argument("csv", type=Path, nargs="?", help="Path to usage-events CSV export")
     parser.add_argument("--recorded-at", help="YYYY-MM-DD for recorded_at (default: today CN)")
     parser.add_argument("--code-only", action="store_true", help="Only recount code and update About US pages")
+    parser.add_argument(
+        "--migrate-types",
+        action="store_true",
+        help="Convert legacy model categories to input/output token types without importing CSV",
+    )
     args = parser.parse_args()
 
     usage = None
     if args.code_only:
         if args.csv:
             parser.error("csv positional argument conflicts with --code-only")
+    elif args.migrate_types:
+        usage = migrate_only(args.csv)
+        sync_about_us_fallback()
     elif args.csv:
         rec = date.fromisoformat(args.recorded_at) if args.recorded_at else None
         usage = merge_csv(args.csv, rec)
         sync_about_us_fallback()
     else:
-        parser.error("csv path required unless --code-only")
+        parser.error("csv path required unless --code-only or --migrate-types")
 
     code = count_code()
     update_code_volume_pages(code)

@@ -62,7 +62,7 @@ curl -s -H "Authorization: Bearer $ADMIN_TOKEN" \
   "http://127.0.0.1:8012/api/analytics/summary?days=7"
 ```
 
-打开：`http://127.0.0.1:8011/aidc/status.html`（口令 = `ADMIN_TOKEN`，默认 `aidc2026`）
+打开：`http://127.0.0.1:8011/aidc/status.html`（口令 = 环境变量 `ADMIN_TOKEN`；未配置时接口返回 503）
 
 本地无 MySQL 时可用样例日志冒烟：
 

@@ -17,38 +17,36 @@
     "title": "Codebase size",
     "intro": "Counts all source files in this repository (HTML, JavaScript, Shell, SVG, etc.), excluding binary assets such as PDFs and the <code class=\"rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800\">.git</code> directory.",
     "statLinesLabel": "Total lines · prompt equivalent",
-    "statLinesValue": "21,111 lines",
-    "statTokensValue": "395K tokens",
-    "statLinesNote": "If all source were fed as a single prompt: 988,802 characters ÷ 2.5 chars/token, roughly 329K–494K.",
+    "statLinesValue": "21,919 lines",
+    "statTokensValue": "400K tokens",
+    "statLinesNote": "If all source were fed as a single prompt: 1,002,372 characters ÷ 2.5 chars/token, roughly 334K–501K.",
     "statFilesLabel": "Source files",
-    "statFilesValue": "48",
+    "statFilesValue": "52",
     "statLangLabel": "Primary languages",
     "statLangValue": "HTML · JavaScript · Shell · SVG",
     "langChartTitle": "Languages by share",
-    "langHtmlShare": "16,422 lines · 77.8%",
-    "langHtmlNote": "21 page files (home, inference basics, inference data flow, Agentic inference, post-training, AI DC design, room layout, 3D cases, ROI, About, etc.)",
-    "langJsShare": "4,203 lines · 19.9%",
-    "langJsNote": "20 scripts (i18n, page logic, config loader, locale bridge, etc.)",
+    "langHtmlShare": "16,598 lines · 75.7%",
+    "langHtmlNote": "22 page files (home, inference basics, inference data flow, Agentic inference, post-training, AI DC design, room layout, 3D cases, ROI, About, etc.)",
+    "langJsShare": "4,833 lines · 22.0%",
+    "langJsNote": "23 scripts (i18n, page logic, config loader, locale bridge, etc.)",
     "langSvgShare": "104 lines · 0.5%",
     "langSvgNote": "1 vector asset (site logo)",
-    "langShellShare": "382 lines · 1.8%",
+    "langShellShare": "384 lines · 1.8%",
     "langShellNote": "6 scripts (local preview, deploy, API startup, verification, etc.)"
   },
   "usage": {
     "tag": "Usage",
     "title": "AI token consumption",
-    "intro": "Tracks token usage for the AIDC 2026 site in AI-assisted tools such as Cursor. Data comes from Included Usage CSV exports, summarized per billing cycle; re-importing <strong>merges increments</strong> by event date rather than replacing prior totals.",
+    "intro": "Tracks token usage for the AIDC 2026 site in AI-assisted tools such as Cursor. Data comes from Included Usage CSV exports, summarized per billing cycle; re-importing <strong>merges increments</strong> by event date. Shown as input (cache miss), input (cache hit), and output.",
     "dataSourceLabel": "Data source:",
     "totalLabel": "Cumulative tokens",
     "updatedLabel": "Last updated",
     "periodsTitle": "Billing periods",
-    "breakdownTitle": "Model / category breakdown ({period})",
-    "note": "Per-period tokens are snapshots of Included Usage for that cycle; do not sum across periods. Refer to the Cursor console billing as source of truth.",
-    "catCache": "Cache",
-    "catApi": "API",
-    "catComposer": "Auto + Composer",
-    "itemCacheRead": "Cache Read",
-    "itemCacheWrite": "Cache Write"
+    "breakdownTitle": "Token type mix (cumulative)",
+    "note": "Per-period tokens are snapshots of Included Usage for that cycle; do not sum across periods. Refer to the Cursor console billing as source of truth. Older periods without field-level detail are split by recent measured ratios.",
+    "typeMiss": "Input (cache miss)",
+    "typeHit": "Input (cache hit)",
+    "typeOutput": "Output"
   },
   "team": {
     "tag": "Team",
@@ -88,6 +86,6 @@
   "msg": {
     "noBreakdown": "No breakdown available",
     "noEntries": "No entries yet",
-    "categoryLine": "{name} · {tokens} · Included Usage {percent}%"
+    "categoryLine": "{name} · {tokens} · {percent}%"
   }
 }

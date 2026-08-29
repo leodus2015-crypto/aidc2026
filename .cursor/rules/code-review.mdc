@@ -1,0 +1,26 @@
+---
+description: AIDC 代码检视清单。改页面、公式、API、i18n、部署或做测试时对照。
+alwaysApply: false
+---
+
+# AIDC 代码检视
+
+每条发现写清：严重度、文件:行、现象、复现、建议测试层（静态 / 单测 / 浏览器）。
+
+## 必看
+
+- **正确性**：公式、单位、边界（0、空、超大 batch、百分比之和 ≠ 100%）。
+- **回退**：API/DB 不可用时页面仍可用，来源角标正确。
+- **契约**：HTML 引用的 `js/`、`css/`、`i18n/`、`data/` 存在；`data-i18n-page` 与 `i18n/{page}.{zh,en}.json` 对齐。
+- **安全**：PUT / analytics 必须鉴权；token 与解锁口令不写进前端默认值；分析 IP 脱敏。
+- **i18n / 主题**：中英、Light/Dark 四态不丢文案；iframe 不因切主题整页重载。
+- **部署**：新文件在 rsync 范围内；`deploy.sh` 与 `deploy.yml` 的 exclude 一致。
+
+## 增量改动
+
+1. 对照本清单过 diff。
+2. 跑 `python3 scripts/check-site.py`。
+3. 涉及 API/公式时跑 `python3 -m pytest tests -q`。
+4. 涉及 UI 时按 [docs/TEST.md](docs/TEST.md) 做浏览器冒烟。
+
+不要把测试 skill 放到 `~/.cursor/skills/`。

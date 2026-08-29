@@ -59,6 +59,15 @@
 # http://127.0.0.1:8011/aidc/ai-dc-design.html
 ```
 
+## 测试
+
+静态检查、API/公式单测与浏览器冒烟清单见 [`docs/TEST.md`](docs/TEST.md)；基线代码检视见 [`docs/REVIEW-BASELINE.md`](docs/REVIEW-BASELINE.md)。
+
+```bash
+python3 scripts/check-site.py
+python3 -m pytest tests -q
+```
+
 ## 版本
 
 发布版本记录在 [`data/site-release.json`](data/site-release.json)，每次执行 `./scripts/deploy.sh`  bump 时自动更新（与 GitHub 推送联动）。About 页会读取并展示最新版本号与更新日期。
@@ -78,9 +87,12 @@ aidc/
 ├── i18n/                   页面文案
 ├── js/                     页面逻辑与 i18n 引导
 ├── scripts/
+│   ├── check-site.py       部署前静态检查
 │   ├── deploy.sh           一键提交 + 部署
 │   ├── analytics/          访问日志解析
 │   └── merge-usage-events-csv.py
+├── tests/                  API / 公式黄金用例
+├── docs/TEST.md            测试说明与浏览器冒烟清单
 └── preview-8011.sh         本地预览
 ```
 

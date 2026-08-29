@@ -24,6 +24,7 @@ usage() {
 
   SKIP_BUMP=1 ./scripts/deploy.sh "说明"   提交时不递增资源版本号
   ./scripts/deploy.sh --no-bump "说明"     同上
+  SKIP_SITE_CHECK=1 ./scripts/deploy.sh …  跳过 scripts/check-site.py（不推荐）
 
 环境:
   复制 deploy.env.example → deploy.env 并填写 SSH 信息
@@ -81,6 +82,8 @@ RSYNC_EXCLUDES=(
   --exclude '*.pyc'
   --exclude 'data/analytics/geo-cache.json'
   --exclude 'data/analytics/summary.json'
+  --exclude '.pytest_cache/'
+  --exclude '.venv/'
 )
 
 if [[ -n "${DEPLOY_EXTRA_EXCLUDES:-}" ]]; then
@@ -154,7 +157,20 @@ verify_deploy() {
     code="$(curl -s -o /dev/null -w '%{http_code}' "https://www.aidc2026.cn/js/lang-switch.js?v=${ver}" || true)"
     echo "   https://www.aidc2026.cn/js/lang-switch.js?v=${ver} → HTTP ${code}"
     echo "   asset-version.json → $(curl -s "https://www.aidc2026.cn/data/asset-version.json" 2>/dev/null || echo 'n/a')"
+    for path in /ai-dc-design.html /i18n/common.zh.json; do
+      live="$(curl -s -o /dev/null -w '%{http_code}' "https://www.aidc2026.cn${path}" || true)"
+      echo "   https://www.aidc2026.cn${path} → HTTP ${live}"
+    done
   fi
+}
+
+run_site_check() {
+  if [[ "${SKIP_SITE_CHECK:-0}" -eq 1 ]]; then
+    echo ">> 跳过站点静态检查（SKIP_SITE_CHECK=1）"
+    return
+  fi
+  echo ">> 站点静态检查"
+  python3 "${ROOT}/scripts/check-site.py"
 }
 
 main() {
@@ -162,6 +178,8 @@ main() {
     usage
     exit 1
   }
+
+  run_site_check
 
   if [[ "${DO_PUSH}" -eq 1 ]]; then
     git_commit_and_push

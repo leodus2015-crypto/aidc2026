@@ -7,3 +7,7 @@ data/analytics/geo-cache.json
 deploy.env
 api/__pycache__/
 api/**/__pycache__/
+tests/__pycache__/
+.pytest_cache/
+.venv/
+*.pyc

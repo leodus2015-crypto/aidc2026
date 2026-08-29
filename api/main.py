@@ -22,6 +22,8 @@ app.add_middleware(
 
 
 def require_admin(authorization: Optional[str]) -> None:
+    if not ADMIN_TOKEN:
+        raise HTTPException(status_code=503, detail="ADMIN_TOKEN 未配置")
     token = (authorization or "").removeprefix("Bearer").strip()
     if not token or token != ADMIN_TOKEN:
         raise HTTPException(status_code=401, detail="未授权")

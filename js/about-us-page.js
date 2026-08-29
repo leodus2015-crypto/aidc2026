@@ -3,10 +3,10 @@ function initAboutUsPage() {
   const loc = () => AidcI18n.localeTag();
 
   const fallback = {
-    "version": 2,
-    "updated_at": "2026-08-01T22:49:42+08:00",
-    "source": "Cursor Dashboard \u00b7 usage-events-2026-08-01.csv",
-    "notes": "\u7531 Cursor \u5bfc\u51fa CSV \u6c47\u603b\uff1bIncluded \u884c\u6309\u8d26\u5355\u5468\u671f\u62c6\u5206\u3002\u540c\u4e00\u5468\u671f\u91cd\u590d\u5bfc\u5165\u65f6\uff0c\u4ec5\u5408\u5e76\u4e8b\u4ef6\u65e5\u671f\u665a\u4e8e recorded_at \u7684\u589e\u91cf\u3002Cache = Cache Read + Input (w/ Cache Write)\uff1bAPI / Auto + Composer = Input (w/o Cache Write) + Output Tokens\u3002",
+    "version": 3,
+    "updated_at": "2026-08-29T10:11:24+08:00",
+    "source": "Cursor Dashboard \u00b7 usage-events-2026-08-29.csv",
+    "notes": "\u7531 Cursor \u5bfc\u51fa CSV \u6c47\u603b\uff1bIncluded \u884c\u6309\u8d26\u5355\u5468\u671f\u62c6\u5206\u3002\u540c\u4e00\u5468\u671f\u91cd\u590d\u5bfc\u5165\u65f6\uff0c\u4ec5\u5408\u5e76\u4e8b\u4ef6\u65e5\u671f\u665a\u4e8e recorded_at \u7684\u589e\u91cf\u3002input_cache_hit = Cache Read\uff1binput_cache_miss = Input (w/ Cache Write) + Input (w/o Cache Write)\uff1boutput = Output Tokens\u3002\u5386\u53f2\u4ec5\u6709\u6a21\u578b\u4fa7\u5206\u7c7b\u7684\u5468\u671f\uff0c\u6309\u8fd1\u671f\u5b9e\u6d4b\u6bd4\u4f8b\u4f30\u7b97\u4e09\u7c7b\u62c6\u5206\u3002",
     "periods": [
         {
             "period": "2026-04-25 \u2014 2026-05-25",
@@ -14,59 +14,24 @@ function initAboutUsPage() {
             "period_end": "2026-05-25",
             "recorded_at": "2026-06-19",
             "total_tokens": 84624306,
-            "categories": [
+            "token_types": [
                 {
-                    "name": "Cache",
+                    "name": "input_cache_miss",
+                    "tokens": 5846620,
+                    "usage_percent": 6.9
+                },
+                {
+                    "name": "input_cache_hit",
                     "tokens": 77889664,
-                    "usage_percent": 92.0,
-                    "items": [
-                        {
-                            "name": "Cache Read",
-                            "tokens": 77889664,
-                            "usage_percent": 92.0
-                        },
-                        {
-                            "name": "Cache Write",
-                            "tokens": 0,
-                            "usage_percent": 0.0
-                        }
-                    ]
+                    "usage_percent": 92.0
                 },
                 {
-                    "name": "API",
-                    "tokens": 489627,
-                    "usage_percent": 0.6,
-                    "items": [
-                        {
-                            "name": "gpt-5.5-medium",
-                            "tokens": 489627,
-                            "usage_percent": 0.6
-                        }
-                    ]
-                },
-                {
-                    "name": "Auto + Composer",
-                    "tokens": 6245015,
-                    "usage_percent": 7.4,
-                    "items": [
-                        {
-                            "name": "composer-2.5-fast",
-                            "tokens": 3278591,
-                            "usage_percent": 3.9
-                        },
-                        {
-                            "name": "composer-2-fast",
-                            "tokens": 2808023,
-                            "usage_percent": 3.3
-                        },
-                        {
-                            "name": "auto",
-                            "tokens": 158401,
-                            "usage_percent": 0.2
-                        }
-                    ]
+                    "name": "output",
+                    "tokens": 888022,
+                    "usage_percent": 1.0
                 }
-            ]
+            ],
+            "estimated": true
         },
         {
             "period": "2026-05-25 \u2014 2026-06-25",
@@ -74,54 +39,24 @@ function initAboutUsPage() {
             "period_end": "2026-06-25",
             "recorded_at": "2026-06-23",
             "total_tokens": 265728228,
-            "categories": [
+            "token_types": [
                 {
-                    "name": "Cache",
+                    "name": "input_cache_miss",
+                    "tokens": 25352323,
+                    "usage_percent": 9.5
+                },
+                {
+                    "name": "input_cache_hit",
                     "tokens": 236525231,
-                    "usage_percent": 89.0,
-                    "items": [
-                        {
-                            "name": "Cache Read",
-                            "tokens": 236525231,
-                            "usage_percent": 89.0
-                        },
-                        {
-                            "name": "Cache Write",
-                            "tokens": 0,
-                            "usage_percent": 0.0
-                        }
-                    ]
+                    "usage_percent": 89.0
                 },
                 {
-                    "name": "API",
-                    "tokens": 6400691,
-                    "usage_percent": 2.4,
-                    "items": [
-                        {
-                            "name": "gpt-5.5-medium",
-                            "tokens": 6400691,
-                            "usage_percent": 2.4
-                        }
-                    ]
-                },
-                {
-                    "name": "Auto + Composer",
-                    "tokens": 22802306,
-                    "usage_percent": 8.6,
-                    "items": [
-                        {
-                            "name": "composer-2.5-fast",
-                            "tokens": 14926960,
-                            "usage_percent": 5.6
-                        },
-                        {
-                            "name": "auto",
-                            "tokens": 7875346,
-                            "usage_percent": 3.0
-                        }
-                    ]
+                    "name": "output",
+                    "tokens": 3850674,
+                    "usage_percent": 1.4
                 }
-            ]
+            ],
+            "estimated": true
         },
         {
             "period": "2026-06-25 \u2014 2026-07-25",
@@ -129,148 +64,89 @@ function initAboutUsPage() {
             "period_end": "2026-07-25",
             "recorded_at": "2026-07-21",
             "total_tokens": 157872029,
-            "categories": [
+            "token_types": [
                 {
-                    "name": "Cache",
-                    "tokens": 146192952,
-                    "usage_percent": 92.6,
-                    "items": [
-                        {
-                            "name": "Cache Read",
-                            "tokens": 143133855,
-                            "usage_percent": 90.7
-                        },
-                        {
-                            "name": "Cache Write",
-                            "tokens": 3059097,
-                            "usage_percent": 1.9
-                        }
-                    ]
+                    "name": "input_cache_miss",
+                    "tokens": 13198184,
+                    "usage_percent": 8.4
                 },
                 {
-                    "name": "API",
-                    "tokens": 6219789,
-                    "usage_percent": 3.9,
-                    "items": [
-                        {
-                            "name": "gpt-5.5-medium",
-                            "tokens": 5201169,
-                            "usage_percent": 3.3
-                        },
-                        {
-                            "name": "gpt-5.6-sol-medium",
-                            "tokens": 1018620,
-                            "usage_percent": 0.6
-                        }
-                    ]
+                    "name": "input_cache_hit",
+                    "tokens": 143133855,
+                    "usage_percent": 90.7
                 },
                 {
-                    "name": "Auto + Composer",
-                    "tokens": 5459288,
-                    "usage_percent": 3.5,
-                    "items": [
-                        {
-                            "name": "composer-2.5-fast",
-                            "tokens": 4583208,
-                            "usage_percent": 2.9
-                        },
-                        {
-                            "name": "auto",
-                            "tokens": 681083,
-                            "usage_percent": 0.4
-                        },
-                        {
-                            "name": "cursor-grok-4.5-high-fast",
-                            "tokens": 194997,
-                            "usage_percent": 0.1
-                        }
-                    ]
+                    "name": "output",
+                    "tokens": 1539990,
+                    "usage_percent": 1.0
                 }
-            ]
+            ],
+            "estimated": true
         },
         {
             "period": "2026-07-25 \u2014 2026-08-25",
             "period_start": "2026-07-25",
             "period_end": "2026-08-25",
-            "recorded_at": "2026-08-01",
-            "total_tokens": 58270373,
-            "categories": [
+            "recorded_at": "2026-08-24",
+            "total_tokens": 248603286,
+            "token_types": [
                 {
-                    "name": "Cache",
-                    "tokens": 54772738,
-                    "usage_percent": 94.0,
-                    "items": [
-                        {
-                            "name": "Cache Read",
-                            "tokens": 53443684,
-                            "usage_percent": 91.7
-                        },
-                        {
-                            "name": "Cache Write",
-                            "tokens": 1329054,
-                            "usage_percent": 2.3
-                        }
-                    ]
+                    "name": "input_cache_miss",
+                    "tokens": 13019218,
+                    "usage_percent": 5.2
                 },
                 {
-                    "name": "API",
-                    "tokens": 2039647,
-                    "usage_percent": 3.5,
-                    "items": [
-                        {
-                            "name": "gpt-5.5-medium",
-                            "tokens": 1146712,
-                            "usage_percent": 2.0
-                        },
-                        {
-                            "name": "gpt-5.6-sol-medium",
-                            "tokens": 892935,
-                            "usage_percent": 1.5
-                        }
-                    ]
+                    "name": "input_cache_hit",
+                    "tokens": 234083203,
+                    "usage_percent": 94.2
                 },
                 {
-                    "name": "Auto + Composer",
-                    "tokens": 1457988,
-                    "usage_percent": 2.5,
-                    "items": [
-                        {
-                            "name": "auto",
-                            "tokens": 762598,
-                            "usage_percent": 1.3
-                        },
-                        {
-                            "name": "composer-2.5-fast",
-                            "tokens": 677965,
-                            "usage_percent": 1.2
-                        },
-                        {
-                            "name": "claude-4.5-sonnet-thinking",
-                            "tokens": 17425,
-                            "usage_percent": 0.0
-                        }
-                    ]
+                    "name": "output",
+                    "tokens": 1500865,
+                    "usage_percent": 0.6
                 }
-            ]
+            ],
+            "estimated": true
+        },
+        {
+            "period": "2026-08-25 \u2014 2026-09-25",
+            "period_start": "2026-08-25",
+            "period_end": "2026-09-25",
+            "recorded_at": "2026-08-27",
+            "total_tokens": 55791828,
+            "token_types": [
+                {
+                    "name": "input_cache_miss",
+                    "tokens": 2477042,
+                    "usage_percent": 4.4
+                },
+                {
+                    "name": "input_cache_hit",
+                    "tokens": 53147991,
+                    "usage_percent": 95.3
+                },
+                {
+                    "name": "output",
+                    "tokens": 166795,
+                    "usage_percent": 0.3
+                }
+            ],
+            "estimated": false
         }
     ]
 };
 
-  const barColors = ['bg-teal-500', 'bg-blue-600', 'bg-sky-500', 'bg-violet-500', 'bg-indigo-500', 'bg-emerald-500', 'bg-amber-500'];
+  const barColors = {
+    input_cache_miss: 'bg-amber-500',
+    input_cache_hit: 'bg-teal-500',
+    output: 'bg-blue-600',
+  };
 
-  function labelCategory(name) {
+  function labelTokenType(name) {
     const map = {
-      Cache: t('usage.catCache'),
-      API: t('usage.catApi'),
-      'Auto + Composer': t('usage.catComposer'),
-    };
-    return map[name] || name;
-  }
-
-  function labelItem(name) {
-    const map = {
-      'Cache Read': t('usage.itemCacheRead'),
-      'Cache Write': t('usage.itemCacheWrite'),
+      input_cache_miss: t('usage.typeMiss'),
+      input_cache_hit: t('usage.typeHit'),
+      output: t('usage.typeOutput'),
     };
     return map[name] || name;
   }
@@ -313,43 +189,55 @@ function initAboutUsPage() {
         period_end: baseline.period_end || baseline.period?.split('—')[1]?.trim(),
         recorded_at: baseline.recorded_at,
         total_tokens: baseline.total_tokens,
-        categories: baseline.categories || [],
+        token_types: baseline.token_types || baseline.categories || [],
       },
     ];
   }
 
-  function renderBreakdown(categories) {
-    if (!Array.isArray(categories) || !categories.length) {
+  function accumulateTokenTypes(periods) {
+    const totals = {
+      input_cache_miss: 0,
+      input_cache_hit: 0,
+      output: 0,
+    };
+    periods.forEach((period) => {
+      (period.token_types || []).forEach((item) => {
+        if (Object.prototype.hasOwnProperty.call(totals, item.name)) {
+          totals[item.name] += Number(item.tokens) || 0;
+        }
+      });
+    });
+    const total = totals.input_cache_miss + totals.input_cache_hit + totals.output;
+    return ['input_cache_miss', 'input_cache_hit', 'output'].map((name) => ({
+      name,
+      tokens: totals[name],
+      usage_percent: total ? Math.round((totals[name] * 1000) / total) / 10 : 0,
+    }));
+  }
+
+  function formatPercent(value) {
+    const n = Number(value) || 0;
+    return `${n.toFixed(1)}%`;
+  }
+
+  function renderBreakdown(tokenTypes) {
+    if (!Array.isArray(tokenTypes) || !tokenTypes.length) {
       return `<li class="text-sm text-slate-500">${t('msg.noBreakdown')}</li>`;
     }
-    return categories
-      .map((category) => {
-        const items = (category.items || [])
-          .filter((item) => Number(item.tokens) > 0)
-          .map((item, index) => {
-            const color = barColors[index % barColors.length];
-            const width = Math.max(0.6, Math.min(100, Number(item.usage_percent) || 0));
-            return `
-              <li>
-                <div class="flex items-center justify-between gap-4 text-sm">
-                  <span class="font-medium text-slate-800">${labelItem(item.name)}</span>
-                  <span class="shrink-0 tabular-nums text-slate-600">${formatTokens(item.tokens)} · ${width}%</span>
-                </div>
-                <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-                  <div class="h-full rounded-full ${color}" style="width: ${width}%"></div>
-                </div>
-              </li>`;
-          })
-          .join('');
-
+    return tokenTypes
+      .filter((item) => Number(item.tokens) > 0)
+      .map((item) => {
+        const color = barColors[item.name] || 'bg-slate-400';
+        const width = Math.max(0.6, Math.min(100, Number(item.usage_percent) || 0));
         return `
           <li>
-            <p class="text-sm font-semibold text-slate-800">${t('msg.categoryLine', {
-              name: labelCategory(category.name),
-              tokens: formatTokens(category.tokens),
-              percent: category.usage_percent,
-            })}</p>
-            <ul class="mt-3 space-y-3" role="list">${items}</ul>
+            <div class="flex items-center justify-between gap-4 text-sm">
+              <span class="font-medium text-slate-800">${labelTokenType(item.name)}</span>
+              <span class="shrink-0 tabular-nums text-slate-600">${formatTokens(item.tokens)} · ${formatPercent(item.usage_percent)}</span>
+            </div>
+            <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+              <div class="h-full rounded-full ${color}" style="width: ${width}%"></div>
+            </div>
           </li>`;
       })
       .join('');
@@ -358,8 +246,6 @@ function initAboutUsPage() {
   function renderUsage(data) {
     lastUsageData = data;
     const periods = normalizePeriods(data);
-    const latest = periods[periods.length - 1];
-    const periodLabel = latest?.period || '—';
 
     const setText = (id, text) => {
       const node = document.getElementById(id);
@@ -367,11 +253,12 @@ function initAboutUsPage() {
     };
 
     const totalTokens = periods.reduce((sum, entry) => sum + (Number(entry.total_tokens) || 0), 0);
+    const tokenTypes = accumulateTokenTypes(periods);
 
     setText('usageSource', data.source || 'Cursor Dashboard · Included Usage');
-    setText('usageUpdatedAt', formatDate(data.updated_at || latest?.recorded_at));
+    setText('usageUpdatedAt', formatDate(data.updated_at || periods[periods.length - 1]?.recorded_at));
     setText('usageTotalTokens', periods.length ? formatTokens(totalTokens) : '—');
-    setText('usageBreakdownTitle', t('usage.breakdownTitle', { period: periodLabel }));
+    setText('usageBreakdownTitle', t('usage.breakdownTitle'));
 
     const periodList = document.getElementById('usagePeriodList');
     if (periodList) {
@@ -386,7 +273,7 @@ function initAboutUsPage() {
     }
 
     const breakdown = document.getElementById('usageBreakdown');
-    if (breakdown) breakdown.innerHTML = renderBreakdown(latest?.categories || []);
+    if (breakdown) breakdown.innerHTML = renderBreakdown(tokenTypes);
   }
 
   function formatReleaseVersion(data) {

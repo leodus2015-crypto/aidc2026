@@ -83,7 +83,20 @@
       'glm-52': { tpsInputMiss: 400, tpsInputHit: 1600, tpsOutput: 12 },
     },
   };
-  const KEY_PASSWORD = 'aidc2026';
+  let unlockPassword = '';
+
+  function normalizeUnlockPassword(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function isUnlockConfigured() {
+    return Boolean(normalizeUnlockPassword(unlockPassword));
+  }
+
+  function verifyUnlockPassword(input) {
+    if (!isUnlockConfigured()) return false;
+    return normalizeUnlockPassword(input) === normalizeUnlockPassword(unlockPassword);
+  }
 
   let CLOUD_COMPARE = {};
   let configLoadMeta = { defaults: 'local', cloud: 'local' };
@@ -314,7 +327,7 @@
     hint.textContent = L('同步中…');
     hint.className = 'text-xs text-slate-500';
     try {
-      const token = KEY_PASSWORD;
+      const token = unlockPassword;
       await AidcConfig.save(configKeys.defaults, collectRoiConfigForSave(), token);
       await AidcConfig.save(configKeys.cloudCompare, { schemaVersion: 1, ...CLOUD_COMPARE }, token);
       hint.textContent = L('已同步到云端');
@@ -632,6 +645,7 @@
     $('pwdOverlay').classList.remove('hidden');
     $('pwdOverlay').classList.add('flex');
     $('pwdInput').value = '';
+    $('pwdError').textContent = L('密码错误，请重试。');
     $('pwdError').classList.add('hidden');
     $('pwdInput').focus();
   }
@@ -653,8 +667,17 @@
       if ($('keyParamsToggle').checked) {
         if (keyParamsUnlocked) {
           setKeyParamsVisible(true);
+        } else if (!isUnlockConfigured()) {
+          $('keyParamsToggle').checked = false;
+          showPwdOverlay();
+          $('pwdInput').disabled = true;
+          $('pwdOk').disabled = true;
+          $('pwdError').textContent = L('解锁口令未配置，请先通过云端写入 site.unlock_password');
+          $('pwdError').classList.remove('hidden');
         } else {
           $('keyParamsToggle').checked = false;
+          $('pwdInput').disabled = false;
+          $('pwdOk').disabled = false;
           showPwdOverlay();
         }
       } else {
@@ -664,7 +687,7 @@
 
     $('pwdCancel').addEventListener('click', () => { hidePwdOverlay(); $('keyParamsToggle').checked = false; });
     $('pwdOk').addEventListener('click', () => {
-      if ($('pwdInput').value.trim().toLowerCase() === KEY_PASSWORD) {
+      if (verifyUnlockPassword($('pwdInput').value)) {
         hidePwdOverlay();
         setKeyParamsVisible(true);
       } else {
@@ -714,10 +737,12 @@
   async function bootPage() {
     applyPageConfig();
     translateStaticLookupText();
-    const [defaultsResult, cloudResult] = await Promise.all([
+    const [defaultsResult, cloudResult, unlockResult] = await Promise.all([
       AidcConfig.load(configKeys.defaults, LOCAL_ROI_DEFAULTS),
       AidcConfig.load(configKeys.cloudCompare, LOCAL_CLOUD_COMPARE),
+      AidcConfig.load('site.unlock_password', { password: '' }),
     ]);
+    unlockPassword = (unlockResult.data && unlockResult.data.password) || '';
     configLoadMeta = { defaults: defaultsResult.source, cloud: cloudResult.source };
     mergeCloudCompare(cloudResult.data);
     applyRoiConfig(defaultsResult.data);

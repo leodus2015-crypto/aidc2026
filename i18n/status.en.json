@@ -6,7 +6,7 @@
   "gate": {
     "eyebrow": "Internal",
     "title": "Site Status",
-    "hint": "Enter the admin token (same as API ADMIN_TOKEN).",
+    "hint": "Enter the server ADMIN_TOKEN from environment (no hardcoded default on this page).",
     "placeholder": "Password",
     "error": "Invalid token or unauthorized",
     "errorUnauthorized": "Incorrect password. Please try again.",

@@ -61,11 +61,10 @@
     "确定要执行此操作吗？": "Are you sure you want to perform this action?",
     "取消": "Cancel",
     "确定": "OK",
-    "确认": "Confirm",
     "输入访问密码": "Enter access password",
     "解锁布局或规则需验证身份（不区分大小写）。": "Unlocking layout or rules requires verification (case-insensitive).",
     "密码": "Password",
-    "密码错误，请重试。": "Incorrect password. Please try again.",
+    "密码错误，请重试。": "Incorrect password, please try again.",
     "总线柜 (第3-6排, 第1柜)": "Bus racks (rows 3–6, rack 1)",
     "AI 奇数排 (1,3,5,7)": "AI odd rows (1,3,5,7)",
     "AI 偶数排 (2,4,6,8)": "AI even rows (2,4,6,8)",
@@ -118,6 +117,8 @@
     "🏭 DataCenter 3D Designer v2 · 案例A（风冷超节点） 已启动": "🏭 DataCenter 3D Designer v2 · Case A (Air-Cooled Supernode) started",
     "• 鼠标左键旋转 | 滚轮缩放 | 右键平移": "• Left-drag rotate | Scroll zoom | Right-drag pan",
     "• 悬停查看机柜信息": "• Hover racks for details",
-    "• 配置自动保存到 localStorage": "• Configuration auto-saves to localStorage"
+    "• 配置自动保存到 localStorage": "• Configuration auto-saves to localStorage",
+    "解锁口令未配置": "Unlock password not configured",
+    "解锁口令未配置，请先通过云端写入 site.unlock_password": "Unlock password is not configured. Set site.unlock_password via the cloud API first."
   }
 }

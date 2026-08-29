@@ -12,7 +12,8 @@ DATABASE_USER = os.getenv("DATABASE_USER", "").strip()
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", "")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "aidc").strip()
 
-ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "aidc2026").strip()
+# No insecure default: write/analytics endpoints refuse when unset.
+ADMIN_TOKEN = (os.getenv("ADMIN_TOKEN") or "").strip()
 API_HOST = os.getenv("API_HOST", "127.0.0.1")
 API_PORT = int(os.getenv("API_PORT", "8012"))
 CORS_ORIGINS = [
@@ -30,13 +31,9 @@ ALLOWED_CONFIG_KEYS = frozenset(
         "roi.defaults.en",
         "roi.cloud_compare",
         "roi.cloud_compare.en",
-        "inference.defaults",
-        "aidc_calc.cfg",
         "dc3d.case_a",
         "dc3d.case_b",
         "site.unlock_password",
-        "outline.2026",
-        "ai_usage",
     }
 )
 

@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DataCenter 3D 设计器 · 案例A（风冷超节点）</title>
-<script src="js/aidc-theme.js?v=75"></script>
-<script src="js/embed-mode.js?v=75"></script>
-<script src="js/theme-switch.js?v=75"></script>
-<link rel="stylesheet" href="css/embed.css?v=75" />
-<link rel="stylesheet" href="css/theme.css?v=75" />
+<script src="js/aidc-theme.js?v=79"></script>
+<script src="js/embed-mode.js?v=79"></script>
+<script src="js/theme-switch.js?v=79"></script>
+<link rel="stylesheet" href="css/embed.css?v=79" />
+<link rel="stylesheet" href="css/theme.css?v=79" />
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -564,8 +564,8 @@
 </div>
 
 <!-- ===== Three.js ===== -->
-  <script src="js/aidc-asset-version.js?v=75"></script>
-<script src="js/config-loader.js?v=75"></script>
+  <script src="js/aidc-asset-version.js?v=79"></script>
+<script src="js/config-loader.js?v=79"></script>
 <script type="importmap">
 {
   "imports": {
@@ -735,14 +735,19 @@ function applyRemoteConfig(data) {
 
 let configLoadMeta = { source: 'local', version: null, fromLocalStorage: false };
 
-const LOCAL_UNLOCK_PASSWORD = { password: 'aidc2026' };
+const LOCAL_UNLOCK_PASSWORD = { password: '' };
 let unlockPassword = LOCAL_UNLOCK_PASSWORD.password;
 
 function normalizeUnlockPassword(value) {
   return String(value || '').trim().toLowerCase();
 }
 
+function isUnlockConfigured() {
+  return Boolean(normalizeUnlockPassword(unlockPassword));
+}
+
 function verifyUnlockPassword(input) {
+  if (!isUnlockConfigured()) return false;
   return normalizeUnlockPassword(input) === normalizeUnlockPassword(unlockPassword);
 }
 
@@ -2466,8 +2471,12 @@ async function boot() {
   let configVersion = null;
 
   const pwdResult = await AidcConfig.load('site.unlock_password', LOCAL_UNLOCK_PASSWORD);
-  if (pwdResult.data && pwdResult.data.password) {
-    unlockPassword = pwdResult.data.password;
+  unlockPassword = (pwdResult.data && pwdResult.data.password) || '';
+  if (!isUnlockConfigured()) {
+    const layoutBtn = document.getElementById('btn-unlock-layout');
+    const rulesBtn = document.getElementById('btn-unlock-rules');
+    if (layoutBtn) layoutBtn.title = L('解锁口令未配置');
+    if (rulesBtn) rulesBtn.title = L('解锁口令未配置');
   }
 
   const result = await AidcConfig.load(CONFIG_KEY, LOCAL_DC3D_DEFAULTS);
@@ -2536,6 +2545,10 @@ document.querySelectorAll('.sb-tab').forEach(tab => {
 document.getElementById('btn-unlock-layout').addEventListener('click', async () => {
   const btn = document.getElementById('btn-unlock-layout');
   if (btn.getAttribute('aria-pressed') === 'true') return;
+  if (!isUnlockConfigured()) {
+    toast(L('解锁口令未配置，请先通过云端写入 site.unlock_password'), 'error');
+    return;
+  }
   await promptUnlockPassword(() => {
     setLayoutInputsLocked(false);
     toast(L('布局参数已解锁'));
@@ -2576,6 +2589,10 @@ document.getElementById('cfg-depth2').addEventListener('input', () => { document
 
 document.getElementById('btn-unlock-rules').addEventListener('click', async () => {
   if (rulesLocked) {
+    if (!isUnlockConfigured()) {
+      toast(L('解锁口令未配置，请先通过云端写入 site.unlock_password'), 'error');
+      return;
+    }
     await promptUnlockPassword(() => {
       setRulesLocked(false);
       toast(L('规则已解锁'));
@@ -2692,10 +2709,10 @@ console.log(L('• 悬停查看机柜信息'));
 console.log(L('• 配置自动保存到 localStorage'));
 </script>
 
-  <script src="js/aidc-locale-bridge.js?v=75"></script>
-  <script src="js/i18n.js?v=75"></script>
-  <script src="js/lang-switch.js?v=75"></script>
-  <script src="js/i18n-bootstrap.js?v=75"></script>
+  <script src="js/aidc-locale-bridge.js?v=79"></script>
+  <script src="js/i18n.js?v=79"></script>
+  <script src="js/lang-switch.js?v=79"></script>
+  <script src="js/i18n-bootstrap.js?v=79"></script>
   <script>
     AidcI18nBootstrap.bootstrap('datacenter-3d-case-b', {
       onReady: function () { globalThis.__aidcPageRefreshI18n?.(); },

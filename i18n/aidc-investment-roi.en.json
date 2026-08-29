@@ -45,7 +45,7 @@
     "算力规模与 IT 功率可独立填写；电费按 MW × PUE × 利用率估算。": "Compute scale and IT power are independent; electricity cost estimated as MW × PUE × utilization.",
     "公有云公开价 vs 自建成本": "Public cloud list price vs self-built cost",
     "自建成本": "Self-built cost",
-    "未命中 / 命中 / 输出": "miss / hit / output",
+    "未命中 / 命中 / 输出": "Miss / hit / output",
     "元/百万 Token（自建）": "CNY/M tokens (self-built)",
     "自建 {miss} / {hit} / {out} 元/百万 Token · 云侧为各平台公开价": "Self-built {miss} / {hit} / {out} CNY/M · cloud figures are published list prices",
     "元/百万 Token（云公开价 vs 自建）": "CNY/M tokens (cloud list price vs self-built)",
@@ -80,7 +80,6 @@
     "运行环境": "Operating environment",
     "工业电价（元/kWh）": "Industrial electricity (CNY/kWh)",
     "平均利用率（%）": "Average utilization (%)",
-    "单卡吞吐（tokens/s）": "Per-card throughput (tokens/s)",
     "输入·未命中": "Input · cache miss",
     "输入·命中": "Input · cache hit",
     "输出": "Output",
@@ -97,7 +96,6 @@
     "高于自建": "Above self-built",
     "更新 {date}": "Updated {date}",
     "DeepSeek-V4-Flash 高峰时段公开价（api-docs.deepseek.com/zh-cn）；各平台按 2026-08 峰谷调价后高峰价目整理，单位元/百万 Token": "DeepSeek-V4-Flash peak-hour list prices per api-docs.deepseek.com (Aug 2026); USD/M tokens for overseas clouds.",
-    "DeepSeek-V4-Flash 公开价；各平台按官网/百炼等公开价目整理，单位元/百万 Token": "DeepSeek-V4-Flash list prices from official docs and major cloud catalogs (USD/M tokens).",
     "GLM-5.2 公开价；智谱 AI 开放平台 open.bigmodel.cn 价目，单位元/百万 Token": "GLM-5.2 list prices from Z.AI / Zhipu open platform (open.bigmodel.cn); USD/M tokens.",
     "OPEX 结果": "OPEX results",
     "年电费": "Annual electricity",
@@ -213,7 +211,6 @@
     "年 Token 合计": "Annual tokens total",
     "未命中 + 命中 + 输出": "Miss + hit + output",
     "输入/输出 t/s": "Input/output t/s",
-    "未命中 / 命中 / 输出": "Miss / hit / output",
     "MW × 8760 × PUE × u × 电价": "MW × 8760 × PUE × u × price",
     "自建均摊 / M": "Self-built blended /M",
     "全成本 ÷ 三类 Token 合计": "Full cost ÷ total of three token types",
@@ -226,6 +223,7 @@
     "固定 ÷ 边际": "Fixed ÷ marginal",
     "静态回收期": "Static payback period",
     "CAPEX ÷ 年利润": "CAPEX ÷ annual profit",
-    "{years} 年": "{years} years"
+    "{years} 年": "{years} years",
+    "解锁口令未配置，请先通过云端写入 site.unlock_password": "Unlock password is not configured. Set site.unlock_password via the cloud API first."
   }
 }
