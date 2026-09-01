@@ -12,6 +12,7 @@ function initIndexPage() {
     const panelMixed = document.getElementById('panel-mixed');
     const panelSeparated = document.getElementById('panel-separated');
     const panelKvcache = document.getElementById('panel-kvcache');
+    const inferenceSupplement = document.getElementById('inference-supplement');
     const iframePrinciples = document.getElementById('iframe-principles');
     const iframeDataflow = document.getElementById('iframe-dataflow');
 
@@ -63,30 +64,40 @@ function initIndexPage() {
     const FRAMEWORK_OVERHEAD_OF_CAPACITY = 0.1;
 
     const fixedW8A8WeightGbByModel = {
-      'DeepSeek-R1-W8A8': 689,
-      'DeepSeek-V3.1-Terminus-W4A8': 360,
-      'DeepSeek-V4-Flash-W8A8': 160,
-      'DeepSeek-V4-Pro-W8A8': 865,
-      'GLM-5.1-W8A8': 756,
-      'Qwen3.6-35B-A3B': 71.9,
+      'DeepSeek-V4-Flash-W8A8': 300,
+      'DeepSeek-V4-Pro-W4A8': 878,
+      'GLM-5.2-W8A8': 774,
+      'Qwen3.6-35B-A3B-W8A8': 39.8,
     };
 
     const modelSizeMap = {
-      'DeepSeek-R1-W8A8': '685B',
-      'DeepSeek-V3.1-Terminus-W4A8': '685B',
       'DeepSeek-V4-Flash-W8A8': '284B',
-      'DeepSeek-V4-Pro-W8A8': '1.6T',
-      'Qwen3.6-35B-A3B': '35B',
-      'GLM-5.1-W8A8': '744B',
+      'DeepSeek-V4-Pro-W4A8': '1.6T',
+      'Qwen3.6-35B-A3B-W8A8': '35B',
+      'GLM-5.2-W8A8': '744B',
     };
 
     const npuCapacityMap = {
-      'Ascend A2': 64,
       'Ascend A3': 128,
       'Ascend 950DT': 96,
     };
 
-    /** Prefill / Decode 各占一半总卡数；每组独立部署一整份 modelGb，组内均摊。 */
+    function syncModelParamsFromSelection(modelKey, paramInput) {
+      if (!paramInput) return;
+      paramInput.value = modelSizeMap[modelKey] || '';
+    }
+
+    function syncModelNameAcrossPanels(modelKey) {
+      if (modelNameInput && [...modelNameInput.options].some((opt) => opt.value === modelKey)) {
+        modelNameInput.value = modelKey;
+        syncModelParamsFromSelection(modelKey, modelSizeInput);
+      }
+      if (modelNameSep && [...modelNameSep.options].some((opt) => opt.value === modelKey)) {
+        modelNameSep.value = modelKey;
+        syncModelParamsFromSelection(modelKey, modelSizeSep);
+      }
+    }
+
     const pdDeployLayouts = {
       '32-1p1d': {
         labelKey: 'pd.layout32',
@@ -110,33 +121,14 @@ function initIndexPage() {
      * KV Cache 估算用模型画像（与混部下拉型号对齐）。
      * 标准公式（tutorialQ / vLLM 等）：
      * KV_bytes = 2 × L × H_kv × head_dim × seq_len × batch_size × dtype_size
-     * DeepSeek R1 / V3.1 使用 MLA 结构化公式（kv_lora_rank + qk_rope_head_dim，非标准 GQA）。
-     * GLM-5.1 使用 MLA + DSA（含 indexer key 与 FP32 scale）。
+     * GLM-5.2 使用 MLA + DSA（含 indexer key 与 FP32 scale）。
      * Qwen3.6 混合注意力：仅 full attention 层保存完整 KV（linear 层不计入）。
      * DeepSeek V4 另见 v4KvCompressedAnchors（CSA/HCA 架构压缩）。
      */
     const kvModelProfiles = {
-      'DeepSeek-R1-W8A8': {
-        layers: 61,
-        compressedKvDim: 512,
-        ropeHeadDim: 64,
-        experts: 256,
-        kvHeads: 128,
-        headDim: 128,
-        kvFormula: 'mla',
-      },
-      'DeepSeek-V3.1-Terminus-W4A8': {
-        layers: 61,
-        compressedKvDim: 512,
-        ropeHeadDim: 64,
-        experts: 256,
-        kvHeads: 128,
-        headDim: 128,
-        kvFormula: 'mla',
-      },
       'DeepSeek-V4-Flash-W8A8': { layers: 43, experts: 128, kvHeads: 96, headDim: 128, kvFormula: 'v4-compressed' },
-      'DeepSeek-V4-Pro-W8A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128, kvFormula: 'v4-compressed' },
-      'Qwen3.6-35B-A3B': {
+      'DeepSeek-V4-Pro-W4A8': { layers: 61, experts: 256, kvHeads: 128, headDim: 128, kvFormula: 'v4-compressed' },
+      'Qwen3.6-35B-A3B-W8A8': {
         layers: 40,
         fullAttentionLayers: 10,
         linearAttentionLayers: 30,
@@ -150,7 +142,7 @@ function initIndexPage() {
           noteKey: 'quantFp16Note',
         },
       },
-      'GLM-5.1-W8A8': {
+      'GLM-5.2-W8A8': {
         layers: 78,
         compressedKvDim: 512,
         ropeHeadDim: 64,
@@ -174,7 +166,7 @@ function initIndexPage() {
         bf16AnchorGiB: 9.62,
         noteKey: 'v4FlashNote',
       },
-      'DeepSeek-V4-Pro-W8A8': {
+      'DeepSeek-V4-Pro-W4A8': {
         anchorSeqLen: 1_000_000,
         bf16AnchorGiB: 9.62 * ((61 * 128) / (43 * 96)),
         noteKey: 'v4ProNote',
@@ -610,12 +602,31 @@ function initIndexPage() {
       if (tab === 'mixed') return 'mixed';
       if (tab === 'separated') return 'separated';
       if (tab === 'kvcache') return 'kvcache';
+      const hash = window.location.hash;
+      if (hash === '#capacity' || hash === '#docs') return 'mixed';
       return 'principles';
     }
 
     function scrollToInferenceSection() {
       const params = new URLSearchParams(window.location.search);
-      const shouldScroll = params.has('tab') || window.location.hash === '#inference';
+      const hash = window.location.hash;
+      if (hash === '#capacity') {
+        const section = document.getElementById('capacity');
+        if (!section) return;
+        requestAnimationFrame(() => {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return;
+      }
+      if (hash === '#docs') {
+        const section = document.getElementById('docs');
+        if (!section) return;
+        requestAnimationFrame(() => {
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return;
+      }
+      const shouldScroll = params.has('tab') || hash === '#inference';
       if (!shouldScroll) return;
       const section = document.getElementById('inference');
       if (!section) return;
@@ -624,18 +635,69 @@ function initIndexPage() {
       });
     }
 
-    function inferenceIframeSrc(path) {
+    function inferenceIframeSrc(path, options) {
       const lang = AidcI18n?.getLocale?.() || 'zh';
-      return `inference/${path}?embed=1&lang=${lang}`;
+      const params = new URLSearchParams({ embed: '1', lang });
+      if (options?.bust) params.set('_', String(options.bust));
+      return `inference/${path}?${params.toString()}`;
     }
 
-    function ensureInferenceIframe(iframe, path) {
+    function ensureInferenceIframe(iframe, path, options) {
       if (!iframe) return;
-      const nextSrc = inferenceIframeSrc(path);
-      if (iframe.getAttribute('src') !== nextSrc) {
+      const nextSrc = inferenceIframeSrc(path, options);
+      if (options?.reload || iframe.getAttribute('src') !== nextSrc) {
         iframe.setAttribute('src', nextSrc);
       }
     }
+
+    function reloadInferenceIframe(mode) {
+      if (mode === 'principles') {
+        ensureInferenceIframe(iframePrinciples, 'basic.html', { reload: true, bust: Date.now() });
+      } else if (mode === 'dataflow') {
+        ensureInferenceIframe(iframeDataflow, 'server-dataflow.html', { reload: true, bust: Date.now() });
+      }
+    }
+
+    function normalizeInferenceTab(tab) {
+      if (tab === 'dataflow') return 'dataflow';
+      if (tab === 'mixed') return 'mixed';
+      if (tab === 'separated') return 'separated';
+      if (tab === 'kvcache') return 'kvcache';
+      return 'principles';
+    }
+
+    function flashInferencePanel(mode) {
+      const panelMap = {
+        principles: panelPrinciples,
+        dataflow: panelDataflow,
+        mixed: panelMixed,
+        separated: panelSeparated,
+        kvcache: panelKvcache,
+      };
+      window.AidcRefreshFlash?.pulsePanel?.(panelMap[mode]);
+    }
+
+    function navigateToTab(tab, options) {
+      const mode = normalizeInferenceTab(tab);
+      const opts = options || {};
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', mode);
+      url.hash = opts.hash || '#inference';
+      window.history.pushState({ aidcInferenceTab: mode }, '', url);
+      selectDeploymentTab(mode);
+      scrollToInferenceSection();
+      requestAnimationFrame(() => {
+        const activePanel = document.querySelector('#inference [role="tabpanel"]:not(.hidden)');
+        activePanel?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+      if (!opts.reload) return;
+      if (mode === 'principles' || mode === 'dataflow') {
+        reloadInferenceIframe(mode);
+      }
+      flashInferencePanel(mode);
+    }
+
+    indexNavigateToTab = navigateToTab;
 
     function syncInferenceIframes() {
       if (iframePrinciples?.getAttribute('src')) {
@@ -664,6 +726,13 @@ function initIndexPage() {
         panel.classList.toggle('hidden', !active);
         panel.setAttribute('aria-hidden', active ? 'false' : 'true');
       });
+
+      if (inferenceSupplement) {
+        const showSupplement = mode === 'mixed' || mode === 'separated' || mode === 'kvcache';
+        inferenceSupplement.classList.toggle('hidden', !showSupplement);
+        inferenceSupplement.hidden = !showSupplement;
+        inferenceSupplement.setAttribute('aria-hidden', showSupplement ? 'false' : 'true');
+      }
 
       if (mode === 'principles') {
         ensureInferenceIframe(iframePrinciples, 'basic.html');
@@ -971,8 +1040,9 @@ function initIndexPage() {
     }
 
     modelNameInput.addEventListener('change', () => {
-      modelSizeInput.value = modelSizeMap[modelNameInput.value] || '';
+      syncModelNameAcrossPanels(modelNameInput.value);
       updateEstimateMixed();
+      updateEstimateSeparated();
     });
 
     attachSyncedInputs([modelSizeInput, cardCountInput], updateEstimateMixed);
@@ -990,8 +1060,9 @@ function initIndexPage() {
     });
 
     modelNameSep.addEventListener('change', () => {
-      modelSizeSep.value = modelSizeMap[modelNameSep.value] || '';
+      syncModelNameAcrossPanels(modelNameSep.value);
       updateEstimateSeparated();
+      updateEstimateMixed();
     });
 
     attachSyncedInputs([modelSizeSep, pdDeployMode], updateEstimateSeparated);
@@ -1017,12 +1088,23 @@ function initIndexPage() {
 
     syncNpuCapacityFromSelection();
     syncNpuCapacitySepFromSelection();
+    syncModelParamsFromSelection(modelNameInput.value, modelSizeInput);
+    syncModelParamsFromSelection(modelNameSep.value, modelSizeSep);
     syncKvProfileFromModel();
 
     resultMessageSep.textContent = t('results.sepPlaceholder');
 
     selectDeploymentTab(initialTabFromUrl());
     scrollToInferenceSection();
+
+    if (!window.__aidcIndexPopstateBound) {
+      window.__aidcIndexPopstateBound = true;
+      window.addEventListener('popstate', () => {
+        if (typeof indexNavigateToTab !== 'function') return;
+        selectDeploymentTab(initialTabFromUrl());
+        scrollToInferenceSection();
+      });
+    }
 
   window.refreshIndexPageI18n = function refreshIndexPageI18n() {
     document.querySelectorAll('#pdDeployMode option').forEach((opt) => {
@@ -1045,3 +1127,26 @@ function initIndexPage() {
   };
 }
 window.initIndexPage = initIndexPage;
+
+let indexNavigateToTab = null;
+
+function normalizeInferenceTabForNav(tab) {
+  if (tab === 'dataflow') return 'dataflow';
+  if (tab === 'mixed') return 'mixed';
+  if (tab === 'separated') return 'separated';
+  if (tab === 'kvcache') return 'kvcache';
+  return 'principles';
+}
+
+window.AidcIndexPage = {
+  navigateToTab(tab, options) {
+    if (typeof indexNavigateToTab === 'function') {
+      return indexNavigateToTab(tab, options);
+    }
+    const url = new URL(window.location.href);
+    const mode = normalizeInferenceTabForNav(tab);
+    url.searchParams.set('tab', mode);
+    url.hash = (options && options.hash) || '#inference';
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`);
+  },
+};

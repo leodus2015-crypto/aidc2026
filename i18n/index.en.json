@@ -13,8 +13,8 @@
   },
   "form": {
     "modelName": "Model name",
-    "modelSize": "Model size",
-    "modelSizePlaceholder": "e.g. 284B, 1.6T, 72",
+    "modelSize": "Model parameters",
+    "modelSizePlaceholder": "e.g. 284B, 1.6T, 35B",
     "npuModel": "NPU model",
     "hbmCapacity": "Per-card HBM capacity (GB)",
     "hbmCapacityTitle": "Auto-filled from NPU model; not editable",
@@ -22,7 +22,7 @@
     "cardCountQuickAria": "Card count presets",
     "pdDeployMode": "PD deployment mode",
     "pdDeployHint": "For each mode, Prefill and Decode each use half the total cards, split by P/D group count; <strong class=\"font-medium text-slate-600\">each group deploys a full copy of model weights</strong>, then shards across cards in the group.",
-    "kvcModelSizeRo": "Model size (linked)",
+    "kvcModelSizeRo": "Model parameters (linked)",
     "kvcLayersRo": "Transformer layers (L)",
     "kvcExpertsRo": "MoE expert count (profile)",
     "kvcExpertsRoTitle": "KV sizing does not multiply expert count; routed experts are far fewer",
@@ -53,7 +53,7 @@
   "notes": {
     "mixed": "<strong class=\"font-semibold\">Calculation notes:</strong> This is a simplified estimate; quantization follows the model name. Framework and runtime overhead reserves <strong class=\"font-semibold\">10% of per-card HBM capacity</strong>. Actual deployment also depends on the inference framework.",
     "separated": "<strong class=\"font-semibold\">Calculation notes (PD separated):</strong> Total weight size matches co-located mode. Total cards split into Prefill and Decode pools (half each), then into groups by <strong class=\"font-semibold\">P groups / D groups</strong>; <strong class=\"font-semibold\">each group deploys one full copy of weights</strong>, sharded across cards in the group. Per group: <strong class=\"font-semibold\">model usage per card = total weight GB ÷ cards in group</strong>, plus <strong class=\"font-semibold\">10% of per-card HBM</strong> for framework/runtime. Main view and charts show the <strong class=\"font-semibold\">bottleneck side</strong> (higher total usage per card on Prefill vs Decode).",
-    "kvcache": "<strong class=\"font-semibold\">Calculation notes (KV Cache):</strong> Industry-standard sizing (see <a href=\"https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing\" class=\"font-semibold text-blue-800 underline-offset-2 hover:underline\" target=\"_blank\" rel=\"noopener noreferrer\">KV Cache Sizing</a>): standard GQA <strong class=\"font-semibold\">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>. <strong class=\"font-semibold\">Qwen3.6 (hybrid attention)</strong>: <strong class=\"font-semibold\">L_full × 2 × H_kv × head_dim × seq_len × batch_size × dtype_size</strong> (FP16 @ 1M ≈ <strong class=\"font-semibold\">19.1 GiB</strong>; linear layers excluded). <strong class=\"font-semibold\">DeepSeek R1 / V3.1 (MLA)</strong>: <strong class=\"font-semibold\">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong> (W4A8 / W8A8 use A8 → INT8 KV, 1 byte/element; W4 affects weights only). <strong class=\"font-semibold\">GLM-5.1 (MLA + DSA)</strong>: <strong class=\"font-semibold\">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong> (W8A8 @ 1M ≈ <strong class=\"font-semibold\">51.4 GiB</strong>; MLA-only ≈ 41.8 GiB). <strong class=\"font-semibold\">DeepSeek V4 (CSA/HCA)</strong>: <strong class=\"font-semibold\">BF16 @ 1M anchor × (dtype_size / 2) × seq_len ratio</strong> (V4-Flash W8A8 ≈ <strong class=\"font-semibold\">4.81 GiB</strong>, BF16 baseline 9.62 GiB ÷ 2)."
+    "kvcache": "<strong class=\"font-semibold\">Calculation notes (KV Cache):</strong> Industry-standard sizing (see <a href=\"https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing\" class=\"font-semibold text-blue-800 underline-offset-2 hover:underline\" target=\"_blank\" rel=\"noopener noreferrer\">KV Cache Sizing</a>): standard GQA <strong class=\"font-semibold\">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>. <strong class=\"font-semibold\">Qwen3.6 (hybrid attention)</strong>: <strong class=\"font-semibold\">L_full × 2 × H_kv × head_dim × seq_len × batch_size × dtype_size</strong> (FP16 @ 1M ≈ <strong class=\"font-semibold\">19.1 GiB</strong>; linear layers excluded). <strong class=\"font-semibold\">DeepSeek R1 / V3.1 (MLA)</strong>: <strong class=\"font-semibold\">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong> (W4A8 / W8A8 use A8 → INT8 KV, 1 byte/element; W4 affects weights only). <strong class=\"font-semibold\">GLM-5.2 (MLA + DSA)</strong>: <strong class=\"font-semibold\">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong> (W8A8 @ 1M ≈ <strong class=\"font-semibold\">51.4 GiB</strong>; MLA-only ≈ 41.8 GiB). <strong class=\"font-semibold\">DeepSeek V4 (CSA/HCA)</strong>: <strong class=\"font-semibold\">BF16 @ 1M anchor × (dtype_size / 2) × seq_len ratio</strong> (V4-Flash W8A8 ≈ <strong class=\"font-semibold\">4.81 GiB</strong>, BF16 baseline 9.62 GiB ÷ 2)."
   },
   "capacity": {
     "heading": "Capacity planning",
@@ -71,9 +71,9 @@
     "calcBody": "This is a simplified estimate; quantization follows the <strong class=\"text-slate-800\">model name</strong>. Framework and runtime overhead reserves <strong class=\"text-slate-800\">10% of per-card HBM capacity</strong>. Actual deployment also depends on the inference framework.",
     "modelTitle": "Model usage",
     "modelLi1": "For some models, per-card weight usage = <strong class=\"text-slate-800\">fixed total weight file (GB)</strong> ÷ <strong class=\"text-slate-800\">card count</strong>.",
-    "modelLi2": "Others use <strong class=\"text-slate-800\">model size × 2 bytes ÷ card count</strong> (simplified FP16/BF16 width).",
+    "modelLi2": "Others use <strong class=\"text-slate-800\">model parameters × 2 bytes ÷ card count</strong> (simplified FP16/BF16 width).",
     "modelLi3": "<strong class=\"text-slate-800\">Per-card HBM capacity</strong> is auto-filled from the selected NPU model.",
-    "modelList": "<li>For some models, per-card weight usage = <strong class=\"text-slate-800\">fixed total weight file (GB)</strong> ÷ <strong class=\"text-slate-800\">card count</strong>.</li><li>Others use <strong class=\"text-slate-800\">model size × 2 bytes ÷ card count</strong> (simplified FP16/BF16 width).</li><li><strong class=\"text-slate-800\">Per-card HBM capacity</strong> is auto-filled from the selected NPU model.</li>",
+    "modelList": "<li>For some models, per-card weight usage = <strong class=\"text-slate-800\">fixed total weight file (GB)</strong> ÷ <strong class=\"text-slate-800\">card count</strong>.</li><li>Others use <strong class=\"text-slate-800\">model parameters × 2 bytes ÷ card count</strong> (simplified FP16/BF16 width).</li><li><strong class=\"text-slate-800\">Per-card HBM capacity</strong> is auto-filled from the selected NPU model.</li>",
     "chartTitle": "Bar chart legend",
     "chartBody": "Each NPU bar left to right: <strong class=\"text-slate-800\">framework/runtime</strong> (amber), <strong class=\"text-slate-800\">model weights</strong> (blue), <strong class=\"text-slate-800\">remaining capacity</strong> (green), overflow (red). Total scale changes when usage exceeds per-card capacity.",
     "entry": "<strong class=\"font-semibold\">Entry point:</strong> Return to <a href=\"#inference\" class=\"font-semibold text-blue-800 underline-offset-2 hover:underline\">Agentic inference · HBM estimate</a> at the top to try values."
@@ -86,7 +86,7 @@
     "resultLabelMixed": "{model} · {npu} · {cards} cards",
     "errCardCount": "Card count must be an integer ≥ 1.",
     "errHbmCapacity": "Per-card total HBM must be a number greater than 0.",
-    "errModelSize": "Enter a valid model size, e.g. 284B, 1.6T, 72.",
+    "errModelSize": "Enter valid model parameters, e.g. 284B, 1.6T, 35B.",
     "weightNoteW8A8": " (W8A8)",
     "weightNoteW4A8": " (W4A8)",
     "weightNoteW8A8En": " (W8A8)",

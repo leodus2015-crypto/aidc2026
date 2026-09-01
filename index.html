@@ -7,10 +7,12 @@
   <meta name="theme-color" content="#f8fafc" />
   <link rel="canonical" href="https://www.aidc2026.cn/index.html" />
   <title>Agentic 推理 · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=80"></script>
-  <script src="js/theme-switch.js?v=80"></script>
+  <script src="js/aidc-theme.js?v=84"></script>
+  <script src="js/embed-mode.js?v=84"></script>
+  <script src="js/theme-switch.js?v=84"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/theme.css?v=80" />
+  <link rel="stylesheet" href="css/theme.css?v=84" />
+  <link rel="stylesheet" href="css/embed.css?v=84" />
   <style>
     /* 原生 select 在 Safari/macOS 上常为直角；去掉系统外观后与 input 共用 rounded-2xl */
     #hbmForm select,
@@ -200,34 +202,31 @@
             <label for="modelName" class="block text-sm font-medium text-slate-700" data-i18n="form.modelName"></label>
             <select id="modelName" name="modelName"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-              <option value="DeepSeek-R1-W8A8">DeepSeek-R1-W8A8</option>
-              <option value="DeepSeek-V3.1-Terminus-W4A8">DeepSeek-V3.1-Terminus-W4A8</option>
               <option value="DeepSeek-V4-Flash-W8A8" selected>DeepSeek-V4-Flash-W8A8</option>
-              <option value="DeepSeek-V4-Pro-W8A8">DeepSeek-V4-Pro-W8A8</option>
-              <option value="Qwen3.6-35B-A3B">Qwen3.6-35B-A3B</option>
-              <option value="GLM-5.1-W8A8">GLM-5.1-W8A8</option>
+              <option value="DeepSeek-V4-Pro-W4A8">DeepSeek-V4-Pro-W4A8</option>
+              <option value="Qwen3.6-35B-A3B-W8A8">Qwen3.6-35B-A3B-W8A8</option>
+              <option value="GLM-5.2-W8A8">GLM-5.2-W8A8</option>
             </select>
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
             <label for="modelSize" class="block text-sm font-medium text-slate-700" data-i18n="form.modelSize"></label>
-            <input id="modelSize" name="modelSize" type="text" value="284B" data-i18n-placeholder="form.modelSizePlaceholder" placeholder="例如：284B、1.6T、72"
-              class="mt-2 box-border h-12 w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+            <input id="modelSize" name="modelSize" type="text" value="284B" readonly aria-readonly="true" data-i18n-placeholder="form.modelSizePlaceholder" placeholder="例如：284B、1.6T、72"
+              class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
             <label for="npuModel" class="block text-sm font-medium text-slate-700" data-i18n="form.npuModel"></label>
             <select id="npuModel" name="npuModel"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-              <option value="Ascend A2" selected>Ascend A2</option>
-              <option value="Ascend A3">Ascend A3</option>
+              <option value="Ascend A3" selected>Ascend A3</option>
               <option value="Ascend 950DT">Ascend 950DT</option>
             </select>
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
             <label for="hbmCapacity" class="block text-sm font-medium text-slate-700" data-i18n="form.hbmCapacity"></label>
-            <input id="hbmCapacity" name="hbmCapacity" type="number" min="1" step="1" value="64" readonly
+            <input id="hbmCapacity" name="hbmCapacity" type="number" min="1" step="1" value="128" readonly
               data-i18n-title="form.hbmCapacityTitle" title="随「NPU 型号」自动填充，不可手动修改"
               aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none [appearance:textfield] ring-slate-200 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
@@ -255,19 +254,19 @@
               <div class="mt-2 flex flex-wrap items-baseline gap-x-6 gap-y-2 sm:gap-x-10">
                 <div class="flex min-w-0 items-baseline gap-2">
                   <span class="shrink-0 text-xs font-medium text-slate-400" data-i18n="results.used"></span>
-                  <span id="hbmUsed" class="text-3xl font-bold tracking-tight tabular-nums sm:text-4xl">26.40</span>
+                  <span id="hbmUsed" class="text-3xl font-bold tracking-tight tabular-nums sm:text-4xl">50.30</span>
                   <span class="text-base font-semibold text-slate-300 sm:text-lg">GB</span>
                 </div>
                 <div class="flex min-w-0 items-baseline gap-2">
                   <span class="shrink-0 text-xs font-medium text-slate-400" data-i18n="results.remaining"></span>
-                  <span id="hbmRemain" class="text-3xl font-bold tracking-tight tabular-nums text-emerald-300 sm:text-4xl">37.60</span>
+                  <span id="hbmRemain" class="text-3xl font-bold tracking-tight tabular-nums text-emerald-300 sm:text-4xl">77.70</span>
                   <span class="text-base font-semibold text-slate-300 sm:text-lg">GB</span>
                 </div>
               </div>
             </div>
             <div class="w-full shrink-0 rounded-2xl bg-white/10 px-4 py-3 text-sm text-slate-200 lg:w-auto lg:max-w-xs lg:text-right xl:max-w-sm">
-              <div id="resultLabel" class="break-words">DeepSeek-V4-Flash-W8A8 · Ascend A2 · 8 卡</div>
-              <div id="capacityLabel" class="mt-1 text-slate-400">单卡总容量 64 GB</div>
+              <div id="resultLabel" class="break-words">DeepSeek-V4-Flash-W8A8 · Ascend A3 · 8 卡</div>
+              <div id="capacityLabel" class="mt-1 text-slate-400">单卡总容量 128 GB</div>
             </div>
           </div>
 
@@ -281,7 +280,7 @@
           <div id="hbmChart" class="mt-5 space-y-3"></div>
 
           <p id="resultMessage" class="mt-4 text-sm leading-6 text-slate-300">
-            模型权重合计 160 GB（W8A8）/ 8 = 20.00 GB/卡，框架/运行开销 6.40 GB（单卡容量 10%），剩余 37.60 GB/卡。
+            模型权重合计 300 GB（W8A8）/ 8 = 37.50 GB/卡，框架/运行开销 12.80 GB（单卡容量 10%），剩余 77.70 GB/卡。
           </p>
             </div>
           </div>
@@ -299,30 +298,29 @@
             <label for="modelNameSep" class="block text-sm font-medium text-slate-700" data-i18n="form.modelName"></label>
             <select id="modelNameSep" name="modelNameSep"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-              <option value="DeepSeek-R1-W8A8" selected>DeepSeek-R1-W8A8</option>
-              <option value="GLM-5.1-W8A8">GLM-5.1-W8A8</option>
+              <option value="DeepSeek-V4-Flash-W8A8" selected>DeepSeek-V4-Flash-W8A8</option>
+              <option value="GLM-5.2-W8A8">GLM-5.2-W8A8</option>
             </select>
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
             <label for="modelSizeSep" class="block text-sm font-medium text-slate-700" data-i18n="form.modelSize"></label>
-            <input id="modelSizeSep" name="modelSizeSep" type="text" value="685B" data-i18n-placeholder="form.modelSizePlaceholder" placeholder="例如：284B、1.6T、72"
-              class="mt-2 box-border h-12 w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+            <input id="modelSizeSep" name="modelSizeSep" type="text" value="284B" readonly aria-readonly="true" data-i18n-placeholder="form.modelSizePlaceholder" placeholder="例如：284B、1.6T、72"
+              class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
             <label for="npuModelSep" class="block text-sm font-medium text-slate-700" data-i18n="form.npuModel"></label>
             <select id="npuModelSep" name="npuModelSep"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-              <option value="Ascend A2" selected>Ascend A2</option>
-              <option value="Ascend A3">Ascend A3</option>
+              <option value="Ascend A3" selected>Ascend A3</option>
               <option value="Ascend 950DT">Ascend 950DT</option>
             </select>
           </div>
 
           <div class="flex min-h-0 w-full min-w-0 flex-col">
             <label for="hbmCapacitySep" class="block text-sm font-medium text-slate-700" data-i18n="form.hbmCapacity"></label>
-            <input id="hbmCapacitySep" name="hbmCapacitySep" type="number" min="1" step="1" value="64" readonly
+            <input id="hbmCapacitySep" name="hbmCapacitySep" type="number" min="1" step="1" value="128" readonly
               data-i18n-title="form.hbmCapacityTitle" title="随「NPU 型号」自动填充，不可手动修改"
               aria-readonly="true"
               class="mt-2 box-border h-12 w-full min-w-0 cursor-default rounded-2xl border border-slate-200 bg-slate-50 px-4 text-base text-slate-700 outline-none [appearance:textfield] ring-slate-200 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:border-slate-300 focus:ring-2 focus:ring-slate-100" />
@@ -390,12 +388,10 @@
             <label for="modelNameKvc" class="block text-sm font-medium text-slate-700" data-i18n="form.modelName"></label>
             <select id="modelNameKvc" name="modelNameKvc"
               class="mt-2 box-border h-12 w-full min-w-0 appearance-none truncate rounded-2xl border border-slate-200 bg-white pl-4 pr-11 text-base text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-              <option value="DeepSeek-R1-W8A8">DeepSeek-R1-W8A8</option>
-              <option value="DeepSeek-V3.1-Terminus-W4A8">DeepSeek-V3.1-Terminus-W4A8</option>
               <option value="DeepSeek-V4-Flash-W8A8" selected>DeepSeek-V4-Flash-W8A8</option>
-              <option value="DeepSeek-V4-Pro-W8A8">DeepSeek-V4-Pro-W8A8</option>
-              <option value="Qwen3.6-35B-A3B">Qwen3.6-35B-A3B</option>
-              <option value="GLM-5.1-W8A8">GLM-5.1-W8A8</option>
+              <option value="DeepSeek-V4-Pro-W4A8">DeepSeek-V4-Pro-W4A8</option>
+              <option value="Qwen3.6-35B-A3B-W8A8">Qwen3.6-35B-A3B-W8A8</option>
+              <option value="GLM-5.2-W8A8">GLM-5.2-W8A8</option>
             </select>
           </div>
 
@@ -479,6 +475,7 @@
 
     </section>
 
+    <div id="inference-supplement" class="hidden" hidden aria-hidden="true">
     <section id="capacity" class="mt-16 border-t border-slate-200 pt-14 lg:mt-20 lg:pt-16" aria-labelledby="capacity-heading">
       <div class="max-w-3xl xl:max-w-4xl">
         <h2 id="capacity-heading" class="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl" data-i18n="capacity.heading"></h2>
@@ -524,6 +521,7 @@
         <div class="aidc-inset-panel rounded-2xl p-4 text-sm leading-6" data-i18n-html="docs.entry"></div>
       </div>
     </section>
+    </div>
   </main>
 
   <footer class="border-t border-slate-200 bg-white py-6">
@@ -548,11 +546,12 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=80"></script>
-<script src="js/i18n.js?v=80"></script>
-  <script src="js/lang-switch.js?v=80"></script>
-  <script src="js/aidc-mega-nav.js?v=80"></script>
-  <script src="js/index-page.js?v=80"></script>
+    <script src="js/aidc-asset-version.js?v=84"></script>
+<script src="js/i18n.js?v=84"></script>
+  <script src="js/lang-switch.js?v=84"></script>
+  <script src="js/aidc-refresh-flash.js?v=84"></script>
+<script src="js/aidc-mega-nav.js?v=84"></script>
+  <script src="js/index-page.js?v=84"></script>
   <script>
     (async function bootstrapIndexPage() {
       const params = new URLSearchParams(window.location.search);

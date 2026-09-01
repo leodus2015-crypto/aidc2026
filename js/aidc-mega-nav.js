@@ -66,6 +66,47 @@
     return value && value !== key ? value : fallback;
   }
 
+  function pageFileFromPath(pathname) {
+    const parts = pathname.split('/').filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : '';
+  }
+
+  function isIndexPage() {
+    const path = global.location.pathname;
+    const file = pageFileFromPath(path);
+    return file === 'index.html' || /\/aidc\/?$/.test(path);
+  }
+
+  function isDesignPage() {
+    return pageFileFromPath(global.location.pathname) === 'ai-dc-design.html';
+  }
+
+  function handleMegaLinkClick(event, link, closeAllNavigation) {
+    const href = link.dataset.aidcMegaHref || link.getAttribute('href');
+    if (!href) return;
+
+    const target = new URL(href, global.location.href);
+    const page = pageFileFromPath(target.pathname);
+
+    if (page === 'index.html' && isIndexPage()) {
+      event.preventDefault();
+      const tab = target.searchParams.get('tab') || 'principles';
+      global.AidcIndexPage?.navigateToTab?.(tab, {
+        hash: target.hash || '#inference',
+        reload: true,
+      });
+      closeAllNavigation();
+      return;
+    }
+
+    if (page === 'ai-dc-design.html' && isDesignPage()) {
+      event.preventDefault();
+      const tab = target.searchParams.get('tab') || 'roomLayout';
+      global.AidcAiDcDesignPage?.navigateToTab?.(tab, { reload: true });
+      closeAllNavigation();
+    }
+  }
+
   function buildPanel(menu) {
     const panel = document.createElement('div');
     panel.id = `aidc-mega-${menu.id}`;
@@ -88,6 +129,7 @@
         const link = document.createElement('a');
         link.href = href;
         link.className = 'aidc-mega-link';
+        link.dataset.aidcMegaHref = href;
         link.appendChild(translatedSpan(key, fallback));
         list.appendChild(link);
       });
@@ -165,6 +207,14 @@
       });
     }
 
+    function closeAllNavigation() {
+      closeMenu();
+      navGroup.classList.remove('is-open');
+      mobileToggle.classList.remove('is-open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+      updateMobileToggleLabel(false);
+    }
+
     function openMenu(item) {
       if (!item) return;
       global.clearTimeout(closeTimer);
@@ -216,6 +266,10 @@
         event.preventDefault();
         item.classList.contains('is-open') ? closeMenu() : openMenu(item);
       });
+    });
+
+    header.querySelectorAll('.aidc-mega-link').forEach((link) => {
+      link.addEventListener('click', (event) => handleMegaLinkClick(event, link, closeAllNavigation));
     });
 
     mobileToggle.addEventListener('click', () => {

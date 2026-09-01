@@ -88,12 +88,42 @@
     return ['roomLayout', 'plan', 'synergy', 'a', 'b', 'roi'].includes(tab) ? tab : 'roomLayout';
   }
 
+  let selectLayoutTabRef = null;
+
+  const DESIGN_PANEL_BY_TAB = {
+    roomLayout: 'panel-room-layout',
+    plan: 'panel-plan',
+    synergy: 'panel-synergy',
+    a: 'panel-case-a',
+    b: 'panel-case-b',
+    roi: 'panel-roi',
+  };
+
+  function flashDesignPanel(tab) {
+    const panelId = DESIGN_PANEL_BY_TAB[tab] || DESIGN_PANEL_BY_TAB.roomLayout;
+    const panel = document.getElementById(panelId);
+    global.AidcRefreshFlash?.pulsePanel?.(panel);
+  }
+
   global.AidcAiDcDesignPage = {
     init() {
-      const selectLayoutTab = initTabs();
-      selectLayoutTab(initialTabFromUrl());
+      selectLayoutTabRef = initTabs();
+      selectLayoutTabRef(initialTabFromUrl());
       syncIframes();
+    },
+    navigateToTab(tab, options) {
+      const mode = ['roomLayout', 'plan', 'synergy', 'a', 'b', 'roi'].includes(tab) ? tab : 'roomLayout';
+      const url = new URL(global.location.href);
+      url.searchParams.set('tab', mode);
+      global.history.pushState({ aidcDesignTab: mode }, '', url);
+      selectLayoutTabRef?.(mode);
+      syncIframes(options?.reload ? { reload: true } : undefined);
+      if (options?.reload) flashDesignPanel(mode);
     },
     syncIframes,
   };
+
+  global.addEventListener('popstate', () => {
+    selectLayoutTabRef?.(initialTabFromUrl());
+  });
 })(typeof window !== 'undefined' ? window : globalThis);

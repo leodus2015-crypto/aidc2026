@@ -13,8 +13,8 @@
   },
   "form": {
     "modelName": "大模型名称",
-    "modelSize": "模型尺寸",
-    "modelSizePlaceholder": "例如：284B、1.6T、72",
+    "modelSize": "模型参数",
+    "modelSizePlaceholder": "例如：284B、1.6T、35B",
     "npuModel": "NPU 型号",
     "hbmCapacity": "单卡 HBM 总容量（GB）",
     "hbmCapacityTitle": "随「NPU 型号」自动填充，不可手动修改",
@@ -22,7 +22,7 @@
     "cardCountQuickAria": "卡数量快捷选项",
     "pdDeployMode": "PD部署方式",
     "pdDeployHint": "每种部署方式下，Prefill / Decode 各占一半总卡数，并按 P、D 组数拆分；<strong class=\"font-medium text-slate-600\">每组独立部署一整份模型权重</strong>，再按组内卡数均摊到单卡。",
-    "kvcModelSizeRo": "模型尺寸（联动）",
+    "kvcModelSizeRo": "模型参数（联动）",
     "kvcLayersRo": "Transformer 层数 (L)",
     "kvcExpertsRo": "MoE 专家数量（档案）",
     "kvcExpertsRoTitle": "KV 体积估算不乘专家数；路由激活专家数远小于总数",
@@ -53,7 +53,7 @@
   "notes": {
     "mixed": "<strong class=\"font-semibold\">计算说明：</strong>此结果为简化估算，模型量化方式参考模型名称描述；框架与运行时开销按<strong class=\"font-semibold\">单卡 HBM 总容量的 10%</strong>单独预留。实际部署还会受推理框架实现影响。",
     "separated": "<strong class=\"font-semibold\">计算说明（PD分离）：</strong>权重总量与混部相同。总卡数按部署方式分为 Prefill 池与 Decode 池（各占一半），再按 <strong class=\"font-semibold\">P 组数 / D 组数</strong>拆成若干组；<strong class=\"font-semibold\">每一组各部署一整份模型权重</strong>，组内按卡数均摊。每组公式：<strong class=\"font-semibold\">单卡模型占用 = 权重总量 GB ÷ 该组卡数</strong>；另加 <strong class=\"font-semibold\">单卡 HBM 的 10%</strong> 作为框架/运行开销。主视图与柱状图为<strong class=\"font-semibold\">Prefill 侧与 Decode 侧中单卡总占用更高的一侧（瓶颈侧）</strong>。",
-    "kvcache": "<strong class=\"font-semibold\">计算说明（KV Cache）：</strong>采用业界通用估算（见 <a href=\"https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing\" class=\"font-semibold text-blue-800 underline-offset-2 hover:underline\" target=\"_blank\" rel=\"noopener noreferrer\">KV Cache Sizing</a> 等资料）：标准 GQA 为 <strong class=\"font-semibold\">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>。<strong class=\"font-semibold\">Qwen3.6（混合注意力）</strong> 为 <strong class=\"font-semibold\">L_full × 2 × H_kv × head_dim × seq_len × batch_size × dtype_size</strong>（FP16 @ 1M 约 <strong class=\"font-semibold\">19.1 GiB</strong>；linear 层不计 KV）。<strong class=\"font-semibold\">DeepSeek R1 / V3.1（MLA）</strong> 为 <strong class=\"font-semibold\">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong>（W4A8 / W8A8 均按激活 A8 → INT8 KV，1 byte/元素；W4 仅影响权重）。<strong class=\"font-semibold\">GLM-5.1（MLA + DSA）</strong> 为 <strong class=\"font-semibold\">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong>（W8A8 @ 1M 约 <strong class=\"font-semibold\">51.4 GiB</strong>；仅 MLA 约 41.8 GiB）。<strong class=\"font-semibold\">DeepSeek V4（CSA/HCA）</strong> 按 <strong class=\"font-semibold\">BF16 @ 1M 锚点 × (dtype_size / 2) × seq_len 比例</strong> 估算（V4-Flash W8A8 约 <strong class=\"font-semibold\">4.81 GiB</strong>，BF16 基准 9.62 GiB ÷ 2）。"
+    "kvcache": "<strong class=\"font-semibold\">计算说明（KV Cache）：</strong>采用业界通用估算（见 <a href=\"https://tutorialq.com/ai/dl-infrastructure/kv-cache-sizing\" class=\"font-semibold text-blue-800 underline-offset-2 hover:underline\" target=\"_blank\" rel=\"noopener noreferrer\">KV Cache Sizing</a> 等资料）：标准 GQA 为 <strong class=\"font-semibold\">KV_bytes = 2 × L × num_key_value_heads × head_dim × seq_len × batch_size × dtype_size</strong>。<strong class=\"font-semibold\">Qwen3.6（混合注意力）</strong> 为 <strong class=\"font-semibold\">L_full × 2 × H_kv × head_dim × seq_len × batch_size × dtype_size</strong>（FP16 @ 1M 约 <strong class=\"font-semibold\">19.1 GiB</strong>；linear 层不计 KV）。<strong class=\"font-semibold\">DeepSeek R1 / V3.1（MLA）</strong> 为 <strong class=\"font-semibold\">L × (kv_lora_rank + qk_rope_head_dim) × seq_len × batch_size × dtype_size</strong>（W4A8 / W8A8 均按激活 A8 → INT8 KV，1 byte/元素；W4 仅影响权重）。<strong class=\"font-semibold\">GLM-5.2（MLA + DSA）</strong> 为 <strong class=\"font-semibold\">L × seq_len × batch_size × [(kv_lora_rank + qk_rope_head_dim + DSA_index_head_dim) × dtype_size + indexer_scale]</strong>（W8A8 @ 1M 约 <strong class=\"font-semibold\">51.4 GiB</strong>；仅 MLA 约 41.8 GiB）。<strong class=\"font-semibold\">DeepSeek V4（CSA/HCA）</strong> 按 <strong class=\"font-semibold\">BF16 @ 1M 锚点 × (dtype_size / 2) × seq_len 比例</strong> 估算（V4-Flash W8A8 约 <strong class=\"font-semibold\">4.81 GiB</strong>，BF16 基准 9.62 GiB ÷ 2）。"
   },
   "capacity": {
     "heading": "容量规划",
@@ -71,9 +71,9 @@
     "calcBody": "此结果为简化估算，模型量化方式参考<strong class=\"text-slate-800\">模型名称</strong>描述；框架与运行时开销按<strong class=\"text-slate-800\">单卡 HBM 总容量的 10%</strong>单独预留。实际部署还会受推理框架实现影响。",
     "modelTitle": "模型占用",
     "modelLi1": "部分型号在界面中选择后，使用<strong class=\"text-slate-800\">固定权重文件总量（GB）</strong>除以<strong class=\"text-slate-800\">卡数量</strong>得到每卡模型文件占用。",
-    "modelLi2": "其余型号按<strong class=\"text-slate-800\">模型尺寸 × 2 bytes ÷ 卡数量</strong>估算每卡权重占用（按 FP16/BF16 宽度简化）。",
+    "modelLi2": "其余型号按<strong class=\"text-slate-800\">模型参数 × 2 bytes ÷ 卡数量</strong>估算每卡权重占用（按 FP16/BF16 宽度简化）。",
     "modelLi3": "<strong class=\"text-slate-800\">单卡 HBM 总容量</strong>由所选 NPU 型号自动带出，与推理页联动。",
-    "modelList": "<li>部分型号在界面中选择后，使用<strong class=\"text-slate-800\">固定权重文件总量（GB）</strong>除以<strong class=\"text-slate-800\">卡数量</strong>得到每卡模型文件占用。</li><li>其余型号按<strong class=\"text-slate-800\">模型尺寸 × 2 bytes ÷ 卡数量</strong>估算每卡权重占用（按 FP16/BF16 宽度简化）。</li><li><strong class=\"text-slate-800\">单卡 HBM 总容量</strong>由所选 NPU 型号自动带出，与推理页联动。</li>",
+    "modelList": "<li>部分型号在界面中选择后，使用<strong class=\"text-slate-800\">固定权重文件总量（GB）</strong>除以<strong class=\"text-slate-800\">卡数量</strong>得到每卡模型文件占用。</li><li>其余型号按<strong class=\"text-slate-800\">模型参数 × 2 bytes ÷ 卡数量</strong>估算每卡权重占用（按 FP16/BF16 宽度简化）。</li><li><strong class=\"text-slate-800\">单卡 HBM 总容量</strong>由所选 NPU 型号自动带出，与推理页联动。</li>",
     "chartTitle": "柱状图含义",
     "chartBody": "每张 NPU 横向条从左到右依次为：<strong class=\"text-slate-800\">框架/运行开销</strong>（琥珀色）、<strong class=\"text-slate-800\">模型文件占用</strong>（蓝色）、<strong class=\"text-slate-800\">剩余容量</strong>（绿色）、超出部分（红色）。条的总尺度随是否超出单卡容量而变化。",
     "entry": "<strong class=\"font-semibold\">使用入口：</strong>回到页面顶部 <a href=\"#inference\" class=\"font-semibold text-blue-800 underline-offset-2 hover:underline\">Agentic 推理 · HBM 估算</a> 开始试算。"
@@ -86,7 +86,7 @@
     "resultLabelMixed": "{model} · {npu} · {cards} 卡",
     "errCardCount": "卡数量需为大于等于 1 的整数。",
     "errHbmCapacity": "单卡 HBM 总容量需为大于 0 的数字。",
-    "errModelSize": "请输入有效模型尺寸，例如 284B、1.6T、72。",
+    "errModelSize": "请输入有效模型参数，例如 284B、1.6T、35B。",
     "weightNoteW8A8": "（W8A8）",
     "weightNoteW4A8": "（W4A8）",
     "weightNoteW8A8En": " (W8A8)",
