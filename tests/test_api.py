@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 
 import analytics
 import main
+from db import DatabaseError
 
 client = TestClient(main.app)
 
@@ -38,16 +39,19 @@ def test_unlock_password_is_not_public_config():
 
 
 def test_get_config_db_down_503():
-    with patch.object(main, "ping_database", return_value=False), patch.object(
-        main, "get_db_error", return_value="down"
-    ):
+    with patch.object(main, "fetch_config", side_effect=DatabaseError("driver detail must not leak")):
         res = client.get("/api/config/roi.defaults")
     assert res.status_code == 503
+    body = res.json()
+    assert body["error"]["code"] == "SERVICE_UNAVAILABLE"
+    assert body["error"]["message"] == "数据库不可用"
+    assert "driver detail" not in res.text
+    assert body["error"]["request_id"] == res.headers["x-request-id"]
 
 
 def test_get_config_ok():
     row = {"key": "roi.defaults", "data": {"computeP": 1}, "version": 2, "updated_at": None}
-    with patch.object(main, "ping_database", return_value=True), patch.object(
+    with patch.object(main, "ping_database", side_effect=AssertionError("must not ping")), patch.object(
         main, "fetch_config", return_value=row
     ):
         res = client.get("/api/config/roi.defaults")
@@ -120,6 +124,15 @@ def test_cors_allows_api_client_request_headers():
     assert "x-request-id" in allowed
 
 
+def test_request_id_is_echoed_or_replaced_when_invalid():
+    valid = client.get("/api/config/not.a.real.key", headers={"X-Request-ID": "web-test_123"})
+    invalid = client.get("/api/config/not.a.real.key", headers={"X-Request-ID": "bad request id"})
+    assert valid.headers["x-request-id"] == "web-test_123"
+    assert valid.json()["error"]["request_id"] == "web-test_123"
+    assert invalid.headers["x-request-id"] != "bad request id"
+    assert invalid.json()["error"]["request_id"] == invalid.headers["x-request-id"]
+
+
 def test_analytics_rejects_when_admin_token_unset():
     with patch.object(main, "ADMIN_TOKEN", ""):
         res = client.get(
@@ -132,6 +145,23 @@ def test_analytics_rejects_when_admin_token_unset():
 def test_analytics_requires_auth():
     res = client.get("/api/analytics/summary")
     assert res.status_code == 401
+
+
+def test_analytics_database_error_uses_validated_local_fallback():
+    with patch.object(main, "ADMIN_TOKEN", "strong-test-token"), patch.object(
+        main,
+        "query_summary",
+        side_effect=DatabaseError("driver detail"),
+    ):
+        res = client.get(
+            "/api/analytics/summary?days=14",
+            headers={"Authorization": "Bearer strong-test-token"},
+        )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["source"] == "json-fallback"
+    assert body["warning"] == "数据库不可用，当前显示本地聚合快照"
+    assert body["range"]["days"] == 14
 
 
 def test_mask_ip_ipv4_and_ipv6():

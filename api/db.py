@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, Optional
 
@@ -17,6 +18,11 @@ from settings import (
 )
 
 _db_error: Optional[str] = None
+logger = logging.getLogger(__name__)
+
+
+class DatabaseError(RuntimeError):
+    """Safe database boundary error; internal driver details stay server-side."""
 
 
 def get_db_error() -> Optional[str]:
@@ -33,28 +39,36 @@ def ping_database() -> bool:
             conn.ping(reconnect=True)
         _db_error = None
         return True
-    except Exception as exc:  # noqa: BLE001
-        _db_error = str(exc)
+    except DatabaseError:
+        _db_error = "数据库不可用"
         return False
 
 
 @contextmanager
 def db_connection() -> Iterator[pymysql.connections.Connection]:
     if not database_configured():
-        raise RuntimeError("数据库未配置")
-    conn = pymysql.connect(
-        host=DATABASE_HOST,
-        port=DATABASE_PORT,
-        user=DATABASE_USER,
-        password=DATABASE_PASSWORD,
-        database=DATABASE_NAME,
-        charset="utf8mb4",
-        cursorclass=DictCursor,
-        autocommit=False,
-    )
+        raise DatabaseError("数据库不可用")
+    try:
+        conn = pymysql.connect(
+            host=DATABASE_HOST,
+            port=DATABASE_PORT,
+            user=DATABASE_USER,
+            password=DATABASE_PASSWORD,
+            database=DATABASE_NAME,
+            charset="utf8mb4",
+            cursorclass=DictCursor,
+            autocommit=False,
+        )
+    except pymysql.MySQLError as exc:
+        logger.exception("Database connection failed")
+        raise DatabaseError("数据库不可用") from exc
     try:
         yield conn
         conn.commit()
+    except pymysql.MySQLError as exc:
+        conn.rollback()
+        logger.exception("Database operation failed")
+        raise DatabaseError("数据库操作失败") from exc
     except Exception:
         conn.rollback()
         raise

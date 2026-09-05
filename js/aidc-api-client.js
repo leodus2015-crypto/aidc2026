@@ -88,13 +88,16 @@
       });
       const payload = await parseResponse(res);
       if (!res.ok) {
-        const detail = payload && typeof payload === 'object' ? payload.detail : payload;
+        const apiError = payload && typeof payload === 'object' ? payload.error : null;
+        const detail = apiError?.message ?? (
+          payload && typeof payload === 'object' ? payload.detail : payload
+        );
         throw new AidcApiError(
           typeof detail === 'string' && detail ? detail : `HTTP ${res.status}`,
           {
-            code: res.status === 401 ? 'UNAUTHORIZED' : 'HTTP_ERROR',
+            code: apiError?.code || (res.status === 401 ? 'UNAUTHORIZED' : 'HTTP_ERROR'),
             status: res.status,
-            requestId: res.headers.get('x-request-id') || requestId,
+            requestId: apiError?.request_id || res.headers.get('x-request-id') || requestId,
             details: payload,
           }
         );
