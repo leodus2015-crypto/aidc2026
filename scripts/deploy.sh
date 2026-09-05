@@ -141,7 +141,7 @@ rsync_to_server() {
 
   echo ">> 修正属主 ${DEPLOY_OWNER}"
   ssh "${SSH_OPTS[@]}" "${DEPLOY_USER}@${DEPLOY_HOST}" \
-    "chown ${DEPLOY_OWNER} '${DEPLOY_PATH}' && find '${DEPLOY_PATH}' -mindepth 1 ! -name '.user.ini' -exec chown ${DEPLOY_OWNER} {} + && find '${DEPLOY_PATH}' -type d -exec chmod 755 {} \\; && find '${DEPLOY_PATH}' -type f ! -name '.user.ini' -exec chmod 644 {} \\;"
+    "chown ${DEPLOY_OWNER} '${DEPLOY_PATH}' && find '${DEPLOY_PATH}' -mindepth 1 ! -name '.user.ini' -exec chown ${DEPLOY_OWNER} {} + && find '${DEPLOY_PATH}' -type d -exec chmod 755 {} \\; && find '${DEPLOY_PATH}' -type f ! -name '.user.ini' -exec chmod 644 {} \\; && find '${DEPLOY_PATH}' -type f -name '*.sh' -exec chmod 755 {} +"
 }
 
 verify_deploy() {
