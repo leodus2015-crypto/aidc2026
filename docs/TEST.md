@@ -18,7 +18,10 @@ python3 -m pytest tests -q
 SKIP_SITE_CHECK=1 ./scripts/deploy.sh --sync-only
 ```
 
-GitHub Actions 在 rsync 之前跑同一套静态检查和 `pytest`。
+GitHub Actions：
+
+- **CI**（`.github/workflows/ci.yml`）：`pull_request` 与非 `main` 的 push 只跑 `check-site.py` + `pytest`，不部署。
+- **Deploy**（`.github/workflows/deploy.yml`）：仅 `workflow_dispatch` 备用。正式上线只走本机 `./scripts/deploy.sh`；GitHub 为开源归档。
 
 ## 浏览器冒烟（行为，不是一张截图）
 
@@ -34,8 +37,17 @@ GitHub Actions 在 rsync 之前跑同一套静态检查和 `pytest`。
 ### 入口与嵌套
 
 - [ ] 打开 `ai-dc-design.html`，默认 Tab 为机房布局，iframe 子页可见。
-- [ ] 切换规划相关 Tab，子页切换，地址/hash 不把整站卸载成空白。
+- [ ] 依次切换：机房布局、TCP、算力估算、机柜规划、产品协同、案例 A、案例 B、ROI；子页有内容，整站不卸载成空白。
+- [ ] 直达 `ai-dc-design.html?tab=tcp`、`?tab=computeEst`、`?tab=plan`，打开即对应面板。
 - [ ] 打开 `ai-dc-design.html?embed=1`（或子页 `?embed=1`），站点顶栏/大导航隐藏。
+
+### 新页：TCP / 算力估算 / 机柜
+
+- [ ] `ai-dc-tcp.html`：切换 1024 液冷 / 768 风冷，链路数字与对照区同步变化（卡数、MW、面积）。
+- [ ] TCP 页「进入测算工具」落到算力估算，「进入布局工具」落到机柜规划（或带 `tab=` 的规划容器）。
+- [ ] `ai-dc-computeEst.html`：默认口径算出卡数（与 TCP 1024 档同量级，约 1024）；`batch`/渗透等改为 0 或非法时有错误，结果不是 NaN。
+- [ ] 算力页改渗透率或冗余后，卡数与「显存下限 / 算力需求」约束标签更新。
+- [ ] `ai-dc-layout.html`：改卡数或功率后平面/汇总更新；断 API 仍可本机看图。
 
 ### 推理计算
 

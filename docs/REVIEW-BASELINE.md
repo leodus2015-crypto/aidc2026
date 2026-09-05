@@ -1,67 +1,82 @@
-# AIDC 基线代码检视（2026-08-29）
+# AIDC 基线代码检视（2026-09-05 · v2026.09.01 / build 84）
 
-只读检视，按风险模块记录。**本轮不顺手大改**；后续用静态检查 / 单测 / 浏览器冒烟消化。
+整改后全站重检。只读记录；已有自动化覆盖的标「已回归」。新页与新契约是本轮重点。
 
 检视格式：严重度 · 位置 · 现象 · 建议测试层。
+
+## 页面盘点（相对上一轮）
+
+新增正式页：
+
+- `ai-dc-tcp.html`（规划 Tab `tcp`）：Token → Card → Power 总览，页内预设 1024 液冷 / 768 风冷。
+- `ai-dc-computeEst.html`（规划 Tab `computeEst`）：算力卡数匡算，`calculate()` 在页内。
+- `ai-dc-layout.html`：由跳转壳改为机柜规划子页（Tab `plan`）。
+
+已下线：`capacity.html`、`docs.html`、`aidc-investment-roi.en.html`、`inference/index.html`、`ai-dc-layout_37.html`。
+
+导航契约：[`js/ai-dc-design-page.js`](../js/ai-dc-design-page.js) 的 `VALID_TABS` 与 [`data/page-registry.json`](../data/page-registry.json) 必须一致；iframe 键 `caseA`/`caseB` 对应 URL tab `a`/`b`。
 
 ## 1. 鉴权与密钥
 
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
-| 已解决 | `api/settings.py`、`api/main.py` | `ADMIN_TOKEN` 无默认值；未配置时管理与 analytics 接口拒绝服务，并使用恒定时间比较。 | 单测：无 Bearer / 错 Bearer → 401 |
-| 已解决 | `datacenter-3d-*.html`、`js/aidc-investment-roi-page.js` | 已删除公开的 `site.unlock_password`；浏览器输入凭据后由服务端验证，不再下载口令本身。 | 浏览器：错误口令与 API 不可用均不能解锁 |
-| 中 | `status.html` | 管理口令与 `ADMIN_TOKEN` 相同，页面对外路径可猜。 | 浏览器：无口令看不到分析数据 |
-| 低 | `.gitignore` | `.env` / `deploy.env` 已忽略。确认未误提交。 | 静态：不检查私密文件是否存在 |
+| 已回归 | `api/settings.py` | 无默认 `ADMIN_TOKEN`；未配置时写接口 / analytics 503。 | 单测已有 |
+| 已回归 | 前端 | 禁止 `site.unlock_password`；凭据走 `POST /api/admin/verify`。 | 静态 + 单测 404 |
+| 中 | `status.html` | 路径可猜；生产应再加 Nginx `auth_basic`。 | 浏览器：无口令无数据 |
+| 低 | `.gitignore` | `.env` / `deploy.env` 已忽略。 | 不必测 |
 
-## 2. 公式（KV / ROI / PD）
-
-| 严重度 | 位置 | 现象 | 建议测试层 |
-|--------|------|------|------------|
-| 中 | `js/index-page.js` `computeStandardKvCacheBytes` 等 | 公式封在 IIFE，无黄金用例。batch/seq 非正整数已有 UI 拦截，但公式本身未回归。 | 单测：标准 GQA / MLA 对照字节数 |
-| 中 | `js/aidc-investment-roi-page.js` `tokenMix` / `blendedCloudPrice` | `total <= 0` 时比例归零；云价加权依赖 mix。改默认 TPS 易 silently 偏。 | 单测：mix 归一化、加权价、TPS↔亿 token/日 |
-| 低 | `js/index-page.js` PD 分离 | Prefill/Decode 分卡 + 10% 开销，逻辑与 UI 耦合，适合浏览器点一次，不强行单测。 | 浏览器：混部/分离切换后结果变化 |
-
-## 3. 配置回退
+## 2. 公式
 
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
-| 中 | `js/config-loader.js` | 3s 超时或非 2xx → 本地默认。行为正确，但 `ALLOWED_CONFIG_KEYS` 含 `inference.defaults` / `aidc_calc.cfg` / `outline.2026` / `ai_usage`，种子目录无对应文件。 | 静态：种子键 ⊆ 白名单；浏览器：断 API 时 ROI 仍出数 |
-| 低 | `api/main.py` GET `/api/config/{key}` | DB down → 503。前端靠 catch 回退，与「API 优先」一致。 | 单测：已知 key + DB down → 503 |
+| 高 | `ai-dc-computeEst.html` `calculate()` | Token→卡数、显存下限、逐年放大均在页内，此前无黄金用例。口径：`N` 为利用率百分比；`n_card = max(n_compute, n_min)`。 | 单测：与 TCP 1024 档默认日 Token / 卡数对齐 |
+| 高 | `ai-dc-tcp.html` `COMMON` + `SC` | 总览用预计算刻度，应与算力页默认公式同口径。1024 档：`DAU=3180`、渗透 60% → 日 Token `40640400000`、卡数 1024。 | 单测对照 `SC["1024"]` |
+| 中 | `js/index-page.js` | KV / PD 仍在页面逻辑。 | 既有 KV 单测 + 浏览器 PD |
+| 中 | `js/aidc-investment-roi-page.js` | mix / 云价已有单测；UI 耦合部分靠冒烟。 | 单测 + 浏览器 |
+| 低 | `ai-dc-layout.html` | 机柜/功率以预设与反算为主，几何不做单测。 | 浏览器：改卡数/功率后平面更新 |
+
+## 3. 配置与 API
+
+| 严重度 | 位置 | 现象 | 建议测试层 |
+|--------|------|------|------------|
+| 已回归 | `ALLOWED_CONFIG_KEYS` | 仅 ROI / 3D 六键，与种子对齐。 | 静态 |
+| 已回归 | PUT | 需 Bearer + `expected_version`；冲突 409。 | 单测已有 |
+| 低 | TCP / 算力页 | 纯本机计算，不打 API；断网应仍可算。 | 浏览器 |
+| 低 | `js/config-loader.js` | ROI/3D 失败回退本地，须标明来源。 | 浏览器 |
 
 ## 4. i18n
 
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
-| 中 | `i18n/*.zh.json` vs `*.en.json` | 键不对齐会导致 EN 显示 key 或错文案。3D 页 historically 有 lookup 错位。 | 静态：成对 JSON 键集合（可白名单） |
-| 低 | `js/i18n.js` `t()` | 缺 key 原样返回 key，页面不会崩，但 EN 会露出路径。 | 静态 + 浏览器抽查 |
+| 中 | TCP / 算力 / 机柜 / 3D / 后训练 | 页内 `I18N` / lookup 与 `data-i18n` 并存，EN 易漏动态串。 | 静态键对齐 + `?lang=en` |
+| 低 | `js/i18n.js` | 缺 key 回显路径。 | 浏览器抽查 |
 
 ## 5. 跨页状态
 
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
-| 中 | `js/aidc-theme.js` + iframe | 主题靠 postMessage，子页不应因切主题整页重载。 | 浏览器：父页切 Light/Dark，子 iframe 同步且不闪白 |
-| 低 | `js/lang-switch.js` / `localStorage aidc-locale` | `?lang=` 写入 storage 后跨页保持。 | 浏览器：`?lang=en` 后再开另一页仍为 EN |
-| 低 | `js/embed-mode.js` | 仅加 `aidc-embed` class，逻辑薄。 | 浏览器：`?embed=1` 隐藏站点 chrome |
+| 中 | 规划容器 8 Tab | 新 Tab 切过去 iframe 必须有内容；`?tab=tcp` / `?tab=computeEst` 直达。 | 浏览器 |
+| 中 | 主题 / 语言 | iframe postMessage，禁止整页重载。 | 浏览器四态 |
+| 低 | `?embed=1` | 新子页须去 chrome。 | 浏览器 |
 
-## 6. 部署契约
-
-| 严重度 | 位置 | 现象 | 建议测试层 |
-|--------|------|------|------------|
-| 高 | 历史事故 | 线上曾缺 `js/lang-switch.js`。Actions 部署后只测该文件是否存在。 | 静态：HTML 引用的本地资源存在；CI 部署前跑 `check-site.py` |
-| 中 | `scripts/deploy.sh` vs `.github/workflows/deploy.yml` | exclude 目前一致，但两处手写，易漂移。 | 静态：两边 `--exclude` 列表必须相同 |
-| 低 | `data/analytics/summary.json` | 已在 exclude 中，避免把本机快照覆盖服务器。 | 静态：exclude 对齐 |
-
-## 7. 大页与分析
+## 6. 部署与协作
 
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
-| 低 | `datacenter-3d-*.html` | 大段内联 JS，几何不做单测。 | 检视 + 浏览器目视布局 |
-| 中 | `api/analytics.py` `mask_ip` | IPv4 保留前两段；IPv6 只留前两段。无单测。 | 单测：`1.2.3.4` → `1.2.*.*` |
-| 低 | `api/settings.py` `CORS_ORIGINS` | 默认仅本机 8011。生产必须靠环境变量，漏配会导致浏览器跨域失败。 | 运维：`cloud-verify` / 生产 `.env` |
+| 已回归 | `check-site.py` | JSON、引用、注册表、密钥、API 客户端、exclude、CI。 | 静态 + CI |
+| 中 | exclude | 两处手写，靠检查对齐。 | 静态 |
+| 低 | CSP | 仍 Report-Only + `unsafe-inline`/`unsafe-eval`。 | 运维，本轮不测 |
 
-## 建议消化顺序
+## 7. 大页
 
-1. 静态检查（缺文件、JSON、i18n 键、exclude）——对应历史部署事故。
-2. API 鉴权 + health + `mask_ip` 单测。
-3. KV / ROI 黄金用例（Python 对照，避免拆 IIFE）。
-4. [docs/TEST.md](TEST.md) 浏览器冒烟；3D 仅目视。
+| 严重度 | 位置 | 现象 | 建议测试层 |
+|--------|------|------|------------|
+| 低 | `datacenter-3d-*.html` | `case-b` 文件对应展示「案例 A」。 | 目视 |
+| 中 | analytics IP | 展示脱敏，入库策略仍待治理。 | 非本轮 |
+
+## 本轮测试消化顺序
+
+1. 规划导航契约（注册表 ↔ Tab ↔ iframe）。
+2. TCP / 算力估算黄金用例（与 1024 档默认对齐）。
+3. 浏览器：新 Tab + 直达 URL + 中英/主题 + embed。
+4. 回归原有 KV / ROI / API 单测与入口冒烟。

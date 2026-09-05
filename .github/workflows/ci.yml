@@ -1,0 +1,31 @@
+# 拉取请求与非 main 分支：只检查，不部署。
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Site static checks
+        run: python3 scripts/check-site.py
+
+      - name: API and formula tests
+        run: |
+          python3 -m pip install -q -r api/requirements.txt -r tests/requirements.txt
+          python3 -m pytest tests -q

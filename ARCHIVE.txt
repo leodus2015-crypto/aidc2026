@@ -1,6 +1,16 @@
 aidc 静态站点归档
-版本：v2026.08.21（build 见 data/site-release.json；部署时 bump）
-日期：2026-08-21
+版本：见 data/site-release.json（本机最新；部署到腾讯云时 bump）
+日期：2026-09-05
+
+本版要点（v2026.09.05）
+──────────────
+  · 三角色：本机 = 最新源；腾讯云 = 部署版（只走 scripts/deploy.sh rsync）；
+    GitHub = 开源归档，push 不自动上线
+  · AI DC 规划 8 Tab：机房布局 / TCP / 算力估算 / 机柜规划 / 产品协同 / 案例 A / 案例 B / ROI
+  · 新页 ai-dc-tcp.html、ai-dc-computeEst.html；ai-dc-layout.html 为正式机柜子页
+  · 解锁走 POST /api/admin/verify；前端 js/aidc-api-client.js；配置 PUT 需 expected_version
+  · 结构变更走 sql/migrations + python3 scripts/migrate.py；部署后重启 API
+  · 已删除 capacity.html、docs.html、aidc-investment-roi.en.html（旧 URL 由 Nginx 301）
 
 本版要点（v22 / build 64+）
 ──────────────
@@ -33,7 +43,7 @@ aidc 静态站点归档
 包含
 ────
 【主导航页面】
-  index.html              首页（Agentic 推理 #inference、容量 #capacity、文档 #docs）
+  index.html              首页（Agentic 推理：原理 / 数据流 / 混部 / 分离 / KV）
   ai-dc-design.html       AI DC 规划（Tab 壳页，内嵌 iframe）
   post-training.html      后训练
   white-paper.html        白皮书
@@ -102,7 +112,7 @@ aidc 静态站点归档
   embed 下保留精简顶栏（俯视/水平/透视/Cooling），隐藏 Logo 与主题切换。
   已删除的旧 HTML 入口由 deploy/nginx-static-cache.conf 提供 301 兼容跳转。
   站点状态：status.html（内部页；About US 头像悬停 2s 入口）+ deploy/ANALYTICS.md。
-  云端 MySQL：部署后执行 python3 scripts/migrate.py，再 python3 scripts/seed-config.py。
+  云端 MySQL：部署后执行 python3 scripts/migrate.py；仅当种子即产品口径时再 seed-config.py。
 
 本地预览
 ────────
@@ -111,20 +121,21 @@ aidc 静态站点归档
   AI DC 规划：http://127.0.0.1:8011/aidc/ai-dc-design.html
   站点状态：http://127.0.0.1:8011/aidc/status.html（凭据来自服务端 ADMIN_TOKEN）
 
-部署（GitHub → 云服务器 aidc2026.cn）
+部署（本机最新 → 腾讯云部署版；GitHub 仅归档）
 ────────────────────────────────────
   cp deploy.env.example deploy.env   # 填写 SSH，勿提交
-  ./scripts/deploy.sh --full-reset "全量同步"   # 首次：清空服务器再 rsync
-  ./scripts/deploy.sh "说明"                    # 日常：commit + push + rsync
-  push 到 main 且配置 GitHub Secrets 后，Actions 自动部署（.github/workflows/deploy.yml）
-  部署后（服务器项目根）：
-    python3 scripts/seed-config.py              # 同步 app_config 种子
-    mysql -u … -p aidc < sql/analytics.sql      # 首次建访问观测表
+  ./scripts/deploy.sh --sync-only --no-commit              # 正式：rsync --delete
+  ./scripts/deploy.sh --full-reset --sync-only --no-commit # 首次或残留过多时
+  ./scripts/deploy.sh --push-only                          # 验收后 push 开源归档
+  部署后（服务器项目根，用该机 .env）：
+    python3 scripts/migrate.py
+    # 仅当允许覆盖线上 roi.* / dc3d.* 时：python3 scripts/seed-config.py
+    ./start-api-prod.sh
     # 确认 .env：ADMIN_TOKEN=<强随机值>、DATABASE_*、ANALYTICS_LOG=…
-    ./start-api-prod.sh                         # 重启 API
 
 已移除（勿再引用）
 ──────────────────
   en/ 目录（英文改 ?lang=en）
+  capacity.html、docs.html、aidc-investment-roi.en.html
   aidc-calculation.html、datacenter-hot-aisle-demo.html
   white-paper-2.0.html、white-paper-2.0-draft.html、whitepaper2026-outline.html

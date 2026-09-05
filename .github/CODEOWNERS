@@ -1,0 +1,13 @@
+# 默认评审人。GitHub 分支保护开启 “Require review from Code Owners” 后生效。
+* @leodus2015-crypto
+
+# 认证、配置、分析和数据库边界
+/api/ @leodus2015-crypto
+/sql/ @leodus2015-crypto
+
+# 部署与静态检查
+/deploy/ @leodus2015-crypto
+/scripts/check-site.py @leodus2015-crypto
+/scripts/deploy.sh @leodus2015-crypto
+/scripts/migrate.py @leodus2015-crypto
+/.github/ @leodus2015-crypto

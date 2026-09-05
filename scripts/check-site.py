@@ -370,6 +370,60 @@ def extract_excludes(text: str) -> list[str]:
     return [item for item in EXCLUDE_RE.findall(text) if "$" not in item]
 
 
+TAB_TO_IFRAME_KEY = {"a": "caseA", "b": "caseB"}
+
+
+def check_design_nav(errors: list[str], loaded: dict[Path, Any], root: Path = ROOT) -> None:
+    js_path = root / "js" / "ai-dc-design-page.js"
+    html_path = root / "ai-dc-design.html"
+    if not js_path.is_file() or not html_path.is_file():
+        errors.append("缺少 ai-dc-design 导航源文件")
+        return
+    js = js_path.read_text(encoding="utf-8")
+    html = html_path.read_text(encoding="utf-8")
+    tabs_match = re.search(r"VALID_TABS = \[([^\]]+)\]", js)
+    if not tabs_match:
+        errors.append("ai-dc-design-page.js 缺少 VALID_TABS")
+        return
+    valid_tabs = re.findall(r"'([^']+)'", tabs_match.group(1))
+    html_tabs = re.findall(r'data-layout-tab="([^"]+)"', html)
+    if valid_tabs != html_tabs:
+        errors.append(f"规划 Tab 与 VALID_TABS 不一致: js={valid_tabs} html={html_tabs}")
+
+    iframe_pairs = re.findall(r"^\s{4}(\w+): '([^']+\.html)", js, flags=re.M)
+    html_iframes = re.findall(r'data-iframe-key="([^"]+)"', html)
+    js_iframe_keys = [key for key, _ in iframe_pairs]
+    if js_iframe_keys != html_iframes:
+        errors.append(f"规划 iframe key 不一致: js={js_iframe_keys} html={html_iframes}")
+
+    registry = loaded.get(root / "data" / "page-registry.json") or {}
+    design = next(
+        (page for page in registry.get("pages") or [] if isinstance(page, dict) and page.get("path") == "ai-dc-design.html"),
+        None,
+    )
+    if not design:
+        return
+    embeds = set(design.get("embeds") or [])
+    for key, src in iframe_pairs:
+        page = src.split("?")[0]
+        if page not in embeds:
+            errors.append(f"IFRAME_BASE {key} → {page} 未写入 page-registry embeds")
+
+
+def check_ci_workflow(errors: list[str], root: Path = ROOT) -> None:
+    ci_path = root / ".github" / "workflows" / "ci.yml"
+    if not ci_path.is_file():
+        errors.append("缺少 .github/workflows/ci.yml")
+        return
+    text = ci_path.read_text(encoding="utf-8")
+    if "scripts/check-site.py" not in text:
+        errors.append("ci.yml 必须运行 scripts/check-site.py")
+    if "pytest" not in text:
+        errors.append("ci.yml 必须运行 pytest")
+    if "rsync" in text:
+        errors.append("ci.yml 不得部署（发现 rsync）")
+
+
 def check_deploy_excludes(errors: list[str]) -> None:
     sh_path = ROOT / "scripts" / "deploy.sh"
     yml_path = ROOT / ".github" / "workflows" / "deploy.yml"
@@ -388,11 +442,13 @@ def main() -> int:
     check_i18n_pairs(errors, loaded)
     check_html_refs(errors)
     check_page_registry(errors, loaded)
+    check_design_nav(errors, loaded)
     check_frontend_secret_refs(errors)
     check_frontend_api_access(errors)
     check_config_seeds(errors)
     check_migrations(errors)
     check_deploy_excludes(errors)
+    check_ci_workflow(errors)
     return fail(errors)
 
 

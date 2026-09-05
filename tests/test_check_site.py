@@ -120,3 +120,17 @@ def test_invalid_migration_filename_is_rejected(tmp_path):
     check_site.check_migrations(errors, root=tmp_path)
 
     assert errors == ["迁移文件名无效: v1-add-table.sql"]
+
+
+def test_ci_workflow_must_check_and_not_deploy(tmp_path):
+    check_site = load_check_site_module()
+    workflow = tmp_path / ".github" / "workflows"
+    workflow.mkdir(parents=True)
+    (workflow / "ci.yml").write_text("name: CI\nrun: rsync\n", encoding="utf-8")
+    errors = []
+
+    check_site.check_ci_workflow(errors, root=tmp_path)
+
+    assert "ci.yml 必须运行 scripts/check-site.py" in errors
+    assert "ci.yml 必须运行 pytest" in errors
+    assert "ci.yml 不得部署（发现 rsync）" in errors

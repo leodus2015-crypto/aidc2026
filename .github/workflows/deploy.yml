@@ -1,9 +1,9 @@
-# push 到 main 后自动 rsync 到云服务器（需在 GitHub 仓库 Settings → Secrets 配置）
+# 手动备用：正式上线只走本机 scripts/deploy.sh。
+# GitHub 是开源归档，push 不得 rsync 覆盖腾讯云。
 name: Deploy to aidc2026.cn
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: deploy-aidc2026
@@ -29,7 +29,7 @@ jobs:
           install -m 700 -d ~/.ssh
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "${{ secrets.DEPLOY_PORT || 22 }}" "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh-keyscan -p "${{ secrets.DEPLOY_PORT || 22 }}" "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Rsync to server
         env:
@@ -53,7 +53,7 @@ jobs:
             --exclude 'data/analytics/summary.json' \
             --exclude '.pytest_cache/' \
             --exclude '.venv/' \
-            -e "ssh -p ${PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            -e "ssh -p ${PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
             ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
       - name: Fix ownership
@@ -66,7 +66,7 @@ jobs:
         run: |
           PORT="${DEPLOY_PORT:-22}"
           OWNER="${DEPLOY_OWNER:-www:www}"
-          ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+          ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "${DEPLOY_USER}@${DEPLOY_HOST}" \
             "chown ${OWNER} '${DEPLOY_PATH}' && find '${DEPLOY_PATH}' -mindepth 1 ! -name '.user.ini' -exec chown ${OWNER} {} +"
 
@@ -78,7 +78,7 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           PORT="${DEPLOY_PORT:-22}"
-          ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+          ssh -p "${PORT}" -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes \
             "${DEPLOY_USER}@${DEPLOY_HOST}" \
             "test -f '${DEPLOY_PATH}/js/lang-switch.js'"
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# 一键：push GitHub → rsync 到云服务器（与 .github/workflows/deploy.yml 规则一致）
+# 本机为最新源：rsync 到腾讯云（部署版）。GitHub 只作开源归档，不触发线上。
+# exclude 列表须与 .github/workflows/deploy.yml 保持一致。
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -16,11 +17,11 @@ SKIP_COMMIT=0
 usage() {
   cat <<EOF
 用法:
-  ./scripts/deploy.sh "提交说明"     提交 + push + 同步服务器
-  ./scripts/deploy.sh --sync-only    仅 rsync（已 push 过）
-  ./scripts/deploy.sh --push-only    仅 push GitHub
-  ./scripts/deploy.sh --full-reset "提交说明"
-                                     服务器备份 .env 后清空目录再全量同步
+  ./scripts/deploy.sh --sync-only --no-commit   仅 rsync 到腾讯云（正式部署）
+  ./scripts/deploy.sh --push-only               仅 push GitHub（开源归档）
+  ./scripts/deploy.sh --full-reset --sync-only --no-commit
+                                                服务器备份 .env 后清空再全量同步
+  ./scripts/deploy.sh "提交说明"                提交 + 部署；默认还会 push 归档
 
   SKIP_BUMP=1 ./scripts/deploy.sh "说明"   提交时不递增资源版本号
   ./scripts/deploy.sh --no-bump "说明"     同上
@@ -29,9 +30,8 @@ usage() {
 环境:
   复制 deploy.env.example → deploy.env 并填写 SSH 信息
 
-自动化:
-  git push origin main 会触发 GitHub Actions 部署（配置 Secrets 后）
-  或: ./scripts/install-deploy-hook.sh 安装 post-push 钩子
+角色:
+  本机 = 最新源；腾讯云 = 部署版（只走本脚本 rsync）；GitHub = 开源归档（不自动部署）
 EOF
 }
 
