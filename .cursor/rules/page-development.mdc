@@ -1,0 +1,23 @@
+---
+description: AIDC 页面、前端资源、API 与数据库开发规范
+globs: "{**/*.html,js/**/*.js,css/**/*.css,i18n/**/*.json,api/**/*.py,sql/**/*.sql}"
+alwaysApply: false
+---
+
+# AIDC 开发规范
+
+新增或整改页面、共享前端资源、API、数据库时，开始编码前必须读取并遵循：
+
+- `docs/DEVELOPMENT-STANDARDS.md`
+- 涉及测试或验收时同时读取 `docs/TEST.md`
+- 涉及代码检视时同时读取 `.cursor/rules/code-review.mdc`
+
+执行要求：
+
+1. 先确认页面 ID、入口、父子/iframe 关系、i18n、主题和数据来源。
+2. 复用共享主题、语言、embed 和 API 能力，不复制站点基础逻辑。
+3. 浏览器不得直连数据库或读取用于验证自身的管理凭据。
+4. 计算逻辑必须校验边界并可测试；API 失败必须有明确、安全的回退或错误状态。
+5. 合并前运行 `python3 scripts/check-site.py` 和 `python3 -m pytest tests -q`。
+6. UI 改动按 `docs/TEST.md` 验证中文/英文 × Light/Dark、移动端和 embed。
+7. 只修改当前目标需要的文件，不混入无关重构或格式化。

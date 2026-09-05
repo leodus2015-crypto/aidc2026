@@ -61,7 +61,7 @@
 
 ## 测试
 
-静态检查、API/公式单测与浏览器冒烟清单见 [`docs/TEST.md`](docs/TEST.md)；基线代码检视见 [`docs/REVIEW-BASELINE.md`](docs/REVIEW-BASELINE.md)。
+团队新增页面、接口与数据库变更统一遵循 [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)。静态检查、API/公式单测与浏览器冒烟清单见 [`docs/TEST.md`](docs/TEST.md)；基线代码检视见 [`docs/REVIEW-BASELINE.md`](docs/REVIEW-BASELINE.md)。
 
 ```bash
 python3 scripts/check-site.py
