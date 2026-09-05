@@ -7,6 +7,7 @@
     "eyebrow": "Internal",
     "title": "Site Status",
     "hint": "Enter the server ADMIN_TOKEN from environment (no hardcoded default on this page).",
+    "label": "Admin token",
     "placeholder": "Password",
     "error": "Invalid token or unauthorized",
     "errorUnauthorized": "Incorrect password. Please try again.",

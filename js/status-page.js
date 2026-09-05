@@ -190,17 +190,36 @@
         },
       });
 
-      $('ipBody').innerHTML = ips.length
-        ? ips.map((row, i) =>
-            `<tr>
-              <td class="py-2 pr-4 tabular-nums text-slate-400">${i + 1}</td>
-              <td class="py-2 pr-4 font-mono text-slate-800">${row.ip || '—'}</td>
-              <td class="py-2 pr-4 text-right tabular-nums font-semibold">${Number(row.hits || 0).toLocaleString(loc)}</td>
-              <td class="py-2 pr-4 text-slate-700">${row.country || '—'}</td>
-              <td class="py-2 text-slate-700">${row.city || '—'}</td>
-            </tr>`
-          ).join('')
-        : `<tr><td colspan="5" class="py-6 text-center text-slate-400">${t('table.empty')}</td></tr>`;
+      const tbody = $('ipBody');
+      if (!tbody) return;
+      tbody.replaceChildren();
+      if (!ips.length) {
+        const emptyRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.colSpan = 5;
+        emptyCell.className = 'py-6 text-center text-slate-400';
+        emptyCell.textContent = t('table.empty');
+        emptyRow.appendChild(emptyCell);
+        tbody.appendChild(emptyRow);
+        return;
+      }
+      ips.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        const cells = [
+          { className: 'py-2 pr-4 tabular-nums text-slate-400', text: String(i + 1) },
+          { className: 'py-2 pr-4 font-mono text-slate-800', text: row.ip || '—' },
+          { className: 'py-2 pr-4 text-right tabular-nums font-semibold', text: Number(row.hits || 0).toLocaleString(loc) },
+          { className: 'py-2 pr-4 text-slate-700', text: row.country || '—' },
+          { className: 'py-2 text-slate-700', text: row.city || '—' },
+        ];
+        cells.forEach((cell) => {
+          const td = document.createElement('td');
+          td.className = cell.className;
+          td.textContent = cell.text;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
     }
 
     async function load() {
