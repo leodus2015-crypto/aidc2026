@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "AI 数据中心算力评估规划 · Token → Card",
+    "description": "从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。"
+  }
+}

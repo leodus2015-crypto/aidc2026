@@ -12,13 +12,8 @@ from typing import Any, Iterable
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# Pages that only redirect or are legacy shells; no data-i18n-page required.
-REDIRECT_HTML = {
-    "ai-dc-layout.html",
-    "inference/index.html",
-    "aidc-investment-roi.en.html",
-    "ai-dc-layout_37.html",
-}
+# Redirect-only compatibility HTML pages have been removed.
+REDIRECT_HTML: set[str] = set()
 
 # Known extra ALLOWED_CONFIG_KEYS that have no file in data/config-seeds/.
 SEEDLESS_CONFIG_KEYS: set[str] = set()

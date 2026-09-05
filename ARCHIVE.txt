@@ -44,18 +44,14 @@ aidc 静态站点归档
   ai-dc-room-layout.html      Tab「机房布局」（?embed=1）
   ai-dc-four-layer.html       机房布局 · 四层示意（嵌套 iframe）
   ai-dc-floor-detail.html     机房布局 · 单层平面图（嵌套 iframe）
-  ai-dc-layout_37.html        Tab「机柜布局（风冷）」
+  ai-dc-tcp.html              Tab「Token → Card → Power」（TCP 总览，?embed=1）
+  ai-dc-computeEst.html       Tab「算力估算」（Token → Card，?embed=1）
+  ai-dc-layout.html           Tab「机柜规划」（Card → Power，?embed=1）
   ai-dc-deployment-perf.html  Tab「产品协同」（?embed=1 · 部署 & 协同特性）
   datacenter-3d-case-b.html   Tab「案例 A（风冷）」
   datacenter-3d-v3-2.html     Tab「案例 B（风冷）」
-  aidc-investment-roi.html    Tab「Investment ROI」（中文）
-  aidc-investment-roi.en.html  同上（英文 · USD · 海外云比价）
+  aidc-investment-roi.html    Tab「Investment ROI」（中英文统一入口）
   js/aidc-investment-roi-page.js  ROI 页共享逻辑
-
-【兼容重定向页（不在主导航，保留旧链接）】
-  ai-dc-layout.html       → ai-dc-design.html
-  capacity.html           → index.html#capacity
-  docs.html               → index.html#docs
 
 【内部 / 运维页】
   status.html             站点状态（访问观测）；i18n/status.{zh,en}.json、js/status-page.js
@@ -69,7 +65,7 @@ aidc 静态站点归档
   i18n/ai-dc-deployment-perf.zh.json、i18n/ai-dc-deployment-perf.en.json  部署 & 协同特性页文案
   js/i18n.js、js/i18n-bootstrap.js、js/lang-switch.js、js/aidc-locale-bridge.js
   js/aidc-theme.js、js/theme-switch.js、css/theme.css（Light / Dark 与 iframe 联动）
-  js/embed-mode.js、js/redirect-page.js
+  js/embed-mode.js
   js/index-page.js、js/ai-dc-design-page.js、js/aidc-investment-roi-page.js、js/config-loader.js
   js/aidc-asset-version.js、data/asset-version.json、scripts/bump-asset-version.py
   i18n/ai-dc-deployment-perf.{zh,en}.json、scripts/patch-deployment-perf-i18n.py
@@ -87,7 +83,7 @@ aidc 静态站点归档
   ai-dc-design.html 通过 js/ai-dc-design-page.js 加载上述 8 个子页 iframe；
   ai-dc-room-layout.html 再通过 js/ai-dc-room-layout-page.js 加载四层示意与单层平面。
 
-  Tab 顺序（ai-dc-design）：机房布局 | 机柜布局（风冷）| 产品协同 | 案例 A | 案例 B | Investment ROI
+  Tab 顺序（ai-dc-design）：机房布局 | Token->Card->Power | 算力估算 | 机柜规划 | 产品协同 | 案例 A | 案例 B | Investment ROI
   默认 Tab：机房布局（roomLayout）。单层平面图（ai-dc-floor-detail.html）：
     · 左上角红色虚线标出一个 POD（含 EHU、风冷/液冷机房及电源区上半部；电源区与下方 POD 共用）
     · 配电功能区 420 m² 标注于虚框内电源区上半部
@@ -99,11 +95,12 @@ aidc 静态站点归档
   与本目录源码一致；解压即用或与服务器 wwwroot 同步。
   全站采用方案 B（单 HTML + i18n/*.json）；英文通过 ?lang=en 或页内语言切换。
   Light / Dark 与语言维度分离；主题存入 aidc-theme，并通过 postMessage 同步嵌套 iframe。
-  例外：ai-dc-layout_37.html 仍使用页内 EN{} 与 AidcLocaleBridge，未完全迁到方案 B。
+  ai-dc-layout.html 使用页内 EN{}，并通过 AidcLocaleBridge 与父页同步语言。
   3D 案例默认配置见 data/dc3d-case-a.defaults.json / dc3d-case-b.defaults.json；
   云端配置键 dc3d.case_a / dc3d.case_b（MySQL app_config JSON，非逐字段建表）。
   embed 模式：子页 URL 加 ?embed=1，样式见 css/embed.css、js/embed-mode.js；
   embed 下保留精简顶栏（俯视/水平/透视/Cooling），隐藏 Logo 与主题切换。
+  已删除的旧 HTML 入口由 deploy/nginx-static-cache.conf 提供 301 兼容跳转。
   站点状态：status.html（内部页；About US 头像悬停 2s 入口）+ deploy/ANALYTICS.md。
   云端 MySQL：部署后执行 python3 scripts/seed-config.py；首次访问观测需 mysql < sql/analytics.sql。
 

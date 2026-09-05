@@ -115,20 +115,6 @@ HOT_AISLE = {
     "热通道": "Hot Aisle",
 }
 
-DOCS = {
-    **COMMON_NAV,
-    "重定向至说明文档 · AI Data Center": "Redirect to Documentation · AI Data Center",
-    "说明文档已合并至首页第三部分。": "Documentation has been merged into section three on the home page.",
-    "前往「说明文档」区块": "Go to Documentation section",
-}
-
-CAPACITY = {
-    **COMMON_NAV,
-    "重定向至容量规划 · AI Data Center": "Redirect to Capacity Planning · AI Data Center",
-    "容量规划内容已合并至首页 Agentic 推理下方。": "Capacity planning content has been merged below Agentic Inference on the home page.",
-    "前往「容量规划」区块": "Go to Capacity Planning section",
-}
-
 OUTLINE = {
     "重定向 · 白皮书 2.0讨论稿": "Redirect · White Paper 2.0 Draft",
     "前往 2.0讨论稿": "Go to 2.0 Draft",
@@ -394,8 +380,6 @@ def build(name: str, mapping: dict | None = None, nav_mode: str = "nav") -> str:
 def main() -> None:
     EN.mkdir(exist_ok=True)
     jobs = [
-        ("docs.html", DOCS, "nav"),
-        ("capacity.html", CAPACITY, "nav"),
         ("post-training.html", POST_TRAINING, "nav"),
     ]
     created = []

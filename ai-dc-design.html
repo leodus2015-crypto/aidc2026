@@ -96,6 +96,28 @@
           >机房布局</button>
           <button
             type="button"
+            id="tab-tcp"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-tcp"
+            data-layout-tab="tcp"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            data-i18n="tabs.tcp"
+          >Token->Card->Power</button>
+          <button
+            type="button"
+            id="tab-compute-est"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-compute-est"
+            data-layout-tab="computeEst"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            data-i18n="tabs.computeEst"
+          >算力估算</button>
+          <button
+            type="button"
             id="tab-plan"
             role="tab"
             aria-selected="false"
@@ -104,7 +126,7 @@
             tabindex="-1"
             class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
             data-i18n="tabs.plan"
-          >机柜布局（风冷）</button>
+          >机柜规划</button>
           <button
             type="button"
             id="tab-synergy"
@@ -115,7 +137,7 @@
             tabindex="-1"
             class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
             data-i18n="tabs.synergy"
-          >Token Centric</button>
+          >产品协同</button>
           <button
             type="button"
             id="tab-case-a"
@@ -164,6 +186,30 @@
         </div>
       </div>
 
+      <div id="panel-tcp" role="tabpanel" aria-labelledby="tab-tcp" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            data-iframe-key="tcp"
+            data-i18n-title="iframe.tcp"
+            title="AI DC 布局 · Token → Card → Power"
+            class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-slate-50"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
+      <div id="panel-compute-est" role="tabpanel" aria-labelledby="tab-compute-est" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            data-iframe-key="computeEst"
+            data-i18n-title="iframe.computeEst"
+            title="AI DC 布局 · 算力估算"
+            class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-slate-50"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
       <div id="panel-case-a" role="tabpanel" aria-labelledby="tab-case-a" aria-hidden="true" class="hidden min-w-0 w-full">
         <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
           <iframe
@@ -192,7 +238,7 @@
           <iframe
             data-iframe-key="plan"
             data-i18n-title="iframe.plan"
-            title="AI DC 布局 · 机柜布局（风冷）"
+            title="AI DC 布局 · 机柜规划"
             class="block h-[min(90vh,72rem)] w-full min-h-[40rem] bg-[#f2f6fc]"
             loading="lazy"
           ></iframe>
@@ -204,7 +250,7 @@
           <iframe
             data-iframe-key="synergy"
             data-i18n-title="iframe.synergy"
-            title="AI DC 布局 · Token Centric"
+            title="AI DC 布局 · 产品协同"
             class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-[#f0f5fc]"
             loading="lazy"
           ></iframe>

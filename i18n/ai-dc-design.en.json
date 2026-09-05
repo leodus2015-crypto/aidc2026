@@ -8,16 +8,23 @@
     "roomLayout": "Data Hall Layout",
     "caseA": "Case A (Air-Cooled)",
     "caseB": "Case B (Air-Cooled)",
-    "plan": "Cabinet Layout (Air-Cooled)",
-    "synergy": "Token Centric",
+    "plan": "Rack Planning",
+    "synergy": "Product Synergy",
+    "tcp": "Token->Card->Power",
+    "computeEst": "Compute Estimation",
     "roi": "Investment ROI"
   },
   "iframe": {
     "roomLayout": "AI DC Layout · Data Hall Layout",
     "caseA": "AI DC Layout · Case A (Air-Cooled)",
     "caseB": "AI DC Layout · Case B (Air-Cooled)",
-    "plan": "AI DC Layout · Cabinet Layout (Air-Cooled)",
-    "synergy": "AI DC Layout · Token Centric",
+    "tcp": "AI DC Layout · Token → Card → Power",
+    "computeEst": "AI DC Layout · Compute Estimation",
+    "plan": "AI DC Layout · Rack Planning",
+    "synergy": "AI DC Layout · Product Synergy",
     "roi": "AI DC Layout · Investment ROI"
+  },
+  "placeholder": {
+    "body": "Content is under development. Please check back soon."
   }
 }

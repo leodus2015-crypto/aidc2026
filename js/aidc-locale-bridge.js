@@ -1,6 +1,6 @@
 /**
  * 全站 locale 联动：localStorage、postMessage、storage 事件。
- * 供 ai-dc-layout_37 等自带 i18n 的 iframe 与 ai-dc-design / index 主站同步。
+ * 供 ai-dc-layout 等自带 i18n 的 iframe 与 ai-dc-design / index 主站同步。
  */
 (function (global) {
   const STORAGE_KEY = 'aidc-locale';

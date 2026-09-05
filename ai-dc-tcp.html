@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<meta name="description" content="Token → Card → Power：从业务 Token 需求推算算力卡数、机柜、电力、制冷与机房面积。" />
+<title>TCP 总览 · Token → Card → Power | AI 数据中心规划方法论</title>
+<script src="js/aidc-theme.js?v=84"></script>
+<script src="js/embed-mode.js?v=84"></script>
+<script src="js/theme-switch.js?v=84"></script>
+<script src="js/aidc-asset-version.js?v=84"></script>
+<script src="js/aidc-locale-bridge.js?v=84"></script>
+<link rel="stylesheet" href="css/theme.css?v=84" />
+<link rel="stylesheet" href="css/embed.css?v=84" />
+<style>
+:root{
+  --s-50:#f8fafc;--s-100:#f1f5f9;--s-200:#e2e8f0;--s-300:#cbd5e1;--s-400:#94a3b8;
+  --s-500:#64748b;--s-600:#475569;--s-700:#334155;--s-800:#1e293b;--s-900:#0f172a;
+  --b-50:#eff6ff;--b-100:#dbeafe;--b-200:#bfdbfe;--b-500:#3b82f6;--b-600:#2563eb;--b-700:#1d4ed8;--b-900:#1e3a8a;
+  --tk:#7c3aed;--tk-50:#f5f3ff;--tk-100:#ede9fe;--tk-700:#6d28d9;
+  --cd:#2563eb;--cd-50:#eff6ff;--cd-100:#dbeafe;--cd-700:#1d4ed8;
+  --pw:#ea580c;--pw-50:#fff7ed;--pw-100:#ffedd5;--pw-700:#c2410c;
+  --ai:#1d6fe5;--cmp:#8b5cf6;--bus:#10b981;--net:#f59e0b;--sto:#db2777;--cold:#0891b2;
+  --ok:#059669;--ok-50:#ecfdf5;
+  --shadow-lg:0 24px 50px -24px rgba(15,23,42,.32),0 2px 6px rgba(15,23,42,.05);
+  --shadow-md:0 14px 30px -20px rgba(15,23,42,.30),0 1px 3px rgba(15,23,42,.04);
+  --shadow-xs:0 1px 2px rgba(15,23,42,.05);
+  --r-lg:22px;--r-md:16px;--r-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--s-50);color:var(--s-900);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+  background-image:
+    radial-gradient(1100px 520px at 50% -240px,rgba(37,99,235,.10),transparent 70%),
+    linear-gradient(rgba(37,99,235,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(37,99,235,.035) 1px,transparent 1px);
+  background-size:auto,52px 52px,52px 52px;
+}
+body.lang-en{font-family:"Inter","Segoe UI",Arial,Helvetica,sans-serif}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+sub{font-size:.7em}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+/* ══ TOPBAR ══ */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--s-200)}
+.topbar-in{max-width:1520px;margin:0 auto;padding:11px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.brand-mark{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:13px;color:#fff;
+  background:linear-gradient(140deg,#1e3a8a,#2563eb 55%,#3b82f6);box-shadow:0 8px 20px rgba(37,99,235,.34);
+  font-weight:900;font-size:13px;letter-spacing:.5px}
+.brand-title{font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.25}
+.brand-sub{margin-top:1px;color:var(--s-500);font-size:11.5px;font-weight:500;letter-spacing:.02em}
+.top-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:700;
+  color:var(--ok);background:var(--ok-50);border:1px solid #cdeade;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(5,150,105,.12)}
+.lang-btn{border:1px solid var(--s-300);border-radius:9px;padding:7px 14px;font-size:12px;font-weight:800;
+  color:var(--b-700);background:#fff;letter-spacing:.06em;transition:.15s;box-shadow:var(--shadow-xs)}
+.lang-btn:hover{background:var(--b-700);color:#fff;border-color:var(--b-700)}
+
+/* ══ LAYOUT ══ */
+main{max-width:1520px;margin:0 auto;padding:26px 26px 60px}
+.stack{display:flex;flex-direction:column;gap:22px}
+.card{background:#fff;border:1px solid var(--s-200);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);padding:24px}
+.eyebrow{color:var(--b-700);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.sec-title{font-size:19px;font-weight:800;letter-spacing:.01em;margin-top:4px}
+.sec-note{color:var(--s-500);font-size:13px;margin-top:4px}
+.sec-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+
+/* ══ HERO ══ */
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:30px 32px 26px;
+  background:linear-gradient(135deg,#2b4a86 0%,#2f60b8 48%,#4181dd 100%);color:#fff;box-shadow:0 26px 52px -30px rgba(37,86,170,.52)}
+.hero::after{content:"";position:absolute;inset:0;opacity:.42;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:44px 44px;mask-image:radial-gradient(120% 100% at 80% 0%,#000,transparent 72%)}
+.hero-in{position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.hero-copy{max-width:820px;min-width:320px}
+.hero-eyebrow{font-size:11.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:#d5e6ff}
+.hero-h1{margin-top:10px;font-size:34px;font-weight:900;letter-spacing:.01em;line-height:1.25}
+.hero-h1 em{font-style:normal;color:#a7ecff}
+.hero-chain{margin-top:10px;font-size:19px;font-weight:800;letter-spacing:.10em;color:#dbe9ff}
+.hero-chain b{color:#fff}
+.hero-p{margin-top:12px;font-size:14.5px;line-height:1.75;color:rgba(238,246,255,.92);max-width:760px}
+.hero-tags{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+.htag{border:1px solid rgba(255,255,255,.30);background:rgba(255,255,255,.13);border-radius:999px;
+  padding:5px 12px;font-size:12px;font-weight:600;color:#eef5ff}
+
+/* scale switch */
+.scale-box{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:18px;padding:14px 16px;min-width:330px}
+.scale-lbl{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#dceaff;margin-bottom:10px}
+.scale-btns{display:flex;gap:8px}
+.sbtn{flex:1;border-radius:13px;padding:14px 15px;text-align:left;border:1.5px solid rgba(255,255,255,.30);
+  background:rgba(255,255,255,.10);color:#eef5ff;transition:.18s}
+.sbtn .sb-n{font-size:24px;font-weight:900;line-height:1;color:#fff}
+.sbtn .sb-u{font-size:11px;font-weight:700;letter-spacing:.06em;margin-left:3px;color:#dbe9ff}
+.sbtn .sb-d{margin-top:6px;font-size:11.5px;font-weight:600;color:#d3e4fb;line-height:1.4}
+.sbtn:hover{background:rgba(255,255,255,.2)}
+.sbtn.on{background:#fff;border-color:#fff;box-shadow:0 12px 26px -14px rgba(20,50,110,.55)}
+.sbtn.on .sb-n{color:#1e3a72}.sbtn.on .sb-u{color:#2563eb}.sbtn.on .sb-d{color:#475569}
+.sbtn .sb-tag{display:inline-block;margin-bottom:6px;font-size:9.5px;font-weight:800;letter-spacing:.1em;
+  padding:2px 7px;border-radius:5px;background:rgba(125,211,252,.22);color:#bae6fd}
+.sbtn.on .sb-tag{background:var(--b-100);color:var(--b-700)}
+
+/* ══ CHAIN ══ */
+.chain{display:grid;grid-template-columns:1fr 136px 1fr 136px 1fr;align-items:stretch;gap:0}
+.node{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--s-200);background:#fff;
+  padding:20px 22px 18px;box-shadow:var(--shadow-md)}
+.node.t{border-top:4px solid var(--tk)}.node.c{border-top:4px solid var(--cd)}.node.p{border-top:4px solid var(--pw)}
+.node-wm{position:absolute;right:12px;bottom:-24px;font-size:112px;font-weight:900;line-height:1;opacity:.055;letter-spacing:-.04em}
+.node.t .node-wm{color:var(--tk)}.node.c .node-wm{color:var(--cd)}.node.p .node-wm{color:var(--pw)}
+.node-top{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.node-ic{width:46px;height:46px;flex:0 0 46px;border-radius:14px;display:grid;place-items:center;color:#fff}
+.node.t .node-ic{background:linear-gradient(140deg,#8b5cf6,#6d28d9);box-shadow:0 8px 18px rgba(109,40,217,.28)}
+.node.c .node-ic{background:linear-gradient(140deg,#3b82f6,#1d4ed8);box-shadow:0 8px 18px rgba(29,78,216,.28)}
+.node.p .node-ic{background:linear-gradient(140deg,#fb923c,#c2410c);box-shadow:0 8px 18px rgba(194,65,12,.28)}
+.node-kick{font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+.node.t .node-kick{color:var(--tk-700)}.node.c .node-kick{color:var(--cd-700)}.node.p .node-kick{color:var(--pw-700)}
+.node-name{font-size:16px;font-weight:800;margin-top:1px}
+.node-val{position:relative;z-index:1;margin-top:16px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.node-val .v{font-size:38px;font-weight:900;line-height:1;letter-spacing:-.02em}
+.node-val .u{font-size:14px;font-weight:800;color:var(--s-500)}
+.node-cap{position:relative;z-index:1;margin-top:6px;font-size:12.5px;color:var(--s-500);font-weight:600}
+.node-sub{position:relative;z-index:1;margin-top:14px;padding-top:12px;border-top:1px dashed var(--s-200);
+  display:flex;gap:18px;flex-wrap:wrap}
+.node-sub div{min-width:0}
+.node-sub .k{font-size:10.5px;color:var(--s-400);font-weight:700;letter-spacing:.04em}
+.node-sub .v2{font-size:14.5px;font-weight:800;margin-top:1px;color:var(--s-800)}
+.link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:0 8px}
+.link-f{font-size:10px;font-weight:800;color:var(--s-600);background:#fff;border:1px solid var(--s-200);
+  border-radius:8px;padding:5px 8px;text-align:center;line-height:1.5;max-width:120px;
+  box-shadow:var(--shadow-xs)}
+.link svg{width:100%;height:22px;overflow:visible}
+.flow{stroke-dasharray:7 7;animation:flow 1.1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-14}}
+
+/* ══ 3-PANEL ══ */
+.panels{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.panel{background:#fff;border:1px solid var(--s-200);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
+  padding:22px;display:flex;flex-direction:column}
+.p-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.p-badge{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:grid;place-items:center;
+  font-size:16px;font-weight:900;color:#fff}
+.panel.t .p-badge{background:var(--tk)}.panel.c .p-badge{background:var(--cd)}.panel.p .p-badge{background:var(--pw)}
+.p-title{font-size:15.5px;font-weight:800;line-height:1.3}
+.p-note{font-size:11.5px;color:var(--s-500);margin-top:2px;font-weight:500}
+.viz{border:1px solid var(--s-200);border-radius:14px;background:linear-gradient(180deg,#fcfdff,#f6f9fe);
+  padding:14px;margin-bottom:14px}
+.viz-cap{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.viz-t{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--s-500)}
+.viz-v{font-size:12px;font-weight:800;color:var(--s-700)}
+.viz svg{display:block;width:100%;height:auto}
+.rows{display:flex;flex-direction:column;gap:0;margin-top:auto}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--s-100)}
+.row:last-child{border-bottom:none}
+.row .rk{font-size:12.5px;color:var(--s-500);font-weight:600;min-width:0}
+.row .rk small{color:var(--s-400);font-weight:500}
+.row .rv{font-size:14px;font-weight:800;color:var(--s-800);white-space:nowrap}
+.row.hi .rv{color:var(--b-700);font-size:15.5px}
+.formula{margin-top:14px;border-radius:11px;padding:10px 12px;font-size:12px;line-height:1.7;font-weight:600}
+.panel.t .formula{background:var(--tk-50);color:var(--tk-700);border:1px solid #e0d8fd}
+.panel.c .formula{background:var(--cd-50);color:var(--cd-700);border:1px solid var(--b-200)}
+.panel.p .formula{background:var(--pw-50);color:var(--pw-700);border:1px solid #fed7aa}
+.formula code{font-family:"SF Mono",Consolas,Menlo,monospace;font-size:11.5px;font-weight:700}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:10px}
+.lg{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--s-600)}
+.lg i{width:9px;height:9px;border-radius:3px;display:block}
+
+/* ══ COMPARE ══ */
+.cmp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.cmp{border:1px solid var(--s-200);border-radius:16px;padding:15px 16px;background:linear-gradient(180deg,#fff,#fafcff)}
+.cmp-k{font-size:11.5px;font-weight:700;color:var(--s-500)}
+.cmp-bars{margin-top:11px;display:flex;flex-direction:column;gap:8px}
+.cbar{display:flex;align-items:center;gap:8px}
+.cbar .cn{font-size:10px;font-weight:800;color:var(--s-400);width:30px;flex:0 0 30px}
+.cbar .ct{display:block;flex:1;height:10px;border-radius:5px;background:var(--s-100);overflow:hidden}
+.cbar .cf{display:block;height:100%;border-radius:5px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.cbar.air .cf{background:linear-gradient(90deg,#94a3b8,#64748b)}
+.cbar.liq .cf{background:linear-gradient(90deg,#38bdf8,#0284c7)}
+.cbar .cv{font-size:12px;font-weight:800;width:76px;flex:0 0 76px;text-align:right;color:var(--s-800)}
+.cmp-delta{margin-top:11px;font-size:12px;font-weight:800;border-radius:8px;padding:5px 9px;text-align:center}
+.cmp-delta.good{background:var(--ok-50);color:var(--ok);border:1px solid #cdeade}
+.cmp-delta.up{background:var(--b-50);color:var(--b-700);border:1px solid var(--b-200)}
+
+/* ══ FUTURE ══ */
+.fut{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;align-items:center}
+.fut-steps{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+.fstep{border:1px solid var(--s-200);background:#fff;border-radius:11px;padding:9px 13px;box-shadow:var(--shadow-xs)}
+.fstep .fk{font-size:10px;font-weight:800;color:var(--s-400);letter-spacing:.06em}
+.fstep .fv{font-size:17px;font-weight:900;color:var(--s-800);margin-top:1px}
+.fx{font-size:15px;font-weight:900;color:var(--s-300)}
+.fut-res{border-radius:18px;padding:20px 22px;background:linear-gradient(135deg,#0f1e3d,#1e3a8a);color:#fff;
+  box-shadow:0 22px 44px -26px rgba(15,32,80,.7)}
+.fut-res .frk{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#93c5fd}
+.fut-res .frv{font-size:44px;font-weight:900;line-height:1.05;margin-top:6px;letter-spacing:-.02em}
+.fut-res .frv span{font-size:16px;font-weight:800;color:#bfdbfe;margin-left:6px}
+.fut-res .frn{margin-top:10px;font-size:12.5px;color:rgba(219,234,254,.8);line-height:1.6}
+.fut-res .frx{margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.16);display:flex;gap:20px;flex-wrap:wrap}
+.fut-res .frx div .k{font-size:10px;color:#93c5fd;font-weight:700;letter-spacing:.05em}
+.fut-res .frx div .v{font-size:16px;font-weight:800;margin-top:1px}
+
+/* ══ ENTRY ══ */
+.entries{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.entry{position:relative;overflow:hidden;display:block;background:#fff;border:1px solid var(--s-200);border-radius:var(--r-lg);
+  padding:24px;box-shadow:var(--shadow-lg);transition:transform .2s,box-shadow .2s,border-color .2s}
+.entry:hover{transform:translateY(-3px);box-shadow:0 30px 56px -26px rgba(15,23,42,.36);border-color:var(--b-200)}
+.entry-wm{position:absolute;right:-6px;bottom:-34px;font-size:132px;font-weight:900;opacity:.05;line-height:1;letter-spacing:-.05em}
+.entry.e1{border-top:4px solid var(--tk)}.entry.e1 .entry-wm{color:var(--tk)}
+.entry.e2{border-top:4px solid var(--pw)}.entry.e2 .entry-wm{color:var(--pw)}
+.entry-top{display:flex;align-items:center;justify-content:space-between;gap:14px;position:relative;z-index:1}
+.entry-ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;color:#fff}
+.entry.e1 .entry-ic{background:linear-gradient(140deg,#8b5cf6,#6d28d9)}
+.entry.e2 .entry-ic{background:linear-gradient(140deg,#fb923c,#c2410c)}
+.entry-step{font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--s-400)}
+.entry-h{margin-top:14px;font-size:19px;font-weight:800;position:relative;z-index:1}
+.entry-p{margin-top:7px;font-size:13px;color:var(--s-500);line-height:1.65;position:relative;z-index:1;max-width:88%}
+.entry-tags{margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:1}
+.etag{font-size:11px;font-weight:700;border-radius:7px;padding:4px 9px;background:var(--s-100);color:var(--s-600);border:1px solid var(--s-200)}
+.entry-go{position:relative;z-index:1;margin-top:16px;display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:800;color:var(--b-700)}
+.entry-go svg{transition:transform .2s}
+.entry:hover .entry-go svg{transform:translateX(4px)}
+.entry-3{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:linear-gradient(135deg,#f1f5f9,#e8eefb);border:1px solid var(--s-200);border-radius:var(--r-md);padding:16px 20px}
+.entry-3 .e3t{font-size:14px;font-weight:800}
+.entry-3 .e3p{font-size:12.5px;color:var(--s-500);margin-top:2px}
+.e3btn{border:1px solid var(--b-600);background:var(--b-600);color:#fff;border-radius:9px;padding:9px 16px;
+  font-size:12.5px;font-weight:800;transition:.15s;white-space:nowrap}
+.e3btn:hover{background:var(--b-700);border-color:var(--b-700)}
+
+/* ══ PARAMS ══ */
+.ptable{display:grid;grid-template-columns:repeat(4,1fr);gap:0 26px}
+.pt-col{display:flex;flex-direction:column}
+.pt-h{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--b-700);
+  padding-bottom:8px;border-bottom:2px solid var(--b-100);margin-bottom:4px}
+.pt-r{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--s-100);font-size:12.5px}
+.pt-r .a{color:var(--s-500);font-weight:600}
+.pt-r .b{font-weight:800;color:var(--s-800);white-space:nowrap}
+.disclaim{margin-top:18px;padding:13px 16px;border-radius:12px;background:var(--s-50);border:1px solid var(--s-200);
+  font-size:12px;color:var(--s-500);line-height:1.7}
+.footer{margin-top:26px;text-align:center;color:var(--s-400);font-size:12px;font-weight:600;letter-spacing:.04em}
+
+/* ══ DARK THEME ══ */
+html[data-theme="dark"]{
+  --s-50:#07111f;--s-100:#0f1c2e;--s-200:#2a3a50;--s-300:#3c506a;--s-400:#91a4bb;
+  --s-500:#a7b6c8;--s-600:#c2cedc;--s-700:#d7e0ea;--s-800:#e8eef5;--s-900:#f8fafc;
+  --b-50:#10284a;--b-100:#16365f;--b-200:#245080;--b-500:#60a5fa;--b-600:#60a5fa;--b-700:#93c5fd;--b-900:#bfdbfe;
+  --tk:#a78bfa;--tk-50:#241b45;--tk-100:#302758;--tk-700:#c4b5fd;
+  --cd:#60a5fa;--cd-50:#10284a;--cd-100:#16365f;--cd-700:#93c5fd;
+  --pw:#fb923c;--pw-50:#3b210f;--pw-100:#522a11;--pw-700:#fdba74;
+  --ok:#34d399;--ok-50:#0b3029;
+  --shadow-lg:0 24px 50px -24px rgba(0,0,0,.72),0 2px 6px rgba(0,0,0,.26);
+  --shadow-md:0 14px 30px -20px rgba(0,0,0,.72),0 1px 3px rgba(0,0,0,.24);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.32);
+  color-scheme:dark;
+}
+html[data-theme="dark"] .topbar{background:rgba(7,17,31,.9)}
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .node,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .cmp,
+html[data-theme="dark"] .fstep,
+html[data-theme="dark"] .entry{background:#0f1c2e}
+html[data-theme="dark"] .viz{background:linear-gradient(180deg,#111f32,#0d1929)}
+html[data-theme="dark"] .link-f,
+html[data-theme="dark"] .lang-btn{background:#162438}
+html[data-theme="dark"] .entry-3{background:linear-gradient(135deg,#0f1c2e,#162438)}
+html[data-theme="dark"] .panel.t .formula{border-color:#514185}
+html[data-theme="dark"] .panel.p .formula{border-color:#74401c}
+html[data-theme="dark"] .pill,
+html[data-theme="dark"] .cmp-delta.good{border-color:#1d654f}
+
+@media(max-width:1240px){
+  .chain{grid-template-columns:1fr;gap:12px}
+  .link{flex-direction:row;padding:2px 0;gap:12px}
+  .link svg{width:120px;height:20px}
+  .panels{grid-template-columns:1fr}
+  .cmp-grid{grid-template-columns:repeat(2,1fr)}
+  .fut{grid-template-columns:1fr}
+  .entries{grid-template-columns:1fr}
+  .ptable{grid-template-columns:repeat(2,1fr);gap:0 22px}
+  .hero-h1{font-size:27px}
+}
+@media(max-width:720px){
+  main{padding:18px 14px 44px}.hero{padding:22px 20px}.cmp-grid{grid-template-columns:1fr}
+  .ptable{grid-template-columns:1fr}
+}
+@media print{body{background:#fff}.topbar{position:static}}
+</style>
+</head>
+<body data-i18n-page="ai-dc-tcp">
+
+<!-- ══════════ TOPBAR ══════════ -->
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="brand-mark">TCP</div>
+      <div>
+        <div class="brand-title" data-i18n="brandTitle">AI 数据中心规划方法论 · 总览</div>
+        <div class="brand-sub" data-i18n="brandSub">Token &rarr; Card &rarr; Power ｜ 从业务 Token 需求，一条链路推到机房电力与空间</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <div id="theme-switch-root"></div>
+      <span class="pill" data-i18n="pillOffline">本机计算 · 无需联网</span>
+      <button class="lang-btn" id="langBtn" type="button">EN</button>
+    </div>
+  </div>
+</header>
+
+<main class="stack tcp-main">
+
+  <!-- ══════════ HERO ══════════ -->
+  <section class="hero">
+    <div class="hero-in">
+      <div class="hero-copy">
+        <div class="hero-eyebrow" data-i18n="heroEyebrow">TCP Methodology · Overview</div>
+        <h1 class="hero-h1" data-i18n="heroH1">从<em>一句话</em>，到<em>一度电</em></h1>
+        <div class="hero-chain"><b>Token</b> &rarr; <b>Card</b> &rarr; <b>Power</b></div>
+        <p class="hero-p" data-i18n="heroP">TCP 方法论把 AI 数据中心的规划拆成一条可验证的因果链：业务侧的 Token 工作量决定算力卡数，算力卡数决定机柜、电力、制冷与机房面积。三段各有明确公式与口径，任一参数变化都可沿链路正算与反算。</p>
+        <div class="hero-tags">
+          <span class="htag" data-i18n="tag1">一条链路 · 三段公式</span>
+          <span class="htag" data-i18n="tag2">正算 / 反算双向可推</span>
+          <span class="htag" data-i18n="tag3">规划级一级匡算口径</span>
+          <span class="htag" data-i18n="tag4">超节点标准化交付</span>
+        </div>
+      </div>
+      <div class="scale-box">
+        <div class="scale-lbl" data-i18n="scaleLbl">选择超节点规模 · Select Scale</div>
+        <div class="scale-btns">
+          <button class="sbtn on" data-scale="1024" type="button">
+            <div><span class="sb-n num">1024</span><span class="sb-u" data-i18n="cardsU">卡</span></div>
+            <div class="sb-d" data-i18n="sb1024">液冷超节点<br>2.10 MW · 206 ㎡</div>
+          </button>
+          <button class="sbtn" data-scale="768" type="button">
+            <div><span class="sb-n num">768</span><span class="sb-u" data-i18n="cardsU">卡</span></div>
+            <div class="sb-d" data-i18n="sb768">风冷超节点<br>2.50 MW · 404 ㎡</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ CHAIN ══════════ -->
+  <section class="card">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow" data-i18n="chainEyebrow">The Chain · 主链路</div>
+        <h2 class="sec-title" data-i18n="chainTitle">一条链路，三个刻度</h2>
+        <p class="sec-note" data-i18n="chainNote">当前展示：<b id="chainScaleTxt">1024 卡 · 液冷超节点</b>。切换右上角规模，全页数据沿链路同步重算。</p>
+      </div>
+    </div>
+    <div class="chain">
+      <!-- T -->
+      <div class="node t">
+        <div class="node-wm">T</div>
+        <div class="node-top">
+          <div class="node-ic">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.9-.8L3 21l1.9-4.6A8.4 8.4 0 0 1 3.6 11.5a8.4 8.4 0 0 1 8.4-8.4 8.4 8.4 0 0 1 9 8.4Z"/>
+              <path d="M8.2 11.5h.01M12 11.5h.01M15.8 11.5h.01"/>
+            </svg>
+          </div>
+          <div>
+            <div class="node-kick">Token</div>
+            <div class="node-name" data-i18n="nT">业务工作量</div>
+          </div>
+        </div>
+        <div class="node-val"><span class="v num" id="cT">406.4</span><span class="u" data-i18n="uYiDay">亿 / 日</span></div>
+        <div class="node-cap" data-i18n="capT">全网日均 Token 处理量 T<sub>d</sub></div>
+        <div class="node-sub">
+          <div><div class="k" data-i18n="kTs">秒级吞吐 T<sub>s</sub></div><div class="v2 num" id="cTs">47.0 万 token/s</div></div>
+          <div><div class="k" data-i18n="kUsers">AI 渗透用户</div><div class="v2 num" id="cU">1,908 人</div></div>
+        </div>
+      </div>
+      <!-- link 1 -->
+      <div class="link">
+        <div class="link-f" id="lf1" data-i18n="lf1">÷ 86400 秒<br>× F·P<sub>act</sub> × M ÷ N<br>× K<sub>compute</sub> ÷ C<sub>card</sub></div>
+        <svg viewBox="0 0 100 26" preserveAspectRatio="none">
+          <line x1="0" y1="13" x2="88" y2="13" stroke="#b4c4dc" stroke-width="3" class="flow"/>
+          <path d="M85 5.5 L99 13 L85 20.5 Z" fill="#7b8fa8"/>
+        </svg>
+      </div>
+      <!-- C -->
+      <div class="node c">
+        <div class="node-wm">C</div>
+        <div class="node-top">
+          <div class="node-ic">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/>
+              <path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/>
+            </svg>
+          </div>
+          <div>
+            <div class="node-kick">Card</div>
+            <div class="node-name" data-i18n="nC">算力卡数</div>
+          </div>
+        </div>
+        <div class="node-val"><span class="v num" id="cC">1,024</span><span class="u" data-i18n="uCards">卡</span></div>
+        <div class="node-cap" data-i18n="capC">规划算力卡数 n<sub>card</sub>（含冗余）</div>
+        <div class="node-sub">
+          <div><div class="k" data-i18n="kPf">含冗余算力</div><div class="v2 num" id="cPf">940.8 PFLOPS</div></div>
+          <div><div class="k" data-i18n="kDev">整机台数</div><div class="v2 num" id="cDev">128 台</div></div>
+        </div>
+      </div>
+      <!-- link 2 -->
+      <div class="link">
+        <div class="link-f" id="lf2" data-i18n="lf2">÷ Q<sub>rack</sub> × K<sub>IT</sub><br>× P<sub>rack</sub><br>× PUE</div>
+        <svg viewBox="0 0 100 26" preserveAspectRatio="none">
+          <line x1="0" y1="13" x2="88" y2="13" stroke="#b4c4dc" stroke-width="3" class="flow"/>
+          <path d="M85 5.5 L99 13 L85 20.5 Z" fill="#7b8fa8"/>
+        </svg>
+      </div>
+      <!-- P -->
+      <div class="node p">
+        <div class="node-wm">P</div>
+        <div class="node-top">
+          <div class="node-ic">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2 L4.5 13.5h6L10 22l9-11.5h-6L13 2Z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="node-kick">Power</div>
+            <div class="node-name" data-i18n="nP">电力与空间</div>
+          </div>
+        </div>
+        <div class="node-val"><span class="v num" id="cP">2.10</span><span class="u" data-i18n="uMW">MW 设计功率</span></div>
+        <div class="node-cap" data-i18n="capP">IT 设计功率（含配套 IT 柜）</div>
+        <div class="node-sub">
+          <div><div class="k" data-i18n="kRoom">全机房功率</div><div class="v2 num" id="cRoom">2.41 MW</div></div>
+          <div><div class="k" data-i18n="kArea">机房面积</div><div class="v2 num" id="cArea">206 ㎡</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3 PANELS ══════════ -->
+  <section>
+    <div class="sec-head" style="padding:0 4px">
+      <div>
+        <div class="eyebrow" data-i18n="detailEyebrow">Breakdown · 分段拆解</div>
+        <h2 class="sec-title" data-i18n="detailTitle">每一段，都可追溯到具体参数</h2>
+        <p class="sec-note" data-i18n="detailNote">三段各自独立成立、逐段咬合：上一段的输出，就是下一段的输入。</p>
+      </div>
+    </div>
+    <div class="panels">
+
+      <!-- Panel T -->
+      <div class="panel t">
+        <div class="p-head">
+          <div class="p-badge">T</div>
+          <div>
+            <div class="p-title" data-i18n="ptT">Token · 业务侧工作量</div>
+            <div class="p-note" data-i18n="pnT">由用户规模与渗透率推算全网日均 Token</div>
+          </div>
+        </div>
+        <div class="viz">
+          <div class="viz-cap"><span class="viz-t" data-i18n="vizT1">AI 用户渗透</span><span class="viz-v" id="vizTv">60% · 1,908 / 3,180 人</span></div>
+          <div id="vizPen"></div>
+          <div class="viz-cap" style="margin:12px 0 8px"><span class="viz-t" data-i18n="vizT2">Token 流</span><span class="viz-v" id="vizTv2">21.3 M token / 人·日</span></div>
+          <div id="vizFlow"></div>
+        </div>
+        <div class="rows" id="rowsT"></div>
+        <div class="formula">
+          <div data-i18n="fT1">U<sub>0</sub> = DAU × R<sub>0</sub></div>
+          <div data-i18n="fT2">T<sub>user</sub> = T<sub>out</sub> + T<sub>in</sub> × (1 − H)</div>
+          <div data-i18n="fT3">T<sub>d</sub> = U<sub>0</sub> × T<sub>user</sub>　·　T<sub>s</sub> = T<sub>d</sub> ÷ 86400</div>
+        </div>
+      </div>
+
+      <!-- Panel C -->
+      <div class="panel c">
+        <div class="p-head">
+          <div class="p-badge">C</div>
+          <div>
+            <div class="p-title" data-i18n="ptC">Card · 算力卡数</div>
+            <div class="p-note" data-i18n="pnC">由 Token 吞吐换算峰值算力与 NPU 卡数</div>
+          </div>
+        </div>
+        <div class="viz">
+          <div class="viz-cap"><span class="viz-t" data-i18n="vizC1">算力卡阵列</span><span class="viz-v" id="vizCv">128 台 × 8 卡 = 1,024 卡</span></div>
+          <div id="vizCards"></div>
+          <div class="legend">
+            <span class="lg"><i style="background:#2563eb"></i><span data-i18n="lgDev">1 个方块 = 1 台 8 卡服务器</span></span>
+            <span class="lg" id="lgNode"></span>
+          </div>
+        </div>
+        <div class="rows" id="rowsC"></div>
+        <div class="formula">
+          <div data-i18n="fC1">C<sub>理论</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N</div>
+          <div data-i18n="fC2">n<sub>compute</sub> = ⌈ C<sub>理论</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉</div>
+          <div data-i18n="fC3">n<sub>card</sub> = max( n<sub>compute</sub> , n<sub>min 显存下限</sub> )</div>
+        </div>
+      </div>
+
+      <!-- Panel P -->
+      <div class="panel p">
+        <div class="p-head">
+          <div class="p-badge">P</div>
+          <div>
+            <div class="p-title" data-i18n="ptP">Power · 电力 / 空间 / 制冷</div>
+            <div class="p-note" data-i18n="pnP">由卡数推算机柜组成、设计功率与机房面积</div>
+          </div>
+        </div>
+        <div class="viz">
+          <div class="viz-cap"><span class="viz-t" data-i18n="vizP1">机房平面俯视</span><span class="viz-v" id="vizPv">40 柜 · 2 Pod · 206 ㎡</span></div>
+          <div id="vizPlan"></div>
+          <div class="legend" id="planLegend"></div>
+        </div>
+        <div class="rows" id="rowsP"></div>
+        <div class="formula">
+          <div data-i18n="fP1">n<sub>rack</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>rack</sub> ⌉ × K<sub>IT</sub></div>
+          <div data-i18n="fP2">P<sub>IT</sub> = n<sub>rack</sub> × P<sub>rack</sub>　·　P<sub>机房</sub> = P<sub>IT</sub> × PUE</div>
+          <div data-i18n="fP3">S<sub>IT</sub> = n<sub>rack</sub> × K<sub>rack</sub> × A<sub>rack</sub></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ COMPARE ══════════ -->
+  <section class="card">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow" data-i18n="cmpEyebrow">Scale Comparison · 规模对照</div>
+        <h2 class="sec-title" data-i18n="cmpTitle">1024 卡液冷 vs 768 卡风冷</h2>
+        <p class="sec-note" data-i18n="cmpNote">同一 TCP 链路的两个刻度：卡数多 33%，功率、面积、机柜数反而全面下降。</p>
+      </div>
+    </div>
+    <div class="cmp-grid" id="cmpGrid"></div>
+  </section>
+
+  <!-- ══════════ ENTRIES ══════════ -->
+  <section>
+    <div class="sec-head" style="padding:0 4px">
+      <div>
+        <div class="eyebrow" data-i18n="entEyebrow">Deep Dive · 分段下钻</div>
+        <h2 class="sec-title" data-i18n="entTitle">总览之后，逐段展开</h2>
+        <p class="sec-note" data-i18n="entNote">点击进入对应工具，可现场调参、实时演算。</p>
+      </div>
+    </div>
+    <div class="entries">
+      <a class="entry e1" href="ai-dc-design.html?tab=computeEst" target="_top">
+        <div class="entry-wm">T&rarr;C</div>
+        <div class="entry-top">
+          <div class="entry-ic">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.9-.8L3 21l1.9-4.6A8.4 8.4 0 0 1 3.6 11.5a8.4 8.4 0 0 1 8.4-8.4 8.4 8.4 0 0 1 9 8.4Z"/>
+              <path d="M8.2 11.5h.01M12 11.5h.01M15.8 11.5h.01"/>
+            </svg>
+          </div>
+          <div class="entry-step">Step 01</div>
+        </div>
+        <div class="entry-h" data-i18n="e1h">Token &rarr; Card · 算力卡数匡算</div>
+        <p class="entry-p" data-i18n="e1p">选择推理场景或自定义单用户用量，由 AI 渗透用户规模推算 Token 总量，再换算为所需 NPU 卡数，并做显存部署下限校验。</p>
+        <div class="entry-tags">
+          <span class="etag" data-i18n="e1t1">17 款主流大模型预置</span>
+          <span class="etag" data-i18n="e1t2">缓存命中折减</span>
+          <span class="etag" data-i18n="e1t3">显存下限校验</span>
+          <span class="etag" data-i18n="e1t4">逐年规划明细</span>
+        </div>
+        <span class="entry-go"><span data-i18n="goto">进入测算工具</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+      <a class="entry e2" href="ai-dc-design.html?tab=plan" target="_top">
+        <div class="entry-wm">C&rarr;P</div>
+        <div class="entry-top">
+          <div class="entry-ic">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="7" rx="1.6"/><rect x="3" y="14" width="18" height="7" rx="1.6"/>
+              <path d="M7 6.5h.01M7 17.5h.01M11 6.5h5M11 17.5h5"/>
+            </svg>
+          </div>
+          <div class="entry-step">Step 02</div>
+        </div>
+        <div class="entry-h" data-i18n="e2h">Card &rarr; Power · 机房功率与布局</div>
+        <p class="entry-p" data-i18n="e2p">由算力卡数推算机柜组成、设计功率与机房面积，落到机房平面布局、微模块划分与风冷 / 液冷制冷方案，并支持按机房功率反算规模。</p>
+        <div class="entry-tags">
+          <span class="etag" data-i18n="e2t1">64 / 96 / 192 / 384 / 768 / 1024 卡</span>
+          <span class="etag" data-i18n="e2t2">机房平面俯视</span>
+          <span class="etag" data-i18n="e2t3">制冷截面动画</span>
+          <span class="etag" data-i18n="e2t4">按功率反算</span>
+        </div>
+        <span class="entry-go"><span data-i18n="goto2">进入布局工具</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <div class="footer">@数据中心产品组合 · TCP（Token &rarr; Card &rarr; Power）</div>
+</main>
+
+<script>
+"use strict";
+
+/* ═══════════════ 1. 场景数据 ═══════════════
+   Token 侧参数取自《AI数据中心算力卡数测算工具》默认口径；
+   Power 侧机柜 / 功率 / 面积取自《aidc-layout-Card2Power》的 768 与 1024 预设。 */
+const COMMON = {
+  dau:3180, tin:21000000, tout:300000, hit:0,
+  tuser:21300000,
+  model:"GLM-5.2  744B-A40B (MoE)", pact:40, ptotal:744,
+  F:2, M:5, N:40, K:2.0, ccard:919, cardsPerDev:8, vram:96, vramUse:80,
+  nmin:10, years:5, rN:100, kFreq:3, kAgent:4
+};
+
+const SC = {
+  "1024":{
+    key:"1024", mode:"liquid",
+    pen:60, users:1908,
+    tokenDay:40640400000, tokenDayYi:406.4, tokenSec:470375, tokenSecWan:47.0,
+    pflops:470.4, pflopsK:940.8,
+    cards:1024, devices:128,
+    qRack:64, racks:40, pods:2,
+    mix:{ai:16,bus:4,cmp:10,sto:2,net:8},
+    rackKW:{ai:100,bus:21,cmp:20,sto:20,net:20},
+    designKW:2096, pue:1.15, roomKW:2410, area:206,
+    coolCN:"3 台 CDU + 4 台冷冻水风墙", coolEN:"3× CDU + 4× CHW fan wall",
+    formCN:"冷板液冷 · 高密部署", formEN:"Cold-plate liquid · High density",
+    podCN:"智算 Pod 2排×10柜 ｜ 通算 Pod 2排×10柜",
+    podEN:"AI pod 2 rows×10 racks | Compute pod 2 rows×10 racks",
+    kPen:100/60
+  },
+  "768":{
+    key:"768", mode:"air",
+    pen:45, users:1431,
+    tokenDay:30480300000, tokenDayYi:304.8, tokenSec:352781, tokenSecWan:35.3,
+    pflops:352.8, pflopsK:705.6,
+    cards:768, devices:96,
+    qRack:8, racks:144, pods:4,
+    mix:{ai:96,bus:16,cmp:20,sto:4,net:8},
+    rackKW:{ai:20,bus:12,cmp:12,sto:12,net:12},
+    designKW:2500, pue:1.25, roomKW:3125, area:404,
+    coolCN:"远端冷冻水风墙 · 密封热通道", coolEN:"Remote CHW fan wall · sealed hot aisle",
+    formCN:"风冷 · 中密部署", formEN:"Air-cooled · Medium density",
+    podCN:"4 个微模块 · 每模块 36 柜（2排×18柜）",
+    podEN:"4 pods · 36 racks each (2 rows × 18)",
+    kPen:100/45
+  }
+};
+
+const RACKCOLOR = {ai:"#1d6fe5",bus:"#10b981",cmp:"#8b5cf6",sto:"#db2777",net:"#f59e0b",cool:"#0891b2"};
+
+/* ═══════════════ 2. i18n ═══════════════ */
+const LOCALE_SELF_SOURCE = "ai-dc-tcp";
+let LANG = globalThis.AidcLocaleBridge
+  ? AidcLocaleBridge.toLegacyLang(AidcLocaleBridge.getLocale())
+  : (new URLSearchParams(location.search).get("lang") === "en" ? "en" : "cn");
+const I18N = {
+ brandTitle:["AI 数据中心规划方法论 · 总览","AI Data Center Planning Methodology · Overview"],
+ brandSub:["Token &rarr; Card &rarr; Power ｜ 从业务 Token 需求，一条链路推到机房电力与空间","Token &rarr; Card &rarr; Power ｜ One chain from business token demand to facility power &amp; space"],
+ pillOffline:["本机计算 · 无需联网","Runs locally · No network"],
+ heroEyebrow:["TCP Methodology · 总览","TCP Methodology · Overview"],
+ heroH1:["从<em>一句话</em>，到<em>一度电</em>","From a <em>single prompt</em> to a <em>kilowatt-hour</em>"],
+ heroP:["TCP 方法论把 AI 数据中心的规划拆成一条可验证的因果链：业务侧的 Token 工作量决定算力卡数，算力卡数决定机柜、电力、制冷与机房面积。三段各有明确公式与口径，任一参数变化都可沿链路正算与反算。","The TCP methodology breaks AI data center planning into one verifiable causal chain: business token workload determines accelerator count, and accelerator count determines racks, power, cooling and floor area. Each stage has an explicit formula, so any parameter can be propagated forward or solved backward along the chain."],
+ tag1:["一条链路 · 三段公式","One chain · three formulas"],
+ tag2:["正算 / 反算双向可推","Forward &amp; reverse solvable"],
+ tag3:["规划级一级匡算口径","Planning-grade first-order sizing"],
+ tag4:["超节点标准化交付","Standardized super-node delivery"],
+ scaleLbl:["选择超节点规模 · Select Scale","Select Super-Node Scale"],
+ tagMain:["主推","FEATURED"], tagRef:["对照","REFERENCE"],
+ cardsU:["卡","cards"], uCards2:["卡","cards"],
+ sb1024:["液冷超节点<br>2.10 MW · 206 ㎡","Liquid-cooled<br>2.10 MW · 206 m²"],
+ sb768:["风冷超节点<br>2.50 MW · 404 ㎡","Air-cooled<br>2.50 MW · 404 m²"],
+ lf1:["÷ 86400 秒<br>× F·P<sub>act</sub> × M ÷ N<br>× K<sub>compute</sub> ÷ C<sub>card</sub>","÷ 86400 s<br>× F·P<sub>act</sub> × M ÷ N<br>× K<sub>compute</sub> ÷ C<sub>card</sub>"],
+ lf2:["÷ Q<sub>rack</sub> × K<sub>IT</sub><br>× P<sub>rack</sub><br>× PUE","÷ Q<sub>rack</sub> × K<sub>IT</sub><br>× P<sub>rack</sub><br>× PUE"],
+ chainEyebrow:["The Chain · 主链路","The Chain"],
+ chainTitle:["一条链路，三个刻度","One chain, three checkpoints"],
+ chainNote:['当前展示：<b id="chainScaleTxt"></b>。切换右上角规模，全页数据沿链路同步重算。','Now showing: <b id="chainScaleTxt"></b>. Switch the scale above — the whole page recomputes along the chain.'],
+ detailEyebrow:["Breakdown · 分段拆解","Breakdown"],
+ detailTitle:["每一段，都可追溯到具体参数","Every stage traces back to explicit parameters"],
+ detailNote:["三段各自独立成立、逐段咬合：上一段的输出，就是下一段的输入。","Each stage stands on its own and interlocks with the next: the output of one is the input of the following."],
+ nT:["业务工作量","Business workload"], nC:["算力卡数","Accelerator count"], nP:["电力与空间","Power &amp; space"],
+ uYiDay:["亿 / 日","B tokens / day"], uCards:["卡","cards"], uMW:["MW 设计功率","MW design power"],
+ capT:["全网日均 Token 处理量 T<sub>d</sub>","Daily token throughput T<sub>d</sub>"],
+ capC:["规划算力卡数 n<sub>card</sub>（含冗余）","Planned accelerators n<sub>card</sub> (with margin)"],
+ capP:["IT 设计功率（含配套 IT 柜）","IT design power (incl. supporting racks)"],
+ kTs:["秒级吞吐 T<sub>s</sub>","Throughput T<sub>s</sub>"], kUsers:["AI 渗透用户","AI active users"],
+ kPf:["含冗余算力","Compute w/ margin"], kDev:["整机台数","Servers"],
+ kRoom:["全机房功率","Room total power"], kArea:["机房面积","Floor area"],
+ ptT:["Token · 业务侧工作量","Token · Business workload"],
+ pnT:["由用户规模与渗透率推算全网日均 Token","Daily tokens from user base and AI penetration"],
+ ptC:["Card · 算力卡数","Card · Accelerator count"],
+ pnC:["由 Token 吞吐换算峰值算力与 NPU 卡数","Peak compute and NPU count from token throughput"],
+ ptP:["Power · 电力 / 空间 / 制冷","Power · Electrical / Space / Cooling"],
+ pnP:["由卡数推算机柜组成、设计功率与机房面积","Rack mix, design power and floor area from accelerator count"],
+ vizT1:["AI 用户渗透","AI user penetration"], vizT2:["Token 流","Token stream"],
+ vizC1:["算力卡阵列","Accelerator array"], vizP1:["机房平面俯视","Floor plan (top view)"],
+ lgDev:["1 个方块 = 1 台 8 卡服务器","1 block = one 8-card server"],
+ fT1:["U<sub>0</sub> = DAU × R<sub>0</sub>","U<sub>0</sub> = DAU × R<sub>0</sub>"],
+ fT2:["T<sub>user</sub> = T<sub>out</sub> + T<sub>in</sub> × (1 − H)","T<sub>user</sub> = T<sub>out</sub> + T<sub>in</sub> × (1 − H)"],
+ fT3:["T<sub>d</sub> = U<sub>0</sub> × T<sub>user</sub>　·　T<sub>s</sub> = T<sub>d</sub> ÷ 86400","T<sub>d</sub> = U<sub>0</sub> × T<sub>user</sub>　·　T<sub>s</sub> = T<sub>d</sub> ÷ 86400"],
+ fC1:["C<sub>理论</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N","C<sub>raw</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N"],
+ fC2:["n<sub>compute</sub> = ⌈ C<sub>理论</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉","n<sub>compute</sub> = ⌈ C<sub>raw</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉"],
+ fC3:["n<sub>card</sub> = max( n<sub>compute</sub> , n<sub>min 显存下限</sub> )","n<sub>card</sub> = max( n<sub>compute</sub> , n<sub>min · HBM floor</sub> )"],
+ fP1:["n<sub>rack</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>rack</sub> ⌉ × K<sub>IT</sub>","n<sub>rack</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>rack</sub> ⌉ × K<sub>IT</sub>"],
+ fP2:["P<sub>IT</sub> = n<sub>rack</sub> × P<sub>rack</sub>　·　P<sub>机房</sub> = P<sub>IT</sub> × PUE","P<sub>IT</sub> = n<sub>rack</sub> × P<sub>rack</sub>　·　P<sub>room</sub> = P<sub>IT</sub> × PUE"],
+ fP3:["S<sub>IT</sub> = n<sub>rack</sub> × K<sub>rack</sub> × A<sub>rack</sub>","S<sub>IT</sub> = n<sub>rack</sub> × K<sub>rack</sub> × A<sub>rack</sub>"],
+ cmpEyebrow:["Scale Comparison · 规模对照","Scale Comparison"],
+ cmpTitle:["1024 卡液冷 vs 768 卡风冷","1024-card liquid vs 768-card air"],
+ cmpNote:["同一 TCP 链路的两个刻度：卡数多 33%，功率、面积、机柜数反而全面下降。","Two checkpoints on the same TCP chain: 33% more accelerators, yet lower power, fewer racks and half the floor area."],
+ futEyebrow:["Growth · 未来 5 年演进","Growth · 5-Year Outlook"],
+ futTitle:["链路不变，只是把系数往前推","The chain holds — only the factors move"],
+ futNote:["渗透率推到 100%、使用频率提升 3 倍、Agent 放大 4 倍 —— TCP 链路结构完全不变，只是三个增长系数相乘。两档起步规模在第 5 年收敛到同一个规划终点。","Penetration to 100%, usage frequency ×3, agent amplification ×4 — the TCP chain is structurally unchanged; only three growth factors multiply. Both starting scales converge on the same year-5 target."],
+ futResK:["第 5 年规划终值 · Year-5 Target","Year-5 Planning Target"],
+ futResN:["≈ 20 套 1024 卡液冷超节点。1024 卡档与 768 卡档虽起点不同，因同样推向 100% 渗透，终值一致 —— 这正是 TCP 链路可比、可验证的体现。","≈ 20 liquid-cooled 1024-card super-nodes. Both scales start differently yet converge, because both are driven to 100% penetration — which is exactly what makes the TCP chain comparable and verifiable."],
+ futK1:["设计功率","Design power"], futK2:["机房面积","Floor area"], futK3:["日均 Token","Daily tokens"],
+ entEyebrow:["Deep Dive · 分段下钻","Deep Dive"],
+ entTitle:["总览之后，逐段展开","From overview to stage detail"],
+ entNote:["点击进入对应工具，可现场调参、实时演算。","Open either tool to adjust parameters and recompute live."],
+ e1h:["Token &rarr; Card · 算力卡数匡算","Token &rarr; Card · Accelerator Sizing"],
+ e1p:["选择推理场景或自定义单用户用量，由 AI 渗透用户规模推算 Token 总量，再换算为所需 NPU 卡数，并做显存部署下限校验。","Pick an inference scenario or set per-user usage, derive total tokens from the AI user base, convert to required NPU count, and validate against the HBM deployment floor."],
+ e1t1:["17 款主流大模型预置","17 preset LLMs"], e1t2:["缓存命中折减","Cache-hit discount"],
+ e1t3:["显存下限校验","HBM floor check"], e1t4:["逐年规划明细","Year-by-year plan"],
+ goto:["进入测算工具","Open sizing tool"], goto2:["进入布局工具","Open layout tool"],
+ e2h:["Card &rarr; Power · 机房功率与布局","Card &rarr; Power · Facility Power &amp; Layout"],
+ e2p:["由算力卡数推算机柜组成、设计功率与机房面积，落到机房平面布局、微模块划分与风冷 / 液冷制冷方案，并支持按机房功率反算规模。","Derive rack mix, design power and floor area from accelerator count, land it on a floor plan with pod partitioning and air/liquid cooling — and solve the scale backward from a given room power."],
+ e2t1:["64 / 96 / 192 / 384 / 768 / 1024 卡","64 / 96 / 192 / 384 / 768 / 1024 cards"],
+ e2t2:["机房平面俯视","Floor plan view"], e2t3:["制冷截面动画","Animated cooling section"], e2t4:["按功率反算","Reverse-solve by power"],
+ e3t:["TCP 一体化规划工具 · 完整链路单页测算","Integrated TCP Planner · Full chain on one page"],
+ e3p:["Token / Card / Power 三段合一，风冷与液冷方案同屏对比，含逐年规划明细与全部公式口径。","All three stages combined, air vs liquid side by side, with year-by-year detail and every formula documented."],
+ e3b:["打开一体化工具 →","Open integrated planner →"],
+ parEyebrow:["Assumptions · 参数与口径","Assumptions"],
+ parTitle:["本页测算所用的全部输入","Every input behind these numbers"],
+ parNote:['当前展示规模：<b id="parScaleTxt"></b>。所有数值与两个子页工具的默认口径一致。','Current scale: <b id="parScaleTxt"></b>. All values match the default assumptions of the two stage tools.'],
+ disclaim:["口径说明：单 Token 前向计算量按 F × 激活参数量估算（F = 2，乘加各计 1 次 FLOP，依据 Kaplan et al., 2020）；算力综合利用率 N 对应 MFU（Chowdhery et al., 2022）；MoE 取激活参数量而非总参数量（Fedus et al., 2021）。本页用于规划阶段一级匡算，未计入 Prefill / Decode 分离、并发与时延 SLO、长序列注意力开销；工程落地还需结合供配电拓扑、机房工勘与产品实测进一步核实。","Method notes: per-token forward compute is estimated as F × active parameters (F = 2, one multiply and one add, per Kaplan et al., 2020); utilization N corresponds to MFU (Chowdhery et al., 2022); for MoE the active — not total — parameter count is used (Fedus et al., 2021). This page is a first-order planning estimate: it excludes prefill/decode disaggregation, concurrency and latency SLOs, and long-sequence attention overhead. Engineering delivery requires further validation against power topology, site survey and measured product data."]
+};
+
+/* 动态短语 */
+const L = {
+  scaleName:(s)=> LANG==="cn"
+    ? `${fmt(s.cards)} 卡 · ${s.mode==="liquid"?"液冷超节点":"风冷超节点"}`
+    : `${fmt(s.cards)} cards · ${s.mode==="liquid"?"liquid-cooled":"air-cooled"} super-node`,
+  ppl:["人","users"], dai:["台","servers"], ka:["卡","cards"], gui:["柜","racks"],
+  sqm:["㎡","m²"], perDay:["亿/日","B/day"],
+  rack:{ai:["智算柜 NPU","AI rack (NPU)"],bus:["总线柜 灵衢","Bus rack (UB)"],cmp:["通算柜 CPU","Compute rack (CPU)"],
+        sto:["存储柜","Storage rack"],net:["网络柜 参数面","Network rack"],cool:["制冷 CDU / 风墙","Cooling CDU / fan wall"]}
+};
+const t = (k)=> I18N[k] ? I18N[k][LANG==="cn"?0:1] : k;
+const tx = (pair)=> pair[LANG==="cn"?0:1];
+const fmt = (n)=> n.toLocaleString("en-US");
+const fx = (n,d)=> n.toFixed(d);
+
+/* ═══════════════ 3. 图形生成 ═══════════════ */
+
+/* 渗透率点阵：20 × 5 = 100 格 */
+function svgPen(pen){
+  const C=20,R=5,S=11,G=4,W=C*(S+G)-G,H=R*(S+G)-G;
+  const on=Math.round(pen);let s="";
+  for(let i=0;i<100;i++){
+    const x=(i%C)*(S+G), y=Math.floor(i/C)*(S+G), f=i<on;
+    s+=`<rect x="${x}" y="${y}" width="${S}" height="${S}" rx="3" fill="${f?"#7c3aed":"#fff"}" stroke="${f?"#6d28d9":"#dbd8ea"}" stroke-width="1" opacity="${f?(0.55+0.45*(1-i/100)):1}"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img"><g>${s}</g></svg>`;
+}
+
+/* Token 流：用户 → token 流 → 芯片 */
+function svgFlow(sc){
+  const W=300,H=52;
+  let lanes="";
+  for(let r=0;r<3;r++){
+    const y=14+r*12;
+    lanes+=`<line x1="74" y1="${y}" x2="228" y2="${y}" stroke="#ddd6fe" stroke-width="3.4" stroke-linecap="round"/>`;
+    lanes+=`<line x1="74" y1="${y}" x2="228" y2="${y}" stroke="#7c3aed" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="9 15" class="flow" style="animation-duration:${1.1+r*0.25}s"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">
+    <rect x="2" y="8" width="62" height="36" rx="10" fill="#f5f3ff" stroke="#ddd6fe"/>
+    <g fill="#6d28d9"><circle cx="21" cy="21" r="5"/><path d="M11 38a10 10 0 0 1 20 0Z"/>
+      <circle cx="42" cy="22.5" r="4"/><path d="M34 37a8 8 0 0 1 16 0Z" opacity=".55"/></g>
+    <text x="33" y="50" font-size="7.5" fill="#8b7bb8" text-anchor="middle" font-weight="700">USERS</text>
+    ${lanes}
+    <rect x="236" y="8" width="60" height="36" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
+    <g stroke="#1d4ed8" stroke-width="1.8" fill="none">
+      <rect x="252" y="15" width="28" height="22" rx="3"/><rect x="260" y="22" width="12" height="8" rx="2" fill="#dbeafe"/>
+      <path d="M258 15v-4M270 15v-4M258 37v4M270 37v4M252 21h-4M252 31h-4M280 21h4M280 31h4" stroke-linecap="round"/>
+    </g>
+    <text x="266" y="50" font-size="7.5" fill="#7d9ac9" text-anchor="middle" font-weight="700">NPU</text>
+  </svg>`;
+}
+
+/* 卡阵列：每方块 = 1 台 8 卡服务器 */
+function svgCards(sc){
+  const dev=sc.devices, COLS=16, ROWS=Math.ceil(dev/COLS);
+  const d=3.4, gd=1.2, px=d+gd;               // 单卡点
+  const bw=4*px-gd, bh=2*px-gd;               // 单台 8 卡 = 4×2
+  const gx=6.4, gy=5.2;
+  const W=COLS*(bw+gx)-gx, H=ROWS*(bh+gy)-gy;
+  let s="";
+  for(let i=0;i<dev;i++){
+    const bx=(i%COLS)*(bw+gx), by=Math.floor(i/COLS)*(bh+gy);
+    s+=`<rect x="${(bx-1.8).toFixed(2)}" y="${(by-1.8).toFixed(2)}" width="${(bw+3.6).toFixed(2)}" height="${(bh+3.6).toFixed(2)}" rx="2.6" fill="#eff6ff" stroke="#cfe0fb" stroke-width=".7"/>`;
+    for(let c=0;c<8;c++){
+      const x=bx+(c%4)*px, y=by+Math.floor(c/4)*px;
+      s+=`<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${d}" height="${d}" rx=".9" fill="#2563eb" opacity="${(0.62+0.38*(1-i/dev)).toFixed(2)}"/>`;
+    }
+  }
+  return `<svg viewBox="${-2} ${-2} ${W+4} ${H+4}" role="img">${s}</svg>`;
+}
+
+/* 机房平面俯视 */
+function svgPlan(sc){
+  const W=620,H=250;
+  const lbl=(x,y,txt,col)=>`<text x="${x}" y="${y}" font-size="9" font-weight="800" fill="${col||"#64748b"}" letter-spacing=".4">${txt}</text>`;
+  const rk=(x,y,w,h,type)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.6" fill="${RACKCOLOR[type]}" opacity=".88"/>`;
+  let s=`<rect x="0" y="0" width="${W}" height="${H}" rx="8" fill="#fbfcfe" stroke="#e2e8f0"/>`;
+
+  if(sc.mode==="liquid"){
+    /* 左：制冷间 3×CDU + 4×风墙 ｜ 右：IT 机房 2 Pod */
+    s+=`<rect x="8" y="26" width="152" height="212" rx="6" fill="#ecfeff" stroke="#a5e8f0" stroke-dasharray="4 3"/>`;
+    s+=lbl(16,20, LANG==="cn"?"制冷间":"COOLING ROOM","#0891b2");
+    for(let i=0;i<3;i++) s+=`<rect x="18" y="${40+i*62}" width="58" height="48" rx="4" fill="#0891b2" opacity=".85"/>`+
+      `<text x="47" y="${69+i*62}" font-size="9" font-weight="800" fill="#fff" text-anchor="middle">CDU</text>`;
+    for(let i=0;i<4;i++) s+=`<rect x="${88+i*17}" y="36" width="12" height="192" rx="3" fill="#67e8f9" stroke="#0891b2" stroke-width=".8"/>`;
+
+    s+=`<rect x="170" y="26" width="442" height="212" rx="6" fill="#fff" stroke="#dbe4f0"/>`;
+    s+=lbl(178,20, LANG==="cn"?"IT 机房 · 2 Pod 横向排布":"IT ROOM · 2 pods side by side","#475569");
+    const rowA=["bus","bus","ai","ai","ai","ai","ai","ai","ai","ai"];
+    const rowB=["cmp","cmp","cmp","cmp","cmp","sto","net","net","net","net"];
+    const pods=[{x:180,seq:rowA,n:LANG==="cn"?"智算 Pod":"AI POD"},{x:398,seq:rowB,n:LANG==="cn"?"通算 Pod":"COMPUTE POD"}];
+    pods.forEach(p=>{
+      s+=`<rect x="${p.x-6}" y="42" width="208" height="180" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="3 3"/>`;
+      s+=lbl(p.x-2,58,p.n,"#334155");
+      for(let r=0;r<2;r++){
+        const y = r===0?68:160;
+        p.seq.forEach((tp,i)=> s+=rk(p.x+i*19.6, y, 16.6, 34, tp));
+      }
+      s+=`<rect x="${p.x-2}" y="106" width="200" height="50" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-dasharray="4 3"/>`;
+      s+=`<text x="${p.x+98}" y="135" font-size="9" font-weight="800" fill="#dc2626" text-anchor="middle">${LANG==="cn"?"密封热通道":"SEALED HOT AISLE"}</text>`;
+    });
+  } else {
+    /* 4 个微模块 · 每模块 2排×18柜 · 两端冷冻水风墙 */
+    const seq1=["ai","ai","ai","ai","ai","ai","ai","ai","ai","ai","ai","ai","bus","bus","cmp","cmp","net","sto"];
+    const seq2=["ai","ai","ai","ai","ai","ai","ai","ai","ai","ai","ai","ai","bus","bus","cmp","cmp","cmp","net"];
+    s+=lbl(14,18, LANG==="cn"?"IT 机房 · 4 个微模块（2排×18柜）· 两端冷冻水风墙":"IT ROOM · 4 pods (2 rows × 18 racks) · CHW fan walls at both ends","#475569");
+    for(let pr=0;pr<2;pr++){
+      const y0=26+pr*110;
+      s+=`<rect x="10" y="${y0}" width="14" height="100" rx="3" fill="#67e8f9" stroke="#0891b2" stroke-width=".8"/>`;
+      s+=`<rect x="596" y="${y0}" width="14" height="100" rx="3" fill="#67e8f9" stroke="#0891b2" stroke-width=".8"/>`;
+      for(let pc=0;pc<2;pc++){
+        const x0=32+pc*284;
+        s+=`<rect x="${x0-4}" y="${y0}" width="280" height="100" rx="5" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="3 3"/>`;
+        [seq1,seq2].forEach((seq,r)=>{
+          const y = y0 + (r===0?10:66);
+          seq.forEach((tp,i)=> s+=rk(x0+i*15.1, y, 12.6, 24, tp));
+        });
+        s+=`<rect x="${x0-1}" y="${y0+37}" width="274" height="26" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-dasharray="4 3"/>`;
+        s+=`<text x="${x0+136}" y="${y0+54}" font-size="8.5" font-weight="800" fill="#dc2626" text-anchor="middle">${LANG==="cn"?"密封热通道":"SEALED HOT AISLE"}</text>`;
+      }
+    }
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${s}</svg>`;
+}
+
+/* ═══════════════ 4. 渲染 ═══════════════ */
+let CUR = "1024";
+
+function row(k,v,hi){return `<div class="row${hi?" hi":""}"><span class="rk">${k}</span><span class="rv num">${v}</span></div>`;}
+
+function render(){
+  const s = SC[CUR], o = SC[CUR==="1024"?"768":"1024"];
+  const cn = LANG==="cn";
+
+  /* 顶部链路 */
+  document.getElementById("cT").textContent   = cn ? fx(s.tokenDayYi,1) : fx(s.tokenDay/1e9,1);
+  document.getElementById("cTs").textContent  = cn? `${fx(s.tokenSecWan,1)} 万 token/s` : `${fmt(s.tokenSec)} token/s`;
+  document.getElementById("cU").textContent   = cn? `${fmt(s.users)} 人` : `${fmt(s.users)} users`;
+  document.getElementById("cC").textContent   = fmt(s.cards);
+  document.getElementById("cPf").textContent  = `${fx(s.pflopsK,1)} PFLOPS`;
+  document.getElementById("cDev").textContent = cn? `${s.devices} 台` : `${s.devices} servers`;
+  document.getElementById("cP").textContent   = fx(s.designKW/1000,2);
+  document.getElementById("cRoom").textContent= `${fx(s.roomKW/1000,2)} MW`;
+  document.getElementById("cArea").textContent= `${s.area} ${tx(L.sqm)}`;
+  const cst=document.getElementById("chainScaleTxt"); if(cst) cst.textContent = L.scaleName(s);
+
+  /* 规模按钮 */
+  document.querySelectorAll(".sbtn").forEach(b=>b.classList.toggle("on", b.dataset.scale===CUR));
+
+  /* T 面板 */
+  document.getElementById("vizPen").innerHTML  = svgPen(s.pen);
+  document.getElementById("vizFlow").innerHTML = svgFlow(s);
+  document.getElementById("vizTv").textContent = cn
+    ? `${s.pen}% · ${fmt(s.users)} / ${fmt(COMMON.dau)} 人`
+    : `${s.pen}% · ${fmt(s.users)} of ${fmt(COMMON.dau)} users`;
+  document.getElementById("vizTv2").textContent = cn ? "21.3 M token / 人·日" : "21.3 M tokens / user·day";
+  document.getElementById("rowsT").innerHTML =
+    row(cn?"AI 日活用户 DAU":"AI daily active users (DAU)", `${fmt(COMMON.dau)} ${tx(L.ppl)}`)+
+    row(cn?"当前用户渗透率 R₀":"Current penetration R₀", `${s.pen}%`)+
+    row(cn?"AI 渗透用户 U₀":"AI penetrated users U₀", `${fmt(s.users)} ${tx(L.ppl)}`)+
+    row(cn?"单用户日均 Token <small>输入 / 输出</small>":"Tokens per user·day <small>in / out</small>", "21.00 M / 0.30 M")+
+    row(cn?"缓存命中率 H":"Cache hit rate H", `${COMMON.hit}%`)+
+    row(cn?"全网日均 Token T<sub>d</sub>":"Daily tokens T<sub>d</sub>", `${cn?fx(s.tokenDayYi,1):fx(s.tokenDay/1e9,1)} ${tx(L.perDay)}`, true)+
+    row(cn?"秒级吞吐 T<sub>s</sub>":"Per-second throughput T<sub>s</sub>", `${fmt(s.tokenSec)} token/s`);
+
+  /* C 面板 */
+  document.getElementById("vizCards").innerHTML = svgCards(s);
+  document.getElementById("vizCv").textContent = cn
+    ? `${s.devices} 台 × 8 卡 = ${fmt(s.cards)} 卡`
+    : `${s.devices} servers × 8 = ${fmt(s.cards)} cards`;
+  document.getElementById("lgNode").innerHTML =
+    `<i style="background:#93c5fd"></i><span>${cn?`共 ${fmt(s.cards)} 张 NPU 加速卡`:`${fmt(s.cards)} NPU accelerators in total`}</span>`;
+  document.getElementById("rowsC").innerHTML =
+    row(cn?"大模型 · 激活参数量":"Model · active parameters", `GLM-5.2 · ${COMMON.pact} B`)+
+    row(cn?"峰值倍数 M / 综合利用率 N":"Peak factor M / utilization N", `${COMMON.M}× / ${COMMON.N}%`)+
+    row(cn?"理论算力需求 C<sub>理论</sub>":"Raw compute demand C<sub>raw</sub>", `${fx(s.pflops,1)} PFLOPS`)+
+    row(cn?"算力规划冗余 K<sub>compute</sub>":"Compute margin K<sub>compute</sub>", `${fx(COMMON.K,1)}×`)+
+    row(cn?"含冗余算力需求":"Compute demand w/ margin", `${fx(s.pflopsK,1)} PFLOPS`)+
+    row(cn?"单卡算力 C<sub>card</sub>":"Per-card compute C<sub>card</sub>", `${COMMON.ccard} TFLOPS · FP8`)+
+    row(cn?"规划算力卡数 n<sub>card</sub>":"Planned accelerators n<sub>card</sub>", `${fmt(s.cards)} ${tx(L.ka)}`, true)+
+    row(cn?"显存部署下限 n<sub>min</sub>":"HBM deployment floor n<sub>min</sub>", cn?`${COMMON.nmin} 卡 · 不构成约束`:`${COMMON.nmin} cards · not binding`);
+
+  /* P 面板 */
+  document.getElementById("vizPlan").innerHTML = svgPlan(s);
+  document.getElementById("vizPv").textContent = cn
+    ? `${s.racks} 柜 · ${s.pods} ${s.mode==="liquid"?"Pod":"微模块"} · ${s.area} ㎡`
+    : `${s.racks} racks · ${s.pods} pods · ${s.area} m²`;
+  const order=["ai","bus","cmp","sto","net"];
+  document.getElementById("planLegend").innerHTML =
+    order.filter(k=>s.mix[k]>0).map(k=>
+      `<span class="lg"><i style="background:${RACKCOLOR[k]}"></i><span>${tx(L.rack[k])} ${s.mix[k]}</span></span>`).join("")+
+    `<span class="lg"><i style="background:${RACKCOLOR.cool}"></i><span>${tx(L.rack.cool)}</span></span>`;
+  document.getElementById("rowsP").innerHTML =
+    row(cn?"部署形态":"Deployment form", cn?s.formCN:s.formEN)+
+    row(cn?"单柜卡数 Q<sub>rack</sub>":"Cards per rack Q<sub>rack</sub>", cn?`${s.qRack} 卡/柜`:`${s.qRack} /rack`)+
+    row(cn?"智算柜 / 总柜数":"AI racks / total racks", `${s.mix.ai} / ${s.racks} ${tx(L.gui)}`)+
+    row(cn?"IT 设计功率":"IT design power", `${fmt(s.designKW)} kW`, true)+
+    row(cn?"PUE / 全机房功率":"PUE / room total power", `${fx(s.pue,2)} · ${fmt(s.roomKW)} kW`)+
+    row(cn?"机房面积":"Floor area", `${s.area} ${tx(L.sqm)}`)+
+    row(cn?"单卡摊薄 功率 / 面积":"Per-card power / area", `${fx(s.designKW/s.cards,2)} kW · ${fx(s.area/s.cards,2)} ${tx(L.sqm)}`)+
+    row(cn?"制冷方案":"Cooling scheme", cn?s.coolCN:s.coolEN);
+
+  /* 对照 */
+  const A=SC["768"], B=SC["1024"];
+  const metrics=[
+    {k:cn?"算力卡数":"Accelerators", a:A.cards, b:B.cards, ua:fmt(A.cards)+" "+tx(L.ka), ub:fmt(B.cards)+" "+tx(L.ka), up:true},
+    {k:cn?"机柜总数":"Total racks", a:A.racks, b:B.racks, ua:A.racks+" "+tx(L.gui), ub:B.racks+" "+tx(L.gui)},
+    {k:cn?"IT 设计功率":"IT design power", a:A.designKW, b:B.designKW, ua:fmt(A.designKW)+" kW", ub:fmt(B.designKW)+" kW"},
+    {k:cn?"全机房功率":"Room total power", a:A.roomKW, b:B.roomKW, ua:fx(A.roomKW/1000,2)+" MW", ub:fx(B.roomKW/1000,2)+" MW"},
+    {k:cn?"机房面积":"Floor area", a:A.area, b:B.area, ua:A.area+" "+tx(L.sqm), ub:B.area+" "+tx(L.sqm)}
+  ];
+  document.getElementById("cmpGrid").innerHTML = metrics.map(m=>{
+    const mx=Math.max(m.a,m.b), d=(m.b-m.a)/m.a*100;
+    const sign = d>=0?"+":"−";
+    const cls = m.up ? "up" : (d<0?"good":"up");
+    const txt = cn ? `1024 液冷 ${sign}${fx(Math.abs(d),1)}%` : `Liquid ${sign}${fx(Math.abs(d),1)}%`;
+    return `<div class="cmp">
+      <div class="cmp-k">${m.k}</div>
+      <div class="cmp-bars">
+        <div class="cbar air"><span class="cn">768</span><span class="ct"><span class="cf" style="width:${(m.a/mx*100).toFixed(1)}%"></span></span><span class="cv num">${m.ua}</span></div>
+        <div class="cbar liq"><span class="cn">1024</span><span class="ct"><span class="cf" style="width:${(m.b/mx*100).toFixed(1)}%"></span></span><span class="cv num">${m.ub}</span></div>
+      </div>
+      <div class="cmp-delta ${cls}">${txt}</div>
+    </div>`;
+  }).join("");
+
+}
+
+/* ═══════════════ 5. 交互 ═══════════════ */
+function applyLang(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const v=I18N[el.dataset.i18n]; if(v) el.innerHTML = v[LANG==="cn"?0:1];
+  });
+  document.body.classList.toggle("lang-en", LANG==="en");
+  document.getElementById("langBtn").textContent = LANG==="cn" ? "EN" : "中文";
+  document.documentElement.lang = LANG==="cn" ? "zh-CN" : "en";
+  document.title = LANG==="cn"
+    ? "TCP 总览 · Token → Card → Power | AI 数据中心规划方法论"
+    : "TCP Overview · Token → Card → Power | AI Data Center Planning";
+  const description=document.querySelector('meta[name="description"]');
+  if(description) description.content=LANG==="cn"
+    ? "Token → Card → Power：从业务 Token 需求推算算力卡数、机柜、电力、制冷与机房面积。"
+    : "Token → Card → Power: derive accelerator count, racks, power, cooling, and floor area from business Token demand.";
+  render();
+}
+document.getElementById("langBtn").addEventListener("click",()=>{
+  LANG = LANG==="cn"?"en":"cn";
+  applyLang();
+  if(globalThis.AidcLocaleBridge){
+    AidcLocaleBridge.setLocale(AidcLocaleBridge.fromLegacyLang(LANG),{source:LOCALE_SELF_SOURCE});
+  }
+});
+if(globalThis.AidcLocaleBridge){
+  AidcLocaleBridge.initIframeListener((locale)=>{
+    const next=AidcLocaleBridge.toLegacyLang(locale);
+    if(next===LANG) return;
+    LANG=next;
+    applyLang();
+  },{selfSource:LOCALE_SELF_SOURCE});
+}
+document.querySelectorAll(".sbtn").forEach(b=>b.addEventListener("click",()=>{ CUR=b.dataset.scale; render(); }));
+applyLang();
+</script>
+</body>
+</html>

@@ -33,7 +33,6 @@
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
 | 中 | `i18n/*.zh.json` vs `*.en.json` | 键不对齐会导致 EN 显示 key 或错文案。3D 页 historically 有 lookup 错位。 | 静态：成对 JSON 键集合（可白名单） |
-| 中 | `ai-dc-layout.html`、`inference/index.html`、`aidc-investment-roi.en.html` | 纯跳转页，无 `data-i18n-page`，可接受。 | 静态：跳转页加入豁免名单 |
 | 低 | `js/i18n.js` `t()` | 缺 key 原样返回 key，页面不会崩，但 EN 会露出路径。 | 静态 + 浏览器抽查 |
 
 ## 5. 跨页状态

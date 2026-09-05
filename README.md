@@ -76,8 +76,9 @@ python3 -m pytest tests -q
 
 ```
 aidc/
-├── index.html              Agentic 推理（裸开会跳转至机房布局）
+├── index.html              Agentic 推理（含容量规划与说明文档）
 ├── ai-dc-design.html       默认入口 · AI DC 规划（默认 Tab：机房布局）
+├── ai-dc-layout.html       机柜规划 · Card → Power（由规划页 iframe 加载）
 ├── about-us.html           About US
 ├── status.html             站点状态页（访问观测；内部，不在主导航）
 ├── data/

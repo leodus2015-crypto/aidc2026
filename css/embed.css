@@ -167,7 +167,7 @@ html.aidc-embed #container3d {
   top: 36px;
 }
 
-/* layout_37 iframe */
+/* ai-dc-layout iframe */
 html.aidc-embed .hdr {
   display: none !important;
 }
@@ -175,6 +175,18 @@ html.aidc-embed .hdr {
 html.aidc-embed .wrap {
   max-width: none;
   padding: 0.5rem 0.75rem 1rem;
+}
+
+/* 算力估算 iframe */
+html.aidc-embed .compute-est-main {
+  max-width: none;
+  padding: 0.75rem;
+}
+
+/* TCP 总览 iframe */
+html.aidc-embed .tcp-main {
+  max-width: none;
+  padding: 0.75rem 0.75rem 1rem;
 }
 
 /* ROI iframe：收紧顶栏留白（header 由页内 aidc-embed 规则隐藏） */

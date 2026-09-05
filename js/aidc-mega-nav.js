@@ -6,12 +6,18 @@
       id: 'ai-dc',
       columns: [
         {
-          titleKey: 'nav.menu.design',
-          title: '规划与架构',
+          titleKey: 'nav.menu.roomPlanning',
+          title: '机房规划',
+          links: [['nav.menu.roomLayout', '机房布局', 'ai-dc-design.html?tab=roomLayout']],
+        },
+        {
+          titleKey: 'nav.menu.computePlanning',
+          title: '算力规划',
           links: [
-            ['nav.menu.roomLayout', '机房布局', 'ai-dc-design.html?tab=roomLayout'],
-            ['nav.menu.rackAir', '机柜（风冷）', 'ai-dc-design.html?tab=plan'],
-            ['nav.menu.tokenCentric', 'Token Centric', 'ai-dc-design.html?tab=synergy'],
+            ['nav.menu.tokenCardPower', 'Token->Card->Power', 'ai-dc-design.html?tab=tcp'],
+            ['nav.menu.computeEstimate', '算力估算', 'ai-dc-design.html?tab=computeEst'],
+            ['nav.menu.rackPlanning', '机柜规划', 'ai-dc-design.html?tab=plan'],
+            ['nav.menu.productSynergy', '产品协同', 'ai-dc-design.html?tab=synergy'],
           ],
         },
         {

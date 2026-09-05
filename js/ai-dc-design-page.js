@@ -9,9 +9,11 @@
 
   const IFRAME_BASE = {
     roomLayout: 'ai-dc-room-layout.html?embed=1',
+    tcp: 'ai-dc-tcp.html?embed=1',
+    computeEst: 'ai-dc-computeEst.html?embed=1',
     caseA: 'datacenter-3d-case-b.html?embed=1',
     caseB: 'datacenter-3d-v3-2.html?embed=1',
-    plan: 'ai-dc-layout_37.html?embed=1',
+    plan: 'ai-dc-layout.html?embed=1',
     synergy: 'ai-dc-deployment-perf.html?embed=1',
     roi: 'aidc-investment-roi.html?embed=1',
   };
@@ -83,15 +85,19 @@
     return selectLayoutTab;
   }
 
+  const VALID_TABS = ['roomLayout', 'tcp', 'computeEst', 'plan', 'synergy', 'a', 'b', 'roi'];
+
   function initialTabFromUrl() {
     const tab = new URLSearchParams(global.location.search).get('tab');
-    return ['roomLayout', 'plan', 'synergy', 'a', 'b', 'roi'].includes(tab) ? tab : 'roomLayout';
+    return VALID_TABS.includes(tab) ? tab : 'roomLayout';
   }
 
   let selectLayoutTabRef = null;
 
   const DESIGN_PANEL_BY_TAB = {
     roomLayout: 'panel-room-layout',
+    tcp: 'panel-tcp',
+    computeEst: 'panel-compute-est',
     plan: 'panel-plan',
     synergy: 'panel-synergy',
     a: 'panel-case-a',
@@ -112,7 +118,7 @@
       syncIframes();
     },
     navigateToTab(tab, options) {
-      const mode = ['roomLayout', 'plan', 'synergy', 'a', 'b', 'roi'].includes(tab) ? tab : 'roomLayout';
+      const mode = VALID_TABS.includes(tab) ? tab : 'roomLayout';
       const url = new URL(global.location.href);
       url.searchParams.set('tab', mode);
       global.history.pushState({ aidcDesignTab: mode }, '', url);

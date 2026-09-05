@@ -81,15 +81,6 @@ def patch_file(path: Path) -> bool:
     if path.name == 'whitepaper2026-outline.html' and 'id="lang-switch-root"' not in text:
         text = text.replace('<body>', '<body>\n  <div id="lang-switch-root" class="fixed top-3 right-3 z-50"></div>', 1)
 
-    if '</body>' in text and 'id="lang-switch-root"' not in text and path.name in {
-        'capacity.html', 'docs.html'
-    }:
-        text = text.replace(
-            '<body class="',
-            '<div id="lang-switch-root" class="fixed top-3 right-3 z-50"></div>\n<body class="',
-            1,
-        )
-
     if '#topbar' in text and 'id="lang-switch-root"' not in text:
         if '.lang-switch-topbar' not in text and '</style>' in text:
             text = text.replace('</style>', TOPBAR_STYLE + '\n</style>', 1)

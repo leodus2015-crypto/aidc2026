@@ -1,0 +1,1955 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。" />
+  <title>AI 数据中心算力评估规划 · Token → Card</title>
+  <script src="js/aidc-theme.js?v=84"></script>
+  <script src="js/embed-mode.js?v=84"></script>
+  <script src="js/theme-switch.js?v=84"></script>
+  <script src="js/aidc-asset-version.js?v=84"></script>
+  <script src="js/aidc-locale-bridge.js?v=84"></script>
+  <link rel="stylesheet" href="css/theme.css?v=84" />
+  <link rel="stylesheet" href="css/embed.css?v=84" />
+  <style>
+    :root {
+      --s-50:#f8fafc; --s-100:#f1f5f9; --s-200:#e2e8f0; --s-300:#cbd5e1;
+      --s-400:#94a3b8; --s-500:#64748b; --s-600:#475569; --s-700:#334155;
+      --s-800:#1e293b; --s-900:#0f172a; --s-950:#020617;
+      --b-50:#eff6ff; --b-100:#dbeafe; --b-200:#bfdbfe; --b-500:#3b82f6;
+      --b-600:#2563eb; --b-700:#1d4ed8;
+      --emerald-50:#ecfdf5; --emerald-600:#059669; --emerald-700:#047857;
+      --amber-50:#fffbeb; --amber-700:#b45309; --amber-200:#fde68a; --amber-500:#f59e0b;
+      --rose-50:#fff1f2; --rose-600:#e11d48; --rose-700:#be123c; --rose-200:#fecdd3;
+      --violet-50:#f5f3ff; --violet-600:#7c3aed; --violet-700:#6d28d9; --violet-200:#ddd6fe;
+
+      --card-shadow: 0 20px 40px -18px rgba(15, 23, 42, .28), 0 2px 6px rgba(15, 23, 42, .04);
+      --soft-shadow: 0 10px 24px -16px rgba(15, 23, 42, .30), 0 1px 3px rgba(15, 23, 42, .04);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0; min-height: 100vh;
+      background: var(--s-50); color: var(--s-900);
+      font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 15px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    sub, sup { font-size: .72em; }
+
+    /* ── header ───────────────────────────────────────────── */
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid var(--s-200);
+      background: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1280px; margin: 0 auto; padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 40px; height: 40px; flex: 0 0 40px;
+      display: grid; place-items: center; border-radius: 12px;
+      color: #fff; background: linear-gradient(140deg, #1d4ed8, #3b82f6);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, .32);
+      font-weight: 800; font-size: 13px; letter-spacing: .04em;
+    }
+    .brand-title { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: .01em; }
+    .brand-sub { margin-top: 1px; color: var(--s-500); font-size: 12px; font-weight: 500; }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .locale-toggle {
+      min-height: 34px; padding: 0 12px;
+      border: 1px solid var(--s-200); border-radius: 10px;
+      background: var(--s-100); color: var(--b-700);
+      font-size: 12px; font-weight: 800;
+    }
+    .locale-toggle:hover { border-color: var(--b-200); background: var(--b-50); }
+
+
+
+    /* ── layout ───────────────────────────────────────────── */
+    main { max-width: 1280px; margin: 0 auto; padding: 24px 20px 56px; }
+    .stack { display: flex; flex-direction: column; gap: 24px; }
+
+    .card {
+      width: 100%; min-width: 0; padding: 24px;
+      border: 1px solid var(--s-200); border-radius: 24px;
+      background: #fff; box-shadow: var(--card-shadow);
+    }
+    .card-sm { border-radius: 20px; padding: 20px; box-shadow: var(--soft-shadow); }
+
+    .eyebrow { color: var(--b-700); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .card-title { margin: 4px 0 0; font-size: 18px; font-weight: 800; letter-spacing: .01em; }
+    .card-note { margin: 4px 0 0; color: var(--s-500); font-size: 13px; }
+    .card-head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+
+    /* ── tabs / segmented ─────────────────────────────────── */
+    .tablist {
+      display: inline-flex; flex-wrap: wrap; gap: 4px;
+      padding: 4px; border-radius: 16px; background: var(--s-100);
+      box-shadow: inset 0 1px 3px rgba(15, 23, 42, .06);
+    }
+    .tab {
+      padding: 8px 16px; border: 0; border-radius: 12px;
+      background: transparent; color: var(--s-600);
+      font-size: 14px; font-weight: 700;
+      transition: background .15s, color .15s, box-shadow .15s;
+    }
+    .tab:hover { background: rgba(255,255,255,.75); color: var(--s-900); }
+    .tab[aria-selected="true"] { background: #fff; color: var(--b-700); box-shadow: 0 1px 3px rgba(15,23,42,.12); }
+
+
+    /* ── fields ───────────────────────────────────────────── */
+    .fieldset { border: 0; margin: 0 0 22px; padding: 0; }
+    .fieldset:last-of-type { margin-bottom: 0; }
+    .fieldset legend {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 12px; padding: 0;
+      color: var(--s-900); font-size: 13px; font-weight: 800;
+    }
+    .emoji, .legend-icon, .scenario-icon {
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-style: normal; line-height: 1;
+    }
+    .legend-icon { font-size: 15px; }
+
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; min-width: 0; }
+    .field.span-2 { grid-column: span 2; }
+
+    .field label {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+      color: var(--s-700); font-size: 13px; font-weight: 600;
+    }
+    .sym { color: var(--s-400); font-family: ui-serif, Georgia, "Songti SC", serif; font-weight: 500; }
+
+    .input-wrap { position: relative; margin-top: 8px; }
+    .input-wrap input, .input-wrap select {
+      width: 100%; height: 48px; padding: 0 68px 0 16px;
+      border: 1px solid var(--s-200); border-radius: 16px;
+      background: #fff; color: var(--s-950);
+      font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums;
+      outline: none; -webkit-appearance: none; appearance: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    select {
+      padding-right: 44px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; background-size: 18px;
+    }
+    .input-wrap input::-webkit-inner-spin-button,
+    .input-wrap input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .input-wrap input:focus, .input-wrap select:focus { border-color: var(--b-500); box-shadow: 0 0 0 4px var(--b-100); }
+    input.invalid { border-color: var(--rose-600); background: var(--rose-50); }
+    input.invalid:focus { box-shadow: 0 0 0 4px var(--rose-200); }
+
+    .readonly-box {
+      margin-top: 8px; height: 48px; padding: 0 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      border: 1px solid var(--s-200); border-radius: 16px;
+      background: var(--s-50); color: var(--s-700);
+      font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums;
+    }
+    .readonly-box .ro-unit { color: var(--s-400); font-size: 12px; font-weight: 600; }
+
+    .unit {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      max-width: 56px; color: var(--s-400); font-size: 12px; font-weight: 600;
+      text-align: right; white-space: nowrap; pointer-events: none;
+    }
+    .hint { margin-top: 6px; color: var(--s-500); font-size: 11.5px; line-height: 1.45; }
+    .hint b { color: var(--s-700); font-variant-numeric: tabular-nums; }
+
+    .quick-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .quick {
+      padding: 6px 14px; border: 0; border-radius: 999px;
+      background: var(--s-100); color: var(--s-600);
+      font-size: 13px; font-weight: 600;
+      transition: background .15s, color .15s;
+    }
+    .quick:hover { background: var(--b-50); color: var(--b-700); }
+
+    /* ── scenario presets ─────────────────────────────────── */
+    .scenario-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .scenario {
+      position: relative;
+      padding: 15px 12px; text-align: center;
+      border: 1px solid var(--s-200); border-radius: 16px;
+      background: #fff; color: var(--s-700);
+      transition: border-color .18s, background .18s, box-shadow .18s;
+    }
+    .scenario:hover { border-color: var(--b-200); background: var(--b-50); }
+    .scenario[aria-pressed="true"] {
+      border-color: var(--b-600); background: var(--b-50);
+      box-shadow: 0 0 0 3px var(--b-100);
+    }
+    .scenario-name {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      font-size: 14px; font-weight: 800; color: var(--s-900);
+    }
+    .scenario-icon { font-size: 15px; }
+    .scenario[aria-pressed="true"] .scenario-name { color: var(--b-700); }
+
+    /* 选中卡片下方的连接缺口：从参数面板顶边向上指向该卡片，避免两块割裂
+       填色为 .scenario-body.is-active 的底色叠白后的等效实色，才能盖住面板顶边线 */
+    .scenario[aria-pressed="true"]::after {
+      content: "";
+      position: absolute;
+      left: 50%; bottom: -20px;
+      width: 12px; height: 12px;
+      transform: translateX(-50%) rotate(45deg);
+      background: #f3f6fe;
+      border-top: 1px solid var(--b-200);
+      border-left: 1px solid var(--b-200);
+      border-top-left-radius: 3px;
+    }
+
+    /* 参数面板：未选场景时中性灰，选中后与卡片同色系的半透明底 */
+    .scenario-body {
+      --scenario-tint: var(--s-50);
+      padding: 16px;
+      border: 1px solid var(--s-200);
+      border-radius: 18px;
+      background: var(--scenario-tint);
+      transition: background .18s, border-color .18s;
+    }
+    .scenario-body.is-active {
+      --scenario-tint: rgba(37, 99, 235, .055);
+      border-color: var(--b-200);
+    }
+    .scenario-body .readonly-box { background: rgba(255, 255, 255, .72); }
+
+    /* ── validation ───────────────────────────────────────── */
+    .alerts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+    .alert { display: none; padding: 12px 14px; border-radius: 16px; font-size: 12.5px; line-height: 1.55; }
+    .alert.show { display: block; }
+    .alert.error { border: 1px solid var(--rose-200); background: var(--rose-50); color: var(--rose-700); }
+    .alert.warning { border: 1px solid var(--amber-200); background: var(--amber-50); color: var(--amber-700); }
+    .alert ul { margin: 0; padding-left: 18px; }
+
+    /* ── dark result panel ────────────────────────────────── */
+    .calc-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .82fr); gap: 32px; align-items: start; }
+
+    .result-panel {
+      position: sticky; top: 88px; overflow: hidden;
+      padding: 26px; border-radius: 24px;
+      background: var(--s-950);
+      background-image:
+        radial-gradient(circle at 88% 0%, rgba(59, 130, 246, .22), transparent 55%),
+        radial-gradient(circle at 0% 100%, rgba(37, 99, 235, .14), transparent 50%);
+      color: #fff; box-shadow: 0 24px 48px -20px rgba(2, 6, 23, .55);
+    }
+    .result-sub { margin: 0; color: var(--s-400); font-size: 13px; }
+    .result-main { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+    .result-value { font-size: 46px; line-height: 1; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+    .result-unit { color: var(--s-300); font-size: 17px; font-weight: 700; }
+    .result-aside { color: var(--s-400); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+    .bound-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 12px; padding: 5px 11px; border-radius: 999px;
+      font-size: 11.5px; font-weight: 700;
+    }
+    .bound-tag.compute { background: rgba(59,130,246,.16); color: #bfdbfe; }
+    .bound-tag.memory { background: rgba(245,158,11,.18); color: #fcd34d; }
+
+    .result-formula {
+      margin-top: 14px; padding: 13px 15px;
+      border-radius: 14px; background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.09); color: var(--s-300);
+      font-family: ui-serif, Georgia, "Songti SC", serif;
+      font-size: 13.5px; line-height: 1.6;
+      overflow-x: auto; white-space: nowrap;
+    }
+
+    .result-rows { margin-top: 18px; border-top: 1px solid rgba(255,255,255,.12); }
+    .result-row {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
+      padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .result-row:last-child { border-bottom: 0; }
+    .result-row-label { color: var(--s-400); font-size: 12.5px; font-weight: 600; }
+    .result-row-value { color: #fff; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .result-row-value small { margin-left: 3px; color: var(--s-400); font-size: 11px; font-weight: 600; }
+    .result-row.is-binding .result-row-value { color: #fcd34d; }
+
+    /* ── inset note ───────────────────────────────────────── */
+    .inset {
+      margin-top: 22px; padding: 16px 18px;
+      border: 1px solid var(--s-200); border-radius: 16px;
+      background: var(--s-50); color: var(--s-600);
+      font-size: 12.5px; line-height: 1.7;
+    }
+    .inset strong { color: var(--s-900); }
+    .inset code { padding: 1px 6px; border-radius: 6px; background: var(--s-200); color: var(--s-800); font-size: 12px; }
+
+    /* ── KPI cards ────────────────────────────────────────── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .kpi-card {
+      position: relative; overflow: hidden; padding: 20px;
+      border: 1px solid var(--s-200); border-radius: 20px;
+      background: #fff; box-shadow: var(--soft-shadow);
+    }
+    .kpi-card::after {
+      content: ""; position: absolute; right: -30px; bottom: -46px;
+      width: 110px; height: 110px; border-radius: 50%; background: rgba(37, 99, 235, .05);
+    }
+    .kpi-label { color: var(--s-600); font-size: 12.5px; font-weight: 700; }
+    .kpi-value {
+      margin-top: 12px; color: var(--b-700);
+      font-size: 34px; line-height: 1; font-weight: 800;
+      letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+    }
+    .kpi-value .kpi-unit { margin-left: 4px; color: var(--s-500); font-size: 12px; font-weight: 700; letter-spacing: 0; }
+    .kpi-split { margin-top: 12px; display: grid; gap: 10px; }
+    .kpi-split .kpi-value { margin-top: 0; font-size: 30px; white-space: nowrap; }
+    .kpi-metric + .kpi-metric { padding-top: 10px; border-top: 1px solid var(--s-200); }
+    .kpi-metric-label { margin-top: 6px; color: var(--s-500); font-size: 11px; font-weight: 600; }
+    .kpi-detail { position: relative; z-index: 1; margin-top: 12px; color: var(--s-500); font-size: 11.5px; line-height: 1.5; }
+    .kpi-detail strong { color: var(--s-700); font-weight: 700; }
+
+    /* ── content split ────────────────────────────────────── */
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: 16px; }
+
+    .pill {
+      display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 999px;
+      background: var(--b-50); color: var(--b-700); font-size: 12px; font-weight: 700; white-space: nowrap;
+    }
+    .pill.amber { background: var(--amber-50); color: var(--amber-700); }
+
+    .chart-wrap { min-height: 240px; display: grid; place-items: center; overflow: hidden; }
+    #trendChart { display: block; width: 100%; min-width: 0; height: 230px; overflow: visible; }
+    .chart-axis { fill: var(--s-400); font-size: 10px; }
+    .chart-value-label { fill: var(--b-700); font-size: 10px; font-weight: 800; }
+    .chart-grid { stroke: var(--s-200); stroke-width: 1; }
+    .chart-line { fill: none; stroke: var(--b-600); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-area { fill: url(#areaGradient); }
+    .chart-dot { fill: #fff; stroke: var(--b-600); stroke-width: 2.5; }
+    .chart-floor { stroke: var(--amber-500); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; }
+    .chart-floor-label { fill: var(--amber-700); font-size: 9.5px; font-weight: 700; }
+
+    .factor-stack { display: grid; gap: 10px; }
+    .factor-row {
+      display: grid; grid-template-columns: 96px minmax(0, 1fr) 56px;
+      gap: 12px; align-items: center; padding: 11px 12px;
+      border-radius: 14px; background: var(--s-50);
+    }
+    .factor-name { color: var(--s-600); font-size: 12px; font-weight: 700; }
+    .factor-track { height: 8px; border-radius: 999px; background: var(--s-200); overflow: hidden; }
+    .factor-bar { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--b-700), var(--b-500)); transition: width .3s ease; }
+    .factor-value { color: var(--b-700); font-size: 13px; font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; }
+    .factor-total {
+      margin-top: 6px; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      border: 1px solid var(--b-100); border-radius: 16px; background: var(--b-50);
+    }
+    .factor-total span { color: var(--s-600); font-size: 12px; font-weight: 700; }
+    .factor-total strong { color: var(--b-700); font-size: 24px; font-variant-numeric: tabular-nums; }
+
+    /* ── table ────────────────────────────────────────────── */
+    .table-scroll { overflow-x: auto; border-radius: 16px; border: 1px solid var(--s-200); }
+    .annual-table { width: 100%; min-width: 720px; border-collapse: collapse; }
+    .annual-table th, .annual-table td {
+      padding: 11px 14px; text-align: right; font-size: 12.5px;
+      border-bottom: 1px solid var(--s-200); font-variant-numeric: tabular-nums;
+    }
+    .annual-table thead th { background: var(--s-50); color: var(--s-600); font-weight: 700; }
+    .annual-table th:first-child, .annual-table td:first-child { text-align: left; }
+    .annual-table tbody tr:last-child td { border-bottom: 0; }
+    .annual-table tbody tr.final-year td { background: var(--b-50); color: var(--b-700); font-weight: 800; }
+    .annual-table td.mem-bound { color: var(--amber-700); }
+
+    /* ── formulas ─────────────────────────────────────────── */
+    details { border-bottom: 1px solid var(--s-200); }
+    details:last-of-type { border-bottom: 0; }
+    summary {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 0; list-style: none; cursor: pointer;
+      font-size: 13.5px; font-weight: 700; color: var(--s-800);
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::before {
+      content: "+"; width: 22px; height: 22px; flex: 0 0 22px;
+      display: grid; place-items: center; border-radius: 8px;
+      background: var(--b-50); color: var(--b-700); font-weight: 900;
+    }
+    details[open] summary::before { content: "−"; }
+    .formula-body { padding: 0 0 16px 32px; color: var(--s-600); font-size: 12.5px; }
+    .formula {
+      margin: 2px 0 10px; padding: 12px 14px;
+      border-left: 3px solid var(--b-600); border-radius: 0 12px 12px 0;
+      background: var(--s-50); color: var(--s-900);
+      font-family: ui-serif, Georgia, "Songti SC", SimSun, serif;
+      font-size: 15px; white-space: nowrap; overflow-x: auto;
+    }
+    .formula.alt { border-left-color: var(--amber-500); }
+
+    .source-note {
+      margin-top: 4px; padding: 11px 13px;
+      border: 1px solid var(--b-100); border-left: 3px solid var(--b-500);
+      border-radius: 0 10px 10px 0;
+      background: var(--b-50); color: var(--s-600);
+      font-size: 11.5px; line-height: 1.7;
+    }
+    .source-note b { color: var(--s-800); }
+    .source-note i { color: var(--s-700); font-family: ui-serif, Georgia, serif; font-style: italic; }
+    .ref-lead { margin: 2px 0 8px; color: var(--s-800); font-size: 12.5px; }
+    .ref-list { margin: 0 0 14px; padding-left: 20px; }
+    .ref-list li { margin-bottom: 10px; line-height: 1.75; }
+    .ref-list i { font-family: ui-serif, Georgia, serif; }
+    .ref-list a {
+      display: inline-block; margin-top: 2px;
+      color: var(--b-700); font-size: 11px; text-decoration: none;
+      border-bottom: 1px dashed var(--b-200);
+    }
+    .ref-list a:hover { border-bottom-style: solid; }
+    .ref-tail {
+      margin: 0; padding: 10px 12px;
+      border-radius: 10px; background: var(--s-50);
+      color: var(--s-600); font-size: 11.5px; line-height: 1.7;
+    }
+    .ref-tail b { color: var(--s-900); }
+
+    .definitions { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+    .definitions span { color: var(--s-500); }
+    .definitions b { color: var(--s-700); }
+
+    .footnote { margin: 24px 4px 0; color: var(--s-500); font-size: 12px; text-align: center; line-height: 1.7; }
+    .signature { display: block; margin-top: 6px; color: var(--s-600); font-weight: 700; letter-spacing: .03em; }
+
+    .disabled-results { opacity: .38; pointer-events: none; filter: grayscale(.35); }
+    [hidden] { display: none !important; }
+
+    /* ── dark theme ───────────────────────────────────────── */
+    html[data-theme="dark"] {
+      --s-50:#07111f; --s-100:#0f1c2e; --s-200:#2a3a50; --s-300:#3c506a;
+      --s-400:#91a4bb; --s-500:#a7b6c8; --s-600:#c2cedc; --s-700:#d7e0ea;
+      --s-800:#e8eef5; --s-900:#f8fafc; --s-950:#020617;
+      --b-50:#10284a; --b-100:#16365f; --b-200:#245080; --b-500:#60a5fa;
+      --b-600:#60a5fa; --b-700:#93c5fd;
+      --emerald-50:#0b3029; --emerald-600:#34d399; --emerald-700:#6ee7b7;
+      --amber-50:#34260d; --amber-700:#fcd34d; --amber-200:#74551b; --amber-500:#fbbf24;
+      --rose-50:#381521; --rose-600:#fb7185; --rose-700:#fda4af; --rose-200:#7f2940;
+      --violet-50:#241b45; --violet-600:#a78bfa; --violet-700:#c4b5fd; --violet-200:#514185;
+      --card-shadow:0 20px 40px -18px rgba(0,0,0,.65),0 2px 6px rgba(0,0,0,.25);
+      --soft-shadow:0 10px 24px -16px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.28);
+      color-scheme: dark;
+    }
+    html[data-theme="dark"] .site-header { background: rgba(7,17,31,.9); }
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .kpi-card,
+    html[data-theme="dark"] .scenario,
+    html[data-theme="dark"] .input-wrap input,
+    html[data-theme="dark"] .input-wrap select { background-color: #0f1c2e; color: var(--s-900); }
+    html[data-theme="dark"] .tab:hover,
+    html[data-theme="dark"] .tab[aria-selected="true"] { background: #162438; }
+    html[data-theme="dark"] .scenario-body .readonly-box { background: rgba(15,28,46,.76); }
+    html[data-theme="dark"] .scenario[aria-pressed="true"]::after { background: #12233b; }
+    html[data-theme="dark"] .chart-dot { fill: #0f1c2e; }
+    html[data-theme="dark"] .result-panel { background-color: #020617; }
+    html[data-theme="dark"] input.invalid { background: var(--rose-50); }
+
+    /* ── responsive ───────────────────────────────────────── */
+    @media (max-width: 1180px) {
+      .calc-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+      .result-panel { position: static; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .content-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 720px) {
+      main { padding: 18px 14px 40px; }
+      .header-inner { padding: 10px 14px; }
+      .card { padding: 18px; border-radius: 20px; }
+      .field-grid { grid-template-columns: 1fr; }
+      .field.span-2 { grid-column: span 1; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .scenario-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .scenario[aria-pressed="true"]::after { display: none; }
+      .result-value { font-size: 38px; }
+      .result-panel { padding: 20px; }
+      .card-head-row { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .site-header { position: static; }
+      .quick-row, .tablist, .scenario-row { display: none !important; }
+      .card, .kpi-card { box-shadow: none; break-inside: avoid; }
+      .result-panel { position: static; }
+      details .formula-body { display: block; }
+    }
+  </style>
+</head>
+<body data-i18n-page="ai-dc-computeEst">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">AIDC</div>
+        <div>
+          <h1 class="brand-title">AI 数据中心算力评估规划</h1>
+          <div class="brand-sub">Token &gt; Card · 由业务 Token 量推算 NPU 卡数需求</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div id="theme-switch-root"></div>
+        <button class="locale-toggle" id="langToggle" type="button" aria-label="切换语言">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="resultsRoot" class="compute-est-main">
+    <div class="stack">
+
+      <!-- ══ 主计算卡片 ══ -->
+      <section class="card">
+        <div class="card-head-row">
+          <div>
+            <div class="eyebrow">Token → Card</div>
+            <h2 class="card-title">算力卡数匡算</h2>
+            <p class="card-note">选择推理场景或自定义单用户用量，由 AI 渗透用户规模推算 Token 总量，再换算为所需算力卡数。</p>
+          </div>
+          <div class="tablist" role="tablist" aria-label="参数类别">
+            <button class="tab" type="button" id="businessTab" role="tab" aria-controls="businessPanel" aria-selected="true">业务调研</button>
+            <button class="tab" type="button" id="productTab" role="tab" aria-controls="productPanel" aria-selected="false">算力产品</button>
+          </div>
+        </div>
+
+        <div class="calc-grid">
+          <form id="planForm" novalidate>
+            <div class="alerts">
+              <div class="alert error" id="errorBox" role="alert"></div>
+              <div class="alert warning" id="warningBox"></div>
+            </div>
+
+            <!-- ─── 业务调研 ─── -->
+            <div id="businessPanel" role="tabpanel" aria-labelledby="businessTab">
+
+              <fieldset class="fieldset">
+                <legend><span class="legend-icon" aria-hidden="true">💬</span>Token 业务量推算</legend>
+
+                  <div class="scenario-row" role="group" aria-label="推理场景预设">
+                    <button class="scenario" type="button" data-scenario="coding" aria-pressed="false">
+                      <div class="scenario-name"><span class="scenario-icon" aria-hidden="true">💻</span>AI Coding</div>
+                    </button>
+                    <button class="scenario" type="button" data-scenario="office" aria-pressed="false">
+                      <div class="scenario-name"><span class="scenario-icon" aria-hidden="true">📝</span>办公助手</div>
+                    </button>
+                    <button class="scenario" type="button" data-scenario="superapp" aria-pressed="false">
+                      <div class="scenario-name"><span class="scenario-icon" aria-hidden="true">📱</span>SuperApp</div>
+                    </button>
+                    <button class="scenario" type="button" data-scenario="custom" aria-pressed="false">
+                      <div class="scenario-name"><span class="scenario-icon" aria-hidden="true">⚙️</span>自定义</div>
+                    </button>
+                  </div>
+
+                <div class="scenario-body" id="scenarioBody">
+                  <div class="field-grid">
+                    <div class="field">
+                      <label for="inTokens"><span>单用户日均输入 Token</span><span class="sym">T<sub>in</sub></span></label>
+                      <div class="input-wrap">
+                        <input id="inTokens" data-key="inTokens" type="text" inputmode="decimal" autocomplete="off" value="21,000,000" />
+                        <span class="unit">token</span>
+                      </div>
+                      <div class="hint" id="inTokensHint">—</div>
+                    </div>
+                    <div class="field">
+                      <label for="outTokens"><span>单用户日均输出 Token</span><span class="sym">T<sub>out</sub></span></label>
+                      <div class="input-wrap">
+                        <input id="outTokens" data-key="outTokens" type="text" inputmode="decimal" autocomplete="off" value="300,000" />
+                        <span class="unit">token</span>
+                      </div>
+                      <div class="hint" id="outTokensHint">—</div>
+                    </div>
+                    <div class="field">
+                      <label for="cacheHitRate"><span>缓存命中率</span><span class="sym">H</span></label>
+                      <div class="input-wrap">
+                        <input id="cacheHitRate" data-key="cacheHitRate" type="text" inputmode="decimal" autocomplete="off" min="0" max="99.9" step="1" value="0" />
+                        <span class="unit">%</span>
+                      </div>
+                      <div class="hint">仅折减输入侧 Token，输出侧不受缓存影响</div>
+                    </div>
+                    <div class="field">
+                      <label><span>单用户有效日均 Token</span><span class="sym">T<sub>user</sub></span></label>
+                      <div class="readonly-box"><span id="perUserTokensOut">—</span><span class="ro-unit">token/人·日</span></div>
+                      <div class="hint">T<sub>out</sub> + T<sub>in</sub> × (1 − H)</div>
+                    </div>
+                  </div>
+
+                  <div class="field-grid" style="margin-top:16px">
+                    <div class="field span-2">
+                      <label><span>折算全网日均 Token</span><span class="sym">T<sub>d</sub></span></label>
+                      <div class="readonly-box"><span id="dailyTokensOut">—</span><span class="ro-unit">亿/日</span></div>
+                      <div class="hint" id="dailyTokensSource">—</div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend><span class="legend-icon" aria-hidden="true">👥</span>用户规模与渗透</legend>
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="dau"><span>当前 AI 日活用户数</span><span class="sym">DAU</span></label>
+                    <div class="input-wrap">
+                      <input id="dau" data-key="dau" type="text" inputmode="decimal" autocomplete="off" min="1" step="1" value="3,180" />
+                      <span class="unit">人</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label><span>当前 AI 渗透用户数</span><span class="sym">U<sub>0</sub></span></label>
+                    <div class="readonly-box"><span id="activeUsersOut">—</span><span class="ro-unit">人</span></div>
+                  </div>
+                  <div class="field">
+                    <label for="currentPenetration"><span>当前用户渗透率</span><span class="sym">R<sub>0</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="currentPenetration" data-key="currentPenetration" type="text" inputmode="decimal" autocomplete="off" min="0.01" max="100" step="0.1" value="60" />
+                      <span class="unit">%</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="futurePenetration"><span>目标用户渗透率</span><span class="sym">R<sub>N</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="futurePenetration" data-key="futurePenetration" type="text" inputmode="decimal" autocomplete="off" min="0.01" max="100" step="0.1" value="100" />
+                      <span class="unit">%</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="hint" id="penetrationRoleHint">—</div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend><span class="legend-icon" aria-hidden="true">🧠</span>模型与算力换算</legend>
+                <div class="field-grid">
+                  <div class="field span-2">
+                    <label for="modelPreset"><span>大模型型号</span><span class="sym">Model</span></label>
+                    <div class="input-wrap">
+                      <select id="modelPreset">
+                        <optgroup label="DeepSeek">
+                          <option value="ds-v4-pro"   data-total="1600" data-active="49">DeepSeek-V4-Pro　1.6T-A49B（MoE）</option>
+                          <option value="ds-v4-flash" data-total="284"  data-active="13">DeepSeek-V4-Flash　284B-A13B（MoE）</option>
+                          <option value="ds-v3"       data-total="671"  data-active="37">DeepSeek-V3　671B-A37B（MoE）</option>
+                          <option value="ds-r1"       data-total="671"  data-active="37">DeepSeek-R1　671B-A37B（MoE）</option>
+                        </optgroup>
+                        <optgroup label="GLM">
+                          <option value="glm-5.2" data-total="744" data-active="40">GLM-5.2　744B-A40B（MoE）</option>
+                          <option value="glm-5.1" data-total="744" data-active="40">GLM-5.1　744B-A40B（MoE）</option>
+                          <option value="glm-4"   data-total="9"   data-active="9">GLM-4　9B（Dense）</option>
+                        </optgroup>
+                        <optgroup label="Kimi">
+                          <option value="kimi-k3"          data-total="2780" data-active="104">Kimi-K3　2.78T-A104B（MoE）</option>
+                          <option value="kimi-k2.7-coding" data-total="1040" data-active="32.6">Kimi-K2.7-Coding　1.04T-A32.6B（MoE）</option>
+                          <option value="kimi-k2.6"        data-total="1040" data-active="32.6">Kimi-K2.6　1.04T-A32.6B（MoE）</option>
+                          <option value="kimi-k2.5"        data-total="1040" data-active="32.6">Kimi-K2.5　1.04T-A32.6B（MoE）</option>
+                        </optgroup>
+                        <optgroup label="Qwen">
+                          <option value="qwen3.6-35b-a3b"  data-total="35"  data-active="3">Qwen3.6-35B-A3B（MoE）</option>
+                          <option value="qwen3.5-397b"     data-total="397" data-active="17">Qwen3.5-397B-A17B（MoE）</option>
+                          <option value="qwen3.5-122b"     data-total="122" data-active="10">Qwen3.5-122B-A10B（MoE）</option>
+                          <option value="qwen3.5-35b-a3b"  data-total="35"  data-active="3">Qwen3.5-35B-A3B（MoE）</option>
+                          <option value="qwen3-235b"       data-total="235" data-active="22">Qwen3-235B-A22B（MoE）</option>
+                        </optgroup>
+                        <optgroup label="Others">
+                          <option value="gpt-oss-120b" data-total="117" data-active="5.1">GPT-OSS-120B　117B-A5.1B（MoE）</option>
+                          <option value="">其他模型 · 支持自定义输入参数</option>
+                        </optgroup>
+                      </select>
+                    </div>
+                    <div class="hint">选择型号后自动填入下方两项参数；也可直接手动改写，型号会切换为「其他型号」</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="activeParams"><span>大模型激活参数量</span><span class="sym">P<sub>act</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="activeParams" data-key="activeParams" type="text" inputmode="decimal" autocomplete="off" min="0.1" step="1" value="40" />
+                      <span class="unit">B</span>
+                    </div>
+                    <div class="hint">决定算力需求；MoE 按每 Token 实际激活参数量填写</div>
+                  </div>
+                  <div class="field">
+                    <label for="totalParams"><span>大模型总参数量</span><span class="sym">P<sub>total</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="totalParams" data-key="totalParams" type="text" inputmode="decimal" autocomplete="off" value="744" />
+                      <span class="unit">B</span>
+                    </div>
+                    <div class="hint">决定权重显存，用于卡数下限校验</div>
+                  </div>
+                  <div class="field">
+                    <label for="flopsMultiplier"><span>浮点运算量倍数</span><span class="sym">F</span></label>
+                    <div class="input-wrap">
+                      <input id="flopsMultiplier" data-key="flopsMultiplier" type="text" inputmode="decimal" autocomplete="off" min="0.1" step="0.1" value="2" />
+                      <span class="unit">×</span>
+                    </div>
+                    <div class="hint">每 Token 每参数的 FLOP 数，缺省 2（乘加各计 1）</div>
+                  </div>
+                  <div class="field">
+                    <label for="peakMultiplier"><span>峰值倍数</span><span class="sym">M</span></label>
+                    <div class="input-wrap">
+                      <input id="peakMultiplier" data-key="peakMultiplier" type="text" inputmode="decimal" autocomplete="off" min="1" step="0.1" value="5" />
+                      <span class="unit">倍</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="utilization"><span>算力综合利用率</span><span class="sym">N</span></label>
+                    <div class="input-wrap">
+                      <input id="utilization" data-key="utilization" type="text" inputmode="decimal" autocomplete="off" min="1" max="100" step="1" value="40" />
+                      <span class="unit">%</span>
+                    </div>
+                    <div class="hint">一级规划经验值通常 30%–50%</div>
+                  </div>
+                  <div class="field">
+                    <label for="computeMargin"><span>算力规划冗余</span><span class="sym">K<sub>compute</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="computeMargin" data-key="computeMargin" type="text" inputmode="decimal" autocomplete="off" min="0.1" step="0.05" value="2" />
+                      <span class="unit">倍</span>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend><span class="legend-icon" aria-hidden="true">📈</span>未来增长规划</legend>
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="years"><span>规划年限</span><span class="sym">N<sub>year</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="years" data-key="years" type="text" inputmode="decimal" autocomplete="off" min="1" max="20" step="1" value="5" />
+                      <span class="unit">年</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="frequencyFactor"><span>使用频率提升</span><span class="sym">K<sub>freq</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="frequencyFactor" data-key="frequencyFactor" type="text" inputmode="decimal" autocomplete="off" min="0.01" step="0.1" value="3" />
+                      <span class="unit">倍</span>
+                    </div>
+                    <div class="hint">指第 N 年终值，不是每年复利倍数</div>
+                  </div>
+                  <div class="field span-2">
+                    <label for="agentFactor"><span>Agent 放大系数</span><span class="sym">K<sub>Agent</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="agentFactor" data-key="agentFactor" type="text" inputmode="decimal" autocomplete="off" min="0.01" step="0.1" value="4" />
+                      <span class="unit">倍</span>
+                    </div>
+                    <div class="hint">多轮推理、工具调用与任务分解的综合放大</div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- ─── 算力产品 ─── -->
+            <div id="productPanel" role="tabpanel" aria-labelledby="productTab" hidden>
+              <fieldset class="fieldset">
+                <legend><span class="legend-icon" aria-hidden="true">🖥️</span>算力产品参数</legend>
+                <div class="field-grid">
+                  <div class="field span-2">
+                    <label for="cardTflops"><span>产品单卡算力</span><span class="sym">C<sub>card</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="cardTflops" data-key="cardTflops" type="text" inputmode="decimal" autocomplete="off" min="0.01" step="1" value="919" />
+                      <span class="unit">TFLOPS</span>
+                    </div>
+                    <div class="quick-row" aria-label="单卡算力快捷选项">
+                      <button class="quick" type="button" data-tflops="486">486 (FP16)</button>
+                      <button class="quick" type="button" data-tflops="919">919 (FP8)</button>
+                      <button class="quick" type="button" data-tflops="1784">1784 (FP4)</button>
+                    </div>
+                    <div class="hint">默认按 FP8 精度 919 TFLOPS 计算；FP16 为 486 TFLOPS，FP4 为 1784 TFLOPS，也可直接改写数值</div>
+                  </div>
+                  <div class="field span-2">
+                    <label for="cardsPerDevice"><span>单设备卡数</span><span class="sym">Q<sub>unit</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="cardsPerDevice" data-key="cardsPerDevice" type="text" inputmode="decimal" autocomplete="off" min="1" step="1" value="8" />
+                      <span class="unit">卡/台</span>
+                    </div>
+                    <div class="hint">仅用于把卡数折算为整机台数参考，卡数结果不受影响</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend><span class="legend-icon" aria-hidden="true">💾</span>显存与部署卡数下限</legend>
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="cardVram"><span>单卡显存容量</span><span class="sym">V<sub>card</sub></span></label>
+                    <div class="input-wrap">
+                      <input id="cardVram" data-key="cardVram" type="text" inputmode="decimal" autocomplete="off" min="1" step="1" value="96" />
+                      <span class="unit">GB</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="weightPrecision"><span>权重存储精度</span><span class="sym">B<sub>w</sub></span></label>
+                    <div class="input-wrap">
+                      <select id="weightPrecision" data-key="weightPrecision">
+                        <option value="2">FP16 · 2 Byte/参数</option>
+                        <option value="1" selected>FP8 · 1 Byte/参数</option>
+                        <option value="0.5">FP4 · 0.5 Byte/参数</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="vramUsable"><span>权重可用显存占比</span><span class="sym">η</span></label>
+                    <div class="input-wrap">
+                      <input id="vramUsable" data-key="vramUsable" type="text" inputmode="decimal" autocomplete="off" min="1" max="100" step="1" value="80" />
+                      <span class="unit">%</span>
+                    </div>
+                    <div class="hint">其余留给 KV Cache、激活与框架开销</div>
+                  </div>
+                  <div class="field">
+                    <label><span>部署卡数下限</span><span class="sym">n<sub>min</sub></span></label>
+                    <div class="readonly-box"><span id="minCardsOut">—</span><span class="ro-unit">卡</span></div>
+                    <div class="hint" id="minCardsHint">—</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="inset" style="margin-top:0">
+                <strong>下限口径：</strong>权重显存 = 总参数量 × 单参数字节数，除以「单卡显存 × 可用占比」并向上取整，
+                得到<strong>模型能被装下所需的最少卡数</strong>。最终规划卡数取<strong>算力需求卡数与该下限的较大值</strong>，
+                避免 Token 量偏小时算出无法实际承载模型的卡数。下限未强制对齐 TP/PP 并行度与整机粒度，
+                实际组网通常还需向上取到 <code>单设备卡数</code> 的整数倍。
+              </div>
+            </div>
+          </form>
+
+          <!-- 结果面板 -->
+          <aside class="result-panel" aria-label="核心测算结果">
+            <p class="result-sub" id="resultSubtitle">—</p>
+            <div class="result-main">
+              <span class="result-value" id="heroCards">—</span>
+              <span class="result-unit">卡</span>
+              <span class="result-aside" id="heroPflops"></span>
+            </div>
+            <span class="bound-tag compute" id="boundTag">—</span>
+            <div class="result-formula" id="heroFormula">—</div>
+
+            <div class="result-rows">
+              <div class="result-row">
+                <span class="result-row-label">全网日均 Token</span>
+                <span class="result-row-value" id="rowDailyTokens">—<small>亿/日</small></span>
+              </div>
+              <div class="result-row">
+                <span class="result-row-label">秒级 Token 吞吐 T<sub>s</sub></span>
+                <span class="result-row-value" id="rowTokenPerSec">—<small>token/s</small></span>
+              </div>
+              <div class="result-row">
+                <span class="result-row-label">算力需求卡数（含冗余）</span>
+                <span class="result-row-value" id="rowComputeCards">—<small>卡</small></span>
+              </div>
+              <div class="result-row" id="rowMinWrap">
+                <span class="result-row-label">显存部署卡数下限</span>
+                <span class="result-row-value" id="rowMinCards">—<small>卡</small></span>
+              </div>
+              <div class="result-row">
+                <span class="result-row-label" id="rowFutureLabel">未来 5 年卡数</span>
+                <span class="result-row-value" id="rowFutureCards">—<small>卡</small></span>
+              </div>
+              <div class="result-row">
+                <span class="result-row-label">整机台数参考</span>
+                <span class="result-row-value" id="rowDevices">—<small>台</small></span>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="inset">
+          <strong>计算口径：</strong>单 Token 前向计算量按 <code>F × 激活参数量</code> 估算（F 缺省 2，乘加各计 1 次 FLOP）；
+          日均 Token 先均摊到秒级再乘峰值倍数 <code>M</code>，除以算力综合利用率 <code>N</code> 得到峰值算力需求，
+          除以单卡算力 <code>C<sub>card</sub></code> 并乘规划冗余得到算力卡数，最后与显存部署下限取大值。
+          本工具用于规划阶段一级匡算，未计入 Prefill / Decode 分离、并发与时延 SLO 及长序列注意力开销。
+        </div>
+      </section>
+
+      <!-- ══ KPI ══ -->
+      <section class="kpi-grid" aria-label="算力需求汇总">
+        <article class="kpi-card">
+          <div class="kpi-label">当前理论算力需求</div>
+          <div class="kpi-split">
+            <div class="kpi-metric">
+              <div class="kpi-value"><span id="basePflops">—</span><span class="kpi-unit">PFLOPS</span></div>
+              <div class="kpi-metric-label">算力需求</div>
+            </div>
+            <div class="kpi-metric">
+              <div class="kpi-value"><span id="baseCards">—</span><span class="kpi-unit">卡</span></div>
+              <div class="kpi-metric-label">算力卡数</div>
+            </div>
+          </div>
+          <div class="kpi-detail">未含规划冗余的裸需求</div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-label">考虑冗余的算力需求</div>
+          <div class="kpi-split">
+            <div class="kpi-metric">
+              <div class="kpi-value"><span id="plannedPflops">—</span><span class="kpi-unit">PFLOPS</span></div>
+              <div class="kpi-metric-label">算力需求</div>
+            </div>
+            <div class="kpi-metric">
+              <div class="kpi-value"><span id="currentCards">—</span><span class="kpi-unit">卡</span></div>
+              <div class="kpi-metric-label">规划卡数</div>
+            </div>
+          </div>
+          <div class="kpi-detail">冗余系数 <strong id="computeMarginOut">—</strong> · 约 <strong id="currentDevices">—</strong> 台整机</div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-label" id="futureKpiLabel">未来 5 年算力需求</div>
+          <div class="kpi-split">
+            <div class="kpi-metric">
+              <div class="kpi-value"><span id="futurePflops">—</span><span class="kpi-unit">PFLOPS</span></div>
+              <div class="kpi-metric-label">算力需求</div>
+            </div>
+            <div class="kpi-metric">
+              <div class="kpi-value"><span id="futureCards">—</span><span class="kpi-unit">卡</span></div>
+              <div class="kpi-metric-label">规划卡数</div>
+            </div>
+          </div>
+          <div class="kpi-detail">净增 <strong id="futureDeltaPflops">—</strong> PFLOPS / <strong id="futureDeltaCards">—</strong> 卡</div>
+        </article>
+
+        <article class="kpi-card">
+          <div class="kpi-label">未来总增长倍数</div>
+          <div class="kpi-value"><span id="growthMultiple">—</span><span class="kpi-unit">倍</span></div>
+          <div class="kpi-detail">未来 AI 渗透用户约 <strong id="futureDau">—</strong> 人<br />单卡 <strong id="cardTflopsOut">—</strong> TFLOPS · <strong id="cardVramOut">—</strong> GB</div>
+        </article>
+      </section>
+
+      <!-- ══ 图表 + 因子 ══ -->
+      <section class="content-grid">
+        <article class="card card-sm">
+          <div class="card-head-row">
+            <div>
+              <h3 class="card-title" id="trendTitle">未来 5 年算力卡数增长路径</h3>
+              <p class="card-note">渗透率线性推进；频率与 Agent 终值按复合平滑展开</p>
+            </div>
+            <span class="pill" id="chartEndLabel">第 5 年终值</span>
+          </div>
+          <div class="chart-wrap">
+            <svg id="trendChart" role="img" aria-label="未来年度算力卡数趋势图" viewBox="0 0 760 230"></svg>
+          </div>
+        </article>
+
+        <article class="card card-sm">
+          <div class="card-head-row">
+            <div>
+              <h3 class="card-title">增长因子拆解</h3>
+              <p class="card-note">使用未舍入值计算；渗透率提升同时放大渗透用户与 Token 总量</p>
+            </div>
+          </div>
+          <div class="factor-stack">
+            <div class="factor-row">
+              <div class="factor-name">用户渗透率</div>
+              <div class="factor-track"><div class="factor-bar" id="penetrationBar"></div></div>
+              <div class="factor-value" id="penetrationFactor">—</div>
+            </div>
+            <div class="factor-row">
+              <div class="factor-name">使用频率</div>
+              <div class="factor-track"><div class="factor-bar" id="frequencyBar"></div></div>
+              <div class="factor-value" id="frequencyFactorOut">—</div>
+            </div>
+            <div class="factor-row">
+              <div class="factor-name">Agent 放大</div>
+              <div class="factor-track"><div class="factor-bar" id="agentBar"></div></div>
+              <div class="factor-value" id="agentFactorOut">—</div>
+            </div>
+            <div class="factor-total">
+              <span>K<sub>penetration</sub> × K<sub>frequency</sub> × K<sub>Agent</sub></span>
+              <strong id="factorTotal">—</strong>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ══ 逐年表 ══ -->
+      <section class="card card-sm">
+        <div class="card-head-row">
+          <div>
+            <h3 class="card-title">逐年算力卡数规划明细</h3>
+            <p class="card-note">频率与 Agent 输入是第 N 年终值；表内为累计系数</p>
+          </div>
+          <span class="pill amber" id="memBoundPill" hidden>橙色数值 = 受显存下限约束</span>
+        </div>
+        <div class="table-scroll">
+          <table class="annual-table">
+            <thead>
+              <tr><th>规划年度</th><th>渗透率</th><th>频率系数</th><th>Agent 系数</th><th>总增长倍数</th><th>规划算力 PFLOPS</th><th>规划卡数</th><th>整机台数</th></tr>
+            </thead>
+            <tbody id="annualBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ══ 公式 ══ -->
+      <section class="card card-sm">
+        <div class="card-head-row">
+          <div>
+            <h3 class="card-title">计算公式与口径</h3>
+            <p class="card-note">规划测算所使用的全部公式与参数定义</p>
+          </div>
+          <span class="pill">培训讲解区</span>
+        </div>
+        <div>
+          <details>
+            <summary>公式一 · 由用户规模推算 Token 业务量</summary>
+            <div class="formula-body">
+              <div class="formula">U<sub>0</sub> = DAU × R<sub>0</sub></div>
+              <div class="formula">T<sub>user</sub> = T<sub>out</sub> + T<sub>in</sub> × (1 − H)</div>
+              <div class="formula">T<sub>d</sub> = U<sub>0</sub> × T<sub>user</sub></div>
+              <div class="definitions">
+                <span><b>DAU</b> 日活用户数</span>
+                <span><b>R<sub>0</sub></b> 当前用户渗透率</span>
+                <span><b>U<sub>0</sub></b> 当前 AI 渗透用户数</span>
+                <span><b>T<sub>in</sub></b> 单用户日均输入 Token</span>
+                <span><b>T<sub>out</sub></b> 单用户日均输出 Token</span>
+                <span><b>H</b> 缓存命中率</span>
+              </div>
+            </div>
+          </details>
+
+          <details open>
+            <summary>公式二 · 由 Token 推算算力需求与卡数</summary>
+            <div class="formula-body">
+              <div class="formula">T<sub>s</sub> = T<sub>d</sub> ÷ 24 ÷ 3600</div>
+              <div class="formula">C<sub>理论</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N</div>
+              <div class="formula">n<sub>compute</sub> = ⌈ C<sub>理论</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉</div>
+              <div class="definitions">
+                <span><b>T<sub>s</sub></b> 秒级 Token 数</span>
+                <span><b>F</b> 浮点运算量倍数</span>
+                <span><b>P<sub>act</sub></b> 激活参数量</span>
+                <span><b>M</b> 峰值倍数</span>
+                <span><b>N</b> 算力综合利用率</span>
+                <span><b>K<sub>compute</sub></b> 算力规划冗余</span>
+                <span><b>C<sub>card</sub></b> 单卡算力</span>
+              </div>
+              <div class="source-note">
+                <b>依据：</b>系数 <b>F = 2</b> 源自 Kaplan et al. (2020) 对 Transformer 前向计算量的估计
+                <i>C<sub>forward</sub> ≈ 2N</i>（每 Token 每参数约 2 次浮点运算，即乘加各 1 次）；
+                <b>N</b> 对应 Chowdhery et al. (2022) 在 PaLM 中提出的 <b>MFU</b>（Model FLOPs Utilization）；
+                MoE 取<b>激活参数量</b>而非总参数量，依据 Fedus et al. (2021) 的稀疏激活结论。
+                完整出处与业界同口径案例见下方「公式依据」。
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>公式三 · 显存部署卡数下限与最终取值</summary>
+            <div class="formula-body">
+              <div class="formula alt">n<sub>min</sub> = ⌈ P<sub>total</sub> × B<sub>w</sub> ÷ (V<sub>card</sub> × η) ⌉</div>
+              <div class="formula alt">n<sub>card</sub> = max( n<sub>compute</sub> , n<sub>min</sub> )</div>
+              <div class="definitions">
+                <span><b>P<sub>total</sub></b> 大模型总参数量</span>
+                <span><b>B<sub>w</sub></b> 权重单参数字节数（FP16=2 / FP8=1 / FP4=0.5）</span>
+                <span><b>V<sub>card</sub></b> 单卡显存容量</span>
+                <span><b>η</b> 权重可用显存占比</span>
+                <span>取大值可避免小 Token 量算出无法承载模型的卡数</span>
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>公式四 · 未来增长与逐年平滑展开</summary>
+            <div class="formula-body">
+              <div class="formula">C<sub>未来</sub> = C<sub>规划</sub> × (R<sub>N</sub> ÷ R<sub>0</sub>) × K<sub>freq</sub> × K<sub>Agent</sub></div>
+              <div class="formula">K<sub>freq</sub>(y) = K<sub>freq</sub><sup>y / N<sub>year</sub></sup>，K<sub>Agent</sub>(y) = K<sub>Agent</sub><sup>y / N<sub>year</sub></sup></div>
+              <div class="formula">整机台数 n<sub>unit</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>unit</sub> ⌉</div>
+              <div class="definitions">
+                <span><b>R<sub>N</sub></b> 目标用户渗透率</span>
+                <span><b>y</b> 规划第 y 年</span>
+                <span><b>N<sub>year</sub></b> 规划年限</span>
+                <span><b>Q<sub>unit</sub></b> 单设备卡数</span>
+                <span>渗透率按线性推进，频率与 Agent 按复合平滑</span>
+              </div>
+            </div>
+          </details>
+
+          <details open>
+            <summary>公式依据 · 学术出处与业界同口径实践</summary>
+            <div class="formula-body">
+              <p class="ref-lead"><b>一、公式的学术出处</b></p>
+              <ol class="ref-list">
+                <li>
+                  <b>每 Token 计算量 ≈ 2 × 参数量</b>（对应参数 <b>F</b>）<br />
+                  Kaplan, J. et al. <i>Scaling Laws for Neural Language Models.</i> arXiv:2001.08361, 2020 —
+                  Table 1 给出 <i>C<sub>forward</sub> ≈ 2N + 2·n<sub>layer</sub>·n<sub>ctx</sub>·d<sub>attn</sub></i>，
+                  并说明反向传播约为前向的 2 倍，故训练侧 <i>C ≈ 6N</i>。本工具只做推理，取前向项 <b>F = 2</b>。
+                  <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener">arxiv.org/abs/2001.08361</a>
+                </li>
+                <li>
+                  <b>算力综合利用率</b>（对应参数 <b>N</b>）<br />
+                  Chowdhery, A. et al. <i>PaLM: Scaling Language Modeling with Pathways.</i> arXiv:2204.02311, 2022 —
+                  §4.1 提出 <b>MFU</b>：实测吞吐与硬件峰值算力所对应理论吞吐之比，是跨硬件、跨实现可比的效率指标，
+                  即本工具中的 N。
+                  <a href="https://arxiv.org/abs/2204.02311" target="_blank" rel="noopener">arxiv.org/abs/2204.02311</a>
+                </li>
+                <li>
+                  <b>推理侧算力 / 带宽 / 利用率的解析模型</b><br />
+                  Pope, R. et al. <i>Efficiently Scaling Transformer Inference.</i> arXiv:2211.05102, 2022（MLSys 2023）—
+                  给出推理效率的解析建模方法，并区分 Prefill 与 Decode 两阶段的成本结构。
+                  <a href="https://arxiv.org/abs/2211.05102" target="_blank" rel="noopener">arxiv.org/abs/2211.05102</a>
+                </li>
+                <li>
+                  <b>MoE 按激活参数量计算</b>（对应参数 <b>P<sub>act</sub></b>）<br />
+                  Fedus, W., Zoph, B., Shazeer, N. <i>Switch Transformers.</i> arXiv:2101.03961, 2021 —
+                  稀疏 MoE 每 Token 只路由激活少量专家，计算量由激活参数量决定，与总参数量解耦。
+                  <a href="https://arxiv.org/abs/2101.03961" target="_blank" rel="noopener">arxiv.org/abs/2101.03961</a>
+                </li>
+              </ol>
+
+              <p class="ref-lead"><b>二、业界采用同一口径的公开案例</b></p>
+              <ol class="ref-list" start="5">
+                <li>
+                  <b>Epoch AI</b>（AI 算力研究机构）<br />
+                  Denain, JS., Ho, A., Sevilla, J. <i>How many digital workers could OpenAI deploy?</i> 2025-10-03 —
+                  测算 OpenAI 服务能力时明确采用：「GPT-5 激活参数量约 500 亿–3000 亿，
+                  <b>按每激活参数 2 FLOP</b> 计，每 Token 约 1000 亿–6000 亿 FLOP」，
+                  并叠加「<b>推理利用率约 5%–30%</b>」，据此反推日均可处理 Token 量。
+                  与本工具「F × P<sub>act</sub> ÷ N」的结构完全一致。
+                  <a href="https://epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy" target="_blank" rel="noopener">epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy</a>
+                </li>
+                <li>
+                  <b>VMware（Broadcom）× NVIDIA</b> 企业级选型指南<br />
+                  Fu, Y. <i>LLM Inference Sizing and Performance Guidance.</i> VMware Cloud Foundation Blog, 2024 —
+                  面向 VMware Private AI Foundation with NVIDIA 的容量规划文档，
+                  Prefill 阶段直接按 <i>(8B 参数 × 2) FLOP ÷ 加速卡算力 TFLOP/s</i> 估算，
+                  即同一「每 Token 算力 ≈ 2 × 参数量」口径。
+                  <a href="https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/" target="_blank" rel="noopener">blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance</a>
+                </li>
+              </ol>
+              <p class="ref-tail">「每 Token 算力 ≈ F × 激活参数量、以 <b>MFU</b> 表征有效利用率」是学术论文与业界容量测算的<b>通行口径</b>，
+                本工具的公式二即建立在该口径之上。</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <p class="footnote">
+        本工具用于规划阶段的算力卡数一级匡算；未来测算默认模型规模、峰值倍数、利用率与卡型不变。
+        工程落地还需结合并发与时延 SLO、精度与稀疏性、KV Cache 命中率、PD 分离部署形态与产品实测数据进一步核实。
+        <span class="signature">@数据中心产品组合</span>
+      </p>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const LOCALE_SELF_SOURCE = "ai-dc-compute-est";
+      const locale = globalThis.AidcLocaleBridge?.getLocale?.()
+        || (new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh");
+      const IS_EN = locale === "en";
+
+      const EN_TEXT = {
+        "AI 数据中心算力评估规划 · Token → Card": "AI Data Center Compute Estimation · Token → Card",
+        "从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。": "Estimate the NPU cards required for AI inference from Token demand (Token → Card).",
+        "AI 数据中心算力评估规划": "AI Data Center Compute Estimation",
+        "Token > Card · 由业务 Token 量推算 NPU 卡数需求": "Token > Card · Estimate NPU card demand from business Token volume",
+        "算力卡数匡算": "Compute Card Estimation",
+        "选择推理场景或自定义单用户用量，由 AI 渗透用户规模推算 Token 总量，再换算为所需算力卡数。": "Choose an inference scenario or customize per-user usage, estimate total Tokens from AI user adoption, then convert the demand into required compute cards.",
+        "业务调研": "Business Inputs",
+        "算力产品": "Compute Product",
+        "Token 业务量推算": "Token Demand Estimation",
+        "办公助手": "Office Assistant",
+        "自定义": "Custom",
+        "单用户日均输入 Token": "Daily Input Tokens per User",
+        "单用户日均输出 Token": "Daily Output Tokens per User",
+        "缓存命中率": "Cache Hit Rate",
+        "仅折减输入侧 Token，输出侧不受缓存影响": "Reduces input Tokens only; output Tokens are unaffected",
+        "单用户有效日均 Token": "Effective Daily Tokens per User",
+        "折算全网日均 Token": "Estimated Network-wide Daily Tokens",
+        "用户规模与渗透": "User Scale and Adoption",
+        "当前 AI 日活用户数": "Current AI Daily Active Users",
+        "当前 AI 渗透用户数": "Current AI Users",
+        "当前用户渗透率": "Current User Adoption",
+        "目标用户渗透率": "Target User Adoption",
+        "模型与算力换算": "Model and Compute Conversion",
+        "大模型型号": "Model",
+        "其他模型 · 支持自定义输入参数": "Other model · Custom parameters",
+        "选择型号后自动填入下方两项参数；也可直接手动改写，型号会切换为「其他型号」": "Selecting a model fills the two parameters below; manual edits switch the model to “Other model”.",
+        "大模型激活参数量": "Active Model Parameters",
+        "决定算力需求；MoE 按每 Token 实际激活参数量填写": "Determines compute demand; for MoE use parameters activated per Token",
+        "大模型总参数量": "Total Model Parameters",
+        "决定权重显存，用于卡数下限校验": "Determines weight memory and the minimum card count",
+        "浮点运算量倍数": "FLOP Multiplier",
+        "每 Token 每参数的 FLOP 数，缺省 2（乘加各计 1）": "FLOPs per parameter per Token; default 2 (multiply and add counted separately)",
+        "峰值倍数": "Peak Multiplier",
+        "算力综合利用率": "Effective Compute Utilization",
+        "一级规划经验值通常 30%–50%": "Typical early-stage planning range: 30%–50%",
+        "算力规划冗余": "Compute Planning Headroom",
+        "未来增长规划": "Future Growth Planning",
+        "规划年限": "Planning Horizon",
+        "使用频率提升": "Usage Frequency Growth",
+        "指第 N 年终值，不是每年复利倍数": "End value in year N, not an annual compound multiplier",
+        "Agent 放大系数": "Agent Multiplier",
+        "多轮推理、工具调用与任务分解的综合放大": "Combined uplift from multi-turn reasoning, tool calls, and task decomposition",
+        "算力产品参数": "Compute Product Parameters",
+        "产品单卡算力": "Per-card Compute",
+        "默认按 FP8 精度 919 TFLOPS 计算；FP16 为 486 TFLOPS，FP4 为 1784 TFLOPS，也可直接改写数值": "Default: 919 TFLOPS at FP8; FP16 is 486 TFLOPS and FP4 is 1784 TFLOPS. Values remain editable.",
+        "单设备卡数": "Cards per Device",
+        "仅用于把卡数折算为整机台数参考，卡数结果不受影响": "Used only to convert cards into device count; does not affect the card result",
+        "显存与部署卡数下限": "Memory and Minimum Deployment Cards",
+        "单卡显存容量": "Memory per Card",
+        "权重存储精度": "Weight Precision",
+        "权重可用显存占比": "Memory Available for Weights",
+        "其余留给 KV Cache、激活与框架开销": "The remainder is reserved for KV Cache, activations, and framework overhead",
+        "部署卡数下限": "Minimum Deployment Cards",
+        "下限口径：": "Minimum-card methodology:",
+        "权重显存 = 总参数量 × 单参数字节数，除以「单卡显存 × 可用占比」并向上取整，": "weight memory equals total parameters times bytes per parameter, divided by per-card memory times usable share, rounded up.",
+        "得到模型能被装下所需的最少卡数。最终规划卡数取算力需求卡数与该下限的较大值，": "This gives the minimum cards needed to hold the model. Final planning uses the larger of compute-demand cards and this minimum.",
+        "避免 Token 量偏小时算出无法实际承载模型的卡数。下限未强制对齐 TP/PP 并行度与整机粒度，": "This prevents low Token demand from producing an undeployable result. The minimum is not forced to TP/PP or device granularity.",
+        "实际组网通常还需向上取到 单设备卡数 的整数倍。": "Actual deployments usually round up to a multiple of cards per device.",
+        "核心测算结果": "Core Estimation Result",
+        "全网日均 Token": "Network-wide Daily Tokens",
+        "秒级 Token 吞吐": "Token Throughput per Second",
+        "算力需求卡数（含冗余）": "Compute-demand Cards (with Headroom)",
+        "显存部署卡数下限": "Memory-based Minimum Cards",
+        "整机台数参考": "Estimated Device Count",
+        "计算口径：": "Methodology:",
+        "当前理论算力需求": "Current Theoretical Compute Demand",
+        "考虑冗余的算力需求": "Compute Demand with Headroom",
+        "未含规划冗余的裸需求": "Raw demand before planning headroom",
+        "算力需求": "Compute Demand",
+        "算力卡数": "Compute Cards",
+        "规划卡数": "Planned Cards",
+        "未来总增长倍数": "Total Future Growth",
+        "增长因子拆解": "Growth Factor Breakdown",
+        "用户渗透率": "User Adoption",
+        "使用频率": "Usage Frequency",
+        "Agent 放大": "Agent Uplift",
+        "逐年算力卡数规划明细": "Annual Compute Card Plan",
+        "频率与 Agent 输入是第 N 年终值；表内为累计系数": "Frequency and Agent inputs are year-N end values; the table shows cumulative factors.",
+        "橙色数值 = 受显存下限约束": "Amber value = constrained by memory minimum",
+        "规划年度": "Planning Year",
+        "渗透率": "Adoption",
+        "频率系数": "Frequency Factor",
+        "Agent 系数": "Agent Factor",
+        "总增长倍数": "Total Growth",
+        "规划算力 PFLOPS": "Planned Compute PFLOPS",
+        "整机台数": "Devices",
+        "计算公式与口径": "Formulas and Methodology",
+        "规划测算所使用的全部公式与参数定义": "All formulas and parameter definitions used by the estimate",
+        "培训讲解区": "Training Notes",
+        "公式一 · 由用户规模推算 Token 业务量": "Formula 1 · Estimate Token demand from user scale",
+        "公式二 · 由 Token 推算算力需求与卡数": "Formula 2 · Convert Tokens into compute demand and cards",
+        "公式三 · 显存部署卡数下限与最终取值": "Formula 3 · Memory minimum and final card count",
+        "公式四 · 未来增长与逐年平滑展开": "Formula 4 · Future growth and annual ramp",
+        "公式依据 · 学术出处与业界同口径实践": "Formula Basis · Academic sources and industry practice",
+        "日活用户数": "Daily active users",
+        "当前 AI 渗透用户数": "Current AI users",
+        "秒级 Token 数": "Tokens per second",
+        "激活参数量": "Active parameters",
+        "单卡算力": "Per-card compute",
+        "权重单参数字节数（FP16=2 / FP8=1 / FP4=0.5）": "Bytes per weight parameter (FP16=2 / FP8=1 / FP4=0.5)",
+        "取大值可避免小 Token 量算出无法承载模型的卡数": "Taking the maximum prevents a card count too small to hold the model",
+        "规划第 y 年": "Planning year y",
+        "渗透率按线性推进，频率与 Agent 按复合平滑": "Adoption ramps linearly; frequency and Agent factors compound smoothly",
+        "一、公式的学术出处": "1. Academic sources",
+        "二、业界采用同一口径的公开案例": "2. Public industry examples using the same methodology",
+        "每 Token 计算量 ≈ 2 × 参数量": "Compute per Token ≈ 2 × parameters",
+        "算力综合利用率": "Effective compute utilization",
+        "推理侧算力 / 带宽 / 利用率的解析模型": "Analytical model for inference compute, bandwidth, and utilization",
+        "MoE 按激活参数量计算": "MoE compute uses active parameters",
+        "企业级选型指南": "Enterprise sizing guide",
+        "依据：": "Basis:",
+        "系数 F = 2 源自 Kaplan et al. (2020) 对 Transformer 前向计算量的估计": "The F = 2 factor follows Kaplan et al. (2020)’s estimate of Transformer forward-pass compute",
+        "每 Token 每参数约 2 次浮点运算，即乘加各 1 次": "about 2 floating-point operations per parameter per Token, counting multiply and add separately",
+        "N 对应 Chowdhery et al. (2022) 在 PaLM 中提出的 MFU（Model FLOPs Utilization）；": "N corresponds to MFU (Model FLOPs Utilization), introduced for PaLM by Chowdhery et al. (2022);",
+        "MoE 取激活参数量而非总参数量，依据 Fedus et al. (2021) 的稀疏激活结论。": "MoE uses active rather than total parameters, following the sparse-activation result of Fedus et al. (2021).",
+        "完整出处与业界同口径案例见下方「公式依据」。": "Full sources and comparable industry examples appear under “Formula Basis” below.",
+        "Table 1 给出": "Table 1 gives",
+        "并说明反向传播约为前向的 2 倍，故训练侧": "and states that backpropagation is about twice the forward pass, so training",
+        "本工具只做推理，取前向项 F = 2。": "This tool models inference only and therefore uses the forward-pass factor F = 2.",
+        "提出 MFU：实测吞吐与硬件峰值算力所对应理论吞吐之比，是跨硬件、跨实现可比的效率指标，": "defines MFU as measured throughput divided by theoretical throughput at peak hardware compute, an efficiency metric comparable across hardware and implementations,",
+        "即本工具中的 N。": "which is N in this tool.",
+        "给出推理效率的解析建模方法，并区分 Prefill 与 Decode 两阶段的成本结构。": "provides an analytical model of inference efficiency and separates the cost structures of Prefill and Decode.",
+        "稀疏 MoE 每 Token 只路由激活少量专家，计算量由激活参数量决定，与总参数量解耦。": "Sparse MoE routes each Token to only a few active experts, so compute is determined by active parameters rather than total parameters.",
+        "测算 OpenAI 服务能力时明确采用：": "explicitly estimates OpenAI serving capacity using:",
+        "按每激活参数 2 FLOP": "2 FLOPs per active parameter",
+        "并叠加「推理利用率约 5%–30%」，据此反推日均可处理 Token 量。": "and applies roughly 5%–30% inference utilization to derive daily Token capacity.",
+        "与本工具「F × Pact ÷ N」的结构完全一致。": "This matches the tool’s F × P_act ÷ N structure.",
+        "面向 VMware Private AI Foundation with NVIDIA 的容量规划文档，": "In sizing guidance for VMware Private AI Foundation with NVIDIA,",
+        "即同一「每 Token 算力 ≈ 2 × 参数量」口径。": "using the same “compute per Token ≈ 2 × parameters” methodology.",
+        "「每 Token 算力 ≈ F × 激活参数量、以 MFU 表征有效利用率」是学术论文与业界容量测算的通行口径，": "“Compute per Token ≈ F × active parameters, with MFU representing effective utilization” is standard in academic and industry sizing,",
+        "本工具的公式二即建立在该口径之上。": "and Formula 2 in this tool is based on that methodology.",
+        "总参数量小于激活参数量，请核对模型口径（MoE 总参数应大于每 Token 激活参数）。": "Total parameters are smaller than active parameters. Check the model definition; MoE total parameters should exceed active parameters per Token.",
+        "目标渗透率低于当前渗透率，未来结果将体现用户覆盖下降。": "Target adoption is below current adoption; the projection will reflect declining user coverage.",
+        "算力规划冗余系数小于 1，可能低估规划容量。": "Compute planning headroom is below 1 and may underestimate capacity.",
+        "算力综合利用率高于 60%，一级规划通常偏乐观，建议复核。": "Effective compute utilization above 60% is optimistic for early-stage planning; review the assumption.",
+        "单用户日均输入 Token 不能为负": "Daily input Tokens per user cannot be negative",
+        "单用户日均输出 Token 不能为负": "Daily output Tokens per user cannot be negative",
+        "单用户输入与输出 Token 不能同时为 0": "Input and output Tokens per user cannot both be zero",
+        "缓存命中率须在 0–100% 之间（不含 100%）": "Cache hit rate must be between 0% and 100% (exclusive of 100%)",
+        "规划年限须为 1–20 年的整数": "Planning horizon must be an integer from 1 to 20 years",
+        "日活用户数须为整数": "Daily active users must be an integer",
+        "单设备卡数须为整数": "Cards per device must be an integer",
+        "算力综合利用率须在 0–100% 之间": "Effective compute utilization must be between 0% and 100%",
+        "当前用户渗透率须在 0–100% 之间": "Current user adoption must be between 0% and 100%",
+        "未来目标渗透率须在 0–100% 之间": "Target user adoption must be between 0% and 100%",
+        "权重可用显存占比须在 0–100% 之间": "Memory available for weights must be between 0% and 100%",
+        "本工具用于规划阶段的算力卡数一级匡算；未来测算默认模型规模、峰值倍数、利用率与卡型不变。": "This tool provides an early-stage compute-card estimate; future projections assume unchanged model size, peak multiplier, utilization, and card type.",
+        "工程落地还需结合并发与时延 SLO、精度与稀疏性、KV Cache 命中率、PD 分离部署形态与产品实测数据进一步核实。": "Implementation must also validate concurrency and latency SLOs, precision and sparsity, KV Cache hit rate, PD-disaggregated deployment, and measured product performance.",
+        "@数据中心产品组合": "@Data Center Product Portfolio",
+        "参数类别": "Parameter category",
+        "推理场景预设": "Inference scenario presets",
+        "单卡算力快捷选项": "Per-card compute shortcuts",
+        "算力需求汇总": "Compute demand summary",
+        "未来年度算力卡数趋势图": "Future annual compute-card trend",
+        "切换语言": "Switch language",
+        "人": "users",
+        "年": "years",
+        "倍": "×",
+        "卡/台": "cards/device",
+        "卡": "cards",
+        "台": "devices",
+        "亿/日": "100M/day",
+        "token/人·日": "token/user/day",
+        "当前": "Current"
+      };
+
+      const EN_FRAGMENTS = {
+        "未来 ": "Future ",
+        " 年算力需求": "-year Compute Demand",
+        " 年算力卡数增长路径": "-year Compute-card Growth Path",
+        " 年卡数": "-year Cards",
+        "第 ": "Year ",
+        " 年终值": " End Value",
+        "约 ": "about ",
+        "受显存下限约束": "Constrained by memory minimum",
+        "受算力需求约束": "Constrained by compute demand",
+        "显存下限": "memory minimum",
+        "算力需求仅 ": "compute demand only ",
+        "规划算力": "planned compute",
+        "冗余系数": "Headroom",
+        "台整机": "devices",
+        "净增": "Increase",
+        "未来 AI 渗透用户": "Future AI users",
+        "单卡": "per card",
+        "由 ": "From ",
+        "AI 渗透用户": "AI users",
+        "推算，共 ": " gives ",
+        "当前渗透率同时决定": "Current adoption determines both ",
+        "渗透用户数": "AI users",
+        "与未来增长基数；目标渗透率决定未来放大倍数。": " and the future growth baseline; target adoption determines future scaling.",
+        "权重约 ": "Weights: about ",
+        "必须大于 0": "must be greater than 0",
+        "（当前）": " (Current)",
+        "亿 Token/日": " × 100M Tokens/day",
+        "Token/日": "Tokens/day",
+        "卡数": "Cards",
+        "台数": "Devices",
+        "公式": "Formula",
+        "当前理论": "Current theoretical",
+        "参数": "parameter",
+        "当前）": "Current)",
+        "橙色": "Amber"
+      };
+
+      function translateString(value) {
+        if (!IS_EN || !value) return value;
+        const leading = value.match(/^\s*/)?.[0] || "";
+        const trailing = value.match(/\s*$/)?.[0] || "";
+        let core = value.slice(leading.length, value.length - trailing.length || undefined);
+        if (Object.prototype.hasOwnProperty.call(EN_TEXT, core)) {
+          return leading + EN_TEXT[core] + trailing;
+        }
+        Object.entries(EN_TEXT)
+          .filter(([key]) => key.length > 1)
+          .sort((a, b) => b[0].length - a[0].length)
+          .forEach(([zh, en]) => { core = core.split(zh).join(en); });
+        Object.entries(EN_FRAGMENTS)
+          .sort((a, b) => b[0].length - a[0].length)
+          .forEach(([zh, en]) => { core = core.split(zh).join(en); });
+        core = core
+          .replace(/(\d[\d,.]*)\s*卡/g, "$1 cards")
+          .replace(/(\d[\d,.]*)\s*台/g, "$1 devices")
+          .replace(/(\d[\d,.]*)\s*人/g, "$1 users");
+        return leading + core + trailing;
+      }
+
+      function translateDom(root = document.body) {
+        if (!IS_EN || !root) return;
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+          const parent = walker.currentNode.parentElement;
+          if (!parent || ["SCRIPT", "STYLE"].includes(parent.tagName)) continue;
+          nodes.push(walker.currentNode);
+        }
+        nodes.forEach(node => { node.nodeValue = translateString(node.nodeValue); });
+        root.querySelectorAll("[aria-label], [title], [placeholder]").forEach(element => {
+          ["aria-label", "title", "placeholder"].forEach(attribute => {
+            if (element.hasAttribute(attribute)) {
+              element.setAttribute(attribute, translateString(element.getAttribute(attribute)));
+            }
+          });
+        });
+      }
+
+      function applyLocale() {
+        document.documentElement.lang = IS_EN ? "en" : "zh-CN";
+        document.title = IS_EN ? EN_TEXT["AI 数据中心算力评估规划 · Token → Card"] : "AI 数据中心算力评估规划 · Token → Card";
+        const description = document.querySelector('meta[name="description"]');
+        if (description && IS_EN) description.content = EN_TEXT["从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。"];
+        const button = document.getElementById("langToggle");
+        if (button) {
+          button.textContent = IS_EN ? "中文" : "EN";
+          button.setAttribute("aria-label", IS_EN ? "Switch to Chinese" : "切换为英文");
+        }
+        translateDom();
+      }
+
+      function switchLocale() {
+        const next = IS_EN ? "zh" : "en";
+        globalThis.AidcLocaleBridge?.setLocale?.(next, { source: LOCALE_SELF_SOURCE });
+        const url = new URL(location.href);
+        if (next === "en") url.searchParams.set("lang", "en");
+        else url.searchParams.delete("lang");
+        location.replace(url);
+      }
+
+      applyLocale();
+      globalThis.AidcLocaleBridge?.initIframeListener?.((nextLocale) => {
+        const next = nextLocale === "en" ? "en" : "zh";
+        if (next === locale) return;
+        const url = new URL(location.href);
+        if (next === "en") url.searchParams.set("lang", "en");
+        else url.searchParams.delete("lang");
+        location.replace(url);
+      }, { selfSource: LOCALE_SELF_SOURCE });
+
+      const GIB = 1024 ** 3;
+
+      /** 场景预设：覆盖 Token 取数、模型规模与算力换算参数，未列字段保持当前值。 */
+      const scenarios = {
+        coding: {
+          name: "AI Coding",
+          dau: 3180, currentPenetration: 60,
+          inTokens: 21000000, cacheHitRate: 0, outTokens: 300000,
+          flopsMultiplier: 2, totalParams: 744, activeParams: 40,
+          peakMultiplier: 5, utilization: 40, computeMargin: 2
+        },
+        office: {
+          name: "办公助手",
+          dau: 3000, currentPenetration: 60,
+          inTokens: 6000000, cacheHitRate: 0, outTokens: 500000,
+          flopsMultiplier: 2, totalParams: 284, activeParams: 13,
+          peakMultiplier: 10, utilization: 40, computeMargin: 2
+        },
+        superapp: {
+          name: "SuperApp",
+          dau: 410000, currentPenetration: 60,
+          inTokens: 80000, cacheHitRate: 0, outTokens: 5000,
+          flopsMultiplier: 2, totalParams: 120, activeParams: 5.1,
+          peakMultiplier: 50, utilization: 35, computeMargin: 2
+        },
+        // 中等规模自建场景（Qwen3-235B-A22B）：理论 96 卡，按 2 倍冗余规划为 192 卡
+        custom: {
+          name: "自定义",
+          dau: 70000, currentPenetration: 60,
+          inTokens: 80000, cacheHitRate: 0, outTokens: 10000,
+          flopsMultiplier: 2, totalParams: 235, activeParams: 22,
+          peakMultiplier: 8, utilization: 35, computeMargin: 2
+        }
+      };
+
+      /** 取场景预设中的可填写字段（剔除展示用的 name）。 */
+      function presetValues(key) {
+        const { name, ...values } = scenarios[key];
+        return values;
+      }
+
+      /** 页面初始展示的场景。 */
+      const DEFAULT_SCENARIO = "coding";
+
+      const defaults = {
+        // 不随场景变化：未来增长规划与算力产品参数
+        futurePenetration: 100,
+        years: 5,
+        frequencyFactor: 3,
+        agentFactor: 4,
+        cardTflops: 919,
+        cardsPerDevice: 8,
+        cardVram: 96,
+        weightPrecision: 1,
+        vramUsable: 80,
+        // Token 取数、用户规模与模型算力参数直接取自默认场景，避免两处数值走样
+        ...presetValues(DEFAULT_SCENARIO)
+      };
+
+      const inputs = [...document.querySelectorAll("[data-key]")];
+      let activeScenario = null;
+      let lastResult = null;
+
+      const $ = (id) => document.getElementById(id);
+      const numberLocale = IS_EN ? "en-US" : "zh-CN";
+      const nf0 = new Intl.NumberFormat(numberLocale, { maximumFractionDigits: 0 });
+      const nf1 = new Intl.NumberFormat(numberLocale, { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+      const nf2 = new Intl.NumberFormat(numberLocale, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
+      function number(value, digits = 1) {
+        if (!Number.isFinite(value)) return "—";
+        return digits === 0 ? nf0.format(value) : digits === 2 ? nf2.format(value) : nf1.format(value);
+      }
+
+      function compact(value) {
+        if (!Number.isFinite(value)) return "—";
+        if (Math.abs(value) >= 10000) return `${number(value / 1000, 1)}k`;
+        if (Math.abs(value) >= 1000) return `${number(value / 1000, 2)}k`;
+        return number(value, value < 100 ? 1 : 0);
+      }
+
+      /** 大 token 数按 K / M / B 缩写，便于核对量级。 */
+      function tokenScale(value) {
+        if (!Number.isFinite(value)) return "—";
+        if (Math.abs(value) >= 1e9) return `${number(value / 1e9, 2)} B`;
+        if (Math.abs(value) >= 1e6) return `${number(value / 1e6, 2)} M`;
+        if (Math.abs(value) >= 1e3) return `${number(value / 1e3, 2)} K`;
+        return number(value, 0);
+      }
+
+      const precisions = { 486: "FP16", 919: "FP8", 1784: "FP4" };
+      const precisionOf = (tflops) => (precisions[tflops] ? `（${precisions[tflops]}）` : "");
+
+      /** 模型规模标签：≥1000B 记为 T，形如 1.6T-A49B。 */
+      function modelLabel(totalB, activeB) {
+        if (!Number.isFinite(totalB) || !Number.isFinite(activeB)) return "—";
+        const total = totalB >= 1000 ? `${number(totalB / 1000, 2)}T` : `${number(totalB, 0)}B`;
+        return `${total}-A${number(activeB, 1)}B`;
+      }
+
+      const labels = {
+        inTokens: "单用户日均输入 Token", outTokens: "单用户日均输出 Token",
+        cacheHitRate: "缓存命中率", dau: "日活用户数", currentPenetration: "当前用户渗透率",
+        futurePenetration: "未来目标渗透率", activeParams: "大模型激活参数量", totalParams: "大模型总参数量",
+        flopsMultiplier: "浮点运算量倍数", peakMultiplier: "峰值倍数", utilization: "算力综合利用率",
+        computeMargin: "算力规划冗余", years: "规划年限", frequencyFactor: "使用频率提升",
+        agentFactor: "Agent 放大系数", cardTflops: "产品单卡算力", cardsPerDevice: "单设备卡数",
+        cardVram: "单卡显存容量", vramUsable: "权重可用显存占比"
+      };
+      const labelFor = (key) => labels[key] || key;
+
+      /* ── 输入框千分位格式化 ───────────────────────────── */
+
+      /** 只保留数字、单个小数点与前导负号。 */
+      function sanitizeNumeric(raw) {
+        let s = String(raw).replace(/[^0-9.\-]/g, "");
+        const negative = s.startsWith("-");
+        s = s.replace(/-/g, "");
+        const parts = s.split(".");
+        if (parts.length > 1) s = `${parts.shift()}.${parts.join("")}`;
+        return (negative ? "-" : "") + s;
+      }
+
+      /** 给整数部分加千分位，小数部分按用户输入原样保留（不四舍五入）。 */
+      function groupDigits(raw) {
+        const s = sanitizeNumeric(raw);
+        if (s === "" || s === "-") return s;
+        const negative = s.startsWith("-");
+        const body = negative ? s.slice(1) : s;
+        const dot = body.indexOf(".");
+        const intPart = (dot === -1 ? body : body.slice(0, dot)).replace(/^0+(?=\d)/, "");
+        const decPart = dot === -1 ? "" : body.slice(dot);
+        const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return `${negative ? "-" : ""}${grouped || (decPart ? "0" : "")}${decPart}`;
+      }
+
+      /** 重新格式化并把光标放回原来的「第 n 个数字之后」，避免输入时光标乱跳。 */
+      function reformatInput(input) {
+        const caret = input.selectionStart == null ? input.value.length : input.selectionStart;
+        const digitsBefore = (input.value.slice(0, caret).match(/[0-9]/g) || []).length;
+        const formatted = groupDigits(input.value);
+        if (formatted === input.value) return;
+        input.value = formatted;
+        let seen = 0;
+        let pos = formatted.length;
+        if (digitsBefore === 0) {
+          pos = 0;
+        } else {
+          for (let i = 0; i < formatted.length; i += 1) {
+            if (/[0-9]/.test(formatted[i])) seen += 1;
+            if (seen === digitsBefore) { pos = i + 1; break; }
+          }
+        }
+        try { input.setSelectionRange(pos, pos); } catch (error) { /* 非文本型输入忽略 */ }
+      }
+
+      /** 读取输入框数值：剥离千分位逗号，空值返回 NaN 交由校验拦截。 */
+      function numValue(input) {
+        const cleaned = String(input.value).replace(/,/g, "").trim();
+        return cleaned === "" || cleaned === "-" || cleaned === "." ? NaN : Number(cleaned);
+      }
+
+      function readValues() {
+        return Object.fromEntries(inputs.map(i => [i.dataset.key, numValue(i)]));
+      }
+
+      function writeValues(values) {
+        inputs.forEach(input => {
+          if (!Object.prototype.hasOwnProperty.call(values, input.dataset.key)) return;
+          const raw = values[input.dataset.key];
+          input.value = input.tagName === "SELECT" ? String(raw) : groupDigits(String(raw));
+        });
+      }
+
+      function showMessages(id, messages) {
+        const box = $(id);
+        box.classList.toggle("show", messages.length > 0);
+        box.innerHTML = messages.length ? `<ul>${messages.map(m => `<li>${m}</li>`).join("")}</ul>` : "";
+      }
+
+      function validate(v) {
+        const errors = [];
+        const warnings = [];
+        const positive = [
+          "dau", "currentPenetration", "futurePenetration", "activeParams", "totalParams",
+          "flopsMultiplier", "peakMultiplier", "computeMargin", "frequencyFactor", "agentFactor",
+          "cardTflops", "cardsPerDevice", "cardVram", "vramUsable"
+        ];
+
+        inputs.forEach(input => input.classList.remove("invalid"));
+        positive.forEach(key => {
+          if (!Number.isFinite(v[key]) || v[key] <= 0) errors.push(`${labelFor(key)}必须大于 0`);
+        });
+
+        if (!Number.isFinite(v.inTokens) || v.inTokens < 0) errors.push("单用户日均输入 Token 不能为负");
+        if (!Number.isFinite(v.outTokens) || v.outTokens < 0) errors.push("单用户日均输出 Token 不能为负");
+        if (v.inTokens + v.outTokens <= 0) errors.push("单用户输入与输出 Token 不能同时为 0");
+        if (!(v.cacheHitRate >= 0 && v.cacheHitRate < 100)) errors.push("缓存命中率须在 0–100% 之间（不含 100%）");
+
+        if (!Number.isInteger(v.years) || v.years < 1 || v.years > 20) errors.push("规划年限须为 1–20 年的整数");
+        if (!Number.isInteger(v.dau)) errors.push("日活用户数须为整数");
+        if (!Number.isInteger(v.cardsPerDevice)) errors.push("单设备卡数须为整数");
+        if (!(v.utilization > 0 && v.utilization <= 100)) errors.push("算力综合利用率须在 0–100% 之间");
+        if (!(v.currentPenetration > 0 && v.currentPenetration <= 100)) errors.push("当前用户渗透率须在 0–100% 之间");
+        if (!(v.futurePenetration > 0 && v.futurePenetration <= 100)) errors.push("未来目标渗透率须在 0–100% 之间");
+        if (!(v.vramUsable > 0 && v.vramUsable <= 100)) errors.push("权重可用显存占比须在 0–100% 之间");
+
+        if (v.totalParams < v.activeParams) warnings.push("总参数量小于激活参数量，请核对模型口径（MoE 总参数应大于每 Token 激活参数）。");
+        if (v.futurePenetration < v.currentPenetration) warnings.push("目标渗透率低于当前渗透率，未来结果将体现用户覆盖下降。");
+        if (v.computeMargin < 1) warnings.push("算力规划冗余系数小于 1，可能低估规划容量。");
+        if (v.utilization > 60) warnings.push("算力综合利用率高于 60%，一级规划通常偏乐观，建议复核。");
+
+        inputs.forEach(input => {
+          const bad = errors.some(message => message.includes(labelFor(input.dataset.key)));
+          input.classList.toggle("invalid", bad);
+        });
+        showMessages("errorBox", errors);
+        showMessages("warningBox", warnings);
+        return errors.length === 0;
+      }
+
+      function calculate() {
+        const v = readValues();
+        const valid = validate(v);
+        $("resultsRoot").classList.toggle("disabled-results", !valid);
+        if (!valid) return;
+
+        // ── Token 取数：AI 渗透用户数 × 单用户有效用量 ──
+        const activeUsers = v.dau * v.currentPenetration / 100;
+        const perUserTokens = v.outTokens + v.inTokens * (1 - v.cacheHitRate / 100);
+        const dailyTokensRaw = activeUsers * perUserTokens;
+
+        // ── 下游换算链路 ──
+        const tokenPerSecond = dailyTokensRaw / 86400;
+        const baseFlops = tokenPerSecond * v.flopsMultiplier * (v.activeParams * 1e9) * v.peakMultiplier / (v.utilization / 100);
+        const basePflops = baseFlops / 1e15;
+        const plannedPflops = basePflops * v.computeMargin;
+        const cardFlops = v.cardTflops * 1e12;
+
+        const baseCards = Math.ceil(baseFlops / cardFlops);
+        const computeCards = Math.ceil(plannedPflops * 1e15 / cardFlops);
+
+        // ── 显存部署卡数下限 ──
+        const weightBytes = v.totalParams * 1e9 * v.weightPrecision;
+        const usableBytesPerCard = v.cardVram * GIB * (v.vramUsable / 100);
+        const minCards = Math.ceil(weightBytes / usableBytesPerCard);
+
+        const currentCards = Math.max(computeCards, minCards);
+        const memoryBound = minCards > computeCards;
+        const currentDevices = Math.ceil(currentCards / v.cardsPerDevice);
+
+        const penetrationFactor = v.futurePenetration / v.currentPenetration;
+        const growthMultiple = penetrationFactor * v.frequencyFactor * v.agentFactor;
+        const futurePflops = plannedPflops * growthMultiple;
+        const futureCards = Math.max(Math.ceil(futurePflops * 1e15 / cardFlops), minCards);
+        const futureActiveUsers = v.dau * v.futurePenetration / 100;
+
+        const years = [];
+        const calendarYear = new Date().getFullYear();
+        for (let year = 0; year <= v.years; year += 1) {
+          const progress = year / v.years;
+          const penetration = v.currentPenetration + (v.futurePenetration - v.currentPenetration) * progress;
+          const kPenetration = penetration / v.currentPenetration;
+          const kFrequency = Math.pow(v.frequencyFactor, progress);
+          const kAgent = Math.pow(v.agentFactor, progress);
+          const total = kPenetration * kFrequency * kAgent;
+          const pflops = plannedPflops * total;
+          const rawCards = Math.ceil(pflops * 1e15 / cardFlops);
+          const cards = Math.max(rawCards, minCards);
+          years.push({
+            year,
+            label: year === 0 ? `${calendarYear}（当前）` : `${calendarYear + year}`,
+            shortLabel: year === 0 ? "当前" : `Y${year}`,
+            penetration, kFrequency, kAgent, total, pflops, cards,
+            memoryBound: minCards > rawCards,
+            devices: Math.ceil(cards / v.cardsPerDevice)
+          });
+        }
+
+        lastResult = {
+          v, activeUsers, perUserTokens, dailyTokensRaw, tokenPerSecond,
+          basePflops, plannedPflops, baseCards, computeCards, minCards, currentCards,
+          memoryBound, currentDevices, penetrationFactor, growthMultiple,
+          futurePflops, futureCards, futureActiveUsers, years
+        };
+
+        renderInputEchoes(lastResult);
+        renderHero(lastResult);
+        renderSummary(lastResult);
+        renderGrowth(lastResult);
+        renderChart(years, minCards);
+        renderAnnualTable(years);
+        translateDom();
+      }
+
+      /** 表单内的派生只读显示与提示文案。 */
+      function renderInputEchoes(r) {
+        $("inTokensHint").innerHTML = `= <b>${tokenScale(r.v.inTokens)}</b> token/人·日`;
+        $("outTokensHint").innerHTML = `= <b>${tokenScale(r.v.outTokens)}</b> token/人·日`;
+        $("perUserTokensOut").textContent = number(r.perUserTokens, 0);
+        $("activeUsersOut").textContent = number(r.activeUsers, 0);
+        $("dailyTokensOut").textContent = number(r.dailyTokensRaw / 1e8, 2);
+        $("dailyTokensSource").innerHTML =
+          `由 <b>${number(r.activeUsers, 0)}</b> AI 渗透用户 × <b>${tokenScale(r.perUserTokens)}</b> token 推算，共 <b>${tokenScale(r.dailyTokensRaw)}</b> token/日`;
+        $("penetrationRoleHint").innerHTML =
+          "当前渗透率同时决定<b>渗透用户数</b>与未来增长基数；目标渗透率决定未来放大倍数。";
+
+        syncModelPreset(r.v.totalParams, r.v.activeParams);
+
+        $("minCardsOut").textContent = number(r.minCards, 0);
+        const weightGiB = r.v.totalParams * 1e9 * r.v.weightPrecision / GIB;
+        $("minCardsHint").innerHTML =
+          `权重约 <b>${number(weightGiB, 1)}</b> GiB ÷ (<b>${number(r.v.cardVram, 0)}</b> GB × <b>${number(r.v.vramUsable, 0)}</b>%)`;
+      }
+
+      function renderHero(r) {
+        $("resultSubtitle").textContent =
+          `${number(r.dailyTokensRaw / 1e8, 1)} 亿 Token/日 · ${modelLabel(r.v.totalParams, r.v.activeParams)} · ${number(r.v.cardTflops, 1)} TFLOPS/卡${precisionOf(r.v.cardTflops)}`;
+        $("heroCards").textContent = number(r.currentCards, 0);
+        $("heroPflops").textContent = `≈ ${number(r.plannedPflops, 0)} PFLOPS 规划算力`;
+
+        const tag = $("boundTag");
+        tag.className = `bound-tag ${r.memoryBound ? "memory" : "compute"}`;
+        tag.textContent = r.memoryBound
+          ? `受显存下限约束 · 算力需求仅 ${number(r.computeCards, 0)} 卡`
+          : `受算力需求约束 · 显存下限 ${number(r.minCards, 0)} 卡`;
+
+        $("heroFormula").innerHTML = r.memoryBound
+          ? `n<sub>card</sub> = max(${number(r.computeCards, 0)}, ⌈${number(r.v.totalParams, 0)}B × ${number(r.v.weightPrecision, 1)}B/参数 ÷ ${number(r.v.cardVram, 0)}GB×${number(r.v.vramUsable, 0)}%⌉) = ${number(r.currentCards, 0)}`
+          : `n<sub>card</sub> = ${number(r.tokenPerSecond, 0)} × ${number(r.v.flopsMultiplier, 1)} × ${number(r.v.activeParams, 1)}B × ${number(r.v.peakMultiplier, 1)} ÷ ${number(r.v.utilization, 0)}% × ${number(r.v.computeMargin, 2)} ÷ ${number(r.v.cardTflops, 1)}T`;
+
+        $("rowDailyTokens").innerHTML = `${number(r.dailyTokensRaw / 1e8, 2)}<small>亿/日</small>`;
+        $("rowTokenPerSec").innerHTML = `${number(r.tokenPerSecond, 0)}<small>token/s</small>`;
+        $("rowComputeCards").innerHTML = `${number(r.computeCards, 0)}<small>卡</small>`;
+        $("rowMinCards").innerHTML = `${number(r.minCards, 0)}<small>卡</small>`;
+        $("rowMinWrap").classList.toggle("is-binding", r.memoryBound);
+        $("rowFutureLabel").textContent = `未来 ${r.v.years} 年卡数`;
+        $("rowFutureCards").innerHTML = `${number(r.futureCards, 0)}<small>卡</small>`;
+        $("rowDevices").innerHTML = `${number(r.currentDevices, 0)}<small>台</small>`;
+      }
+
+      function renderSummary(r) {
+        $("basePflops").textContent = number(r.basePflops, 0);
+        $("baseCards").textContent = number(r.baseCards, 0);
+        $("plannedPflops").textContent = number(r.plannedPflops, 0);
+        $("currentCards").textContent = number(r.currentCards, 0);
+        $("computeMarginOut").textContent = `${number(r.v.computeMargin, 2)}×`;
+        $("currentDevices").textContent = number(r.currentDevices, 0);
+        $("futureKpiLabel").textContent = `未来 ${r.v.years} 年算力需求`;
+        $("futurePflops").textContent = number(r.futurePflops, 0);
+        $("futureCards").textContent = number(r.futureCards, 0);
+        $("futureDeltaPflops").textContent = number(r.futurePflops - r.plannedPflops, 0);
+        $("futureDeltaCards").textContent = number(r.futureCards - r.currentCards, 0);
+        $("growthMultiple").textContent = number(r.growthMultiple, 2);
+        $("futureDau").textContent = number(r.futureActiveUsers, 0);
+        $("cardTflopsOut").textContent = number(r.v.cardTflops, 1);
+        $("cardVramOut").textContent = number(r.v.cardVram, 0);
+        $("trendTitle").textContent = `未来 ${r.v.years} 年算力卡数增长路径`;
+        $("chartEndLabel").textContent = `第 ${r.v.years} 年终值`;
+        $("memBoundPill").hidden = !r.years.some(row => row.memoryBound);
+      }
+
+      function renderGrowth(r) {
+        $("penetrationFactor").textContent = `${number(r.penetrationFactor, 2)}×`;
+        $("frequencyFactorOut").textContent = `${number(r.v.frequencyFactor, 2)}×`;
+        $("agentFactorOut").textContent = `${number(r.v.agentFactor, 2)}×`;
+        $("factorTotal").textContent = `${number(r.growthMultiple, 2)}×`;
+        const maxFactor = Math.max(r.penetrationFactor, r.v.frequencyFactor, r.v.agentFactor, 1);
+        $("penetrationBar").style.width = `${Math.max(8, r.penetrationFactor / maxFactor * 100)}%`;
+        $("frequencyBar").style.width = `${Math.max(8, r.v.frequencyFactor / maxFactor * 100)}%`;
+        $("agentBar").style.width = `${Math.max(8, r.v.agentFactor / maxFactor * 100)}%`;
+      }
+
+      function renderChart(rows, minCards) {
+        const svg = $("trendChart");
+        const wrap = svg.parentElement;
+        const measured = Math.floor(wrap ? wrap.getBoundingClientRect().width : 0);
+        const width = Math.max(280, measured || 760);
+        const height = 230;
+        const left = 56, right = 20, top = 30, bottom = 34;
+        const plotWidth = width - left - right;
+        const plotHeight = height - top - bottom;
+        const max = Math.max(...rows.map(row => row.cards), 1) * 1.12;
+        const x = i => left + (rows.length === 1 ? plotWidth / 2 : i / (rows.length - 1) * plotWidth);
+        const y = value => top + plotHeight - value / max * plotHeight;
+        const points = rows.map((row, i) => `${x(i)},${y(row.cards)}`).join(" ");
+        const areaPoints = `${left},${top + plotHeight} ${points} ${x(rows.length - 1)},${top + plotHeight}`;
+        const grid = Array.from({ length: 5 }, (_, i) => {
+          const value = max * (4 - i) / 4;
+          const py = top + plotHeight * i / 4;
+          return `<line class="chart-grid" x1="${left}" y1="${py}" x2="${width - right}" y2="${py}"/>` +
+                 `<text class="chart-axis" x="${left - 8}" y="${py + 3}" text-anchor="end">${compact(value)}</text>`;
+        }).join("");
+        const labelsRow = rows.map((row, i) => `<text class="chart-axis" x="${x(i)}" y="${height - 10}" text-anchor="middle">${row.shortLabel}</text>`).join("");
+        const dots = rows.map((row, i) => `<circle class="chart-dot" cx="${x(i)}" cy="${y(row.cards)}" r="4"><title>${row.label}：${number(row.cards, 0)} 卡</title></circle>`).join("");
+        const values = rows.map((row, i) => `<text class="chart-value-label" x="${x(i)}" y="${Math.max(13, y(row.cards) - 10)}" text-anchor="middle">${number(row.cards, 0)}卡</text>`).join("");
+
+        // 显存下限落在可视范围内时画一条参考线
+        const floor = (minCards > 0 && minCards < max)
+          ? `<line class="chart-floor" x1="${left}" y1="${y(minCards)}" x2="${width - right}" y2="${y(minCards)}"/>` +
+            `<text class="chart-floor-label" x="${width - right}" y="${y(minCards) - 5}" text-anchor="end">显存下限 ${number(minCards, 0)} 卡</text>`
+          : "";
+
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.innerHTML = `
+          <defs><linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2563eb" stop-opacity=".22"/>
+            <stop offset="100%" stop-color="#2563eb" stop-opacity=".02"/>
+          </linearGradient></defs>
+          ${grid}
+          <polygon class="chart-area" points="${areaPoints}"/>
+          ${floor}
+          <polyline class="chart-line" points="${points}"/>
+          ${dots}
+          ${values}
+          ${labelsRow}
+          <text class="chart-axis" x="${left}" y="12">卡数</text>`;
+      }
+
+      function renderAnnualTable(rows) {
+        $("annualBody").innerHTML = rows.map((row, i) => `
+          <tr class="${i === rows.length - 1 ? "final-year" : ""}">
+            <td>${row.label}</td>
+            <td>${number(row.penetration, 1)}%</td>
+            <td>${number(row.kFrequency, 2)}×</td>
+            <td>${number(row.kAgent, 2)}×</td>
+            <td>${number(row.total, 2)}×</td>
+            <td>${number(row.pflops, 0)}</td>
+            <td class="${row.memoryBound ? "mem-bound" : ""}">${number(row.cards, 0)}</td>
+            <td>${number(row.devices, 0)}</td>
+          </tr>`).join("");
+      }
+
+      /* ── 交互 ────────────────────────────────────────────── */
+
+
+      function setActiveScenario(key) {
+        activeScenario = key;
+        document.querySelectorAll("[data-scenario]").forEach(btn =>
+          btn.setAttribute("aria-pressed", String(btn.dataset.scenario === key)));
+        $("scenarioBody").classList.toggle("is-active", Boolean(key));
+      }
+
+      function selectTab(tabId) {
+        document.querySelectorAll(".tab").forEach(tab =>
+          tab.setAttribute("aria-selected", String(tab.id === tabId)));
+        $("businessPanel").hidden = tabId !== "businessTab";
+        $("productPanel").hidden = tabId !== "productTab";
+      }
+
+      function setupTabs() {
+        document.querySelectorAll(".tab").forEach(tab =>
+          tab.addEventListener("click", () => selectTab(tab.id)));
+      }
+
+
+      function setupScenarios() {
+        document.querySelectorAll("[data-scenario]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const preset = scenarios[btn.dataset.scenario];
+            if (!preset) return;
+            writeValues(preset);
+            setActiveScenario(btn.dataset.scenario);
+            calculate();
+          });
+        });
+      }
+
+      /** 让型号下拉框回显当前参数：能匹配到型号就选中，匹配不到则落到「其他型号」。
+          若当前选中项参数已相符（如 V3 / R1 同尺寸），保留用户所选不做改写。 */
+      function syncModelPreset(totalParams, activeParams) {
+        const select = $("modelPreset");
+        const same = (option) =>
+          option && option.dataset.total !== undefined &&
+          Number(option.dataset.total) === totalParams &&
+          Number(option.dataset.active) === activeParams;
+        if (same(select.selectedOptions[0])) return;
+        const match = [...select.options].find(same);
+        select.value = match ? match.value : "";
+      }
+
+      function setupModelPreset() {
+        const select = $("modelPreset");
+        select.addEventListener("change", () => {
+          const option = select.selectedOptions[0];
+          if (!option || option.dataset.total === undefined) return; // 「其他型号」不改写参数
+          $("totalParams").value = groupDigits(option.dataset.total);
+          $("activeParams").value = groupDigits(option.dataset.active);
+          setActiveScenario(null);
+          calculate();
+        });
+      }
+
+      function setupQuickButtons() {
+        document.querySelectorAll("[data-tflops]").forEach(button => {
+          button.addEventListener("click", () => { $("cardTflops").value = groupDigits(button.dataset.tflops); calculate(); });
+        });
+      }
+
+      function setupResponsiveChart() {
+        let timer = null;
+        window.addEventListener("resize", () => {
+          window.clearTimeout(timer);
+          timer = window.setTimeout(() => { if (lastResult) renderChart(lastResult.years, lastResult.minCards); }, 80);
+        });
+      }
+
+      $("langToggle")?.addEventListener("click", switchLocale);
+      inputs.forEach(input => {
+        input.addEventListener("input", () => {
+          if (input.tagName !== "SELECT") reformatInput(input);
+          setActiveScenario(null);
+          calculate();
+        });
+        input.addEventListener("change", () => { setActiveScenario(null); calculate(); });
+      });
+
+      setupTabs();
+      setupScenarios();
+      setupModelPreset();
+      setupQuickButtons();
+      setupResponsiveChart();
+      writeValues(defaults);
+      setActiveScenario(DEFAULT_SCENARIO);
+      calculate();
+    })();
+  </script>
+</body>
+</html>
