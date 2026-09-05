@@ -9,11 +9,11 @@ alwaysApply: false
 
 ## 必看
 
-- **正确性**：公式、单位、边界（0、空、超大 batch、百分比之和 ≠ 100%）。
+- **正确性**：公式、单位、边界（0、空、超大 batch、百分比之和 ≠ 100%）。新计算器（TCP、算力估算）与 KV/ROI 同等对待。
 - **回退**：API/DB 不可用时页面仍可用，来源角标正确。
-- **契约**：HTML 引用的 `js/`、`css/`、`i18n/`、`data/` 存在；`data-i18n-page` 与 `i18n/{page}.{zh,en}.json` 对齐。
-- **安全**：PUT / analytics 必须鉴权；token 与解锁口令不写进前端默认值；分析 IP 脱敏。
-- **i18n / 主题**：中英、Light/Dark 四态不丢文案；iframe 不因切主题整页重载。
+- **契约**：HTML 引用存在；`data-i18n-page` 与 i18n 对齐；新页必须写入 `data/page-registry.json`；`ai-dc-design` 的 `tab` / iframe key（`a`↔`caseA`）与注册表一致。
+- **安全**：PUT / analytics / `admin/verify` 必须鉴权；无默认 `ADMIN_TOKEN`；前端不出现 `site.unlock_password`。
+- **i18n / 主题**：中英、Light/Dark 四态；iframe 不因切主题整页重载。
 - **部署**：新文件在 rsync 范围内；`deploy.sh` 与 `deploy.yml` 的 exclude 一致。
 
 ## 增量改动

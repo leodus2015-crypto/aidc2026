@@ -12,7 +12,7 @@ docs/test-reports/YYYY-MM-DD-<site-version>-b<asset-build>.md
 - `<site-version>`：[`data/site-release.json`](../../data/site-release.json) 的 `version`（如 `v2026.08.29`）
 - `b<asset-build>`：同文件 `build`，与 [`data/asset-version.json`](../../data/asset-version.json) 的 `version` 一致
 
-示例：`2026-08-29-v2026.08.29-b78.md`
+示例：`2026-09-05-v2026.09.01-b84.md`
 
 ## 生成后怎么用
 
