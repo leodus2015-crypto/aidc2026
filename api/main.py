@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from analytics import empty_summary, load_summary_file, query_summary
-from db import DatabaseError, fetch_config, get_db_error, ping_database, upsert_config
+from db import ConfigConflictError, DatabaseError, fetch_config, get_db_error, ping_database, upsert_config
 from schemas import (
     AdminVerifyResponse,
     AnalyticsIpsResponse,
@@ -139,7 +139,14 @@ def put_config(
         raise HTTPException(status_code=404, detail="未知配置键")
     require_admin(authorization)
     try:
-        return upsert_config(config_key, body.data, updated_by="admin")
+        return upsert_config(
+            config_key,
+            body.data,
+            updated_by="admin",
+            expected_version=body.expected_version,
+        )
+    except ConfigConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except DatabaseError as exc:
         raise HTTPException(status_code=503, detail="数据库不可用") from exc
 

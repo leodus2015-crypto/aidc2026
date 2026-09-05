@@ -99,6 +99,7 @@
 
   let CLOUD_COMPARE = {};
   let configLoadMeta = { defaults: 'local', cloud: 'local' };
+  let configVersions = { defaults: 0, cloud: 0 };
 
   let activeScenario = 'ds-v4';
   let syncLock = false;
@@ -327,14 +328,23 @@
     hint.className = 'text-xs text-slate-500';
     try {
       const token = unlockPassword;
-      await AidcConfig.save(configKeys.defaults, collectRoiConfigForSave(), token);
-      await AidcConfig.save(configKeys.cloudCompare, { schemaVersion: 1, ...CLOUD_COMPARE }, token);
+      const savedDefaults = await AidcConfig.save(configKeys.defaults, collectRoiConfigForSave(), token, {
+        expectedVersion: configVersions.defaults,
+      });
+      const savedCloud = await AidcConfig.save(configKeys.cloudCompare, { schemaVersion: 1, ...CLOUD_COMPARE }, token, {
+        expectedVersion: configVersions.cloud,
+      });
+      configVersions.defaults = savedDefaults?.version ?? configVersions.defaults + 1;
+      configVersions.cloud = savedCloud?.version ?? configVersions.cloud + 1;
       hint.textContent = L('已同步到云端');
       hint.className = 'text-xs text-emerald-700';
       configLoadMeta = { defaults: 'database', cloud: 'database' };
       updateConfigSourceBadge();
     } catch (err) {
-      hint.textContent = Lp('同步失败：{msg}', { msg: err.message || err });
+      const conflict = err?.code === 'CONFLICT' || err?.status === 409;
+      hint.textContent = conflict
+        ? L('配置已被他人更新，当前输入已保留，请重新加载后再保存')
+        : Lp('同步失败：{msg}', { msg: err.message || err });
       hint.className = 'text-xs text-rose-600';
     }
   }
@@ -745,6 +755,10 @@
       AidcConfig.load(configKeys.cloudCompare, LOCAL_CLOUD_COMPARE),
     ]);
     configLoadMeta = { defaults: defaultsResult.source, cloud: cloudResult.source };
+    configVersions = {
+      defaults: Number(defaultsResult.version) || 0,
+      cloud: Number(cloudResult.version) || 0,
+    };
     mergeCloudCompare(cloudResult.data);
     applyRoiConfig(defaultsResult.data);
     activeScenario = $('serviceModel').value === 'glm-52' ? 'glm-52' : 'ds-v4';

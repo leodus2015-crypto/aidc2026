@@ -42,6 +42,7 @@ ATTR_RE = re.compile(
 )
 I18N_PAGE_RE = re.compile(r'data-i18n-page="([^"]+)"')
 EXCLUDE_RE = re.compile(r"""--exclude\s+['"]([^'"]+)['"]""")
+MIGRATION_RE = re.compile(r"^(\d{4})_[a-z0-9_]+\.sql$")
 
 
 def fail(errors: list[str]) -> int:
@@ -347,6 +348,24 @@ def check_config_seeds(errors: list[str]) -> None:
         errors.append(f"ALLOWED_CONFIG_KEYS 缺少种子文件: {', '.join(missing_seeds)}")
 
 
+def check_migrations(errors: list[str], root: Path = ROOT) -> None:
+    folder = root / "sql" / "migrations"
+    if not folder.is_dir():
+        errors.append("缺少 sql/migrations 目录")
+        return
+    seen: dict[str, str] = {}
+    for path in sorted(folder.glob("*.sql")):
+        match = MIGRATION_RE.fullmatch(path.name)
+        if not match:
+            errors.append(f"迁移文件名无效: {path.name}")
+            continue
+        number = match.group(1)
+        if number in seen:
+            errors.append(f"迁移序号重复: {number} ({seen[number]}, {path.name})")
+        else:
+            seen[number] = path.name
+
+
 def extract_excludes(text: str) -> list[str]:
     return [item for item in EXCLUDE_RE.findall(text) if "$" not in item]
 
@@ -372,6 +391,7 @@ def main() -> int:
     check_frontend_secret_refs(errors)
     check_frontend_api_access(errors)
     check_config_seeds(errors)
+    check_migrations(errors)
     check_deploy_excludes(errors)
     return fail(errors)
 

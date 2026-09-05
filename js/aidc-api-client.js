@@ -127,11 +127,16 @@
   }
 
   function saveConfig(key, data, token, options) {
+    const opts = options || {};
+    const expectedVersion = opts.expectedVersion;
     return request(`/api/config/${encodeURIComponent(key)}`, {
-      ...options,
+      ...opts,
       method: 'PUT',
       token,
-      body: { data },
+      body: {
+        data,
+        expected_version: expectedVersion == null ? 0 : Number(expectedVersion),
+      },
     });
   }
 

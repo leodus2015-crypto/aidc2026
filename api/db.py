@@ -25,6 +25,14 @@ class DatabaseError(RuntimeError):
     """Safe database boundary error; internal driver details stay server-side."""
 
 
+class ConfigConflictError(RuntimeError):
+    """Optimistic-lock mismatch; safe to return to the client."""
+
+    def __init__(self, current_version: int):
+        super().__init__("配置已被他人更新，请重新加载后再保存")
+        self.current_version = int(current_version)
+
+
 def get_db_error() -> Optional[str]:
     return _db_error
 
@@ -102,33 +110,47 @@ def fetch_config(config_key: str) -> Optional[Dict[str, Any]]:
     }
 
 
-def upsert_config(config_key: str, data: Dict[str, Any], updated_by: Optional[str] = None) -> Dict[str, Any]:
+def upsert_config(
+    config_key: str,
+    data: Dict[str, Any],
+    updated_by: Optional[str] = None,
+    expected_version: Optional[int] = None,
+    force: bool = False,
+) -> Dict[str, Any]:
     payload = json.dumps(data, ensure_ascii=False)
     with db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT version, config_json FROM app_config WHERE config_key = %s LIMIT 1",
+                "SELECT version, config_json FROM app_config WHERE config_key = %s LIMIT 1 FOR UPDATE",
                 (config_key,),
             )
             existing = cur.fetchone()
-            next_version = (existing["version"] + 1) if existing else 1
             if existing:
+                current_version = int(existing["version"])
+                if not force and expected_version != current_version:
+                    raise ConfigConflictError(current_version)
+                next_version = current_version + 1
                 cur.execute(
                     """
                     INSERT INTO app_config_revision (config_key, config_json, version, created_by)
                     VALUES (%s, %s, %s, %s)
                     """,
-                    (config_key, existing["config_json"], existing["version"], updated_by),
+                    (config_key, existing["config_json"], current_version, updated_by),
                 )
                 cur.execute(
                     """
                     UPDATE app_config
                     SET config_json = %s, version = %s, updated_by = %s
-                    WHERE config_key = %s
+                    WHERE config_key = %s AND version = %s
                     """,
-                    (payload, next_version, updated_by, config_key),
+                    (payload, next_version, updated_by, config_key, current_version),
                 )
+                if cur.rowcount != 1:
+                    raise ConfigConflictError(current_version)
             else:
+                if not force and expected_version not in (None, 0):
+                    raise ConfigConflictError(0)
+                next_version = 1
                 cur.execute(
                     """
                     INSERT INTO app_config (config_key, config_json, version, updated_by)

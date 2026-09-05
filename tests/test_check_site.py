@@ -108,3 +108,15 @@ def test_direct_frontend_api_path_is_rejected_outside_client(tmp_path):
     check_site.check_frontend_api_access(errors, root=tmp_path)
 
     assert errors == ["前端 API 请求必须通过 js/aidc-api-client.js: js/page.js"]
+
+
+def test_invalid_migration_filename_is_rejected(tmp_path):
+    check_site = load_check_site_module()
+    folder = tmp_path / "sql" / "migrations"
+    folder.mkdir(parents=True)
+    (folder / "v1-add-table.sql").write_text("SELECT 1;", encoding="utf-8")
+    errors = []
+
+    check_site.check_migrations(errors, root=tmp_path)
+
+    assert errors == ["迁移文件名无效: v1-add-table.sql"]

@@ -32,7 +32,7 @@ def main() -> int:
     for path in files:
         config_key = path.stem
         data = json.loads(path.read_text(encoding="utf-8"))
-        saved = upsert_config(config_key, data, updated_by="seed-script")
+        saved = upsert_config(config_key, data, updated_by="seed-script", force=True)
         print(f"✓ {config_key} (v{saved['version']})")
 
     print(f"完成，共导入 {len(files)} 项配置。")

@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 import analytics
 import main
-from db import DatabaseError
+from db import ConfigConflictError, DatabaseError
 
 client = TestClient(main.app)
 
@@ -61,7 +61,7 @@ def test_get_config_ok():
 
 def test_put_config_requires_bearer():
     with patch.object(main, "ping_database", return_value=True):
-        res = client.put("/api/config/roi.defaults", json={"data": {}})
+        res = client.put("/api/config/roi.defaults", json={"data": {}, "expected_version": 0})
     assert res.status_code == 401
 
 
@@ -69,7 +69,7 @@ def test_put_config_rejects_wrong_token():
     with patch.object(main, "ping_database", return_value=True):
         res = client.put(
             "/api/config/roi.defaults",
-            json={"data": {}},
+            json={"data": {}, "expected_version": 0},
             headers={"Authorization": "Bearer wrong-token"},
         )
     assert res.status_code == 401
@@ -79,10 +79,36 @@ def test_put_config_rejects_when_admin_token_unset():
     with patch.object(main, "ADMIN_TOKEN", ""), patch.object(main, "ping_database", return_value=True):
         res = client.put(
             "/api/config/roi.defaults",
-            json={"data": {}},
+            json={"data": {}, "expected_version": 0},
             headers={"Authorization": "Bearer anything"},
         )
     assert res.status_code == 503
+
+
+def test_put_config_requires_expected_version():
+    with patch.object(main, "ADMIN_TOKEN", "strong-test-token"):
+        res = client.put(
+            "/api/config/roi.defaults",
+            json={"data": {}},
+            headers={"Authorization": "Bearer strong-test-token"},
+        )
+    assert res.status_code == 422
+    assert res.json()["error"]["code"] == "VALIDATION_ERROR"
+
+
+def test_put_config_conflict_returns_409():
+    with patch.object(main, "ADMIN_TOKEN", "strong-test-token"), patch.object(
+        main, "upsert_config", side_effect=ConfigConflictError(5)
+    ):
+        res = client.put(
+            "/api/config/roi.defaults",
+            json={"data": {"computeP": 1}, "expected_version": 4},
+            headers={"Authorization": "Bearer strong-test-token"},
+        )
+    assert res.status_code == 409
+    body = res.json()
+    assert body["error"]["code"] == "CONFLICT"
+    assert "重新加载" in body["error"]["message"]
 
 
 def test_verify_admin_accepts_valid_bearer():

@@ -102,7 +102,7 @@ aidc 静态站点归档
   embed 下保留精简顶栏（俯视/水平/透视/Cooling），隐藏 Logo 与主题切换。
   已删除的旧 HTML 入口由 deploy/nginx-static-cache.conf 提供 301 兼容跳转。
   站点状态：status.html（内部页；About US 头像悬停 2s 入口）+ deploy/ANALYTICS.md。
-  云端 MySQL：部署后执行 python3 scripts/seed-config.py；首次访问观测需 mysql < sql/analytics.sql。
+  云端 MySQL：部署后执行 python3 scripts/migrate.py，再 python3 scripts/seed-config.py。
 
 本地预览
 ────────

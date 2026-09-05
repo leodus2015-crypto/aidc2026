@@ -166,6 +166,7 @@
     "同步中…": "Syncing…",
     "已同步到云端": "Synced to cloud",
     "同步失败：{msg}": "Sync failed: {msg}",
+    "配置已被他人更新，当前输入已保留，请重新加载后再保存": "The cloud config was updated by someone else. Your current inputs are kept; reload before saving again.",
     "万元": "",
     "万元/年": "×10k CNY/yr",
     "万元/天": "×10k CNY/day",

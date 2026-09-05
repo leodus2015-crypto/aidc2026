@@ -1,12 +1,6 @@
--- AIDC 站点配置表（MySQL 8.0+）空库引导。
--- 已有库请使用：python3 scripts/migrate.py
--- 空库也可：mysql -u user -p aidc < sql/schema.sql && python3 scripts/migrate.py
-
-CREATE DATABASE IF NOT EXISTS aidc
-  DEFAULT CHARACTER SET utf8mb4
-  DEFAULT COLLATE utf8mb4_unicode_ci;
-
-USE aidc;
+-- 基线：站点配置表。新库创建；已有库 CREATE IF NOT EXISTS 不改数据。
+-- 前滚：确保 app_config / app_config_revision 存在。回滚：禁止删除已有配置数据。
+-- 锁表风险：低。备份：首次在生产执行前备份。
 
 CREATE TABLE IF NOT EXISTS app_config (
   id           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

@@ -27,6 +27,7 @@ class HealthResponse(BaseModel):
 
 class ConfigPayload(BaseModel):
     data: Dict[str, Any] = Field(default_factory=dict)
+    expected_version: int = Field(..., ge=0)
 
 
 class ConfigResponse(BaseModel):

@@ -24,7 +24,7 @@ aidc/
 ├── i18n/                   页面中英文文案；名称与 data-i18n-page 对齐
 ├── data/                   公开静态数据、配置回退、版本及页面注册表
 ├── api/                    FastAPI 路由、响应模型、数据库和分析查询
-├── sql/                    初始 schema；后续结构变化应使用迁移目录
+├── sql/                    空库引导 schema；结构变化必须写入 sql/migrations/
 ├── scripts/                静态检查、构建、数据任务和部署脚本
 ├── tests/                  API、公式和站点检查
 ├── deploy/                 Nginx、安全、缓存和访问分析配置
@@ -114,6 +114,10 @@ iframe URL 与语言同步由 `js/index-page.js` 管理。`inference/styles.css`
 管理凭据仅存在于服务端 `ADMIN_TOKEN` 环境变量。ROI 与 3D 页面由用户输入凭据并调用服务端验证；公共配置接口不得返回口令或其验证材料。
 
 API 成功响应由 `api/schemas.py` 定义并保持现有主体兼容。错误统一返回 `error.code`、`error.message`、`error.request_id`；数据库驱动异常只写服务端日志，不返回浏览器。前端生成的 `X-Request-ID` 会由 API 校验并在响应头回传。
+
+配置写入必须携带 `expected_version`。版本不一致返回 `409 CONFLICT`，页面应保留用户输入并提示重新加载。种子导入使用 `force=True`，不走乐观锁。
+
+结构变更必须新增 `sql/migrations/NNNN_name.sql`，由 `python3 scripts/migrate.py` 按文件名顺序执行。脚本会登记校验和；已应用文件被改动会失败。空库仍可用 `sql/schema.sql` 引导，但生产变更不得只改该文件后手工执行。`python3 scripts/migrate.py --check` 不连接数据库。
 
 ## 8. 新页面接入步骤
 
