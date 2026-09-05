@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="AI 数据中心部署分布、推理性能、算存协同与算云协同特性演示。">
+<meta name="theme-color" content="#f0f5fc">
+<link rel="canonical" href="https://www.aidc2026.cn/ai-dc-deployment-perf.html">
 <title>AI DC · 部署 &amp; 协同特性</title>
 <script src="js/aidc-theme.js?v=84"></script>
 <script src="js/theme-switch.js?v=84"></script>
@@ -218,6 +220,9 @@ html[data-theme="dark"] .pr-bus{background:linear-gradient(130deg,rgba(52,211,15
   body{padding:14px 12px 36px}
 }
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}
 
 /* Dark: inline-style panels → transparent inset */
 html[data-theme="dark"] .pr-std{background:linear-gradient(130deg,rgba(96,165,250,.06),var(--bg2));}

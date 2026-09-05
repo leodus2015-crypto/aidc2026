@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。" />
+  <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-computeEst.html" />
   <title>AI 数据中心算力评估规划 · Token → Card</title>
   <script src="js/aidc-theme.js?v=84"></script>
   <script src="js/embed-mode.js?v=84"></script>
@@ -1601,7 +1602,15 @@
       function showMessages(id, messages) {
         const box = $(id);
         box.classList.toggle("show", messages.length > 0);
-        box.innerHTML = messages.length ? `<ul>${messages.map(m => `<li>${m}</li>`).join("")}</ul>` : "";
+        box.replaceChildren();
+        if (!messages.length) return;
+        const ul = document.createElement("ul");
+        messages.forEach((message) => {
+          const li = document.createElement("li");
+          li.textContent = message;
+          ul.appendChild(li);
+        });
+        box.appendChild(ul);
       }
 
       function validate(v) {
