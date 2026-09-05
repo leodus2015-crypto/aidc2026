@@ -33,7 +33,6 @@ ALLOWED_CONFIG_KEYS = frozenset(
         "roi.cloud_compare.en",
         "dc3d.case_a",
         "dc3d.case_b",
-        "site.unlock_password",
     }
 )
 

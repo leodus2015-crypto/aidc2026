@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, Header, HTTPException, Query
@@ -16,7 +17,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["GET", "PUT", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
 
@@ -24,13 +25,24 @@ app.add_middleware(
 def require_admin(authorization: Optional[str]) -> None:
     if not ADMIN_TOKEN:
         raise HTTPException(status_code=503, detail="ADMIN_TOKEN 未配置")
-    token = (authorization or "").removeprefix("Bearer").strip()
-    if not token or token != ADMIN_TOKEN:
+    scheme, separator, token = (authorization or "").partition(" ")
+    if (
+        separator != " "
+        or scheme.lower() != "bearer"
+        or not token
+        or not hmac.compare_digest(token.strip(), ADMIN_TOKEN)
+    ):
         raise HTTPException(status_code=401, detail="未授权")
 
 
 class ConfigPayload(BaseModel):
     data: Dict[str, Any] = Field(default_factory=dict)
+
+
+@app.post("/api/admin/verify")
+def verify_admin(authorization: Optional[str] = Header(default=None)):
+    require_admin(authorization)
+    return {"authenticated": True}
 
 
 @app.get("/api/health")

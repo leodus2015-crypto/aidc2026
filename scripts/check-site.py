@@ -23,6 +23,8 @@ I18N_KEY_WHITELIST: dict[str, set[str]] = {
     # "page-id": {"lookup.someLegacyKey"},
 }
 
+FORBIDDEN_FRONTEND_SECRET_KEYS = ("site.unlock_password",)
+
 LOCAL_REF_ATTRS = ("src", "href")
 SKIP_REF_PREFIXES = (
     "http://",
@@ -277,6 +279,16 @@ def check_page_registry(errors: list[str], loaded: dict[Path, Any], root: Path =
                 errors.append(f"页面关系不对称: {page_path} parent={parent_path}，父页未登记 embeds")
 
 
+def check_frontend_secret_refs(errors: list[str], root: Path = ROOT) -> None:
+    for pattern in ("**/*.html", "js/**/*.js"):
+        for path in root.glob(pattern):
+            text = path.read_text(encoding="utf-8")
+            for secret_key in FORBIDDEN_FRONTEND_SECRET_KEYS:
+                if secret_key in text:
+                    rel = path.relative_to(root).as_posix()
+                    errors.append(f"前端禁止引用敏感配置键 {secret_key}: {rel}")
+
+
 def _frozenset_literals(node: ast.AST) -> set[str] | None:
     if not isinstance(node, ast.Call) or not node.args:
         return None
@@ -346,6 +358,7 @@ def main() -> int:
     check_i18n_pairs(errors, loaded)
     check_html_refs(errors)
     check_page_registry(errors, loaded)
+    check_frontend_secret_refs(errors)
     check_config_seeds(errors)
     check_deploy_excludes(errors)
     return fail(errors)

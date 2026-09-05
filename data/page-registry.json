@@ -252,6 +252,7 @@
         "data/dc3d-case-a.defaults.json"
       ],
       "dataSources": [
+        "/api/admin/verify",
         "/api/config/dc3d.case_a"
       ]
     },
@@ -275,6 +276,7 @@
         "data/dc3d-case-b.defaults.json"
       ],
       "dataSources": [
+        "/api/admin/verify",
         "/api/config/dc3d.case_b"
       ]
     },
@@ -299,6 +301,7 @@
         "i18n/aidc-investment-roi.en.json"
       ],
       "dataSources": [
+        "/api/admin/verify",
         "/api/config/roi.defaults",
         "/api/config/roi.defaults.en",
         "/api/config/roi.cloud_compare",

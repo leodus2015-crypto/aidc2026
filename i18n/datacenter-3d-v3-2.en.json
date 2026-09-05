@@ -118,7 +118,6 @@
     "• 鼠标左键旋转 | 滚轮缩放 | 右键平移": "• Left-drag rotate | Scroll zoom | Right-drag pan",
     "• 悬停查看机柜信息": "• Hover racks for details",
     "• 配置自动保存到 localStorage": "• Configuration auto-saves to localStorage",
-    "解锁口令未配置": "Unlock password not configured",
-    "解锁口令未配置，请先通过云端写入 site.unlock_password": "Unlock password is not configured. Set site.unlock_password via the cloud API first."
+    "认证服务不可用，请稍后重试。": "Authentication service is unavailable. Please try again later."
   }
 }

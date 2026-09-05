@@ -9,8 +9,8 @@ aidc 静态站点归档
   · 12 柜 × 8 NPU：boot 态柜 1–2 手机银行、3–4 风控、5–12 AI Coding 两组 DeepSeek EP；
     scale 态手机银行扩至柜 5–8，AI Coding 收拢柜 9–12；手机银行场景/机柜紫色高亮
   · 站点状态页 status.html（About US 头像悬停 2s 入口）+ /api/analytics/*
-  · Nginx 日志解析 → MySQL analytics_* 表；口令 = ADMIN_TOKEN（默认 aidc2026）
-  · 全站解锁密码种子 site.unlock_password = aidc2026（与 ADMIN_TOKEN 对齐）
+  · Nginx 日志解析 → MySQL analytics_* 表；管理认证仅使用服务端 ADMIN_TOKEN（无默认值）
+  · ROI / 3D 管理解锁由服务端验证，不向浏览器下发口令
 
 本版要点（v21）
 ──────────────
@@ -109,7 +109,7 @@ aidc 静态站点归档
   ./preview-8011.sh
   http://127.0.0.1:8011/aidc/index.html
   AI DC 规划：http://127.0.0.1:8011/aidc/ai-dc-design.html
-  站点状态：http://127.0.0.1:8011/aidc/status.html（口令 aidc2026）
+  站点状态：http://127.0.0.1:8011/aidc/status.html（凭据来自服务端 ADMIN_TOKEN）
 
 部署（GitHub → 云服务器 aidc2026.cn）
 ────────────────────────────────────
@@ -120,7 +120,7 @@ aidc 静态站点归档
   部署后（服务器项目根）：
     python3 scripts/seed-config.py              # 同步 app_config 种子
     mysql -u … -p aidc < sql/analytics.sql      # 首次建访问观测表
-    # 确认 .env：ADMIN_TOKEN=aidc2026、DATABASE_*、ANALYTICS_LOG=…
+    # 确认 .env：ADMIN_TOKEN=<强随机值>、DATABASE_*、ANALYTICS_LOG=…
     ./start-api-prod.sh                         # 重启 API
 
 已移除（勿再引用）

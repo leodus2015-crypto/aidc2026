@@ -85,17 +85,16 @@
   };
   let unlockPassword = '';
 
-  function normalizeUnlockPassword(value) {
-    return String(value || '').trim().toLowerCase();
-  }
-
-  function isUnlockConfigured() {
-    return Boolean(normalizeUnlockPassword(unlockPassword));
-  }
-
-  function verifyUnlockPassword(input) {
-    if (!isUnlockConfigured()) return false;
-    return normalizeUnlockPassword(input) === normalizeUnlockPassword(unlockPassword);
+  async function verifyAdminCredential(input) {
+    const token = String(input || '').trim();
+    if (!token) return { ok: false, unavailable: false };
+    try {
+      await AidcConfig.verifyAdmin(token);
+      unlockPassword = token;
+      return { ok: true, unavailable: false };
+    } catch (error) {
+      return { ok: false, unavailable: error?.status !== 401 };
+    }
   }
 
   let CLOUD_COMPARE = {};
@@ -667,13 +666,6 @@
       if ($('keyParamsToggle').checked) {
         if (keyParamsUnlocked) {
           setKeyParamsVisible(true);
-        } else if (!isUnlockConfigured()) {
-          $('keyParamsToggle').checked = false;
-          showPwdOverlay();
-          $('pwdInput').disabled = true;
-          $('pwdOk').disabled = true;
-          $('pwdError').textContent = L('解锁口令未配置，请先通过云端写入 site.unlock_password');
-          $('pwdError').classList.remove('hidden');
         } else {
           $('keyParamsToggle').checked = false;
           $('pwdInput').disabled = false;
@@ -686,11 +678,22 @@
     });
 
     $('pwdCancel').addEventListener('click', () => { hidePwdOverlay(); $('keyParamsToggle').checked = false; });
-    $('pwdOk').addEventListener('click', () => {
-      if (verifyUnlockPassword($('pwdInput').value)) {
+    $('pwdOk').addEventListener('click', async () => {
+      $('pwdOk').disabled = true;
+      $('pwdCancel').disabled = true;
+      $('pwdInput').disabled = true;
+      $('pwdError').classList.add('hidden');
+      const result = await verifyAdminCredential($('pwdInput').value);
+      $('pwdOk').disabled = false;
+      $('pwdCancel').disabled = false;
+      $('pwdInput').disabled = false;
+      if (result.ok) {
         hidePwdOverlay();
         setKeyParamsVisible(true);
       } else {
+        $('pwdError').textContent = result.unavailable
+          ? L('认证服务不可用，请稍后重试。')
+          : L('密码错误，请重试。');
         $('pwdError').classList.remove('hidden');
       }
     });
@@ -737,12 +740,10 @@
   async function bootPage() {
     applyPageConfig();
     translateStaticLookupText();
-    const [defaultsResult, cloudResult, unlockResult] = await Promise.all([
+    const [defaultsResult, cloudResult] = await Promise.all([
       AidcConfig.load(configKeys.defaults, LOCAL_ROI_DEFAULTS),
       AidcConfig.load(configKeys.cloudCompare, LOCAL_CLOUD_COMPARE),
-      AidcConfig.load('site.unlock_password', { password: '' }),
     ]);
-    unlockPassword = (unlockResult.data && unlockResult.data.password) || '';
     configLoadMeta = { defaults: defaultsResult.source, cloud: cloudResult.source };
     mergeCloudCompare(cloudResult.data);
     applyRoiConfig(defaultsResult.data);

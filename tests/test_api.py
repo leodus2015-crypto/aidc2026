@@ -32,6 +32,11 @@ def test_get_config_unknown_key_404():
     assert res.status_code == 404
 
 
+def test_unlock_password_is_not_public_config():
+    res = client.get("/api/config/site.unlock_password")
+    assert res.status_code == 404
+
+
 def test_get_config_db_down_503():
     with patch.object(main, "ping_database", return_value=False), patch.object(
         main, "get_db_error", return_value="down"
@@ -74,6 +79,30 @@ def test_put_config_rejects_when_admin_token_unset():
             headers={"Authorization": "Bearer anything"},
         )
     assert res.status_code == 503
+
+
+def test_verify_admin_accepts_valid_bearer():
+    with patch.object(main, "ADMIN_TOKEN", "strong-test-token"):
+        res = client.post(
+            "/api/admin/verify",
+            headers={"Authorization": "Bearer strong-test-token"},
+        )
+    assert res.status_code == 200
+    assert res.json() == {"authenticated": True}
+
+
+def test_verify_admin_rejects_invalid_scheme_and_token():
+    with patch.object(main, "ADMIN_TOKEN", "strong-test-token"):
+        invalid_scheme = client.post(
+            "/api/admin/verify",
+            headers={"Authorization": "Basic strong-test-token"},
+        )
+        invalid_token = client.post(
+            "/api/admin/verify",
+            headers={"Authorization": "Bearer wrong-token"},
+        )
+    assert invalid_scheme.status_code == 401
+    assert invalid_token.status_code == 401
 
 
 def test_analytics_rejects_when_admin_token_unset():

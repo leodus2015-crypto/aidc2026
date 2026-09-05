@@ -74,3 +74,18 @@ def test_page_registry_reports_duplicate_id_unregistered_and_asymmetric_relation
     assert any("id 重复" in error for error in errors)
     assert any("HTML 未登记" in error and "orphan.html" in error for error in errors)
     assert any("页面关系不对称" in error for error in errors)
+
+
+def test_frontend_secret_config_reference_is_rejected(tmp_path):
+    check_site = load_check_site_module()
+    js_dir = tmp_path / "js"
+    js_dir.mkdir()
+    (js_dir / "unsafe.js").write_text(
+        "AidcConfig.load('site.unlock_password', {});",
+        encoding="utf-8",
+    )
+    errors = []
+
+    check_site.check_frontend_secret_refs(errors, root=tmp_path)
+
+    assert errors == ["前端禁止引用敏感配置键 site.unlock_password: js/unsafe.js"]

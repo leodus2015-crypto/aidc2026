@@ -110,7 +110,7 @@ iframe URL 与语言同步由 `js/index-page.js` 管理。`inference/styles.css`
 - 白皮书：可选读取 `assets/aidc-whitepaper-2024-zh.pdf`，缺失时必须显示就绪提示。
 - 页面文案：所有标准页面读取 `i18n/common.*.json` 和自己的页面 bundle。
 
-当前配置认证仍存在“浏览器可读取解锁口令”的历史设计，不能视为安全边界；该问题列为下一阶段最高优先级整改项。
+管理凭据仅存在于服务端 `ADMIN_TOKEN` 环境变量。ROI 与 3D 页面由用户输入凭据并调用服务端验证；公共配置接口不得返回口令或其验证材料。
 
 ## 8. 新页面接入步骤
 

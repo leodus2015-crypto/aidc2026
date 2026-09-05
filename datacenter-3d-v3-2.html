@@ -735,20 +735,15 @@ function applyRemoteConfig(data) {
 
 let configLoadMeta = { source: 'local', version: null, fromLocalStorage: false };
 
-  const LOCAL_UNLOCK_PASSWORD = { password: '' };
-  let unlockPassword = LOCAL_UNLOCK_PASSWORD.password;
-
-  function normalizeUnlockPassword(value) {
-    return String(value || '').trim().toLowerCase();
+async function verifyAdminCredential(input) {
+  const token = String(input || '').trim();
+  if (!token) return { ok: false, unavailable: false };
+  try {
+    await AidcConfig.verifyAdmin(token);
+    return { ok: true, unavailable: false };
+  } catch (error) {
+    return { ok: false, unavailable: error?.status !== 401 };
   }
-
-  function isUnlockConfigured() {
-    return Boolean(normalizeUnlockPassword(unlockPassword));
-  }
-
-  function verifyUnlockPassword(input) {
-    if (!isUnlockConfigured()) return false;
-    return normalizeUnlockPassword(input) === normalizeUnlockPassword(unlockPassword);
   }
 
 function updateConfigSourceBadge() {
@@ -806,6 +801,7 @@ function confirmDialog(title, msg) {
 
 function promptUnlockPassword(onSuccess) {
   return new Promise((resolve) => {
+    let active = true;
     const overlay = document.getElementById('pwd-overlay');
     const input = document.getElementById('pwd-input');
     const err = document.getElementById('pwd-error');
@@ -813,6 +809,7 @@ function promptUnlockPassword(onSuccess) {
     const cancelBtn = document.getElementById('pwd-cancel');
 
     const cleanup = () => {
+      active = false;
       overlay.classList.remove('open');
       okBtn.onclick = null;
       cancelBtn.onclick = null;
@@ -825,12 +822,20 @@ function promptUnlockPassword(onSuccess) {
     overlay.classList.add('open');
     input.focus();
 
-    okBtn.onclick = () => {
-      if (verifyUnlockPassword(input.value)) {
+    okBtn.onclick = async () => {
+      okBtn.disabled = true;
+      err.style.display = 'none';
+      const result = await verifyAdminCredential(input.value);
+      if (!active) return;
+      okBtn.disabled = false;
+      if (result.ok) {
         cleanup();
         resolve(true);
         if (onSuccess) onSuccess();
       } else {
+        err.textContent = result.unavailable
+          ? L('认证服务不可用，请稍后重试。')
+          : L('密码错误，请重试。');
         err.style.display = 'block';
       }
     };
@@ -2470,15 +2475,6 @@ async function boot() {
   let configSource = 'local';
   let configVersion = null;
 
-  const pwdResult = await AidcConfig.load('site.unlock_password', LOCAL_UNLOCK_PASSWORD);
-  unlockPassword = (pwdResult.data && pwdResult.data.password) || '';
-  if (!isUnlockConfigured()) {
-    const layoutBtn = document.getElementById('btn-unlock-layout');
-    const rulesBtn = document.getElementById('btn-unlock-rules');
-    if (layoutBtn) layoutBtn.title = L('解锁口令未配置');
-    if (rulesBtn) rulesBtn.title = L('解锁口令未配置');
-  }
-
   const result = await AidcConfig.load(CONFIG_KEY, LOCAL_DC3D_DEFAULTS);
   configSource = result.source;
   configVersion = result.version;
@@ -2545,10 +2541,6 @@ document.querySelectorAll('.sb-tab').forEach(tab => {
 document.getElementById('btn-unlock-layout').addEventListener('click', async () => {
   const btn = document.getElementById('btn-unlock-layout');
   if (btn.getAttribute('aria-pressed') === 'true') return;
-  if (!isUnlockConfigured()) {
-    toast(L('解锁口令未配置，请先通过云端写入 site.unlock_password'), 'error');
-    return;
-  }
   await promptUnlockPassword(() => {
     setLayoutInputsLocked(false);
     toast(L('布局参数已解锁'));
@@ -2589,10 +2581,6 @@ document.getElementById('cfg-depth2').addEventListener('input', () => { document
 
 document.getElementById('btn-unlock-rules').addEventListener('click', async () => {
   if (rulesLocked) {
-    if (!isUnlockConfigured()) {
-      toast(L('解锁口令未配置，请先通过云端写入 site.unlock_password'), 'error');
-      return;
-    }
     await promptUnlockPassword(() => {
       setRulesLocked(false);
       toast(L('规则已解锁'));

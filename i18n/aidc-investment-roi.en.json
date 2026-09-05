@@ -224,6 +224,6 @@
     "静态回收期": "Static payback period",
     "CAPEX ÷ 年利润": "CAPEX ÷ annual profit",
     "{years} 年": "{years} years",
-    "解锁口令未配置，请先通过云端写入 site.unlock_password": "Unlock password is not configured. Set site.unlock_password via the cloud API first."
+    "认证服务不可用，请稍后重试。": "Authentication service is unavailable. Please try again later."
   }
 }

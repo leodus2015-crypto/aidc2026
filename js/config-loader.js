@@ -83,6 +83,30 @@
     }
   }
 
+  async function verifyAdmin(token, options) {
+    const timeoutMs = (options && options.timeoutMs) || DEFAULT_TIMEOUT_MS;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(buildUrl('/api/admin/verify'), {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        const error = new Error(res.status === 401 ? 'unauthorized' : `HTTP ${res.status}`);
+        error.status = res.status;
+        throw error;
+      }
+      return res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function checkHealth(options) {
     const timeoutMs = (options && options.timeoutMs) || DEFAULT_TIMEOUT_MS;
     const controller = new AbortController();
@@ -104,6 +128,7 @@
   global.AidcConfig = {
     load: loadConfig,
     save: saveConfig,
+    verifyAdmin,
     health: checkHealth,
     resolveApiBase,
   };

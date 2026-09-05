@@ -8,8 +8,8 @@
 
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
-| 高 | `api/settings.py:15` | `ADMIN_TOKEN` 默认 `aidc2026`。未配 `.env` 时写配置、看 analytics 都可用该口令。 | 单测：无 Bearer / 错 Bearer → 401 |
-| 高 | `data/config-seeds/site.unlock_password.json`、`datacenter-3d-*.html`、`js/aidc-investment-roi-page.js` | 解锁口令硬编码 `aidc2026`，随仓库公开。API 失败时 3D/ROI 回退到该默认。 | 浏览器：错误口令不能解锁；单测：PUT 仍要独立 admin token |
+| 已解决 | `api/settings.py`、`api/main.py` | `ADMIN_TOKEN` 无默认值；未配置时管理与 analytics 接口拒绝服务，并使用恒定时间比较。 | 单测：无 Bearer / 错 Bearer → 401 |
+| 已解决 | `datacenter-3d-*.html`、`js/aidc-investment-roi-page.js` | 已删除公开的 `site.unlock_password`；浏览器输入凭据后由服务端验证，不再下载口令本身。 | 浏览器：错误口令与 API 不可用均不能解锁 |
 | 中 | `status.html` | 管理口令与 `ADMIN_TOKEN` 相同，页面对外路径可猜。 | 浏览器：无口令看不到分析数据 |
 | 低 | `.gitignore` | `.env` / `deploy.env` 已忽略。确认未误提交。 | 静态：不检查私密文件是否存在 |
 
