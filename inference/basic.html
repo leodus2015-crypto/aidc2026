@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="LLM 推理原理：Prompt/Prefill、Decode、TTFT/TPOT 与 KV Cache 传递。" />
   <meta name="theme-color" content="#f8fafc" />
+  <link rel="canonical" href="https://www.aidc2026.cn/inference/basic.html" />
   <title>推理原理 · Agentic 推理 · AI Data Center</title>
   <script src="../js/aidc-theme.js?v=84"></script>
   <script src="../js/embed-mode.js?v=84"></script>
@@ -265,6 +266,7 @@
   </main>
 
   <script src="../js/aidc-asset-version.js?v=84"></script>
+  <script src="../js/aidc-locale-bridge.js?v=84"></script>
   <script src="../js/i18n.js?v=84"></script>
   <script src="../js/inference-basic-page.js?v=84"></script>
   <script>
@@ -277,6 +279,15 @@
       await AidcI18n.init({ page: 'inference-basic', common: true, basePath: '../i18n/' });
       AidcI18n.applyDom();
       initInferenceBasicPage();
+      if (window.AidcLocaleBridge) {
+        AidcLocaleBridge.initIframeListener(function (locale) {
+          if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+            AidcI18n.setLocale(locale, { page: 'inference-basic', common: true, basePath: '../i18n/' }).then(function () {
+              initInferenceBasicPage();
+            });
+          }
+        }, { selfSource: 'inference-basic' });
+      }
     })();
   </script>
 </body>

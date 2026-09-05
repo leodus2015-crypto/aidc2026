@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="后训练 · 强化学习训练流程演示（数据制作、模型准备、参数配置、训练与评测）。" />
     <meta name="theme-color" content="#f8fafc" />
+    <link rel="canonical" href="https://www.aidc2026.cn/post-training.html" />
     <title data-pt-i18n="后训练 · 强化学习训练流程 · AI Data Center">后训练 · 强化学习训练流程 · AI Data Center</title>
     <script src="js/aidc-theme.js?v=84"></script>
     <script src="js/theme-switch.js?v=84"></script>
@@ -1623,6 +1624,15 @@
                 grid-template-columns: repeat(4, 1fr) !important;
             }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-in,
+            .typing-cursor,
+            .typing-dot,
+            .chat-thinking .dots::after {
+                animation: none !important;
+            }
+        }
     </style>
     <link rel="stylesheet" href="css/theme.css?v=84" />
     <link rel="stylesheet" href="css/post-training-theme.css?v=84" />
@@ -1683,6 +1693,7 @@
         </li>
         </ul>
         <div id="lang-switch-root" class="shrink-0"></div>
+        <div id="theme-switch-root" class="shrink-0"></div>
       </div>
     </nav>
   </header>
@@ -2319,11 +2330,11 @@
 
             data.forEach(item => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.id}</td>
-                    <td>${L(item.input)}</td>
-                    <td>${L(item.output)}</td>
-                `;
+                [item.id, L(item.input), L(item.output)].forEach((text) => {
+                    const td = document.createElement('td');
+                    td.textContent = text;
+                    row.appendChild(td);
+                });
                 tbody.appendChild(row);
             });
 

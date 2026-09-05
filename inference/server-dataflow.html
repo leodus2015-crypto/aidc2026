@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="推理服务七阶段数据流：未启动、空载启动、模型加载、Question、Prefill、Decode、Answer。8 PD分离，4 Prefill + 4 Decode。" />
   <meta name="theme-color" content="#f8fafc" />
+  <link rel="canonical" href="https://www.aidc2026.cn/inference/server-dataflow.html" />
   <title>推理服务数据流 · Agentic 推理 · AI Data Center</title>
   <script src="../js/aidc-theme.js?v=84"></script>
   <script src="../js/embed-mode.js?v=84"></script>
@@ -1521,6 +1522,7 @@
   </main>
 
   <script src="../js/aidc-asset-version.js?v=84"></script>
+  <script src="../js/aidc-locale-bridge.js?v=84"></script>
   <script src="../js/i18n.js?v=84"></script>
   <script src="../js/inference-dataflow-page.js?v=84"></script>
   <script>
@@ -1533,6 +1535,15 @@
       await AidcI18n.init({ page: 'inference-dataflow', common: true, basePath: '../i18n/' });
       AidcI18n.applyDom();
       initInferenceDataflowPage();
+      if (window.AidcLocaleBridge) {
+        AidcLocaleBridge.initIframeListener(function (locale) {
+          if (window.AidcI18n && AidcI18n.getLocale() !== locale) {
+            AidcI18n.setLocale(locale, { page: 'inference-dataflow', common: true, basePath: '../i18n/' }).then(function () {
+              initInferenceDataflowPage();
+            });
+          }
+        }, { selfSource: 'inference-dataflow' });
+      }
     })();
   </script>
   <script>
