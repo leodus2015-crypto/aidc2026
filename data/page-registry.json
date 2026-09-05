@@ -1,0 +1,395 @@
+{
+  "schemaVersion": 1,
+  "description": "AIDC 正式 HTML 页面、嵌套关系和主要资源的机器可读登记表。",
+  "pages": [
+    {
+      "path": "index.html",
+      "id": "index",
+      "title": "Agentic 推理",
+      "kind": "container",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [
+        "inference/basic.html",
+        "inference/server-dataflow.html"
+      ],
+      "assets": [
+        "js/index-page.js",
+        "i18n/index.zh.json",
+        "i18n/index.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "inference/basic.html",
+      "id": "inference-basic",
+      "title": "推理原理",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "index.html",
+          "relation": "iframe",
+          "tab": "principles"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "js/inference-basic-page.js",
+        "inference/styles.css",
+        "i18n/inference-basic.zh.json",
+        "i18n/inference-basic.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "inference/server-dataflow.html",
+      "id": "inference-dataflow",
+      "title": "推理服务数据流",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "index.html",
+          "relation": "iframe",
+          "tab": "dataflow"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "js/inference-dataflow-page.js",
+        "inference/styles.css",
+        "i18n/inference-dataflow.zh.json",
+        "i18n/inference-dataflow.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-design.html",
+      "id": "ai-dc-design",
+      "title": "AI DC 规划",
+      "kind": "container",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [
+        "ai-dc-room-layout.html",
+        "ai-dc-tcp.html",
+        "ai-dc-computeEst.html",
+        "ai-dc-layout.html",
+        "ai-dc-deployment-perf.html",
+        "datacenter-3d-case-b.html",
+        "datacenter-3d-v3-2.html",
+        "aidc-investment-roi.html"
+      ],
+      "assets": [
+        "js/ai-dc-design-page.js",
+        "i18n/ai-dc-design.zh.json",
+        "i18n/ai-dc-design.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-room-layout.html",
+      "id": "ai-dc-room-layout",
+      "title": "机房布局",
+      "kind": "container",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "roomLayout"
+        }
+      ],
+      "embeds": [
+        "ai-dc-four-layer.html",
+        "ai-dc-floor-detail.html"
+      ],
+      "assets": [
+        "js/ai-dc-room-layout-page.js",
+        "i18n/ai-dc-room-layout.zh.json",
+        "i18n/ai-dc-room-layout.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-four-layer.html",
+      "id": "ai-dc-four-layer",
+      "title": "机房四层示意",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-room-layout.html",
+          "relation": "iframe",
+          "slot": "fourLayer"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/ai-dc-four-layer.zh.json",
+        "i18n/ai-dc-four-layer.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-floor-detail.html",
+      "id": "ai-dc-floor-detail",
+      "title": "机房单层平面",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-room-layout.html",
+          "relation": "iframe",
+          "slot": "floorDetail"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/ai-dc-floor-detail.zh.json",
+        "i18n/ai-dc-floor-detail.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-tcp.html",
+      "id": "ai-dc-tcp",
+      "title": "Token → Card → Power",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "tcp"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/ai-dc-tcp.zh.json",
+        "i18n/ai-dc-tcp.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-computeEst.html",
+      "id": "ai-dc-computeEst",
+      "title": "算力估算",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "computeEst"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/ai-dc-computeEst.zh.json",
+        "i18n/ai-dc-computeEst.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-layout.html",
+      "id": "ai-dc-layout",
+      "title": "机柜规划",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "plan"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/ai-dc-layout.zh.json",
+        "i18n/ai-dc-layout.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-deployment-perf.html",
+      "id": "ai-dc-deployment-perf",
+      "title": "产品协同",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "synergy"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/ai-dc-deployment-perf.zh.json",
+        "i18n/ai-dc-deployment-perf.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "datacenter-3d-case-b.html",
+      "id": "datacenter-3d-case-b",
+      "title": "案例 A（风冷）",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "a"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/datacenter-3d-case-b.zh.json",
+        "i18n/datacenter-3d-case-b.en.json",
+        "data/dc3d-case-a.defaults.json"
+      ],
+      "dataSources": [
+        "/api/config/dc3d.case_a"
+      ]
+    },
+    {
+      "path": "datacenter-3d-v3-2.html",
+      "id": "datacenter-3d-v3-2",
+      "title": "案例 B（风冷）",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "b"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "i18n/datacenter-3d-v3-2.zh.json",
+        "i18n/datacenter-3d-v3-2.en.json",
+        "data/dc3d-case-b.defaults.json"
+      ],
+      "dataSources": [
+        "/api/config/dc3d.case_b"
+      ]
+    },
+    {
+      "path": "aidc-investment-roi.html",
+      "id": "aidc-investment-roi",
+      "title": "Investment ROI",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "roi"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "js/aidc-investment-roi-init.js",
+        "js/aidc-investment-roi-page.js",
+        "i18n/aidc-investment-roi.zh.json",
+        "i18n/aidc-investment-roi.en.json"
+      ],
+      "dataSources": [
+        "/api/config/roi.defaults",
+        "/api/config/roi.defaults.en",
+        "/api/config/roi.cloud_compare",
+        "/api/config/roi.cloud_compare.en"
+      ]
+    },
+    {
+      "path": "post-training.html",
+      "id": "post-training",
+      "title": "后训练",
+      "kind": "entry",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [],
+      "assets": [
+        "css/post-training-theme.css",
+        "i18n/post-training.zh.json",
+        "i18n/post-training.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "white-paper.html",
+      "id": "white-paper",
+      "title": "白皮书",
+      "kind": "entry",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [],
+      "assets": [
+        "js/white-paper-page.js",
+        "i18n/white-paper.zh.json",
+        "i18n/white-paper.en.json"
+      ],
+      "dataSources": [
+        "assets/aidc-whitepaper-2024-zh.pdf"
+      ],
+      "optionalDataSources": [
+        "assets/aidc-whitepaper-2024-zh.pdf"
+      ]
+    },
+    {
+      "path": "about-us.html",
+      "id": "about-us",
+      "title": "About US",
+      "kind": "entry",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [],
+      "assets": [
+        "js/about-us-page.js",
+        "i18n/about-us.zh.json",
+        "i18n/about-us.en.json",
+        "data/ai-usage.json",
+        "data/site-release.json"
+      ],
+      "dataSources": [
+        "data/ai-usage.json",
+        "data/site-release.json"
+      ]
+    },
+    {
+      "path": "status.html",
+      "id": "status",
+      "title": "站点状态",
+      "kind": "internal",
+      "visibility": "internal",
+      "parents": [],
+      "embeds": [],
+      "assets": [
+        "js/status-page.js",
+        "i18n/status.zh.json",
+        "i18n/status.en.json"
+      ],
+      "dataSources": [
+        "/api/analytics/summary"
+      ]
+    },
+    {
+      "path": "404.html",
+      "id": "404",
+      "title": "404",
+      "kind": "error",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [],
+      "assets": [
+        "i18n/404.zh.json",
+        "i18n/404.en.json"
+      ],
+      "dataSources": []
+    }
+  ]
+}

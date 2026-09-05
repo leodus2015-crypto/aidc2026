@@ -166,6 +166,117 @@ def check_html_refs(errors: list[str]) -> None:
                 errors.append(f"{rel} data-i18n-page={page_id} 缺少 {bundle.relative_to(ROOT).as_posix()}")
 
 
+def check_page_registry(errors: list[str], loaded: dict[Path, Any], root: Path = ROOT) -> None:
+    registry_path = root / "data" / "page-registry.json"
+    registry = loaded.get(registry_path)
+    if registry is None:
+        if not registry_path.is_file():
+            errors.append("缺少页面注册表 data/page-registry.json")
+        return
+    if not isinstance(registry, dict) or registry.get("schemaVersion") != 1:
+        errors.append("data/page-registry.json schemaVersion 必须为 1")
+        return
+    pages = registry.get("pages")
+    if not isinstance(pages, list):
+        errors.append("data/page-registry.json pages 必须为数组")
+        return
+
+    actual_html = {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*.html")
+        if not any(part.startswith(".") for part in path.relative_to(root).parts)
+    }
+    by_path: dict[str, dict[str, Any]] = {}
+    ids: set[str] = set()
+    allowed_kinds = {"entry", "container", "embedded", "internal", "error"}
+    allowed_visibility = {"public", "internal"}
+
+    for index, raw_page in enumerate(pages):
+        label = f"page-registry pages[{index}]"
+        if not isinstance(raw_page, dict):
+            errors.append(f"{label} 必须为对象")
+            continue
+        page_path = raw_page.get("path")
+        page_id = raw_page.get("id")
+        if not isinstance(page_path, str) or not page_path.endswith(".html"):
+            errors.append(f"{label}.path 必须为 HTML 相对路径")
+            continue
+        if page_path in by_path:
+            errors.append(f"页面注册表路径重复: {page_path}")
+            continue
+        by_path[page_path] = raw_page
+        if not isinstance(page_id, str) or not page_id:
+            errors.append(f"{page_path} 缺少有效 id")
+        elif page_id in ids:
+            errors.append(f"页面注册表 id 重复: {page_id}")
+        else:
+            ids.add(page_id)
+        if raw_page.get("kind") not in allowed_kinds:
+            errors.append(f"{page_path} kind 无效: {raw_page.get('kind')}")
+        if raw_page.get("visibility") not in allowed_visibility:
+            errors.append(f"{page_path} visibility 无效: {raw_page.get('visibility')}")
+        for field in ("parents", "embeds", "assets", "dataSources"):
+            if not isinstance(raw_page.get(field), list):
+                errors.append(f"{page_path} {field} 必须为数组")
+
+        html_path = root / page_path
+        if not html_path.is_file():
+            errors.append(f"页面注册表指向不存在文件: {page_path}")
+        else:
+            text = html_path.read_text(encoding="utf-8")
+            match = I18N_PAGE_RE.search(text)
+            actual_id = match.group(1) if match else None
+            if actual_id != page_id:
+                errors.append(f"{page_path} 注册 id={page_id} 与 data-i18n-page={actual_id} 不一致")
+
+        for asset in raw_page.get("assets") or []:
+            if not isinstance(asset, str) or not asset:
+                errors.append(f"{page_path} assets 含无效路径")
+            elif not (root / asset).is_file():
+                errors.append(f"{page_path} 注册资源不存在: {asset}")
+
+        optional_sources = set(raw_page.get("optionalDataSources") or [])
+        for source in raw_page.get("dataSources") or []:
+            if not isinstance(source, str) or not source:
+                errors.append(f"{page_path} dataSources 含无效来源")
+            elif source.startswith(("/", "http://", "https://")) or source in optional_sources:
+                continue
+            elif not (root / source).is_file():
+                errors.append(f"{page_path} 注册数据文件不存在: {source}")
+
+    registered_html = set(by_path)
+    for page_path in sorted(actual_html - registered_html):
+        errors.append(f"HTML 未登记到页面注册表: {page_path}")
+    for page_path in sorted(registered_html - actual_html):
+        errors.append(f"页面注册表存在多余 HTML: {page_path}")
+
+    for page_path, page in by_path.items():
+        embeds = page.get("embeds") or []
+        for child_path in embeds:
+            child = by_path.get(child_path)
+            if not child:
+                errors.append(f"{page_path} embeds 指向未登记页面: {child_path}")
+                continue
+            child_parents = {
+                item.get("path")
+                for item in child.get("parents") or []
+                if isinstance(item, dict)
+            }
+            if page_path not in child_parents:
+                errors.append(f"页面关系不对称: {page_path} embeds {child_path}，子页未登记父页")
+
+        for parent in page.get("parents") or []:
+            if not isinstance(parent, dict) or not isinstance(parent.get("path"), str):
+                errors.append(f"{page_path} parents 含无效关系")
+                continue
+            parent_path = parent["path"]
+            parent_page = by_path.get(parent_path)
+            if not parent_page:
+                errors.append(f"{page_path} parent 指向未登记页面: {parent_path}")
+            elif page_path not in (parent_page.get("embeds") or []):
+                errors.append(f"页面关系不对称: {page_path} parent={parent_path}，父页未登记 embeds")
+
+
 def _frozenset_literals(node: ast.AST) -> set[str] | None:
     if not isinstance(node, ast.Call) or not node.args:
         return None
@@ -234,6 +345,7 @@ def main() -> int:
     loaded = check_json_parse(errors)
     check_i18n_pairs(errors, loaded)
     check_html_refs(errors)
+    check_page_registry(errors, loaded)
     check_config_seeds(errors)
     check_deploy_excludes(errors)
     return fail(errors)
