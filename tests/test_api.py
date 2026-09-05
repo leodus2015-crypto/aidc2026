@@ -105,6 +105,21 @@ def test_verify_admin_rejects_invalid_scheme_and_token():
     assert invalid_token.status_code == 401
 
 
+def test_cors_allows_api_client_request_headers():
+    res = client.options(
+        "/api/admin/verify",
+        headers={
+            "Origin": "http://127.0.0.1:8011",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "authorization,x-request-id",
+        },
+    )
+    assert res.status_code == 200
+    allowed = res.headers.get("access-control-allow-headers", "").lower()
+    assert "authorization" in allowed
+    assert "x-request-id" in allowed
+
+
 def test_analytics_rejects_when_admin_token_unset():
     with patch.object(main, "ADMIN_TOKEN", ""):
         res = client.get(

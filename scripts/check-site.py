@@ -289,6 +289,17 @@ def check_frontend_secret_refs(errors: list[str], root: Path = ROOT) -> None:
                     errors.append(f"前端禁止引用敏感配置键 {secret_key}: {rel}")
 
 
+def check_frontend_api_access(errors: list[str], root: Path = ROOT) -> None:
+    api_client = (root / "js" / "aidc-api-client.js").resolve()
+    for pattern in ("**/*.html", "js/**/*.js"):
+        for path in root.glob(pattern):
+            if path.resolve() == api_client:
+                continue
+            if "/api/" in path.read_text(encoding="utf-8"):
+                rel = path.relative_to(root).as_posix()
+                errors.append(f"前端 API 请求必须通过 js/aidc-api-client.js: {rel}")
+
+
 def _frozenset_literals(node: ast.AST) -> set[str] | None:
     if not isinstance(node, ast.Call) or not node.args:
         return None
@@ -359,6 +370,7 @@ def main() -> int:
     check_html_refs(errors)
     check_page_registry(errors, loaded)
     check_frontend_secret_refs(errors)
+    check_frontend_api_access(errors)
     check_config_seeds(errors)
     check_deploy_excludes(errors)
     return fail(errors)

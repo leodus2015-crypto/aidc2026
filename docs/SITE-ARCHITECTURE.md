@@ -98,7 +98,8 @@ iframe URL 与语言同步由 `js/index-page.js` 管理。`inference/styles.css`
 - `js/aidc-locale-bridge.js`：父子 iframe 语言同步。
 - `js/embed-mode.js`、`css/embed.css`：iframe 子页去除站点级 chrome。
 - `js/aidc-asset-version.js`、`data/asset-version.json`：静态资源和 iframe 版本。
-- `js/config-loader.js`：现有配置 API 客户端；将在数据库接口治理阶段统一。
+- `js/aidc-api-client.js`：统一 API base、超时、认证、错误和请求 ID。
+- `js/config-loader.js`：配置加载兼容包装层，为现有页面保留 `AidcConfig` API。
 - `js/aidc-refresh-flash.js`、`js/aidc-replay-control.js`：共享交互反馈与回放控件。
 
 ## 7. 数据与 API 关系

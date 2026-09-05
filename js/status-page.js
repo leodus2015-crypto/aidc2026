@@ -8,20 +8,6 @@
     return global.AidcI18n?.t?.(key, params) ?? key;
   }
 
-  function resolveApiBase() {
-    if (global.AIDC_API_BASE != null && global.AIDC_API_BASE !== '') {
-      return String(global.AIDC_API_BASE).replace(/\/$/, '');
-    }
-    if (global.location && global.location.port === '8011') return 'http://127.0.0.1:8012';
-    return '';
-  }
-
-  function apiUrl(path) {
-    const base = resolveApiBase();
-    const normalized = path.startsWith('/') ? path : `/${path}`;
-    return `${base}${normalized}`;
-  }
-
   function chartColors() {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {
@@ -61,20 +47,18 @@
     }
 
     async function fetchSummary(days) {
-      const res = await fetch(apiUrl(`/api/analytics/summary?days=${days}`), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.status === 401) {
-        const error = new Error('unauthorized');
-        error.code = 'unauthorized';
+      try {
+        return await global.AidcApi.analyticsSummary(days, token);
+      } catch (cause) {
+        const error = new Error(cause?.code === 'UNAUTHORIZED' ? 'unauthorized' : 'unavailable');
+        error.cause = cause;
+        if (cause?.code === 'UNAUTHORIZED') {
+          error.code = 'unauthorized';
+        } else {
+          error.code = 'unavailable';
+        }
         throw error;
       }
-      if (!res.ok) {
-        const error = new Error(`HTTP ${res.status}`);
-        error.code = 'unavailable';
-        throw error;
-      }
-      return res.json();
     }
 
     function showGateError(key) {
