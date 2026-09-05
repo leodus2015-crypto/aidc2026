@@ -3,10 +3,17 @@
 Keep in sync with:
 - js/index-page.js computeStandardKvCacheBytes / computeMlaKvCacheBytes
 - js/aidc-investment-roi-page.js tokenMix / blendedCloudPrice / formatYiPerDay
+- ai-dc-computeEst.html calculate() and scenarios.coding
+- ai-dc-tcp.html COMMON / SC
+
+TCP 1024 / computeEst coding golden defaults (do not change unless product asks):
+dau=3180, pen=60, tin=21_000_000, tout=300_000, hit=0, N=40, K=2.0, C_card=919
+→ daily tokens 40_640_400_000, cards 1024
 """
 
 from __future__ import annotations
 
+import math
 from typing import Mapping
 
 SEC_PER_DAY = 86400
@@ -57,3 +64,55 @@ def tps_to_yi_per_day(tps: float) -> float:
 
 def yi_per_day_to_tps(yi: float) -> float:
     return yi * YI / SEC_PER_DAY
+
+
+GIB = 1024**3
+
+
+def daily_tokens(
+    dau: float,
+    penetration_pct: float,
+    in_tokens: float,
+    out_tokens: float,
+    cache_hit_pct: float,
+) -> float:
+    """TCP / computeEst: U0 × (Tout + Tin × (1 − H))."""
+    active_users = dau * penetration_pct / 100
+    per_user = out_tokens + in_tokens * (1 - cache_hit_pct / 100)
+    return active_users * per_user
+
+
+def compute_cards(
+    token_per_sec: float,
+    flops_multiplier: float,
+    active_params_b: float,
+    peak_multiplier: float,
+    utilization_pct: float,
+    compute_margin: float,
+    card_tflops: float,
+) -> int:
+    """computeEst: n_compute = ceil(C_raw × K / C_card). utilization_pct is N as percent."""
+    base_flops = (
+        token_per_sec
+        * flops_multiplier
+        * (active_params_b * 1e9)
+        * peak_multiplier
+        / (utilization_pct / 100)
+    )
+    card_flops = card_tflops * 1e12
+    return math.ceil(base_flops * compute_margin / card_flops)
+
+
+def min_hbm_cards(
+    total_params_b: float,
+    weight_precision: float,
+    card_vram_gb: float,
+    vram_usable_pct: float,
+) -> int:
+    weight_bytes = total_params_b * 1e9 * weight_precision
+    usable = card_vram_gb * GIB * (vram_usable_pct / 100)
+    return math.ceil(weight_bytes / usable)
+
+
+def planned_cards(compute: int, memory_min: int) -> int:
+    return max(compute, memory_min)

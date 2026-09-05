@@ -1,7 +1,11 @@
 from formulas import (
     blended_cloud_price,
+    compute_cards,
     compute_mla_kv_cache_bytes,
     compute_standard_kv_cache_bytes,
+    daily_tokens,
+    min_hbm_cards,
+    planned_cards,
     token_mix,
     tps_to_yi_per_day,
     yi_per_day_to_tps,
@@ -66,3 +70,34 @@ def test_tps_yi_roundtrip():
     tps = yi_per_day_to_tps(1.0)
     assert abs(tps - 1e8 / 86400) < 1e-9
     assert abs(tps_to_yi_per_day(tps) - 1.0) < 1e-9
+
+
+def test_tcp_1024_daily_tokens_matches_preset():
+    # Bound to ai-dc-tcp.html COMMON + SC["1024"].pen and computeEst scenarios.coding
+    tokens = daily_tokens(3180, 60, 21_000_000, 300_000, 0)
+    assert tokens == 40_640_400_000
+    assert abs(tokens / 86400 - 470375) < 1e-6
+
+
+def test_tcp_1024_compute_cards_matches_preset():
+    cards = compute_cards(
+        token_per_sec=470375,
+        flops_multiplier=2,
+        active_params_b=40,
+        peak_multiplier=5,
+        utilization_pct=40,
+        compute_margin=2.0,
+        card_tflops=919,
+    )
+    assert cards == 1024
+
+
+def test_compute_est_zero_users_yields_zero_tokens():
+    assert daily_tokens(1000, 0, 100, 10, 0) == 0
+
+
+def test_hbm_floor_can_bind_planned_cards():
+    compute = 8
+    memory_min = min_hbm_cards(744, 2, 96, 80)
+    assert memory_min >= 10
+    assert planned_cards(compute, memory_min) == memory_min

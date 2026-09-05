@@ -1243,6 +1243,7 @@
         "公式四 · 未来增长与逐年平滑展开": "Formula 4 · Future growth and annual ramp",
         "公式依据 · 学术出处与业界同口径实践": "Formula Basis · Academic sources and industry practice",
         "日活用户数": "Daily active users",
+        "未来目标渗透率": "Target user adoption",
         "当前 AI 渗透用户数": "Current AI users",
         "秒级 Token 数": "Tokens per second",
         "激活参数量": "Active parameters",
@@ -1427,7 +1428,9 @@
 
       const GIB = 1024 ** 3;
 
-      /** 场景预设：覆盖 Token 取数、模型规模与算力换算参数，未列字段保持当前值。 */
+      /** 场景预设：覆盖 Token 取数、模型规模与算力换算参数，未列字段保持当前值。
+          coding 与 TCP COMMON + SC["1024"] 同口径（dau=3180, pen=60, Tin/Tout/hit 一致）。
+          改这些默认必须同步 tests/test_formulas.py 与 ai-dc-tcp.html COMMON。 */
       const scenarios = {
         coding: {
           name: "AI Coding",
@@ -1654,6 +1657,10 @@
         return errors.length === 0;
       }
 
+      /* 默认 coding：dau=3180、currentPenetration=60、C_card=919、N=40，与 TCP 1024 档同量级。
+         改这些默认必须同步 tests/test_formulas.py（及 ai-dc-tcp.html COMMON）。
+         对照：test_tcp_1024_* / test_compute_est_zero_users_yields_zero_tokens / test_hbm_floor_can_bind_planned_cards
+         Python 端口：tests/formulas.py daily_tokens / compute_cards / min_hbm_cards / planned_cards */
       function calculate() {
         const v = readValues();
         const valid = validate(v);

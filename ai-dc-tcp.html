@@ -606,7 +606,13 @@ html[data-theme="dark"] .cmp-delta.good{border-color:#1d654f}
 
 /* ═══════════════ 1. 场景数据 ═══════════════
    Token 侧参数取自《AI数据中心算力卡数测算工具》默认口径；
-   Power 侧机柜 / 功率 / 面积取自《aidc-layout-Card2Power》的 768 与 1024 预设。 */
+   Power 侧机柜 / 功率 / 面积取自《aidc-layout-Card2Power》的 768 与 1024 预设。
+
+   黄金用例（改默认必须同步 tests/test_formulas.py 与算力页 coding 场景）：
+   COMMON: dau=3180, tin=21000000, tout=300000, hit=0, N=40, K=2.0, ccard=919
+   SC["1024"].pen=60 → 日 Token 40640400000、卡数 1024
+   对照：test_tcp_1024_daily_tokens_matches_preset / test_tcp_1024_compute_cards_matches_preset
+   Python 端口：tests/formulas.py daily_tokens / compute_cards */
 const COMMON = {
   dau:3180, tin:21000000, tout:300000, hit:0,
   tuser:21300000,
@@ -952,7 +958,7 @@ function render(){
     const mx=Math.max(m.a,m.b), d=(m.b-m.a)/m.a*100;
     const sign = d>=0?"+":"−";
     const cls = m.up ? "up" : (d<0?"good":"up");
-    const txt = cn ? `1024 液冷 ${sign}${fx(Math.abs(d),1)}%` : `Liquid ${sign}${fx(Math.abs(d),1)}%`;
+    const txt = cn ? `1024 液冷 ${sign}${fx(Math.abs(d),1)}%` : `1024 liquid-cooled ${sign}${fx(Math.abs(d),1)}%`;
     return `<div class="cmp">
       <div class="cmp-k">${m.k}</div>
       <div class="cmp-bars">
