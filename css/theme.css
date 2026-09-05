@@ -462,7 +462,8 @@ html[data-theme='dark'] .shadow-sm {
     position: absolute;
     top: calc(100% + 1.25rem);
     left: 50%;
-    width: min(42rem, calc(100vw - 2rem));
+    width: max-content;
+    max-width: min(56rem, calc(100vw - 2rem));
     border: 1px solid var(--aidc-border);
     border-radius: 0 0 1rem 1rem;
     background: color-mix(in srgb, var(--aidc-surface) 97%, transparent);
@@ -475,14 +476,16 @@ html[data-theme='dark'] .shadow-sm {
 
   .aidc-mega-panel__inner {
     display: grid;
-    grid-template-columns: repeat(var(--aidc-mega-columns), minmax(0, 1fr));
-    gap: 2rem;
-    width: 100%;
+    grid-template-columns: repeat(var(--aidc-mega-columns), max-content);
+    gap: 1.5rem;
+    width: max-content;
+    max-width: 100%;
     padding: 1.5rem 1.6rem 1.7rem;
   }
 
-  .aidc-mega-panel--inference {
-    width: min(34rem, calc(100vw - 2rem));
+  .aidc-mega-column__title,
+  .aidc-mega-link {
+    white-space: nowrap;
   }
 }
 
