@@ -1,6 +1,7 @@
 {
   "meta": {
-    "title": "404 · AI Data Center"
+    "title": "404 · AI Data Center",
+    "description": "Page not found. Please return to the AI DC planning home page."
   },
   "page": {
     "code": "404",

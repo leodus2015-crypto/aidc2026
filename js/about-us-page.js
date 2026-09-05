@@ -220,27 +220,44 @@ function initAboutUsPage() {
     return `${n.toFixed(1)}%`;
   }
 
-  function renderBreakdown(tokenTypes) {
-    if (!Array.isArray(tokenTypes) || !tokenTypes.length) {
-      return `<li class="text-sm text-slate-500">${t('msg.noBreakdown')}</li>`;
+  function createEl(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function renderBreakdown(tokenTypes, list) {
+    list.replaceChildren();
+    const items = Array.isArray(tokenTypes)
+      ? tokenTypes.filter((item) => Number(item.tokens) > 0)
+      : [];
+    if (!items.length) {
+      list.appendChild(createEl('li', 'text-sm text-slate-500', t('msg.noBreakdown')));
+      return;
     }
-    return tokenTypes
-      .filter((item) => Number(item.tokens) > 0)
-      .map((item) => {
-        const color = barColors[item.name] || 'bg-slate-400';
-        const width = Math.max(0.6, Math.min(100, Number(item.usage_percent) || 0));
-        return `
-          <li>
-            <div class="flex items-center justify-between gap-4 text-sm">
-              <span class="font-medium text-slate-800">${labelTokenType(item.name)}</span>
-              <span class="shrink-0 tabular-nums text-slate-600">${formatTokens(item.tokens)} · ${formatPercent(item.usage_percent)}</span>
-            </div>
-            <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-              <div class="h-full rounded-full ${color}" style="width: ${width}%"></div>
-            </div>
-          </li>`;
-      })
-      .join('');
+    items.forEach((item) => {
+      const color = barColors[item.name] || 'bg-slate-400';
+      const width = Math.max(0.6, Math.min(100, Number(item.usage_percent) || 0));
+      const li = document.createElement('li');
+      const row = createEl('div', 'flex items-center justify-between gap-4 text-sm');
+      row.appendChild(createEl('span', 'font-medium text-slate-800', labelTokenType(item.name)));
+      row.appendChild(
+        createEl(
+          'span',
+          'shrink-0 tabular-nums text-slate-600',
+          `${formatTokens(item.tokens)} · ${formatPercent(item.usage_percent)}`
+        )
+      );
+      const track = createEl('div', 'mt-2 h-2 overflow-hidden rounded-full bg-slate-100');
+      track.setAttribute('aria-hidden', 'true');
+      const bar = createEl('div', `h-full rounded-full ${color}`);
+      bar.style.width = `${width}%`;
+      track.appendChild(bar);
+      li.appendChild(row);
+      li.appendChild(track);
+      list.appendChild(li);
+    });
   }
 
   function renderUsage(data) {
@@ -262,18 +279,26 @@ function initAboutUsPage() {
 
     const periodList = document.getElementById('usagePeriodList');
     if (periodList) {
-      periodList.innerHTML = periods.length
-        ? periods
-            .map(
-              (entry) =>
-                `<li class="aidc-inset-panel flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-xl px-3 py-2"><span>${entry.period}</span><span class="tabular-nums font-semibold text-slate-900">${formatTokens(entry.total_tokens)}</span></li>`
-            )
-            .join('')
-        : `<li class="text-slate-500">${t('msg.noEntries')}</li>`;
+      periodList.replaceChildren();
+      if (!periods.length) {
+        periodList.appendChild(createEl('li', 'text-slate-500', t('msg.noEntries')));
+      } else {
+        periods.forEach((entry) => {
+          const li = createEl(
+            'li',
+            'aidc-inset-panel flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-xl px-3 py-2'
+          );
+          li.appendChild(createEl('span', '', entry.period || '—'));
+          li.appendChild(
+            createEl('span', 'tabular-nums font-semibold text-slate-900', formatTokens(entry.total_tokens))
+          );
+          periodList.appendChild(li);
+        });
+      }
     }
 
     const breakdown = document.getElementById('usageBreakdown');
-    if (breakdown) breakdown.innerHTML = renderBreakdown(tokenTypes);
+    if (breakdown) renderBreakdown(tokenTypes, breakdown);
   }
 
   function formatReleaseVersion(data) {
@@ -283,7 +308,7 @@ function initAboutUsPage() {
   function renderRelease(data) {
     lastReleaseData = data;
     const siteLink = document.getElementById('openSourceSiteLink');
-    if (siteLink && data.siteUrl) {
+    if (siteLink && /^https?:\/\//i.test(data.siteUrl || '')) {
       siteLink.href = data.siteUrl;
     }
     const meta = document.getElementById('openSourceReleaseMeta');
