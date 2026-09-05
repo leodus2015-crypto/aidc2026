@@ -2,7 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="数据中心 3D 机柜布局设计器 · 案例B（风冷超节点）">
+<link rel="canonical" href="https://www.aidc2026.cn/datacenter-3d-v3-2.html">
 <title>DataCenter 3D 设计器 · 案例B（风冷超节点）</title>
 <script src="js/aidc-theme.js?v=84"></script>
 <script src="js/embed-mode.js?v=84"></script>
@@ -317,6 +319,7 @@
   }
   #pwd-box h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--dc-text); }
   #pwd-box p { font-size: 12px; color: var(--dc-text-secondary); margin-bottom: 12px; line-height: 1.4; }
+  #pwd-box label { display: block; font-size: 12px; font-weight: 600; color: var(--dc-text); margin-bottom: 6px; }
   #pwd-box .pwd-error { font-size: 11px; color: #dc2626; margin-top: 6px; display: none; }
   #pwd-box .cf-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
 
@@ -528,7 +531,7 @@
 
 <!-- ===== Confirm Dialog ===== -->
 <div id="confirm-overlay">
-  <div id="confirm-box">
+  <div id="confirm-box" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
     <h4 id="confirm-title" data-dc-i18n="确认">确认</h4>
     <p id="confirm-msg" data-dc-i18n="确定要执行此操作吗？">确定要执行此操作吗？</p>
     <div class="cf-actions">
@@ -540,10 +543,11 @@
 
 <!-- ===== Password Dialog ===== -->
 <div id="pwd-overlay">
-  <div id="pwd-box">
-    <h4 data-dc-i18n="输入访问密码">输入访问密码</h4>
+  <div id="pwd-box" role="dialog" aria-modal="true" aria-labelledby="pwd-title">
+    <h4 id="pwd-title" data-dc-i18n="输入访问密码">输入访问密码</h4>
     <p data-dc-i18n="解锁布局或规则需验证身份（不区分大小写）。">解锁布局或规则需验证身份（不区分大小写）。</p>
-    <input id="pwd-input" type="password" autocomplete="off" data-dc-i18n-placeholder="密码" placeholder="密码" class="sbf-input" />
+    <label for="pwd-input" data-dc-i18n="密码">密码</label>
+    <input id="pwd-input" type="password" autocomplete="current-password" data-dc-i18n-placeholder="密码" placeholder="密码" class="sbf-input" />
     <p id="pwd-error" class="pwd-error" data-dc-i18n="密码错误，请重试。">密码错误，请重试。</p>
     <div class="cf-actions">
       <button class="btn-sm btn-outline" id="pwd-cancel" data-dc-i18n="取消">取消</button>

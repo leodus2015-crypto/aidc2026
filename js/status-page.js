@@ -44,6 +44,7 @@
       $('app')?.classList.add('hidden');
       sessionStorage.removeItem(STORAGE_KEY);
       token = '';
+      $('pwdInput')?.focus();
     }
 
     async function fetchSummary(days) {

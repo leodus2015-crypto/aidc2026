@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="AI 数据中心 Token 服务投资收益分析：昇腾 NPU CAPEX/OPEX 与公有云 API 比价。" />
   <meta name="theme-color" content="#f8fafc" />
+  <link rel="canonical" href="https://www.aidc2026.cn/aidc-investment-roi.html" />
   <title>Token 投资收益 · AI Data Center</title>
   <script src="js/aidc-theme.js?v=84"></script>
   <script src="js/embed-mode.js?v=84"></script>
@@ -64,6 +65,7 @@
           <li><a href="about-us.html" class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950" data-i18n="nav.aboutUs">About US</a></li>
         </ul>
         <div id="lang-switch-root" class="shrink-0"></div>
+        <div id="theme-switch-root" class="shrink-0"></div>
       </div>
     </nav>
   </header>
@@ -462,11 +464,12 @@
 
   <!-- 密码弹层 -->
   <div id="pwdOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
-    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-labelledby="pwdTitle">
+    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="pwdTitle">
       <h3 id="pwdTitle" class="text-lg font-bold text-slate-950" data-i18n="输入访问密码">输入访问密码</h3>
       <p class="mt-2 text-sm text-slate-600" data-i18n="开启「关键参数」需验证身份（不区分大小写）。">开启「关键参数」需验证身份（不区分大小写）。</p>
-      <input id="pwdInput" type="password" autocomplete="off" placeholder="密码" data-i18n-placeholder="密码"
-        class="mt-4 h-11 w-full rounded-xl border border-slate-200 px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+      <label for="pwdInput" class="mt-4 mb-1 block text-sm font-medium text-slate-700" data-i18n="密码">密码</label>
+      <input id="pwdInput" type="password" autocomplete="current-password" placeholder="密码" data-i18n-placeholder="密码"
+        class="h-11 w-full rounded-xl border border-slate-200 px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
       <p id="pwdError" class="mt-2 hidden text-sm text-rose-600" data-i18n="密码错误，请重试。">密码错误，请重试。</p>
       <div class="mt-4 flex justify-end gap-2">
         <button type="button" id="pwdCancel" class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100" data-i18n="取消">取消</button>
