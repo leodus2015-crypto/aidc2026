@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "title": "机房布局 3D · AI Data Center",
+    "shortTitle": "机房布局 3D",
+    "description": "可交互的 AI 数据中心 3D 机房布局：园区、四层建筑与单层详细机房。"
+  },
+  "app": {
+    "aria": "3D 数据中心布局浏览器",
+    "eyebrow": "AIDC DIGITAL TWIN",
+    "loading": "正在加载 3D 场景…"
+  },
+  "breadcrumb": {
+    "aria": "当前位置",
+    "campus": "园区总览",
+    "building": "A02 数据中心楼",
+    "floor": "{floor} 单层机房"
+  },
+  "campus": {
+    "title": "AIDC 园区整体布局",
+    "description": "拖动旋转园区，点击高亮的 A02 数据中心楼进入建筑。",
+    "info": "园区以 A02 为核心算力建筑，并配置独立变电站、变压器场及柴油发电机组，体现市电与备用电源保障关系。",
+    "referenceAlt": "AIDC 园区布局参考图",
+    "enter": "进入 A02 数据中心楼"
+  },
+  "building": {
+    "title": "A02 · 四层数据中心示意图",
+    "description": "建筑由 1F、2F、3F 数据层及 RF 屋面设备层组成；点击任意数据层查看详细机房。",
+    "info": "1F–2F 层高 8.0m，2F–3F 与 3F–RF 各 7.0m；冷灰表示数据机房，青蓝表示制冷区，琥珀表示供配电，绿色表示屋面电池区。模型为功能剖视示意。",
+    "selectFloor": "查看 {floor} 详细布局",
+    "totalHeightLabel": "总高度",
+    "totalHeightValue": "总高 22.0 m"
+  },
+  "floor": {
+    "title": "A02 · {floor} 单层详细机房",
+    "description": "拖动查看机房立体分区、封闭通道、架空桥架和机柜阵列；各层采用同一标准化 POD 模块。",
+    "info": "单层约 133m × 92m；EHU 空调机房采用 AHU 箱体、过滤盘管、风机和送风风管图示；液冷水力模块间展示泵组、换热器、供回水主管和阀门。容量以 1,280 柜指标为准。",
+    "selected": "当前楼层",
+    "rackRows": "机柜阵列",
+    "zones": "功能分区"
+  },
+  "info": { "live": "模型信息" },
+  "overlays": { "scene": "场景信息", "model": "模型信息" },
+  "stats": { "dataFloors": "数据层", "pods": "POD", "racks": "机柜" },
+  "controls": {
+    "rotate": "左键拖动 · 旋转",
+    "zoom": "滚轮 · 缩放",
+    "pan": "右键拖动 · 平移",
+    "back": "返回上一级",
+    "reset": "重置视角"
+  },
+  "actions": { "aria": "当前场景可选对象" },
+  "fallback": {
+    "title": "当前浏览器无法显示 3D 场景",
+    "body": "请启用浏览器硬件加速，或使用最新版 Chrome、Edge、Safari 浏览器。"
+  },
+  "objects": {
+    "a02": "A02 数据中心楼",
+    "a01": "A01 数据中心楼",
+    "office": "综合办公楼",
+    "substation": "220kV 变电站",
+    "generator": "柴油发电机组",
+    "rf": "RF 屋面设备层",
+    "ehu": "EHU 空调机房",
+    "hall": "风冷 / 液冷机房",
+    "power": "低压配电",
+    "powerFunction": "配电功能区",
+    "medium": "中压室",
+    "hydraulic": "液冷水力模块间",
+    "reserve": "预留空间",
+    "serviceCore": "设备核心筒",
+    "coolingRiser": "制冷竖井",
+    "powerRiser": "供配电竖井",
+    "batteryBank": "电池柜组",
+    "coolingTower": "冷却塔",
+    "transformer": "主变压器及高压设备",
+    "generatorUnit": "柴油发电机单元",
+    "rackPowerUnit": "列头配电柜 / RPP",
+    "hydraulicPump": "液冷循环泵组",
+    "heatExchanger": "板式换热器",
+    "mvSwitchgear": "中压开关柜",
+    "lvSwitchgear": "低压开关柜",
+    "powerCabinet": "UPS / 配电柜",
+    "coolingSupplyPipe": "液冷供水管",
+    "coolingReturnPipe": "液冷回水管",
+    "coolingValve": "液冷管路阀门"
+  }
+}

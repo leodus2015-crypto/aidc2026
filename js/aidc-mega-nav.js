@@ -8,7 +8,12 @@
         {
           titleKey: 'nav.menu.roomPlanning',
           title: '机房规划',
-          links: [['nav.menu.roomLayout', '机房布局', 'ai-dc-design.html?tab=roomLayout']],
+          links: [
+            ['nav.menu.roomLayout', '机房布局', 'ai-dc-design.html?tab=roomLayout'],
+            ['nav.menu.roomLayout3d', '机房布局 3D', 'ai-dc-design.html?tab=roomLayout3d'],
+            ['nav.menu.power', '机房供电', 'ai-dc-design.html?tab=power'],
+            ['nav.menu.liquidRack', '机房液冷', 'ai-dc-design.html?tab=liquidRack'],
+          ],
         },
         {
           titleKey: 'nav.menu.computePlanning',
@@ -31,7 +36,10 @@
         {
           titleKey: 'nav.menu.value',
           title: '效益评估',
-          links: [['nav.menu.roi', 'Investment ROI', 'ai-dc-design.html?tab=roi']],
+          links: [
+            ['nav.menu.scheduleBudget', '机房工期和造价', 'ai-dc-design.html?tab=scheduleBudget'],
+            ['nav.menu.roi', 'Investment ROI', 'ai-dc-design.html?tab=roi'],
+          ],
         },
       ],
     },

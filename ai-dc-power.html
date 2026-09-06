@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="从电网到 AI 服务器机柜的完整 3D 供电路径：降压、UPS、电池与柴油发电机。" />
+  <meta name="theme-color" content="#eef4fb" />
+  <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-power.html" />
+  <title>机房供电 · AI Data Center</title>
+  <script src="js/aidc-theme.js?v=87"></script>
+  <script src="js/embed-mode.js?v=87"></script>
+  <script src="js/theme-switch.js?v=87"></script>
+  <script src="js/aidc-asset-version.js?v=87"></script>
+  <script src="js/aidc-locale-bridge.js?v=87"></script>
+  <link rel="stylesheet" href="css/theme.css?v=87" />
+  <link rel="stylesheet" href="css/embed.css?v=87" />
+  <link rel="stylesheet" href="css/ai-dc-power.css?v=87" />
+</head>
+<body data-i18n-page="ai-dc-power">
+  <header class="aidc-chrome site-header">
+    <a href="ai-dc-design.html" class="brand" aria-label="AIDC 2026 · 首页">
+      <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" />
+    </a>
+    <strong data-i18n="meta.shortTitle">机房供电</strong>
+    <div id="theme-switch-root"></div>
+    <div id="lang-switch-root"></div>
+  </header>
+
+  <main id="power-app" class="power-app" aria-label="3D 机房供电链路" data-i18n-aria-label="app.aria">
+    <div id="scene" aria-hidden="true"></div>
+
+    <div id="toolbar" class="glass">
+      <div class="brand">
+        <h1 data-i18n="brand.title">数据中心供电</h1>
+        <p data-i18n="brand.subtitle">从电网到 AI 服务器机柜的完整供电路径</p>
+      </div>
+      <div class="actions">
+        <button type="button" id="normal" class="active" aria-pressed="true" data-i18n="controls.normal">正常供电</button>
+        <button type="button" id="outage" class="danger" aria-pressed="false" data-i18n="controls.outage">模拟停电</button>
+        <button type="button" id="energyView" data-i18n="controls.energyView">能源区</button>
+        <button type="button" id="hallView" data-i18n="controls.hallView">机房区</button>
+        <button type="button" id="voltages" aria-pressed="false" data-i18n="controls.showVoltages">显示电压</button>
+        <button type="button" id="lines" aria-pressed="true" data-i18n="controls.hideLines">隐藏线路</button>
+        <button type="button" id="walls" aria-pressed="true" data-i18n="controls.hideWalls">隐藏墙体</button>
+        <button type="button" id="reset" data-i18n="controls.reset">重置视角</button>
+      </div>
+    </div>
+
+    <div class="hint" data-i18n="controls.hint">拖动旋转 · 滚轮缩放 · 点击设备查看</div>
+
+    <aside id="info" class="glass">
+      <div class="eyebrow" data-i18n="app.eyebrow">POWER DIGITAL TWIN</div>
+      <div class="info-title" id="infoTitle" data-i18n="info.title">供电系统全景</div>
+      <div class="info-copy" id="infoCopy" data-i18n="info.copy">供电链路从高架 500kV 枢纽站逐级降压至 220kV、10kV 与 380V，经过 UPS 与输出配电后送入 AI 服务器机柜。</div>
+      <div class="status"><span data-i18n="app.status">当前状态</span><span class="online" id="stateText">市电正常</span></div>
+    </aside>
+
+    <div id="legend" class="glass">
+      <span class="key"><i class="line blue"></i><span data-i18n="legend.high">500/220/10kV</span></span>
+      <span class="key"><i class="line cyan"></i><span data-i18n="legend.low">380V / UPS输出</span></span>
+      <span class="key"><i class="line orange"></i><span data-i18n="legend.battery">电池 DC</span></span>
+      <span class="key"><i class="line green"></i><span data-i18n="legend.gen">发电机</span></span>
+    </div>
+
+    <div id="progress" class="glass">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="progressText">500kV 市电逐级降压供电 · IT 负载正常运行</span>
+    </div>
+
+    <div id="loading" class="loading-state">
+      <span class="loader" aria-hidden="true"></span>
+      <span data-i18n="app.loading">正在加载供电场景…</span>
+    </div>
+    <div id="webgl-fallback" class="webgl-fallback" hidden>
+      <strong data-i18n="fallback.title">当前浏览器无法显示 3D 场景</strong>
+      <p data-i18n="fallback.body">请启用浏览器硬件加速，或使用最新版 Chrome、Edge、Safari 浏览器。</p>
+    </div>
+  </main>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script src="js/i18n.js?v=87"></script>
+  <script src="js/lang-switch.js?v=87"></script>
+  <script src="js/i18n-bootstrap.js?v=87"></script>
+  <script type="module" src="js/ai-dc-power.js?v=87"></script>
+</body>
+</html>

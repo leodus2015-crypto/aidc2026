@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "title": "Power System · AI Data Center",
+    "shortTitle": "Power System",
+    "description": "Interactive 3D power path from the utility grid to AI server racks, including step-down, UPS, batteries and diesel generation."
+  },
+  "app": {
+    "aria": "3D data-hall power chain",
+    "eyebrow": "POWER DIGITAL TWIN",
+    "loading": "Loading power scene…",
+    "status": "Current status"
+  },
+  "brand": {
+    "title": "Data Center Power",
+    "subtitle": "End-to-end power path from the utility grid to AI server racks"
+  },
+  "controls": {
+    "normal": "Normal",
+    "outage": "Outage Drill",
+    "energyView": "Power Zone",
+    "hallView": "Data Hall",
+    "showVoltages": "Show Voltages",
+    "hideVoltages": "Hide Voltages",
+    "hideLines": "Hide Routes",
+    "showLines": "Show Routes",
+    "hideWalls": "Hide Walls",
+    "showWalls": "Show Walls",
+    "reset": "Reset View",
+    "hint": "Drag to rotate · Scroll to zoom · Click equipment for details"
+  },
+  "info": {
+    "title": "Power System Overview",
+    "copy": "The power chain steps down from an overhead 500kV hub to 220kV, 10kV and 380V, then feeds AI server racks through UPS and output distribution."
+  },
+  "legend": {
+    "high": "500/220/10kV",
+    "low": "380V / UPS output",
+    "battery": "Battery DC",
+    "gen": "Generator"
+  },
+  "fallback": {
+    "title": "3D rendering is unavailable in this browser",
+    "body": "Enable hardware acceleration or use the latest Chrome, Edge, or Safari."
+  },
+  "eq": {
+    "n500": "① 500kV Hub",
+    "d500": "Overhead 500kV utility intake, protection and outgoing feeder aggregation",
+    "n220": "② 220kV Substation",
+    "d220": "Steps 500kV down to 220kV as the campus high-voltage supply",
+    "n10": "③ 10kV MV",
+    "d10": "Receives the 10kV output from the main transformer for protection, metering and feeders",
+    "nTransformer": "④ 10/0.38kV Transformer",
+    "dTransformer": "Steps 10kV medium voltage down to 380V three-phase low voltage",
+    "nLv": "⑤ 380V LV Room",
+    "dLv": "Receives 380V three-phase output and handles low-voltage distribution branches",
+    "nAts": "⑥ ATS Switchgear",
+    "dAts": "Safely transfers supply between utility power and the generator",
+    "nUps": "⑦ UPS",
+    "dUps": "Online double-conversion UPS: 380V AC → DC → 380V AC",
+    "nBattery1": "Battery Cabinet 1",
+    "dBattery1": "UPS DC energy storage that instantly supports the load during a utility outage",
+    "nBattery2": "Battery Cabinet 2",
+    "dBattery2": "Parallel UPS battery extension cabinet for longer backup runtime",
+    "nGen": "Diesel Generator",
+    "dGen": "Backup AC source for extended outages, connected through ATS",
+    "nPdu": "⑧ Output PDU",
+    "dPdu": "UPS output distribution feeding the data hall busway",
+    "nRack": "⑩ AI Server Rack",
+    "dRack": "Rack PDU powers server PSUs; internal power shelves convert to 48V DC",
+    "rackSub": "380V input · PSU / 48V Power Shelf",
+    "nBusway": "⑨ Busway",
+    "buswaySub": "380V AC · three-phase output path"
+  },
+  "volt": {
+    "v500": "500 kV AC · overhead intake",
+    "v220": "220 kV AC · campus HV",
+    "v10": "10 kV AC · medium voltage",
+    "v380": "380 V AC · three phase",
+    "vUpsIn": "380 V AC · UPS input",
+    "vBattery": "384-576 V DC · battery side",
+    "vUpsOut": "380 V AC · UPS output",
+    "vBusway": "Busway: 380 V AC",
+    "v48": "AI Power Shelf → 48 V DC"
+  },
+  "mode": {
+    "normalStatus": "Utility normal",
+    "normalProgress": "500kV utility stepped down to 380V · UPS output normal",
+    "batteryStatus": "Battery takeover",
+    "batteryProgress": "Utility lost · UPS battery DC instantly supports the load",
+    "startingStatus": "Generator starting",
+    "startingProgress": "Battery continues supporting IT load · diesel generator starting and stabilizing",
+    "generatorStatus": "Generator supply",
+    "generatorProgress": "ATS transferred · generator feeds the UPS input",
+    "rechargingStatus": "Utility restored",
+    "rechargingProgress": "ATS returned to utility · UPS batteries are recharging"
+  }
+}

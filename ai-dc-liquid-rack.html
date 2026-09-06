@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="下走水、上走电的液冷机柜 3D 可交互剖面模拟。" />
+  <meta name="theme-color" content="#07111d" />
+  <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-liquid-rack.html" />
+  <title>机房液冷 · AI Data Center</title>
+  <script src="js/aidc-theme.js?v=87"></script>
+  <script src="js/embed-mode.js?v=87"></script>
+  <script src="js/theme-switch.js?v=87"></script>
+  <script src="js/aidc-asset-version.js?v=87"></script>
+  <script src="js/aidc-locale-bridge.js?v=87"></script>
+  <link rel="stylesheet" href="css/theme.css?v=87" />
+  <link rel="stylesheet" href="css/embed.css?v=87" />
+  <link rel="stylesheet" href="css/ai-dc-liquid-rack.css?v=87" />
+</head>
+<body data-i18n-page="ai-dc-liquid-rack">
+  <header class="aidc-chrome site-header">
+    <a href="ai-dc-design.html" class="brand" aria-label="AIDC 2026 · 首页">
+      <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" />
+    </a>
+    <strong data-i18n="meta.shortTitle">机房液冷</strong>
+    <div id="theme-switch-root"></div>
+    <div id="lang-switch-root"></div>
+  </header>
+
+  <main id="rack-simulator" data-i18n-aria-label="app.aria" aria-label="液冷机柜 3D 模拟器">
+    <div id="scene" aria-hidden="true"></div>
+
+    <section class="glass topbar" data-i18n-aria-label="controls.toolbarAria" aria-label="液冷机柜视图控制">
+      <div class="title-block">
+        <span class="eyebrow" data-i18n="hero.eyebrow">LIQUID COOLING DIGITAL TWIN</span>
+        <h1 data-i18n="hero.title">液冷机柜</h1>
+      </div>
+      <div class="view-actions" role="group" data-i18n-aria-label="controls.viewAria" aria-label="3D 视角控制">
+        <button type="button" class="active" data-view="overview" data-i18n="controls.overview">总览</button>
+        <button type="button" data-view="front" data-i18n="controls.front">正视</button>
+        <button type="button" id="toggle-cards" aria-pressed="false" aria-label="收起文字卡片">
+          <span id="toggle-cards-icon" aria-hidden="true">◀</span>
+          <span id="toggle-cards-text">收起卡片</span>
+        </button>
+      </div>
+    </section>
+
+    <aside class="glass section-panel" data-collapsible-card data-card-id="section" data-i18n-aria-label="section.aria" aria-label="垂直空间分区">
+      <div class="panel-title">
+        <span data-i18n="section.title">垂直空间剖面</span>
+        <div class="panel-title-actions"><b>5.5m+</b><button type="button" class="card-fold" data-card-toggle aria-expanded="true" aria-label="收起垂直空间卡片"><span aria-hidden="true">−</span></button></div>
+      </div>
+      <div class="card-body">
+        <button type="button" data-focus="power" class="section-row power-row">
+          <i>03</i><span><b data-i18n="section.power">顶部供电层</b><small data-i18n="section.powerSub">小母线 · 电力桥架 · 光缆桥架</small></span><em>4.50m</em>
+        </button>
+        <button type="button" data-focus="rack" class="section-row rack-row">
+          <i>02</i><span><b data-i18n="section.rack">液冷机柜层</b><small data-i18n="section.rackSub">2250mm 机柜 · 冷板服务器</small></span><em>3.05m</em>
+        </button>
+        <button type="button" data-focus="water" class="section-row water-row">
+          <i>01</i><span><b data-i18n="section.water">地板下水路层</b><small data-i18n="section.waterSub">供回水主管 · DN125–200</small></span><em>0.80m</em>
+        </button>
+        <div class="datum"><span data-i18n="section.datum">结构地板 ±0.000</span><b>0m</b></div>
+      </div>
+    </aside>
+
+    <section class="glass display-panel" data-collapsible-card data-card-id="display" data-i18n-aria-label="controls.displayAria" aria-label="模型显示控制">
+      <div class="panel-title compact-title">
+        <span data-i18n="controls.display">显示图层</span>
+        <button type="button" class="card-fold" data-card-toggle aria-expanded="true" aria-label="收起显示图层卡片"><span aria-hidden="true">−</span></button>
+      </div>
+      <div class="card-body">
+        <div class="display-grid">
+          <button type="button" id="toggle-shell" class="active" aria-pressed="true" data-i18n="controls.shell">透明外壳</button>
+          <button type="button" id="toggle-water" class="active" aria-pressed="true" data-i18n="controls.water">动态水路</button>
+          <button type="button" id="toggle-power" class="active" aria-pressed="true" data-i18n="controls.power">动态电路</button>
+          <button type="button" id="toggle-dimensions" class="active" aria-pressed="true" data-i18n="controls.dimensions">尺寸标注</button>
+          <button type="button" id="toggle-labels" class="active" aria-pressed="true" data-i18n="controls.labels">文字标注</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="glass info-card" data-collapsible-card data-card-id="info" data-i18n-aria-label="info.aria" aria-label="组件信息" aria-live="polite">
+      <div class="info-head">
+        <span data-i18n="info.kicker">组件信息</span>
+        <div class="info-actions"><b><i></i><span data-i18n="info.running">运行中</span></b><button type="button" class="card-fold" data-card-toggle aria-expanded="true" aria-label="收起组件信息卡片"><span aria-hidden="true">−</span></button></div>
+      </div>
+      <div class="card-body">
+        <h2 id="info-title" data-i18n="info.title">液冷机柜总成</h2>
+        <p id="info-copy" data-i18n="info.copy">点击机柜、管路或桥架，查看其功能及安装标高。</p>
+        <dl>
+          <div><dt data-i18n="info.type">类型</dt><dd id="info-type" data-i18n="info.defaultType">冷板式液冷</dd></div>
+          <div><dt data-i18n="info.elevation">安装标高</dt><dd id="info-level">+0.800m — +3.050m</dd></div>
+        </dl>
+      </div>
+    </aside>
+
+    <section class="glass bottom-bar" data-i18n-aria-label="legend.aria" aria-label="图例与操作提示">
+      <div class="legend">
+        <span><i class="supply"></i><b data-i18n="legend.supply">绿色冷液</b></span>
+        <span><i class="return"></i><b data-i18n="legend.return">红色热液</b></span>
+        <span><i class="electric"></i><b data-i18n="legend.power">A/B 路供电</b></span>
+      </div>
+      <p data-i18n="hint.drag">左键拖动旋转 · 右键平移 · 滚轮缩放 · 点击组件查看详情</p>
+    </section>
+
+    <div id="loading" class="loading" role="status"><span></span><b data-i18n="app.loading">正在装配液冷机柜…</b></div>
+    <div id="fallback" class="fallback" hidden>
+      <strong data-i18n="fallback.title">当前浏览器无法显示 3D 场景</strong>
+      <p data-i18n="fallback.body">请启用浏览器硬件加速，或使用最新版 Chrome、Edge、Safari 浏览器。</p>
+    </div>
+  </main>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script src="js/i18n.js?v=87"></script>
+  <script src="js/lang-switch.js?v=87"></script>
+  <script src="js/i18n-bootstrap.js?v=87"></script>
+  <script>
+    (() => {
+      const revealFallback = () => {
+        const loading = document.getElementById('loading');
+        const fallback = document.getElementById('fallback');
+        if (!loading || loading.classList.contains('done') || !fallback) return;
+        loading.hidden = true;
+        fallback.hidden = false;
+        fallback.style.display = 'grid';
+      };
+      window.addEventListener('error', (event) => {
+        const source = String(event.filename || event.target?.src || '');
+        if (source.includes('three') || source.includes('ai-dc-liquid-rack.js')) revealFallback();
+      }, true);
+      window.setTimeout(revealFallback, 12000);
+    })();
+  </script>
+  <script type="module" src="js/ai-dc-liquid-rack.js?v=87"></script>
+</body>
+</html>

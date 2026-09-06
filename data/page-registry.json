@@ -73,12 +73,16 @@
       "parents": [],
       "embeds": [
         "ai-dc-room-layout.html",
+        "ai-dc-room-layout-3d.html",
+        "ai-dc-power.html",
+        "ai-dc-liquid-rack.html",
         "ai-dc-tcp.html",
         "ai-dc-computeEst.html",
         "ai-dc-layout.html",
         "ai-dc-deployment-perf.html",
         "datacenter-3d-case-b.html",
         "datacenter-3d-v3-2.html",
+        "ai-dc-schedule-budget.html",
         "aidc-investment-roi.html"
       ],
       "assets": [
@@ -109,6 +113,95 @@
         "js/ai-dc-room-layout-page.js",
         "i18n/ai-dc-room-layout.zh.json",
         "i18n/ai-dc-room-layout.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-room-layout-3d.html",
+      "id": "ai-dc-room-layout-3d",
+      "title": "机房布局 3D",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "roomLayout3d"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "js/ai-dc-room-layout-3d.js",
+        "css/ai-dc-room-layout-3d.css",
+        "i18n/ai-dc-room-layout-3d.zh.json",
+        "i18n/ai-dc-room-layout-3d.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-power.html",
+      "id": "ai-dc-power",
+      "title": "机房供电",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "power"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "js/ai-dc-power.js",
+        "css/ai-dc-power.css",
+        "i18n/ai-dc-power.zh.json",
+        "i18n/ai-dc-power.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-liquid-rack.html",
+      "id": "ai-dc-liquid-rack",
+      "title": "机房液冷",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "liquidRack"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "js/ai-dc-liquid-rack.js",
+        "css/ai-dc-liquid-rack.css",
+        "i18n/ai-dc-liquid-rack.zh.json",
+        "i18n/ai-dc-liquid-rack.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-schedule-budget.html",
+      "id": "ai-dc-schedule-budget",
+      "title": "机房工期和造价",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "ai-dc-design.html",
+          "relation": "iframe",
+          "tab": "scheduleBudget"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "js/ai-dc-schedule-budget.js",
+        "js/ai-dc-schedule-budget-model.js",
+        "css/ai-dc-schedule-budget.css",
+        "i18n/ai-dc-schedule-budget.zh.json",
+        "i18n/ai-dc-schedule-budget.en.json"
       ],
       "dataSources": []
     },

@@ -7,12 +7,12 @@
   <meta name="theme-color" content="#f8fafc" />
   <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-design.html" />
   <title>AI DC布局 · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=86"></script>
-  <script src="js/embed-mode.js?v=86"></script>
-  <script src="js/theme-switch.js?v=86"></script>
+  <script src="js/aidc-theme.js?v=87"></script>
+  <script src="js/embed-mode.js?v=87"></script>
+  <script src="js/theme-switch.js?v=87"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/theme.css?v=86" />
-  <link rel="stylesheet" href="css/embed.css?v=86" />
+  <link rel="stylesheet" href="css/theme.css?v=87" />
+  <link rel="stylesheet" href="css/embed.css?v=87" />
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="ai-dc-design">
   <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -97,6 +97,39 @@
           >机房布局</button>
           <button
             type="button"
+            id="tab-room-layout-3d"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-room-layout-3d"
+            data-layout-tab="roomLayout3d"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            data-i18n="tabs.roomLayout3d"
+          >机房布局 3D</button>
+          <button
+            type="button"
+            id="tab-power"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-power"
+            data-layout-tab="power"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            data-i18n="tabs.power"
+          >机房供电</button>
+          <button
+            type="button"
+            id="tab-liquid-rack"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-liquid-rack"
+            data-layout-tab="liquidRack"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            data-i18n="tabs.liquidRack"
+          >机房液冷</button>
+          <button
+            type="button"
             id="tab-tcp"
             role="tab"
             aria-selected="false"
@@ -163,6 +196,17 @@
           >案例B（风冷）</button>
           <button
             type="button"
+            id="tab-schedule-budget"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-schedule-budget"
+            data-layout-tab="scheduleBudget"
+            tabindex="-1"
+            class="rounded-xl px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white/80 hover:text-slate-950"
+            data-i18n="tabs.scheduleBudget"
+          >机房工期和造价</button>
+          <button
+            type="button"
             id="tab-roi"
             role="tab"
             aria-selected="false"
@@ -183,6 +227,42 @@
             title="AI DC 布局 · 机房布局"
             class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-slate-50"
             loading="eager"
+          ></iframe>
+        </div>
+      </div>
+
+      <div id="panel-room-layout-3d" role="tabpanel" aria-labelledby="tab-room-layout-3d" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            data-iframe-key="roomLayout3d"
+            data-i18n-title="iframe.roomLayout3d"
+            title="AI DC 布局 · 机房布局 3D"
+            class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-[#07111f]"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
+      <div id="panel-power" role="tabpanel" aria-labelledby="tab-power" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            data-iframe-key="power"
+            data-i18n-title="iframe.power"
+            title="AI DC 布局 · 机房供电"
+            class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-[#eef4fb]"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
+      <div id="panel-liquid-rack" role="tabpanel" aria-labelledby="tab-liquid-rack" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            data-iframe-key="liquidRack"
+            data-i18n-title="iframe.liquidRack"
+            title="AI DC 布局 · 机房液冷"
+            class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-[#07111d]"
+            loading="lazy"
           ></iframe>
         </div>
       </div>
@@ -258,6 +338,18 @@
         </div>
       </div>
 
+      <div id="panel-schedule-budget" role="tabpanel" aria-labelledby="tab-schedule-budget" aria-hidden="true" class="hidden min-w-0 w-full">
+        <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+          <iframe
+            data-iframe-key="scheduleBudget"
+            data-i18n-title="iframe.scheduleBudget"
+            title="AI DC 布局 · 机房工期和造价"
+            class="block h-[min(92vh,75rem)] w-full min-h-[44rem] bg-[#eaf2fb]"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+
       <div id="panel-roi" role="tabpanel" aria-labelledby="tab-roi" aria-hidden="true" class="hidden min-w-0 w-full">
         <div class="min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
           <iframe
@@ -284,14 +376,14 @@
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=86"></script>
-<script src="js/aidc-locale-bridge.js?v=86"></script>
-  <script src="js/i18n.js?v=86"></script>
-  <script src="js/lang-switch.js?v=86"></script>
-  <script src="js/aidc-refresh-flash.js?v=86"></script>
-<script src="js/aidc-mega-nav.js?v=86"></script>
-  <script src="js/i18n-bootstrap.js?v=86"></script>
-  <script src="js/ai-dc-design-page.js?v=86"></script>
+    <script src="js/aidc-asset-version.js?v=87"></script>
+<script src="js/aidc-locale-bridge.js?v=87"></script>
+  <script src="js/i18n.js?v=87"></script>
+  <script src="js/lang-switch.js?v=87"></script>
+  <script src="js/aidc-refresh-flash.js?v=87"></script>
+<script src="js/aidc-mega-nav.js?v=87"></script>
+  <script src="js/i18n-bootstrap.js?v=87"></script>
+  <script src="js/ai-dc-design-page.js?v=87"></script>
   <script>
     AidcI18nBootstrap.bootstrap('ai-dc-design', {
       onReady: function () {

@@ -51,12 +51,16 @@ ai-dc-design.html
 ├── tab=roomLayout → ai-dc-room-layout.html
 │   ├── fourLayer   → ai-dc-four-layer.html
 │   └── floorDetail → ai-dc-floor-detail.html
+├── tab=roomLayout3d → ai-dc-room-layout-3d.html
+├── tab=power      → ai-dc-power.html
+├── tab=liquidRack → ai-dc-liquid-rack.html
 ├── tab=tcp        → ai-dc-tcp.html
 ├── tab=computeEst → ai-dc-computeEst.html
 ├── tab=plan       → ai-dc-layout.html
 ├── tab=synergy    → ai-dc-deployment-perf.html
 ├── tab=a          → datacenter-3d-case-b.html
 ├── tab=b          → datacenter-3d-v3-2.html
+├── tab=scheduleBudget → ai-dc-schedule-budget.html
 └── tab=roi        → aidc-investment-roi.html
 ```
 
@@ -104,6 +108,8 @@ iframe URL 与语言同步由 `js/index-page.js` 管理。`inference/styles.css`
 
 ## 7. 数据与 API 关系
 
+- 机房布局 3D / 机房供电 / 机房液冷：纯前端 Three.js 场景，无 API / 数据库依赖；WebGL 不可用时显示回退说明。
+- 机房工期和造价：纯前端工期甘特与风冷/液冷造价估算，无 API / 数据库依赖；造价公式在 `js/ai-dc-schedule-budget-model.js`。
 - 3D 案例 A/B：读取 `/api/config/dc3d.case_a`、`dc3d.case_b`，失败时回退 `data/dc3d-case-*.defaults.json`。
 - Investment ROI：读取和管理 `/api/config/roi.*`，本地默认由页面初始化脚本和 `data/config-seeds/` 保持。
 - 站点状态：使用 `/api/analytics/summary`，必须服务端认证。

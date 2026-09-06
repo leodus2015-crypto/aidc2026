@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "title": "Room Layout 3D · AI Data Center",
+    "shortTitle": "Room Layout 3D",
+    "description": "Interactive 3D AI data center layout covering the campus, four-level building, and detailed data floor."
+  },
+  "app": {
+    "aria": "3D data center layout viewer",
+    "eyebrow": "AIDC DIGITAL TWIN",
+    "loading": "Loading 3D scene…"
+  },
+  "breadcrumb": {
+    "aria": "Current location",
+    "campus": "Campus",
+    "building": "A02 Data Center",
+    "floor": "{floor} Data Floor"
+  },
+  "campus": {
+    "title": "AIDC Campus Overview",
+    "description": "Drag to orbit the campus, then select the highlighted A02 data center building.",
+    "info": "A02 is the campus compute core, supported by a dedicated substation, transformer yard and diesel generator plant for utility and standby power.",
+    "referenceAlt": "AIDC campus layout reference",
+    "enter": "Enter A02 Data Center"
+  },
+  "building": {
+    "title": "A02 · Four-Level Data Center",
+    "description": "The building contains data floors 1F, 2F and 3F plus the RF equipment level. Select a data floor for details.",
+    "info": "1F–2F is 8.0m high; 2F–3F and 3F–RF are 7.0m each. Cool gray marks data halls, cyan-blue marks cooling, amber marks power, and green marks rooftop battery zones. This is a functional cutaway.",
+    "selectFloor": "View {floor} Detail",
+    "totalHeightLabel": "Total height",
+    "totalHeightValue": "Total 22.0 m"
+  },
+  "floor": {
+    "title": "A02 · {floor} Detailed Data Floor",
+    "description": "Drag to inspect raised functional zones, contained aisles, overhead services and rack arrays. Every floor uses the same standardized POD modules.",
+    "info": "Each floor is about 133m × 92m. EHU rooms use AHU-style casing, filters, coils, fans and supply ducts; hydraulic modules show pumps, heat exchangers, supply/return headers and valves. Capacity remains 1,280 racks.",
+    "selected": "Current floor",
+    "rackRows": "Rack arrays",
+    "zones": "Functional zones"
+  },
+  "info": { "live": "Model information" },
+  "overlays": { "scene": "Scene info", "model": "Model info" },
+  "stats": { "dataFloors": "Data floors", "pods": "PODs", "racks": "Racks" },
+  "controls": {
+    "rotate": "Left drag · Orbit",
+    "zoom": "Wheel · Zoom",
+    "pan": "Right drag · Pan",
+    "back": "Back",
+    "reset": "Reset view"
+  },
+  "actions": { "aria": "Objects available in this scene" },
+  "fallback": {
+    "title": "3D rendering is unavailable in this browser",
+    "body": "Enable hardware acceleration or use the latest Chrome, Edge, or Safari."
+  },
+  "objects": {
+    "a02": "A02 Data Center",
+    "a01": "A01 Data Center",
+    "office": "Administration Building",
+    "substation": "220kV Substation",
+    "generator": "Diesel Generator Plant",
+    "rf": "RF Equipment Level",
+    "ehu": "EHU Plant Room",
+    "hall": "Air / Liquid-Cooled Hall",
+    "power": "Low-Voltage Power",
+    "powerFunction": "Power Distribution Zone",
+    "medium": "Medium-Voltage Room",
+    "hydraulic": "Liquid-Cooling Hydraulic Module",
+    "reserve": "Reserved Space",
+    "serviceCore": "Service Core",
+    "coolingRiser": "Cooling Riser",
+    "powerRiser": "Power Distribution Riser",
+    "batteryBank": "Battery Bank",
+    "coolingTower": "Cooling Tower",
+    "transformer": "Main Transformer and HV Equipment",
+    "generatorUnit": "Diesel Generator Unit",
+    "rackPowerUnit": "Row Power Cabinet / RPP",
+    "hydraulicPump": "Liquid-Cooling Pump Set",
+    "heatExchanger": "Plate Heat Exchanger",
+    "mvSwitchgear": "Medium-Voltage Switchgear",
+    "lvSwitchgear": "Low-Voltage Switchgear",
+    "powerCabinet": "UPS / Distribution Cabinet",
+    "coolingSupplyPipe": "Liquid-Cooling Supply Pipe",
+    "coolingReturnPipe": "Liquid-Cooling Return Pipe",
+    "coolingValve": "Liquid-Cooling Valve"
+  }
+}

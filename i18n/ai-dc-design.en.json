@@ -6,22 +6,30 @@
   "tabs": {
     "aria": "Layout & planning",
     "roomLayout": "Data Hall Layout",
+    "roomLayout3d": "Room Layout 3D",
+    "power": "Power System",
+    "liquidRack": "Liquid Cooling",
     "caseA": "Case A (Air-Cooled)",
     "caseB": "Case B (Air-Cooled)",
     "plan": "Rack Planning",
     "synergy": "Product Synergy",
     "tcp": "Token->Card->Power",
     "computeEst": "Compute Estimation",
+    "scheduleBudget": "Room Schedule & Cost",
     "roi": "Investment ROI"
   },
   "iframe": {
     "roomLayout": "AI DC Layout · Data Hall Layout",
+    "roomLayout3d": "AI DC Layout · Room Layout 3D",
+    "power": "AI DC Layout · Power System",
+    "liquidRack": "AI DC Layout · Liquid Cooling",
     "caseA": "AI DC Layout · Case A (Air-Cooled)",
     "caseB": "AI DC Layout · Case B (Air-Cooled)",
     "tcp": "AI DC Layout · Token → Card → Power",
     "computeEst": "AI DC Layout · Compute Estimation",
     "plan": "AI DC Layout · Rack Planning",
     "synergy": "AI DC Layout · Product Synergy",
+    "scheduleBudget": "AI DC Layout · Room Schedule & Cost",
     "roi": "AI DC Layout · Investment ROI"
   },
   "placeholder": {

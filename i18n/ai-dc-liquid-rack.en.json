@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "title": "Liquid Cooling · AI Data Center",
+    "shortTitle": "Liquid Cooling",
+    "description": "Interactive 3D section of a liquid-cooled rack with underfloor water and overhead power."
+  },
+  "app": {"aria": "Liquid-cooled rack 3D simulator", "loading": "Assembling liquid-cooled rack…"},
+  "hero": {
+    "eyebrow": "LIQUID COOLING DIGITAL TWIN",
+    "title": "Liquid-Cooled Rack"
+  },
+  "controls": {
+    "toolbarAria": "Liquid-cooled rack view controls", "viewAria": "3D view controls", "overview": "Overview", "front": "Front",
+    "displayAria": "Model layer controls", "display": "Layers", "shell": "Clear Shell", "water": "Water Flow", "power": "Power Flow", "dimensions": "Dimensions", "labels": "Text Labels", "hideCards": "Collapse Cards", "showCards": "Expand Cards", "collapseCard": "Collapse this card", "expandCard": "Expand this card"
+  },
+  "section": {
+    "aria": "Vertical space zones", "title": "Vertical Section", "power": "Overhead Power", "powerSub": "Busway · power trays · fiber tray",
+    "rack": "Liquid Rack", "rackSub": "2250mm rack · cold-plate servers", "water": "Underfloor Water", "waterSub": "Supply / return mains · DN125–200", "datum": "Structural slab ±0.000"
+  },
+  "dimensions": {
+    "floor": "Raised-floor height",
+    "rack": "Liquid rack height",
+    "rackToPower": "Power/fiber trays and clearances",
+    "beamDatum": "Beam soffit height",
+    "roomHeight": "Overall room clearance",
+    "fireClearance": "Fire-pipe zone height",
+    "returnPlenum": "Above-beam return-air plenum"
+  },
+  "info": {
+    "aria": "Component information", "kicker": "COMPONENT", "running": "ONLINE", "title": "Liquid-Cooled Rack Assembly", "copy": "Select the rack, piping or trays to inspect function and elevation.",
+    "type": "Type", "elevation": "Elevation", "defaultType": "Direct-to-chip liquid cooling"
+  },
+  "legend": {"aria": "Legend and interaction guidance", "supply": "Green cold fluid", "return": "Red hot fluid", "power": "A/B power feeds"},
+  "hint": {"drag": "Drag to orbit · right-drag to pan · scroll to zoom · select a component for details"},
+  "fallback": {"title": "3D rendering is unavailable", "body": "Enable hardware acceleration or use a current Chrome, Edge, or Safari browser."},
+  "objects": {
+    "rack": {"title": "Liquid-Cooled Rack Assembly", "copy": "A 2.25m liquid-cooled rack whose server cold plates connect to internal supply and return manifolds.", "type": "Direct-to-chip liquid-cooled rack", "level": "+0.800m — +3.050m"},
+    "servers": {"title": "Liquid-Cooled Compute Nodes", "copy": "High-density AI servers connect to rack manifolds with quick-connect hoses and receive dual power from overhead PDUs.", "type": "Liquid-cooled GPU servers", "level": "+1.050m — +2.780m"},
+    "manifold": {"title": "Rack Supply / Return Manifolds", "copy": "Green carries cold fluid; red carries heated return fluid. Quick-connect branches serve every cold plate.", "type": "Rack-level supply / return manifolds", "level": "+0.900m — +2.900m"},
+    "supply": {"title": "Green Cold-Fluid Main", "copy": "The green cold-fluid main enters beneath the raised floor, rises through the rack base and feeds the supply manifold.", "type": "Secondary cold fluid · DN125–200", "level": "+0.250m — +0.900m"},
+    "return": {"title": "Red Hot-Fluid Main", "copy": "Red heated fluid drops through the rack base and returns below the floor to the CDU or heat exchanger.", "type": "Secondary hot fluid · DN125–200", "level": "+0.450m — +0.900m"},
+    "busway": {"title": "Overhead Row Busway", "copy": "Independent A/B busways move down into the rack-top tray zone and use shorter vertical drops to feed the rack PDUs.", "type": "Dual rack power feeds", "level": "+3.855m — +4.045m"},
+    "powerBridge": {"title": "Power Cable Trays", "copy": "Two power trays sit close to the rack top and above the fiber tray, with most service clearance retained above the tray stack.", "type": "Dual-tier power trays", "level": "+3.530m — +3.760m"},
+    "fiber": {"title": "Fiber Tray", "copy": "The fiber tray sits below the power trays, about 290mm above the rack top, to reduce power/data interference.", "type": "Fiber / low-voltage pathway", "level": "+3.310m — +3.370m"},
+    "fire": {"title": "Fire Protection Main", "copy": "The fire main is contained in the 200mm zone directly below the beam and above the power and fiber trays.", "type": "Fire protection piping", "level": "+4.550m — +4.750m"},
+    "ceiling": {"title": "Ceiling Return Air", "copy": "The return-air plenum is above the beam and separated from the fire pipe and tray zone below it.", "type": "Above-beam return-air plenum", "level": "+4.750m — +5.750m"},
+    "floor": {"title": "Raised Floor System", "copy": "The 800mm raised-floor void provides a dedicated pathway for liquid-cooling supply and return mains.", "type": "800mm raised floor", "level": "+0.000m — +0.800m"}
+  }
+}

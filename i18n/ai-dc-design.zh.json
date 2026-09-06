@@ -6,22 +6,30 @@
   "tabs": {
     "aria": "布局与规划",
     "roomLayout": "机房布局",
+    "roomLayout3d": "机房布局 3D",
+    "power": "机房供电",
+    "liquidRack": "机房液冷",
     "caseA": "案例A（风冷）",
     "caseB": "案例B（风冷）",
     "plan": "机柜规划",
     "synergy": "产品协同",
     "tcp": "Token->Card->Power",
     "computeEst": "算力估算",
+    "scheduleBudget": "机房工期和造价",
     "roi": "Investment ROI"
   },
   "iframe": {
     "roomLayout": "AI DC 布局 · 机房布局",
+    "roomLayout3d": "AI DC 布局 · 机房布局 3D",
+    "power": "AI DC 布局 · 机房供电",
+    "liquidRack": "AI DC 布局 · 机房液冷",
     "caseA": "AI DC 布局 · 案例A（风冷）",
     "caseB": "AI DC 布局 · 案例B（风冷）",
     "tcp": "AI DC 布局 · Token → Card → Power",
     "computeEst": "AI DC 布局 · 算力估算",
     "plan": "AI DC 布局 · 机柜规划",
     "synergy": "AI DC 布局 · 产品协同",
+    "scheduleBudget": "AI DC 布局 · 机房工期和造价",
     "roi": "AI DC 布局 · Investment ROI"
   },
   "placeholder": {

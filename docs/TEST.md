@@ -37,8 +37,8 @@ GitHub Actions：
 ### 入口与嵌套
 
 - [ ] 打开 `ai-dc-design.html`，默认 Tab 为机房布局，iframe 子页可见。
-- [ ] 依次切换：机房布局、TCP、算力估算、机柜规划、产品协同、案例 A、案例 B、ROI；子页有内容，整站不卸载成空白。
-- [ ] 直达 `ai-dc-design.html?tab=tcp`、`?tab=computeEst`、`?tab=plan`，打开即对应面板。
+- [ ] 依次切换：机房布局、机房布局 3D、机房供电、机房液冷、TCP、算力估算、机柜规划、产品协同、案例 A、案例 B、机房工期和造价、ROI；子页有内容，整站不卸载成空白。
+- [ ] 直达 `ai-dc-design.html?tab=tcp`、`?tab=computeEst`、`?tab=plan`、`?tab=roomLayout3d`、`?tab=power`、`?tab=liquidRack`、`?tab=scheduleBudget`，打开即对应面板。
 - [ ] 打开 `ai-dc-design.html?embed=1`（或子页 `?embed=1`），站点顶栏/大导航隐藏。
 
 ### 新页：TCP / 算力估算 / 机柜
@@ -62,6 +62,30 @@ GitHub Actions：
 - [ ] API 正常时：错误管理凭据不能解锁；正确 `ADMIN_TOKEN` 可解锁并写入配置。
 - [ ] API 不可用时：只读测算仍可用，但关键参数不能解锁或写入。
 - [ ] 云端配置版本冲突时：当前输入保留，提示重新加载，不覆盖他人更新。
+
+### 机房工期和造价
+
+- [ ] `ai-dc-design.html?tab=scheduleBudget` 或主导航「机房工期和造价」：iframe 内工期甘特与造价区可见，不是空白。
+- [ ] 切换建设方案后周期与工作包更新；改卡数后造价更新；非法输入（卡数 0、PUE < 1）显示错误而不是 NaN。
+- [ ] 切中英和 Light/Dark 不整页重载；子页 `?embed=1` 时自带顶栏隐藏。
+
+### 机房液冷
+
+- [ ] `ai-dc-design.html?tab=liquidRack` 或主导航「机房液冷」：iframe 内液冷机柜剖面可见，不是空白。
+- [ ] 切换总览/正视、图层开关后场景仍在；切中英和 Light/Dark 不整页重载。
+- [ ] 子页 `?embed=1` 时自带顶栏隐藏；WebGL 不可用时显示回退说明。
+
+### 机房供电
+
+- [ ] `ai-dc-design.html?tab=power` 或主导航「机房供电」：iframe 内供电场景可见，不是空白。
+- [ ] 「模拟停电」后状态文案变化；「正常供电」可恢复。切中英和 Light/Dark 不整页重载。
+- [ ] 子页 `?embed=1` 时自带顶栏隐藏；WebGL 不可用时显示回退说明。
+
+### 机房布局 3D
+
+- [ ] `ai-dc-design.html?tab=roomLayout3d` 或主导航「机房布局 3D」：iframe 内 3D 场景可见，不是空白。
+- [ ] 子页 `?embed=1` 时自带顶栏隐藏；切中英和 Light/Dark 后场景仍在，不整页重载。
+- [ ] WebGL 不可用时显示回退说明，而不是空白或脚本报错裸奔。
 
 ### 3D 配置
 

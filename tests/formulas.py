@@ -5,6 +5,7 @@ Keep in sync with:
 - js/aidc-investment-roi-page.js tokenMix / blendedCloudPrice / formatYiPerDay
 - ai-dc-computeEst.html calculate() and scenarios.coding
 - ai-dc-tcp.html COMMON / SC
+- js/ai-dc-schedule-budget-model.js calculateScenario / compareScenarios
 
 TCP 1024 / computeEst coding golden defaults (do not change unless product asks):
 dau=3180, pen=60, tin=21_000_000, tout=300_000, hit=0, N=40, K=2.0, C_card=919
@@ -116,3 +117,61 @@ def min_hbm_cards(
 
 def planned_cards(compute: int, memory_min: int) -> int:
     return max(compute, memory_min)
+
+
+def schedule_scenario(
+    cards: float,
+    card_power_kw: float,
+    pue: float,
+    unit_cost: float,
+    infra_per_w: float,
+    electricity: float,
+    years: float,
+) -> dict[str, float] | None:
+    """机房工期和造价。非法输入返回 None，不传播 NaN。
+
+    ICT MW = cards × kW/card / 1000
+    机房 MW = ICT MW × PUE
+    L0+L1 = 机房 MW × 10⁶ × $/W
+    ICT = cards × $/card
+    年 OPEX = 机房 MW × 1000 × 8760 × $/kWh
+    """
+    values = (cards, card_power_kw, pue, unit_cost, infra_per_w, electricity, years)
+    if any(not math.isfinite(value) for value in values):
+        return None
+    if cards < 1 or pue < 1 or years < 1:
+        return None
+    if card_power_kw < 0 or unit_cost < 0 or infra_per_w < 0 or electricity < 0:
+        return None
+    ict_mw = cards * card_power_kw / 1000
+    facility_mw = ict_mw * pue
+    ict_cost = cards * unit_cost
+    infra_cost = facility_mw * 1e6 * infra_per_w
+    capex = ict_cost + infra_cost
+    annual_opex = facility_mw * 1000 * 8760 * electricity
+    opex = annual_opex * years
+    return {
+        "ict_mw": ict_mw,
+        "facility_mw": facility_mw,
+        "ict_cost": ict_cost,
+        "infra_cost": infra_cost,
+        "capex": capex,
+        "annual_opex": annual_opex,
+        "opex": opex,
+        "total": capex + opex,
+    }
+
+
+def schedule_compare(air: Mapping[str, float], liquid: Mapping[str, float]) -> dict[str, float | None]:
+    capex_premium = liquid["capex"] - air["capex"]
+    opex_saving = air["opex"] - liquid["opex"]
+    total_saving = air["total"] - liquid["total"]
+    annual_saving = air["annual_opex"] - liquid["annual_opex"]
+    payback = capex_premium / annual_saving if capex_premium > 0 and annual_saving > 0 else None
+    return {
+        "capex_premium": capex_premium,
+        "opex_saving": opex_saving,
+        "total_saving": total_saving,
+        "annual_saving": annual_saving,
+        "payback": payback,
+    }

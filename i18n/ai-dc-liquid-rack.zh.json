@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "title": "机房液冷 · AI Data Center",
+    "shortTitle": "机房液冷",
+    "description": "下走水、上走电的液冷机柜 3D 可交互剖面模拟。"
+  },
+  "app": {"aria": "液冷机柜 3D 模拟器", "loading": "正在装配液冷机柜…"},
+  "hero": {
+    "eyebrow": "LIQUID COOLING DIGITAL TWIN",
+    "title": "液冷机柜"
+  },
+  "controls": {
+    "toolbarAria": "液冷机柜视图控制", "viewAria": "3D 视角控制", "overview": "总览", "front": "正视",
+    "displayAria": "模型显示控制", "display": "显示图层", "shell": "透明外壳", "water": "动态水路", "power": "动态电路", "dimensions": "尺寸标注", "labels": "文字标注", "hideCards": "收起卡片", "showCards": "展开卡片", "collapseCard": "收起此卡片", "expandCard": "展开此卡片"
+  },
+  "section": {
+    "aria": "垂直空间分区", "title": "垂直空间剖面", "power": "顶部供电层", "powerSub": "小母线 · 电力桥架 · 光缆桥架",
+    "rack": "液冷机柜层", "rackSub": "2250mm 机柜 · 冷板服务器", "water": "地板下水路层", "waterSub": "供回水主管 · DN125–200", "datum": "结构地板 ±0.000"
+  },
+  "dimensions": {
+    "floor": "架空地板高度",
+    "rack": "液冷机柜高度",
+    "rackToPower": "电力/光纤桥架及上下净空",
+    "beamDatum": "梁下高度",
+    "roomHeight": "机房整体净高",
+    "fireClearance": "消防管道高度",
+    "returnPlenum": "梁上吊顶回风空间"
+  },
+  "info": {
+    "aria": "组件信息", "kicker": "组件信息", "running": "运行中", "title": "液冷机柜总成", "copy": "点击机柜、管路或桥架，查看其功能及安装标高。",
+    "type": "类型", "elevation": "安装标高", "defaultType": "冷板式液冷"
+  },
+  "legend": {"aria": "图例与操作提示", "supply": "绿色冷液", "return": "红色热液", "power": "A/B 路供电"},
+  "hint": {"drag": "左键拖动旋转 · 右键平移 · 滚轮缩放 · 点击组件查看详情"},
+  "fallback": {"title": "当前浏览器无法显示 3D 场景", "body": "请启用浏览器硬件加速，或使用最新版 Chrome、Edge、Safari 浏览器。"},
+  "objects": {
+    "rack": {"title": "液冷机柜总成", "copy": "2.25m 高液冷机柜，服务器冷板回路在机柜内汇入供回水立管。", "type": "冷板式液冷机柜", "level": "+0.800m — +3.050m"},
+    "servers": {"title": "液冷计算节点", "copy": "高密度 AI 服务器通过快接软管接入机柜供回水歧管，并由顶部双路 PDU 供电。", "type": "GPU 液冷服务器", "level": "+1.050m — +2.780m"},
+    "manifold": {"title": "机柜供回水歧管", "copy": "绿色为低温冷液，红色为吸热后的热液；快接支路连接每台服务器冷板。", "type": "机柜级供回水歧管", "level": "+0.900m — +2.900m"},
+    "supply": {"title": "绿色冷液主管", "copy": "绿色冷液主管从架空地板下进入机柜底部，再向上接入机柜供水歧管。", "type": "二次侧冷液 · DN125–200", "level": "+0.250m — +0.900m"},
+    "return": {"title": "红色热液主管", "copy": "红色热液从机柜底部进入地板下管网，沿独立主管返回换热或 CDU 系统。", "type": "二次侧热液 · DN125–200", "level": "+0.450m — +0.900m"},
+    "busway": {"title": "顶部小母线", "copy": "A/B 两路小母线下移至机柜上方桥架区，通过垂直插接箱和较短电缆下引至机柜 PDU。", "type": "双路机柜供电", "level": "+3.855m — +4.045m"},
+    "powerBridge": {"title": "电力桥架", "copy": "双层电力桥架靠近机柜顶部布置，与下方光缆桥架分层设置；主要检修净空保留在桥架上方。", "type": "双层电力桥架", "level": "+3.530m — +3.760m"},
+    "fiber": {"title": "光缆桥架", "copy": "光缆桥架位于电力桥架下方，距离机柜顶部约 290mm，减少强弱电相互影响。", "type": "弱电 / 光纤通道", "level": "+3.310m — +3.370m"},
+    "fire": {"title": "消防管网", "copy": "消防管网整体位于梁下 200mm 高度区内，并处于电力桥架和光缆桥架上方。", "type": "消防管网", "level": "+4.550m — +4.750m"},
+    "ceiling": {"title": "吊顶回风", "copy": "吊顶回风空间布置在梁以上，与梁下消防管道及桥架安装区分开。", "type": "梁上吊顶回风空间", "level": "+4.750m — +5.750m"},
+    "floor": {"title": "架空地板系统", "copy": "架空地板净高按 800mm 表现，为液冷供回水主管提供独立敷设空间。", "type": "800mm 架空地板", "level": "+0.000m — +0.800m"}
+  }
+}

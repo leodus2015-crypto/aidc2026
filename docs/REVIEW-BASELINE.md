@@ -55,7 +55,7 @@
 
 | 严重度 | 位置 | 现象 | 建议测试层 |
 |--------|------|------|------------|
-| 中 | 规划容器 8 Tab | 新 Tab 切过去 iframe 必须有内容；`?tab=tcp` / `?tab=computeEst` 直达。 | 浏览器 |
+| 中 | 规划容器 12 Tab | 新 Tab 切过去 iframe 必须有内容；`?tab=tcp` / `?tab=computeEst` / `?tab=roomLayout3d` / `?tab=power` / `?tab=liquidRack` / `?tab=scheduleBudget` 直达。 | 浏览器 |
 | 中 | 主题 / 语言 | iframe postMessage，禁止整页重载。 | 浏览器四态 |
 | 低 | `?embed=1` | 新子页须去 chrome。 | 浏览器 |
 

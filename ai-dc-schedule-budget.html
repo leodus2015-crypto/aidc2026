@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="AI 数据中心建设工期，以及风冷与液冷 CAPEX、OPEX 造价对比。" />
+  <meta name="theme-color" content="#eaf2fb" />
+  <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-schedule-budget.html" />
+  <title>机房工期和造价 · AI Data Center</title>
+  <script src="js/aidc-theme.js?v=87"></script>
+  <script src="js/embed-mode.js?v=87"></script>
+  <script src="js/theme-switch.js?v=87"></script>
+  <script src="js/aidc-asset-version.js?v=87"></script>
+  <script src="js/aidc-locale-bridge.js?v=87"></script>
+  <link rel="stylesheet" href="css/theme.css?v=87" />
+  <link rel="stylesheet" href="css/embed.css?v=87" />
+  <link rel="stylesheet" href="css/ai-dc-schedule-budget.css?v=87" />
+</head>
+<body data-i18n-page="ai-dc-schedule-budget">
+  <header class="aidc-chrome site-header">
+    <a href="ai-dc-design.html" class="brand" aria-label="AIDC 2026 · 首页">
+      <img src="aidc2026-logo.svg" alt="AIDC 2026" width="593" height="118" />
+    </a>
+    <strong data-i18n="meta.shortTitle">机房工期和造价</strong>
+    <div id="theme-switch-root"></div>
+    <div id="lang-switch-root"></div>
+  </header>
+
+  <main class="demo" id="schedule-budget-app">
+    <div class="grid-bg" aria-hidden="true"></div>
+    <div class="glow glow-a" aria-hidden="true"></div>
+    <div class="glow glow-b" aria-hidden="true"></div>
+
+    <header class="demo-header">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><b>AIDC 2026</b><small>AI DATA CENTER</small></span>
+      </div>
+      <div class="title">
+        <small data-i18n="copy.clientDemo">客户演示 · SCHEDULE & COST</small>
+        <h1 data-i18n="copy.pageTitle">AI数据中心工期与造价</h1>
+      </div>
+      <div class="header-meta">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span data-i18n="copy.status">建设方案评估</span>
+      </div>
+    </header>
+
+    <section class="module-section schedule-module" aria-labelledby="schedule-module-title">
+      <div class="module-heading">
+        <span class="module-number">01</span>
+        <div>
+          <small data-i18n="copy.scheduleKicker">SCHEDULE ESTIMATE</small>
+          <h2 id="schedule-module-title" data-i18n="copy.scheduleTitle">工期评估</h2>
+        </div>
+        <p data-i18n="copy.scheduleIntro">对比不同建设方式的典型现场周期与并行工作包。</p>
+      </div>
+
+      <section class="scene-switcher" id="scene-switcher" data-i18n-aria-label="copy.schemeLabel" aria-label="建设方案选择"></section>
+
+      <section class="presentation-board">
+        <div class="board-head">
+          <div class="duration-block">
+            <small data-i18n="copy.totalWindow">TOTAL DELIVERY WINDOW</small>
+            <div>
+              <strong id="scene-range"></strong>
+              <span data-i18n="copy.typicalCycle">典型现场总周期</span>
+            </div>
+          </div>
+          <div class="scene-summary">
+            <span class="summary-mark" id="scene-index"></span>
+            <div>
+              <b id="scene-summary"></b>
+              <small id="scene-density"></small>
+            </div>
+          </div>
+          <button class="play" id="play-timeline" type="button" aria-pressed="false">
+            <span id="play-icon" aria-hidden="true">▶</span>
+            <span id="play-label" data-i18n="copy.play">播放建设过程</span>
+          </button>
+        </div>
+
+        <div class="gantt">
+          <div class="gantt-axis">
+            <span class="axis-title" data-i18n="copy.axisTitle">建设工作包 / WORKSTREAM</span>
+            <div class="axis-months" id="axis-months"></div>
+          </div>
+          <div id="phase-list"></div>
+          <div class="gantt-bottom">
+            <span data-i18n="copy.start">开工</span>
+            <div class="progress-rail">
+              <i id="progress-fill"></i>
+              <b id="progress-cursor">0.0月</b>
+            </div>
+            <span data-i18n="copy.delivery">交付</span>
+          </div>
+        </div>
+
+        <div class="speaker-strip">
+          <div class="speaker-label">
+            <small data-i18n="copy.nowPresenting">NOW PRESENTING</small>
+            <b id="presenting-time" aria-live="polite">准备开工</b>
+          </div>
+          <div class="active-work">
+            <small data-i18n="copy.currentWork">当前进行</small>
+            <div id="active-work"></div>
+          </div>
+          <div class="parallel-note">
+            <span class="parallel-icon" aria-hidden="true">⇆</span>
+            <div>
+              <small data-i18n="copy.parallelTitle">并行施工原则</small>
+              <b data-i18n="copy.parallelText">总工期 ≠ 各阶段简单相加</b>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="module-section cost-module" aria-labelledby="cost-module-title">
+      <div class="module-heading">
+        <span class="module-number cost-number">02</span>
+        <div>
+          <small data-i18n="copy.costKicker">COST ESTIMATE</small>
+          <h2 id="cost-module-title" data-i18n="copy.costTitle">造价评估</h2>
+        </div>
+        <p data-i18n="copy.costIntro">按相同卡数比较风冷与液冷的基础设施、ICT 投资和运营电费。</p>
+      </div>
+
+      <div class="cost-board">
+        <div class="assumption-bar">
+          <div class="assumption-copy">
+            <small data-i18n="copy.commonInputs">COMMON ASSUMPTIONS</small>
+            <b data-i18n="copy.commonTitle">共同计算参数</b>
+          </div>
+          <label>
+            <span data-i18n="copy.cards">卡数</span>
+            <input id="cost-cards" type="number" min="1" step="1" value="1024" />
+            <em data-i18n="copy.cardUnit">卡</em>
+          </label>
+          <label>
+            <span data-i18n="copy.infraUnit">L0 土建 + L1 机电</span>
+            <input id="cost-infra" type="number" min="0" step="0.1" value="8" />
+            <em>$/W</em>
+          </label>
+          <label>
+            <span data-i18n="copy.electricity">电价</span>
+            <input id="cost-electricity" type="number" min="0" step="0.001" value="0.132" />
+            <em>$/kWh</em>
+          </label>
+          <label>
+            <span data-i18n="copy.years">运营周期</span>
+            <input id="cost-years" type="number" min="1" step="1" value="5" />
+            <em data-i18n="copy.yearUnit">年</em>
+          </label>
+        </div>
+        <p id="cost-error" class="cost-error" hidden role="alert"></p>
+
+        <div class="cooling-grid">
+          <article class="cooling-card air-card">
+            <div class="cooling-head">
+              <span class="cooling-symbol">AIR</span>
+              <div>
+                <small data-i18n="copy.scenarioA">SCENARIO A</small>
+                <h3 data-i18n="copy.airCooling">风冷</h3>
+              </div>
+            </div>
+            <div class="scenario-inputs">
+              <label>
+                <span data-i18n="copy.cardPower">ICT 单卡功耗</span>
+                <input id="air-card-power" type="number" min="0" step="0.1" value="3" />
+                <em>kW/card</em>
+              </label>
+              <label>
+                <span data-i18n="copy.pue">PUE</span>
+                <input id="air-pue" type="number" min="1" step="0.01" value="1.6" />
+                <em>ratio</em>
+              </label>
+              <label>
+                <span data-i18n="copy.ictUnitCost">L2 ICT 单卡平均</span>
+                <input id="air-unit-cost" type="number" min="0" step="1000" value="85000" />
+                <em>$/card</em>
+              </label>
+            </div>
+            <div class="power-results">
+              <div><small data-i18n="copy.ictPower">ICT 设备总功耗</small><strong id="air-ict-mw">—</strong></div>
+              <div><small data-i18n="copy.facilityPower">机房总功耗</small><strong id="air-facility-mw">—</strong></div>
+            </div>
+            <div class="cost-stack" aria-hidden="true"><i id="air-infra-bar"></i><b id="air-ict-bar"></b></div>
+            <dl class="cost-list">
+              <div><dt data-i18n="copy.infraCost">L0 + L1 总造价</dt><dd id="air-infra-cost">—</dd></div>
+              <div><dt data-i18n="copy.ictCost">L2 ICT 设备总价</dt><dd id="air-ict-cost">—</dd></div>
+              <div class="capex-row"><dt data-i18n="copy.capex">整体造价 CAPEX</dt><dd id="air-capex">—</dd></div>
+              <div><dt id="air-opex-label">5年 OPEX</dt><dd id="air-opex">—</dd></div>
+              <div class="total-row"><dt data-i18n="copy.totalCost">CAPEX + OPEX</dt><dd id="air-total">—</dd></div>
+            </dl>
+          </article>
+
+          <article class="cooling-card liquid-card">
+            <div class="cooling-head">
+              <span class="cooling-symbol">LIQ</span>
+              <div>
+                <small data-i18n="copy.scenarioB">SCENARIO B</small>
+                <h3 data-i18n="copy.liquidCooling">液冷</h3>
+              </div>
+            </div>
+            <div class="scenario-inputs">
+              <label>
+                <span data-i18n="copy.cardPower">ICT 单卡功耗</span>
+                <input id="liquid-card-power" type="number" min="0" step="0.1" value="2" />
+                <em>kW/card</em>
+              </label>
+              <label>
+                <span data-i18n="copy.pue">PUE</span>
+                <input id="liquid-pue" type="number" min="1" step="0.01" value="1.2" />
+                <em>ratio</em>
+              </label>
+              <label>
+                <span data-i18n="copy.ictUnitCost">L2 ICT 单卡平均</span>
+                <input id="liquid-unit-cost" type="number" min="0" step="1000" value="110000" />
+                <em>$/card</em>
+              </label>
+            </div>
+            <div class="power-results">
+              <div><small data-i18n="copy.ictPower">ICT 设备总功耗</small><strong id="liquid-ict-mw">—</strong></div>
+              <div><small data-i18n="copy.facilityPower">机房总功耗</small><strong id="liquid-facility-mw">—</strong></div>
+            </div>
+            <div class="cost-stack" aria-hidden="true"><i id="liquid-infra-bar"></i><b id="liquid-ict-bar"></b></div>
+            <dl class="cost-list">
+              <div><dt data-i18n="copy.infraCost">L0 + L1 总造价</dt><dd id="liquid-infra-cost">—</dd></div>
+              <div><dt data-i18n="copy.ictCost">L2 ICT 设备总价</dt><dd id="liquid-ict-cost">—</dd></div>
+              <div class="capex-row"><dt data-i18n="copy.capex">整体造价 CAPEX</dt><dd id="liquid-capex">—</dd></div>
+              <div><dt id="liquid-opex-label">5年 OPEX</dt><dd id="liquid-opex">—</dd></div>
+              <div class="total-row"><dt data-i18n="copy.totalCost">CAPEX + OPEX</dt><dd id="liquid-total">—</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <div class="cost-summary">
+          <div class="summary-title">
+            <small data-i18n="copy.comparisonKicker">COOLING ECONOMICS</small>
+            <h3 data-i18n="copy.comparisonTitle">液冷相对风冷</h3>
+            <p data-i18n="copy.comparisonIntro">较高的 ICT 初始投入，由更低的设施功耗和长期电费抵消。</p>
+          </div>
+          <div class="summary-kpi">
+            <small data-i18n="copy.capexPremium">CAPEX 增量</small>
+            <strong id="capex-premium">—</strong>
+            <span id="capex-premium-rate">—</span>
+          </div>
+          <div class="summary-kpi saving">
+            <small id="opex-saving-label">5年 OPEX 节省</small>
+            <strong id="opex-saving">—</strong>
+            <span id="opex-saving-rate">—</span>
+          </div>
+          <div class="summary-kpi saving">
+            <small data-i18n="copy.totalSaving">全周期总成本节省</small>
+            <strong id="total-saving">—</strong>
+            <span id="total-saving-rate">—</span>
+          </div>
+          <div class="summary-kpi">
+            <small data-i18n="copy.payback">静态回收期</small>
+            <strong id="payback-years">—</strong>
+            <span data-i18n="copy.paybackNote">CAPEX 增量 ÷ 年电费节省</span>
+          </div>
+        </div>
+
+        <div class="formula-note">
+          <b data-i18n="copy.formulaTitle">计算口径</b>
+          <span data-i18n="copy.formulaText">ICT 功耗 = 卡数 × 单卡功耗；机房功耗 = ICT 功耗 × PUE；L0+L1 = 机房功耗 × 10⁶ × $/W；OPEX = 机房功耗 × 1000 × 8760 × 电价 × 年限。</span>
+        </div>
+
+        <section class="country-examples" aria-labelledby="country-examples-title">
+          <div class="country-examples-head">
+            <div>
+              <small data-i18n="copy.countryKicker">COUNTRY BENCHMARKS</small>
+              <h3 id="country-examples-title" data-i18n="copy.countryTitle">典型国家案例</h3>
+            </div>
+            <p data-i18n="copy.countryIntro">统一采用 1024 卡、5 年电力 OPEX；风冷与液冷的单卡功耗、PUE 和 ICT 单价保持默认。</p>
+          </div>
+          <div class="country-grid" id="country-grid"></div>
+        </section>
+      </div>
+    </section>
+
+    <footer>
+      <span data-i18n="copy.scope">周期口径：仅包含现场建设 / 改造与联调验收</span>
+      <span data-i18n="copy.disclaimer">规划估算 · 典型中大型项目经验区间 · 实际周期与造价随规模、现场条件及设备到货变化</span>
+    </footer>
+  </main>
+
+  <script src="js/i18n.js?v=87"></script>
+  <script src="js/lang-switch.js?v=87"></script>
+  <script src="js/i18n-bootstrap.js?v=87"></script>
+  <script src="js/ai-dc-schedule-budget-model.js?v=87"></script>
+  <script src="js/ai-dc-schedule-budget.js?v=87"></script>
+</body>
+</html>
