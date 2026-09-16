@@ -3,29 +3,33 @@
   "ds-v4": {
     "title": "DeepSeek V4 tier",
     "updatedAt": "2026-09-16",
-    "refInputMiss": 0.3,
-    "refInputHit": 0.006,
-    "refOutput": 1.2,
-    "pricingNote": "DeepSeek-V4.1-Flash (deepseek-flash) peak-hour list prices effective 2026-09-10 per api-docs.deepseek.com; other clouds keep published USD/M; providers that have not followed remain at prior peak rates.",
+    "pricingNote": "DeepSeek-V4.1-Flash (deepseek-flash) peak-hour list prices effective 2026-09-10 per api-docs.deepseek.com; other clouds keep published CNY/M; providers that have not followed remain at prior peak rates.",
+    "refInputMiss": 2.0,
+    "refInputHit": 0.04,
+    "refOutput": 8.0,
     "clouds": [
-      { "name": "DeepSeek API Official", "inputMiss": 0.3, "inputHit": 0.006, "output": 1.2 },
-      { "name": "Tencent Cloud (peak)", "inputMiss": 0.44, "inputHit": 0.014, "output": 1.32 },
-      { "name": "Azure AI Foundry (UAE)", "inputMiss": 0.66, "inputHit": 0.021, "output": 1.98 },
-      { "name": "AWS Bedrock (me-central-1)", "inputMiss": 0.62, "inputHit": 0.62, "output": 1.85 },
-      { "name": "Azure AI Foundry (Global)", "inputMiss": 0.57, "inputHit": 0.019, "output": 1.71 }
+      { "name": "DeepSeek Official", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
+      { "name": "SiliconFlow", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
+      { "name": "Alibaba Cloud Bailian", "inputMiss": 3.0, "inputHit": 0.3, "output": 9.0 },
+      { "name": "Volcengine", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
+      { "name": "Tencent Cloud", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
+      { "name": "China Telecom Cloud", "inputMiss": 3.6, "inputHit": 0.12, "output": 10.8 }
     ]
   },
   "glm-52": {
     "title": "GLM-5.2 tier",
-    "refInputMiss": 1.40,
-    "refInputHit": 0.26,
-    "refOutput": 4.40,
     "updatedAt": "2026-08-06",
-    "pricingNote": "GLM-5.2 list prices from Z.AI / Zhipu open platform; USD/M tokens.",
+    "pricingNote": "GLM-5.2 list prices from Zhipu open platform (open.bigmodel.cn); CNY/M tokens.",
+    "refInputMiss": 8.0,
+    "refInputHit": 2.0,
+    "refOutput": 28.0,
     "clouds": [
-      { "name": "Z.AI Official", "inputMiss": 1.40, "inputHit": 0.26, "output": 4.40 },
-      { "name": "SiliconFlow", "inputMiss": 1.45, "inputHit": 0.27, "output": 4.50 },
-      { "name": "OpenRouter (Z.AI)", "inputMiss": 1.50, "inputHit": 0.28, "output": 4.60 }
+      { "name": "Zhipu AI Official", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
+      { "name": "SiliconFlow", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
+      { "name": "Alibaba Cloud Bailian", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
+      { "name": "Volcengine", "inputMiss": 8.5, "inputHit": 2.1, "output": 29.0 },
+      { "name": "Tencent Cloud", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
+      { "name": "JD Cloud", "inputMiss": 8.2, "inputHit": 2.0, "output": 28.5 }
     ]
   }
 }

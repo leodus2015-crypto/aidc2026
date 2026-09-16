@@ -5,11 +5,11 @@
   "pctItDevice": 65,
   "pctPowerCool": 25,
   "pctLandBuild": 10,
-  "npuUnitPrice": 7,
+  "npuUnitPrice": 60,
   "ascendInItPct": 85,
   "deprecYears": 5,
   "pue": 1.2,
-  "elecPrice": 0.09,
+  "elecPrice": 0.35,
   "utilization": 75,
   "tpsInputMiss": 600,
   "tpsInputHit": 12000,
@@ -17,7 +17,7 @@
   "pctMixMiss": 20,
   "pctMixHit": 70,
   "pctMixOut": 10,
-  "annualFixedOpex": 110,
+  "annualFixedOpex": 800,
   "capexOpexPct": 3,
   "serviceModel": "ds-v4"
 }

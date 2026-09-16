@@ -1,5 +1,5 @@
 /**
- * Investment ROI 页 locale 配置：中文/英文默认值与云比价 fallback。
+ * Investment ROI 页 locale 配置：中英共用人民币默认值与云比价；语言只影响文案。
  */
 (function (global) {
   'use strict';
@@ -24,30 +24,6 @@
     pctMixHit: 70,
     pctMixOut: 10,
     annualFixedOpex: 800,
-    capexOpexPct: 3,
-    serviceModel: 'ds-v4',
-  };
-
-  const EN_DEFAULTS = {
-    schemaVersion: 1,
-    computeP: 768,
-    clusterMw: 2.5,
-    pctItDevice: 65,
-    pctPowerCool: 25,
-    pctLandBuild: 10,
-    npuUnitPrice: 7,
-    ascendInItPct: 85,
-    deprecYears: 5,
-    pue: 1.2,
-    elecPrice: 0.09,
-    utilization: 75,
-    tpsInputMiss: 600,
-    tpsInputHit: 12000,
-    tpsOutput: 100,
-    pctMixMiss: 20,
-    pctMixHit: 70,
-    pctMixOut: 10,
-    annualFixedOpex: 110,
     capexOpexPct: 3,
     serviceModel: 'ds-v4',
   };
@@ -87,37 +63,6 @@
     },
   };
 
-  const EN_CLOUD = {
-    'ds-v4': {
-      title: 'DeepSeek V4 tier',
-      updatedAt: '2026-09-16',
-      pricingNote: 'DeepSeek-V4.1-Flash (deepseek-flash) peak-hour list prices effective 2026-09-10 per api-docs.deepseek.com; other clouds keep published USD/M; providers that have not followed remain at prior peak rates.',
-      refInputMiss: 0.3,
-      refInputHit: 0.006,
-      refOutput: 1.2,
-      clouds: [
-        { name: 'DeepSeek API Official', inputMiss: 0.3, inputHit: 0.006, output: 1.2 },
-        { name: 'Tencent Cloud (peak)', inputMiss: 0.44, inputHit: 0.014, output: 1.32 },
-        { name: 'Azure AI Foundry (UAE)', inputMiss: 0.66, inputHit: 0.021, output: 1.98 },
-        { name: 'AWS Bedrock (me-central-1)', inputMiss: 0.62, inputHit: 0.62, output: 1.85 },
-        { name: 'Azure AI Foundry (Global)', inputMiss: 0.57, inputHit: 0.019, output: 1.71 },
-      ],
-    },
-    'glm-52': {
-      title: 'GLM-5.2 tier',
-      updatedAt: '2026-08-06',
-      pricingNote: 'GLM-5.2 list prices from Z.AI / Zhipu open platform; USD/M tokens.',
-      refInputMiss: 1.40,
-      refInputHit: 0.26,
-      refOutput: 4.40,
-      clouds: [
-        { name: 'Z.AI Official', inputMiss: 1.40, inputHit: 0.26, output: 4.40 },
-        { name: 'SiliconFlow', inputMiss: 1.45, inputHit: 0.27, output: 4.50 },
-        { name: 'OpenRouter (Z.AI)', inputMiss: 1.50, inputHit: 0.28, output: 4.60 },
-      ],
-    },
-  };
-
   function normalizeLocale(locale) {
     return locale === 'en' ? 'en' : 'zh';
   }
@@ -127,12 +72,9 @@
     return {
       locale: loc,
       localeTag: loc === 'en' ? 'en-US' : 'zh-CN',
-      configKeys:
-        loc === 'en'
-          ? { defaults: 'roi.defaults.en', cloudCompare: 'roi.cloud_compare.en' }
-          : { defaults: 'roi.defaults', cloudCompare: 'roi.cloud_compare' },
-      localDefaults: loc === 'en' ? EN_DEFAULTS : ZH_DEFAULTS,
-      localCloudCompare: loc === 'en' ? EN_CLOUD : ZH_CLOUD,
+      configKeys: { defaults: 'roi.defaults', cloudCompare: 'roi.cloud_compare' },
+      localDefaults: ZH_DEFAULTS,
+      localCloudCompare: ZH_CLOUD,
     };
   }
 

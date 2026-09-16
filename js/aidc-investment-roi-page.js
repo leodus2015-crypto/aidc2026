@@ -106,35 +106,9 @@
   let keyParamsUnlocked = false;
 
   const fmtNum = (n, d = 2) => Number(n).toLocaleString(localeTag(), { minimumFractionDigits: d, maximumFractionDigits: d });
-  const fmtMoney = (y) => {
-    if (getLocale() === 'en') {
-      const abs = Math.abs(y);
-      if (abs >= 1e9) return '$' + fmtNum(y / 1e9, 2) + 'B';
-      if (abs >= 1e6) return '$' + fmtNum(y / 1e6, 2) + 'M';
-      if (abs >= 1e3) return '$' + fmtNum(y / 1e3, 1) + 'K';
-      return '$' + fmtNum(y, 0);
-    }
-    return fmtNum(y / 10000, 1) + ' ' + L('万元');
-  };
-  const fmtMoneyWanPerYear = (y) => {
-    if (getLocale() === 'en') {
-      const abs = Math.abs(y);
-      if (abs >= 1e9) return '$' + fmtNum(y / 1e9, 2) + 'B/yr';
-      if (abs >= 1e6) return '$' + fmtNum(y / 1e6, 2) + 'M/yr';
-      return '$' + fmtNum(y / 1e3, 1) + 'K/yr';
-    }
-    return fmtNum(y / 10000, 1) + ' ' + L('万元/年');
-  };
-  const fmtMoneyWanPerDay = (y) => {
-    if (getLocale() === 'en') {
-      const daily = y / 365;
-      const abs = Math.abs(daily);
-      if (abs >= 1e9) return '$' + fmtNum(daily / 1e9, 2) + 'B/day';
-      if (abs >= 1e6) return '$' + fmtNum(daily / 1e6, 2) + 'M/day';
-      return '$' + fmtNum(daily / 1e3, 1) + 'K/day';
-    }
-    return fmtNum(y / 10000 / 365, 2) + ' ' + L('万元/天');
-  };
+  const fmtMoney = (y) => fmtNum(y / 10000, 1) + ' ' + L('万元');
+  const fmtMoneyWanPerYear = (y) => fmtNum(y / 10000, 1) + ' ' + L('万元/年');
+  const fmtMoneyWanPerDay = (y) => fmtNum(y / 10000 / 365, 2) + ' ' + L('万元/天');
   const SEC_PER_DAY = 86400;
   const YI = 1e8;
 
@@ -538,7 +512,7 @@
   function renderComparePanel(title, unitLabel, s, sc, type) {
     const selfCost = selfCostByType(s, type);
     const items = sc.clouds.map((c) => ({
-      name: c.name,
+      name: L(c.name),
       price: cloudPriceByType(c, type),
     }));
     items.push({ name: L('★ 自建'), price: selfCost, isSelf: true });
