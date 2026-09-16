@@ -8,6 +8,7 @@ from formulas import (
     daily_tokens,
     min_hbm_cards,
     planned_cards,
+    room_power_kw,
     schedule_compare,
     schedule_scenario,
     token_mix,
@@ -77,20 +78,63 @@ def test_tps_yi_roundtrip():
 
 
 def test_tcp_1024_daily_tokens_matches_preset():
-    # Bound to ai-dc-tcp.html COMMON + SC["1024"].pen and computeEst scenarios.coding
-    tokens = daily_tokens(3180, 60, 21_000_000, 300_000, 0)
-    assert tokens == 40_640_400_000
-    assert abs(tokens / 86400 - 470375) < 1e-6
+    """TCP 2026-09 1024 档：12700 研发 × 100% × Tuser 10M。"""
+    tokens = daily_tokens(12700, 100, 9_900_000, 100_000, 0)
+    assert tokens == 127_000_000_000
+    assert abs(tokens / 86400 - 1_469_907.4074074074) < 1e-6
 
 
 def test_tcp_1024_compute_cards_matches_preset():
+    """TCP 2026-09 1024 档：M=3 N=45 K=1.2 C_card=919。"""
     cards = compute_cards(
-        token_per_sec=470375,
+        token_per_sec=1_469_907,
         flops_multiplier=2,
         active_params_b=40,
-        peak_multiplier=5,
-        utilization_pct=40,
-        compute_margin=2.0,
+        peak_multiplier=3,
+        utilization_pct=45,
+        compute_margin=1.2,
+        card_tflops=919,
+    )
+    assert cards == 1024
+
+
+def test_tcp_768_daily_tokens_and_cards_match_preset():
+    """TCP 2026-09 768 档：9525 研发 × 100% × Tuser 10M → 768 卡。"""
+    tokens = daily_tokens(9525, 100, 9_900_000, 100_000, 0)
+    assert tokens == 95_250_000_000
+    cards = compute_cards(
+        token_per_sec=1_102_431,
+        flops_multiplier=2,
+        active_params_b=40,
+        peak_multiplier=3,
+        utilization_pct=45,
+        compute_margin=1.2,
+        card_tflops=919,
+    )
+    assert cards == 768
+
+
+def test_tcp_room_power_matches_preset():
+    """TCP roomPowerKW：P_IT × PUE，四舍五入到整数 kW。"""
+    assert room_power_kw(2096, 1.20) == 2515
+    assert room_power_kw(2500, 1.50) == 3750
+
+
+def test_compute_est_coding_daily_tokens_matches_preset():
+    """算力估算 coding 与 TCP 2026-09 1024 档同口径：12700 × 100% × Tuser 10M。"""
+    tokens = daily_tokens(12700, 100, 9_900_000, 100_000, 0)
+    assert tokens == 127_000_000_000
+    assert abs(tokens / 86400 - 1_469_907.4074074074) < 1e-6
+
+
+def test_compute_est_coding_compute_cards_matches_preset():
+    cards = compute_cards(
+        token_per_sec=1_469_907,
+        flops_multiplier=2,
+        active_params_b=40,
+        peak_multiplier=3,
+        utilization_pct=45,
+        compute_margin=1.2,
         card_tflops=919,
     )
     assert cards == 1024
@@ -108,34 +152,38 @@ def test_hbm_floor_can_bind_planned_cards():
 
 
 def test_schedule_budget_default_air_and_liquid():
-    air = schedule_scenario(1024, 3, 1.6, 85000, 8, 0.132, 5)
-    liquid = schedule_scenario(1024, 2, 1.2, 110000, 8, 0.132, 5)
+    air = schedule_scenario(1024, 3, 1.5, 85000, 8, 0.132, 5, 2.5)
+    liquid = schedule_scenario(1024, 2, 1.2, 110000, 8, 0.132, 5, 3)
     assert air is not None and liquid is not None
     assert air["ict_mw"] == pytest.approx(3.072)
-    assert air["facility_mw"] == pytest.approx(4.9152)
+    assert air["facility_mw"] == pytest.approx(4.608)
     assert air["ict_cost"] == 87_040_000
-    assert air["infra_cost"] == pytest.approx(39_321_600)
-    assert air["capex"] == pytest.approx(126_361_600)
-    assert air["annual_opex"] == pytest.approx(5_683_544.064)
+    assert air["infra_cost"] == pytest.approx(36_864_000)
+    assert air["capex"] == pytest.approx(123_904_000)
+    assert air["annual_electricity"] == pytest.approx(5_328_322.56)
+    assert air["annual_maintenance"] == pytest.approx(3_097_600)
+    assert air["annual_opex"] == pytest.approx(8_425_922.56)
     assert liquid["ict_mw"] == pytest.approx(2.048)
     assert liquid["facility_mw"] == pytest.approx(2.4576)
     assert liquid["capex"] == pytest.approx(132_300_800)
+    assert liquid["annual_maintenance"] == pytest.approx(3_969_024)
     compared = schedule_compare(air, liquid)
-    assert compared["capex_premium"] == 5_939_200
-    assert compared["annual_saving"] == pytest.approx(2_841_772.032)
-    assert compared["payback"] == pytest.approx(5_939_200 / 2_841_772.032)
+    assert compared["capex_premium"] == 8_396_800
+    assert compared["annual_saving"] == pytest.approx(1_615_126.528)
+    assert compared["payback"] == pytest.approx(8_396_800 / 1_615_126.528)
 
 
 def test_schedule_budget_country_china_case():
-    air = schedule_scenario(1024, 3, 1.6, 85000, 3, 0.098, 5)
+    air = schedule_scenario(1024, 3, 1.5, 85000, 3, 0.098, 5, 2.5)
     assert air is not None
-    assert air["infra_cost"] == pytest.approx(14_745_600)
-    assert air["capex"] == pytest.approx(101_785_600)
+    assert air["infra_cost"] == pytest.approx(13_824_000)
+    assert air["capex"] == pytest.approx(100_864_000)
 
 
 def test_schedule_budget_rejects_invalid_inputs():
-    assert schedule_scenario(0, 3, 1.6, 85000, 8, 0.132, 5) is None
-    assert schedule_scenario(1024, 3, 0.9, 85000, 8, 0.132, 5) is None
-    assert schedule_scenario(1024, 3, 1.6, 85000, 8, -0.1, 5) is None
-    assert schedule_scenario(1024, 3, 1.6, 85000, 8, 0.132, 0) is None
-    assert schedule_scenario(float("nan"), 3, 1.6, 85000, 8, 0.132, 5) is None
+    assert schedule_scenario(0, 3, 1.6, 85000, 8, 0.132, 5, 2.5) is None
+    assert schedule_scenario(1024, 3, 0.9, 85000, 8, 0.132, 5, 2.5) is None
+    assert schedule_scenario(1024, 3, 1.6, 85000, 8, -0.1, 5, 2.5) is None
+    assert schedule_scenario(1024, 3, 1.6, 85000, 8, 0.132, 0, 2.5) is None
+    assert schedule_scenario(1024, 3, 1.6, 85000, 8, 0.132, 5, 101) is None
+    assert schedule_scenario(float("nan"), 3, 1.6, 85000, 8, 0.132, 5, 2.5) is None

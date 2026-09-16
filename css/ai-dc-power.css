@@ -5,7 +5,7 @@
 
 * { box-sizing: border-box; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
-body { background: #eef4fb; color: #10213d; }
+body { background: #eef4fb; color: #10213d; display: flex; flex-direction: column; }
 button { font: inherit; }
 
 .site-header {
@@ -27,11 +27,11 @@ button { font: inherit; }
 .power-app {
   position: relative;
   width: 100%;
-  height: calc(100% - 54px);
-  min-height: 34rem;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
-html.aidc-embed .power-app { height: 100%; }
+html.aidc-embed .power-app { flex: 1; height: auto; }
 
 #scene {
   position: absolute;

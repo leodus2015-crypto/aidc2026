@@ -17,6 +17,8 @@
 * { box-sizing: border-box; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 body {
+  display: flex;
+  flex-direction: column;
   color: var(--ink);
   background: #07111d;
   font-family: Inter, "SF Pro Display", "Segoe UI", "Microsoft YaHei", sans-serif;
@@ -40,13 +42,12 @@ button { color: inherit; font: inherit; }
 #lang-switch-root button[aria-current="true"] { color: var(--aidc-text-strong, #0f172a); background: var(--aidc-surface, #fff); box-shadow: 0 1px 4px var(--aidc-shadow, rgba(15, 23, 42, 0.12)); }
 
 #rack-simulator {
-  position: absolute;
-  top: 54px;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
-html.aidc-embed #rack-simulator { top: 0; }
+html.aidc-embed #rack-simulator { flex: 1; }
 #scene { position: absolute; inset: 0; }
 #scene {
   background:
@@ -87,7 +88,11 @@ html.aidc-embed #rack-simulator { top: 0; }
 .title-block p { margin: 0; color: var(--muted); font-size: 11px; }
 .view-actions { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
 .view-actions button,
+.view-actions .back-button,
 .display-panel button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid rgba(142, 178, 202, .25);
   border-radius: 9px;
   padding: 8px 11px;
@@ -96,9 +101,12 @@ html.aidc-embed #rack-simulator { top: 0; }
   font-size: 11px;
   font-weight: 760;
   cursor: pointer;
+  text-decoration: none;
   transition: border-color .18s, background .18s, color .18s, transform .18s;
 }
 .view-actions button:hover,
+.view-actions .back-button:hover,
+.view-actions .back-button:focus-visible,
 .view-actions button.active,
 .display-panel button:hover,
 .display-panel button.active {
@@ -107,6 +115,10 @@ html.aidc-embed #rack-simulator { top: 0; }
   background: rgba(32, 180, 222, .16);
   transform: translateY(-1px);
 }
+.view-actions .back-button { border-color: rgba(83, 228, 245, .52); color: #dffbff; background: rgba(19, 125, 158, .22); }
+html[data-theme="light"] .view-actions .back-button { border-color: #0e7490; color: #fff; background: #0e7490; box-shadow: 0 4px 12px rgba(14, 116, 144, .2); }
+html[data-theme="light"] .view-actions .back-button:hover,
+html[data-theme="light"] .view-actions .back-button:focus-visible { border-color: #155e75; color: #fff; background: #155e75; }
 
 .section-panel {
   position: absolute;

@@ -7,10 +7,12 @@
  * - L0+L1 = 机房 MW × 10⁶ × $/W
  * - ICT 造价 = 卡数 × $/card
  * - CAPEX = ICT + L0+L1
- * - 年 OPEX = 机房 MW × 1000 × 8760 × 电价($/kWh)
+ * - 年电费 = 机房 MW × 1000 × 8760 × 电价($/kWh)
+ * - 年运维费 = CAPEX × 运维费率(%) / 100
+ * - 年 OPEX = 年电费 + 年运维费
  * - OPEX = 年 OPEX × 年限
  * - 总计 = CAPEX + OPEX
- * - 静态回收期 = CAPEX 增量 ÷ 年电费节省（仅当两者均为正）
+ * - 静态回收期 = CAPEX 增量 ÷ 年 OPEX 节省（仅当两者均为正）
  */
 (function (global) {
   'use strict';
@@ -40,11 +42,13 @@
     const cardPower = parseFinite(source.cardPower);
     const pue = parseFinite(source.pue);
     const unitCost = parseFinite(source.unitCost);
+    const maintenanceRate = parseFinite(source.maintenanceRate);
     const errors = [];
     if (cardPower == null || cardPower < 0) errors.push('cardPower');
     if (pue == null || pue < 1) errors.push('pue');
     if (unitCost == null || unitCost < 0) errors.push('unitCost');
-    return { ok: errors.length === 0, errors, values: { cardPower, pue, unitCost } };
+    if (maintenanceRate == null || maintenanceRate < 0 || maintenanceRate > 100) errors.push('maintenanceRate');
+    return { ok: errors.length === 0, errors, values: { cardPower, pue, unitCost, maintenanceRate } };
   }
 
   function calculateScenario(shared, parameters) {
@@ -54,13 +58,15 @@
       return { ok: false, errors: sharedCheck.errors.concat(paramCheck.errors) };
     }
     const { cards, infraPerW, electricity, years } = sharedCheck.values;
-    const { cardPower, pue, unitCost } = paramCheck.values;
+    const { cardPower, pue, unitCost, maintenanceRate } = paramCheck.values;
     const ictMW = cards * cardPower / 1000;
     const facilityMW = ictMW * pue;
     const ictCost = cards * unitCost;
     const infraCost = facilityMW * 1e6 * infraPerW;
     const capex = ictCost + infraCost;
-    const annualOpex = facilityMW * 1000 * 8760 * electricity;
+    const annualElectricity = facilityMW * 1000 * 8760 * electricity;
+    const annualMaintenance = capex * maintenanceRate / 100;
+    const annualOpex = annualElectricity + annualMaintenance;
     const opex = annualOpex * years;
     return {
       ok: true,
@@ -70,6 +76,8 @@
       ictCost,
       infraCost,
       capex,
+      annualElectricity,
+      annualMaintenance,
       annualOpex,
       opex,
       total: capex + opex,

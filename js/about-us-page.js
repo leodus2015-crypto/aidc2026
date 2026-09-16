@@ -4,8 +4,8 @@ function initAboutUsPage() {
 
   const fallback = {
     "version": 3,
-    "updated_at": "2026-08-29T10:11:24+08:00",
-    "source": "Cursor Dashboard \u00b7 usage-events-2026-08-29.csv",
+    "updated_at": "2026-09-16T23:22:26+08:00",
+    "source": "Cursor Dashboard \u00b7 usage-events-2026-09-16-2.csv",
     "notes": "\u7531 Cursor \u5bfc\u51fa CSV \u6c47\u603b\uff1bIncluded \u884c\u6309\u8d26\u5355\u5468\u671f\u62c6\u5206\u3002\u540c\u4e00\u5468\u671f\u91cd\u590d\u5bfc\u5165\u65f6\uff0c\u4ec5\u5408\u5e76\u4e8b\u4ef6\u65e5\u671f\u665a\u4e8e recorded_at \u7684\u589e\u91cf\u3002input_cache_hit = Cache Read\uff1binput_cache_miss = Input (w/ Cache Write) + Input (w/o Cache Write)\uff1boutput = Output Tokens\u3002\u5386\u53f2\u4ec5\u6709\u6a21\u578b\u4fa7\u5206\u7c7b\u7684\u5468\u671f\uff0c\u6309\u8fd1\u671f\u5b9e\u6d4b\u6bd4\u4f8b\u4f30\u7b97\u4e09\u7c7b\u62c6\u5206\u3002",
     "periods": [
         {
@@ -112,23 +112,23 @@ function initAboutUsPage() {
             "period": "2026-08-25 \u2014 2026-09-25",
             "period_start": "2026-08-25",
             "period_end": "2026-09-25",
-            "recorded_at": "2026-08-27",
-            "total_tokens": 55791828,
+            "recorded_at": "2026-09-16",
+            "total_tokens": 1287426483,
             "token_types": [
                 {
                     "name": "input_cache_miss",
-                    "tokens": 2477042,
-                    "usage_percent": 4.4
+                    "tokens": 55028350,
+                    "usage_percent": 4.3
                 },
                 {
                     "name": "input_cache_hit",
-                    "tokens": 53147991,
-                    "usage_percent": 95.3
+                    "tokens": 1224285340,
+                    "usage_percent": 95.1
                 },
                 {
                     "name": "output",
-                    "tokens": 166795,
-                    "usage_percent": 0.3
+                    "tokens": 8112793,
+                    "usage_percent": 0.6
                 }
             ],
             "estimated": false

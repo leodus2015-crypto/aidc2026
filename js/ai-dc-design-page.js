@@ -9,18 +9,33 @@
 
   const IFRAME_BASE = {
     roomLayout: 'ai-dc-room-layout.html?embed=1',
-    roomLayout3d: 'ai-dc-room-layout-3d.html?embed=1',
-    power: 'ai-dc-power.html?embed=1',
-    liquidRack: 'ai-dc-liquid-rack.html?embed=1',
+    roomLayout3d: 'ai-dc-room-layout-3d.html?embed=1&rev=campus-row-3',
     tcp: 'ai-dc-tcp.html?embed=1',
     computeEst: 'ai-dc-computeEst.html?embed=1',
     caseA: 'datacenter-3d-case-b.html?embed=1',
     caseB: 'datacenter-3d-v3-2.html?embed=1',
-    plan: 'ai-dc-layout.html?embed=1',
+    plan: 'aidc-layout-Card2Power.html?embed=1',
     synergy: 'ai-dc-deployment-perf.html?embed=1',
-    scheduleBudget: 'ai-dc-schedule-budget.html?embed=1',
     roi: 'aidc-investment-roi.html?embed=1',
   };
+
+  const STANDALONE_BY_TAB = {
+    power: "ai-dc-power.html",
+    liquidRack: "ai-dc-liquid-rack.html",
+    liquidRequirements: "ai-dc-liquid-requirements.html",
+    scheduleBudget: "ai-dc-schedule-budget.html",
+  };
+
+  function redirectStandaloneTab() {
+    const params = new URLSearchParams(global.location.search);
+    const dest = STANDALONE_BY_TAB[params.get('tab')];
+    if (!dest) return false;
+    const next = new URL(dest, global.location.href);
+    const lang = params.get('lang');
+    if (lang === 'en' || lang === 'zh') next.searchParams.set('lang', lang);
+    global.location.replace(`${next.pathname}${next.search}${global.location.hash}`);
+    return true;
+  }
 
   /** iframe cache-bust; synced via data/asset-version.json + bump-asset-version.py */
   const IFRAME_ASSET_VERSION = global.AIDC_ASSET_VERSION || '5';
@@ -89,7 +104,7 @@
     return selectLayoutTab;
   }
 
-  const VALID_TABS = ['roomLayout', 'roomLayout3d', 'power', 'liquidRack', 'tcp', 'computeEst', 'plan', 'synergy', 'a', 'b', 'scheduleBudget', 'roi'];
+  const VALID_TABS = ['roomLayout', 'roomLayout3d', 'tcp', 'computeEst', 'plan', 'synergy', 'a', 'b', 'roi'];
 
   function initialTabFromUrl() {
     const tab = new URLSearchParams(global.location.search).get('tab');
@@ -101,15 +116,12 @@
   const DESIGN_PANEL_BY_TAB = {
     roomLayout: 'panel-room-layout',
     roomLayout3d: 'panel-room-layout-3d',
-    power: 'panel-power',
-    liquidRack: 'panel-liquid-rack',
     tcp: 'panel-tcp',
     computeEst: 'panel-compute-est',
     plan: 'panel-plan',
     synergy: 'panel-synergy',
     a: 'panel-case-a',
     b: 'panel-case-b',
-    scheduleBudget: 'panel-schedule-budget',
     roi: 'panel-roi',
   };
 
@@ -121,6 +133,7 @@
 
   global.AidcAiDcDesignPage = {
     init() {
+      if (redirectStandaloneTab()) return;
       selectLayoutTabRef = initTabs();
       selectLayoutTabRef(initialTabFromUrl());
       syncIframes();

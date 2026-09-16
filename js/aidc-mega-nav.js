@@ -10,9 +10,10 @@
           title: '机房规划',
           links: [
             ['nav.menu.roomLayout', '机房布局', 'ai-dc-design.html?tab=roomLayout'],
-            ['nav.menu.roomLayout3d', '机房布局 3D', 'ai-dc-design.html?tab=roomLayout3d'],
-            ['nav.menu.power', '机房供电', 'ai-dc-design.html?tab=power'],
-            ['nav.menu.liquidRack', '机房液冷', 'ai-dc-design.html?tab=liquidRack'],
+            ['nav.menu.roomLayout3d', '机房布局（立体）', 'ai-dc-design.html?tab=roomLayout3d'],
+            ['nav.menu.power', '机房供电', 'ai-dc-power.html'],
+            ['nav.menu.liquidRequirements', '机房液冷层高承重', 'ai-dc-liquid-requirements.html'],
+            ['nav.menu.liquidRack', '机房液冷（立体）', 'ai-dc-liquid-rack.html'],
           ],
         },
         {
@@ -21,7 +22,7 @@
           links: [
             ['nav.menu.tokenCardPower', 'Token->Card->Power', 'ai-dc-design.html?tab=tcp'],
             ['nav.menu.computeEstimate', '算力估算', 'ai-dc-design.html?tab=computeEst'],
-            ['nav.menu.rackPlanning', '机柜规划', 'ai-dc-design.html?tab=plan'],
+            ['nav.menu.rackPlanning', '机柜规划', 'aidc-layout-Card2Power.html'],
             ['nav.menu.productSynergy', '产品协同', 'ai-dc-design.html?tab=synergy'],
           ],
         },
@@ -37,7 +38,7 @@
           titleKey: 'nav.menu.value',
           title: '效益评估',
           links: [
-            ['nav.menu.scheduleBudget', '机房工期和造价', 'ai-dc-design.html?tab=scheduleBudget'],
+            ['nav.menu.scheduleBudget', '机房工期和造价', 'ai-dc-schedule-budget.html'],
             ['nav.menu.roi', 'Investment ROI', 'ai-dc-design.html?tab=roi'],
           ],
         },

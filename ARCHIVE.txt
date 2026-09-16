@@ -133,6 +133,31 @@ aidc 静态站点归档
     ./start-api-prod.sh
     # 确认 .env：ADMIN_TOKEN=<强随机值>、DATABASE_*、ANALYTICS_LOG=…
 
+华为云冷备（阶段 1）— 待办 · 2026-09-13 记录
+────────────────────────────────────────────
+  状态：华为云尚无 ECS；本机脚手架已就绪，过几天再建资源并首次同步。
+  架构：华为 = 静态镜像（rsync 同目录）；MySQL 单主仍在腾讯；华为 /api/ 反代腾讯 API。
+
+  已入库（本地，未 push 时可 ./scripts/deploy.sh --push-only）：
+    deploy.env.huawei.example     华为 SSH 模板 → 复制为 deploy.env.huawei（.gitignore）
+    scripts/sync-huawei.sh        仅 rsync 华为（与 deploy.sh 排除规则一致）
+    deploy/nginx-api-snippet-huawei-phase1.conf   华为 Nginx：/api/ → https://www.aidc2026.cn/api/
+    scripts/deploy.sh               腾讯同步后若 deploy.env.huawei 已填 HOST，自动再 sync 华为
+
+  过几天操作清单（按序）：
+    1. 华为云：VPC + ECS（2C4G+）+ 弹性公网 IP + 安全组（22 限办公 IP，80/443 开放）
+    2. ECS：装 Nginx（或宝塔），站点根 /www/wwwroot/aidc2026.cn
+    3. Nginx：合并 deploy/nginx-static-cache.conf + nginx-api-snippet-huawei-phase1.conf；配 SSL
+    4. 本机：cp deploy.env.huawei.example deploy.env.huawei，填 HUAWEI_DEPLOY_HOST / SSH 密钥
+    5. 首次：./scripts/sync-huawei.sh
+    6. 验收（EIP 或临时域名）：asset-version 与腾讯一致；ROI 700/6300/400 t/s、占比 10/80/10；
+       /api/config/roi.defaults 经反代与 https://www.aidc2026.cn 一致
+    7. 备案接入华为侧后，DNS 主 100% 腾讯、备 0% 华为（或健康检查 failover）；勿在华为 seed-config
+
+  日常双云发布（ECS 就绪后）：
+    ./scripts/deploy.sh "说明"     # 腾讯 rsync + seed-config + 华为 rsync（若 deploy.env.huawei 已配置）
+    ./scripts/sync-huawei.sh       # 仅华为
+
 已移除（勿再引用）
 ──────────────────
   en/ 目录（英文改 ?lang=en）

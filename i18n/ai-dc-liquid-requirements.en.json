@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "title": "Liquid Cooling Height & Load · AI Data Center",
+    "shortTitle": "Liquid Cooling Height & Load",
+    "description": "Planning diagram for liquid-cooled AI room height, beam clearance, raised floor and slab load capacity."
+  },
+  "hero": {
+    "title": "Liquid Cooling Height & Load",
+    "copy": "Compare current deployment needs with space and load reserves for future equipment."
+  },
+  "metrics": {
+    "aria": "Key planning requirements",
+    "height": "Floor-to-floor height",
+    "clear": "Clearance below beams",
+    "floor": "Clear height beneath raised floor",
+    "load": "Slab load capacity"
+  },
+  "diagram": {
+    "kicker": "VERTICAL ZONES",
+    "title": "Liquid-cooled room section",
+    "unit": "Dimensions: m",
+    "scroll": "Room section diagram; scroll horizontally",
+    "description": "Two liquid-cooled rack rows have supply/return piping below the floor and fiber trays, two-tier power trays, fire protection and return-air space above.",
+    "note": "Vertical dimensions share one scale: 1.0m underfloor + 2.3m racks + 1.8m overhead services = 5.1m. Adding 1.4m for fire protection and return air gives 6.5m clearance below beams. Floor thickness is a line symbol and is excluded from the zone dimensions."
+  },
+  "drawing": {
+    "beam": "Beam",
+    "air": "Fire protection & return-air space",
+    "airDetail": "Fire pipes · return-air plenum · ceiling",
+    "busB": "B busway",
+    "busA": "A busway",
+    "power": "Power tray",
+    "fiber": "Fiber tray",
+    "rack": "Liquid rack",
+    "water": "Underfloor supply / return piping space ≥1.0m",
+    "ground": "Structural slab",
+    "load": "Slab load ≥20–25 kN/m² · Future supernode deployment",
+    "equipment": "Racks & services",
+    "equipmentShort": "Racks / MEP",
+    "clear": "Beam clearance",
+    "height": "Floor-to-floor"
+  },
+  "details": {
+    "aria": "Liquid-cooled room planning requirements",
+    "spaceTitle": "Room height · Future expansion",
+    "spaceCopy": "Plan at least 7.5m floor-to-floor height and 6.5m clearance below beams to reserve space for future supernodes and evolving building services.",
+    "waterTitle": "Raised floor · Liquid piping",
+    "waterCopy": "Provide at least 1.0m clear height beneath the raised floor for liquid supply/return mains and branches, separating water below from power above.",
+    "loadTitle": "Slab load · High-density equipment",
+    "loadCopy": "Plan a room slab load capacity of at least 20–25kN/m² to accommodate future supernode deployments."
+  },
+  "comparison": {
+    "current": "Current-generation requirements",
+    "future": "Future multi-generation requirements",
+    "demo3d": "Spatial",
+    "air": "Fire / return air",
+    "futureAir": "Fire protection & return air",
+    "water": "Liquid supply / return pipes",
+    "currentNote": "For the current generation: supports present equipment deployment, liquid piping and slab load needs.",
+    "futureNote": "Reserve more height, piping space and slab capacity for future supernodes.",
+    "trays": "Power / fiber trays & clearance",
+    "airRange": "Fire / air: 1–1.5m",
+    "currentLoad": "Slab capacity ≥16 kN/m²",
+    "futureLoad": "Slab capacity ≥20–25 kN/m²",
+    "rackTop": "Liquid",
+    "rackBottom": "rack",
+    "currentTotal": "(Per design institute)",
+    "currentTotalMetric": "Per design institute"
+  }
+}

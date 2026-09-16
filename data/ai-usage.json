@@ -1,7 +1,7 @@
 {
   "version": 3,
-  "updated_at": "2026-08-29T10:11:24+08:00",
-  "source": "Cursor Dashboard · usage-events-2026-08-29.csv",
+  "updated_at": "2026-09-16T23:22:26+08:00",
+  "source": "Cursor Dashboard · usage-events-2026-09-16-2.csv",
   "notes": "由 Cursor 导出 CSV 汇总；Included 行按账单周期拆分。同一周期重复导入时，仅合并事件日期晚于 recorded_at 的增量。input_cache_hit = Cache Read；input_cache_miss = Input (w/ Cache Write) + Input (w/o Cache Write)；output = Output Tokens。历史仅有模型侧分类的周期，按近期实测比例估算三类拆分。",
   "periods": [
     {
@@ -108,23 +108,23 @@
       "period": "2026-08-25 — 2026-09-25",
       "period_start": "2026-08-25",
       "period_end": "2026-09-25",
-      "recorded_at": "2026-08-27",
-      "total_tokens": 55791828,
+      "recorded_at": "2026-09-16",
+      "total_tokens": 1287426483,
       "token_types": [
         {
           "name": "input_cache_miss",
-          "tokens": 2477042,
-          "usage_percent": 4.4
+          "tokens": 55028350,
+          "usage_percent": 4.3
         },
         {
           "name": "input_cache_hit",
-          "tokens": 53147991,
-          "usage_percent": 95.3
+          "tokens": 1224285340,
+          "usage_percent": 95.1
         },
         {
           "name": "output",
-          "tokens": 166795,
-          "usage_percent": 0.3
+          "tokens": 8112793,
+          "usage_percent": 0.6
         }
       ],
       "estimated": false

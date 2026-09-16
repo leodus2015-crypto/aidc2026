@@ -80,7 +80,12 @@ aidc/
 ├── ai-dc-design.html       默认入口 · AI DC 规划（默认 Tab：机房布局）
 ├── ai-dc-tcp.html          TCP 方法论总览（规划 Tab）
 ├── ai-dc-computeEst.html   算力卡数匡算（规划 Tab）
-├── ai-dc-layout.html       机柜规划 · Card → Power（规划 Tab）
+├── aidc-layout-Card2Power.html  机柜规划 · Card → Power（正式入口；规划 Tab 内嵌）
+├── ai-dc-layout.html       旧机柜规划地址，跳转到 aidc-layout-Card2Power.html
+├── ai-dc-power.html        机房供电（独立页）
+├── ai-dc-liquid-requirements.html  机房液冷层高承重（独立页）
+├── ai-dc-liquid-rack.html  机房液冷 3D（独立页）
+├── ai-dc-schedule-budget.html  机房工期和造价（独立页）
 ├── about-us.html           About US
 ├── status.html             站点状态页（访问观测；内部，不在主导航）
 ├── data/

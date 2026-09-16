@@ -39,15 +39,13 @@ function hostSize() {
 }
 
 const selectable = [];
-const walls = [];
-const powerObjects = [];
 const flowParticles = [];
 const numberedLabels = [];
 const voltageObjects = [];
 const smoke = [];
+const transferIndicators = [];
 let racks = [];
 let fan;
-let linesVisible = true;
 let mode = 'normal';
 let selected = null;
 let viewTween = null;
@@ -67,7 +65,7 @@ const ACTIVE = {
   normal: new Set(['utility', 'lowVoltage', 'atsOutput', 'upsOutput', 'rackFeed']),
   battery: new Set(['battery', 'upsOutput', 'rackFeed']),
   starting: new Set(['battery', 'upsOutput', 'rackFeed']),
-  generator: new Set(['generator', 'atsOutput', 'upsOutput', 'rackFeed']),
+  generator: new Set(['generator', 'atsOutput', 'lowVoltage', 'upsOutput', 'rackFeed']),
   recharging: new Set(['utility', 'lowVoltage', 'atsOutput', 'battery', 'upsOutput', 'rackFeed']),
 };
 
@@ -196,6 +194,180 @@ function decorateBattery(g, w = 2.8) {
   baseHalo(g, 0xf59e0b);
 }
 
+function decorateMediumVoltageAts(g) {
+  g.children.forEach((child) => {
+    if (!child.element) child.visible = false;
+  });
+  const width = 5.4;
+  const bayWidth = width / 4;
+  const frontZ = 1.56;
+  ['eq.atsUtility', 'eq.atsGenerator', 'eq.atsControl', 'eq.atsFeeder'].forEach((key, index) => {
+    const px = -width / 2 + bayWidth * (index + 0.5);
+    const cabinet = box(bayWidth - 0.045, 4.8, 3, materials.white);
+    cabinet.position.x = px;
+    cabinet.userData = { nameKey: key, descKey: 'eq.dAts', name: t(key), desc: t('eq.dAts'), baseY: 0 };
+    g.add(cabinet);
+    selectable.push(cabinet);
+    const door = box(bayWidth - 0.16, 4.55, 0.055, materials.dark);
+    door.position.set(px, 0, frontZ);
+    g.add(door);
+    // 中压柜分区：上部保护测控，中部手车断路器，下部电缆室。
+    for (const y of [-0.8, 0.9]) {
+      const divider = box(bayWidth - 0.12, 0.055, 0.065, materials.white);
+      divider.position.set(px, y, frontZ + 0.04);
+      g.add(divider);
+    }
+    const relay = box(0.65, 0.5, 0.07, materials.black);
+    relay.position.set(px, 1.53, frontZ + 0.06);
+    g.add(relay);
+    const display = box(0.43, 0.22, 0.025, materials.cyan);
+    display.position.set(px, 1.53, frontZ + 0.11);
+    g.add(display);
+    const breaker = box(0.68, 1.12, 0.09, materials.white);
+    breaker.position.set(px, 0.04, frontZ + 0.08);
+    g.add(breaker);
+    const handle = box(0.36, 0.075, 0.12, materials.black);
+    handle.position.set(px, -0.18, frontZ + 0.17);
+    g.add(handle);
+    const indicator = new THREE.Mesh(new THREE.SphereGeometry(0.075, 10, 10), new THREE.MeshBasicMaterial({ color: 0x64748b }));
+    indicator.position.set(px, 0.38, frontZ + 0.17);
+    g.add(indicator);
+    transferIndicators.push({ material: indicator.material, source: index === 0 ? 'utility' : index === 1 ? 'generator' : 'output' });
+    const warningShape = new THREE.Shape();
+    warningShape.moveTo(-0.17, -0.13);
+    warningShape.lineTo(0.17, -0.13);
+    warningShape.lineTo(0, 0.17);
+    warningShape.closePath();
+    const warning = new THREE.Mesh(new THREE.ShapeGeometry(warningShape), new THREE.MeshBasicMaterial({ color: 0xffb020, side: THREE.DoubleSide }));
+    warning.position.set(px, -1.48, frontZ + 0.05);
+    g.add(warning);
+    const vent = box(bayWidth - 0.18, 0.13, 1.2, materials.dark);
+    vent.position.set(px, 2.45, -0.35);
+    g.add(vent);
+  });
+  const bus = box(width - 0.2, 0.16, 0.16, materials.blue);
+  bus.position.set(0, 2.22, -1.3);
+  g.add(bus);
+  baseHalo(g, COLOR.blue);
+}
+
+function buildSmartModule(rowZ, rackXs) {
+  const module = new THREE.Group();
+  const moduleGlass = materials.glass.clone();
+  moduleGlass.color.set(0x93c5fd);
+  moduleGlass.opacity = 0.28;
+  const moduleLabel = addLabel(module, t('eq.nModule'), t('eq.moduleSub'), 8.2);
+  moduleLabel.position.set(21, 8.2, 3.4);
+  module.userData = {
+    nameKey: 'eq.nModule', descKey: 'eq.dModule', name: t('eq.nModule'), desc: t('eq.dModule'),
+    baseY: 0, subKey: 'eq.moduleSub', label: moduleLabel, labelEl: moduleLabel.element,
+  };
+  scene.add(module);
+  selectable.push(module);
+  const deck = box(23, 0.12, 8.2, materials.white);
+  deck.position.set(21, 0.12, 0);
+  module.add(deck);
+  const aisle = box(18.9, 0.035, 1.7, materials.cyan);
+  aisle.position.set(20.95, 0.205, 0);
+  module.add(aisle);
+  racks = [];
+  rowZ.forEach((z, row) => {
+    const facing = z < 0 ? 1 : -1;
+    rackXs.forEach((x, col) => {
+      const rack = box(2.55, 4.7, 2.5, materials.black);
+      rack.position.set(x, 2.55, z);
+      const suffix = ` ${String.fromCharCode(65 + row)}-${col + 1}`;
+      rack.userData = {
+        nameKey: 'eq.nRack', descKey: 'eq.dRack', nameSuffix: suffix,
+        name: `${t('eq.nRack')}${suffix}`, desc: t('eq.dRack'), baseY: 2.55,
+      };
+      module.add(rack);
+      selectable.push(rack);
+      racks.push(rack);
+      // 两排机柜正面相对，封闭冷通道位于中间。
+      for (const side of [-1, 1]) {
+        const door = box(2.37, 4.38, 0.035, materials.dark);
+        door.position.z = side * 1.275;
+        rack.add(door);
+        for (let y = -1.88; y <= 1.88; y += 0.23) {
+          const meshLine = box(2.15, 0.022, 0.025, materials.black);
+          meshLine.position.set(0, y, side * 1.3);
+          rack.add(meshLine);
+        }
+      }
+      for (let u = -1.5; u <= 1.5; u += 0.55) {
+        const led = box(0.12, 0.045, 0.025, materials.cyan);
+        led.position.set(-0.8, u, facing * 1.33);
+        rack.add(led);
+      }
+    });
+    for (const x of [10.6, 31.3]) {
+      const cooling = box(1.15, 4.7, 2.5, materials.white);
+      cooling.position.set(x, 2.55, z);
+      module.add(cooling);
+      for (let y = -1.9; y < 1.9; y += 0.25) {
+        const grille = box(0.95, 0.06, 0.045, materials.dark);
+        grille.position.set(0, y, facing * 1.28);
+        cooling.add(grille);
+      }
+      cooling.userData = { nameKey: 'eq.nCooling', descKey: 'eq.dCooling', name: t('eq.nCooling'), desc: t('eq.dCooling'), baseY: 2.55 };
+      selectable.push(cooling);
+    }
+    const tray = box(22.6, 0.16, 0.45, materials.dark);
+    tray.position.set(21, 5.4, z);
+    module.add(tray);
+  });
+  // 双排封闭通道：分段透明顶板、端部门框和滑门。
+  rackXs.forEach((x) => {
+    const roof = box(2.59, 0.08, 1.7, moduleGlass);
+    roof.position.set(x, 4.98, 0);
+    module.add(roof);
+    const frame = box(0.07, 0.12, 1.9, materials.white);
+    frame.position.set(x - 1.325, 4.98, 0);
+    module.add(frame);
+  });
+  for (const z of [-0.88, 0.88]) {
+    const rail = box(18.9, 0.13, 0.13, materials.white);
+    rail.position.set(20.95, 4.98, z);
+    module.add(rail);
+    const light = box(18.8, 0.04, 0.06, materials.cyan);
+    light.position.set(20.95, 4.83, z);
+    module.add(light);
+  }
+  for (const x of [11.6, 30.3]) {
+    for (const z of [-0.91, 0.91]) {
+      const post = box(0.14, 4.85, 0.14, materials.white);
+      post.position.set(x, 2.62, z);
+      module.add(post);
+    }
+    const lintel = box(0.2, 0.22, 2.1, materials.white);
+    lintel.position.set(x, 4.97, 0);
+    module.add(lintel);
+    for (const z of [-0.43, 0.43]) {
+      const glassDoor = box(0.07, 4.42, 0.82, moduleGlass);
+      glassDoor.position.set(x, 2.52, z);
+      module.add(glassDoor);
+      const handle = box(0.12, 0.58, 0.045, materials.dark);
+      handle.position.set(x + 0.08, 2.52, z < 0 ? -0.09 : 0.09);
+      module.add(handle);
+    }
+  }
+  const screen = box(0.15, 1.35, 1.1, materials.black);
+  screen.position.set(32.0, 3.0, 0);
+  module.add(screen);
+  const screenStand = box(0.1, 2.4, 0.12, materials.dark);
+  screenStand.position.set(31.95, 1.45, 0);
+  module.add(screenStand);
+  const screenFace = box(0.035, 1.15, 0.92, materials.dark);
+  screenFace.position.set(32.1, 3.0, 0);
+  module.add(screenFace);
+  for (let index = 0; index < 4; index += 1) {
+    const chart = box(0.045, 0.18 + index * 0.15, 0.1, materials.cyan);
+    chart.position.set(32.13, 2.66 + (0.18 + index * 0.15) / 2, -0.3 + index * 0.2);
+    module.add(chart);
+  }
+}
+
 function decorateSubstation(g, color = COLOR.blue) {
   g.children.forEach((child) => {
     if (!child.element) child.visible = false;
@@ -246,7 +418,6 @@ function decorateSubstation(g, color = COLOR.blue) {
 function wall(x, z, w, d) {
   const m = box(w, 3.2, d, materials.glass);
   m.position.set(x, 1.6, z);
-  walls.push(m);
   scene.add(m);
 }
 
@@ -283,32 +454,44 @@ function tower(x, z) {
 
 function makePath(points, color, name, opts = {}) {
   const { radius = 0.08, dotRadius = 0.14, dotCount = 4, opacity = 0.84, glow = 0.18 } = opts;
+  const routeRadius = Math.max(0.11, radius * 2.2);
+  const particleRadius = Math.max(dotRadius * 2.2, routeRadius * 1.85);
+  const routeOpacity = Math.max(0.95, opacity);
+  const routeGlow = Math.min(0.42, Math.max(0.28, glow * 1.6));
   const curve = new THREE.CurvePath();
   for (let i = 0; i < points.length - 1; i += 1) curve.add(new THREE.LineCurve3(points[i], points[i + 1]));
   const segments = Math.max(28, points.length * 18);
   const halo = new THREE.Mesh(
-    new THREE.TubeGeometry(curve, segments, radius * 2.25, 10, false),
-    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: glow, depthWrite: false }),
+    new THREE.TubeGeometry(curve, segments, routeRadius * 1.9, 10, false),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: routeGlow, depthWrite: false }),
   );
   const tube = new THREE.Mesh(
-    new THREE.TubeGeometry(curve, segments, radius, 10, false),
-    new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false }),
+    new THREE.TubeGeometry(curve, segments, routeRadius, 10, false),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: routeOpacity, depthWrite: false }),
   );
   tube.userData.pathType = name;
   halo.userData.pathType = name;
   scene.add(halo, tube);
-  powerObjects.push(halo, tube);
   const dots = [];
   for (let i = 0; i < dotCount; i += 1) {
     const dot = new THREE.Mesh(
-      new THREE.SphereGeometry(dotRadius, 12, 12),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.96, depthWrite: false }),
+      new THREE.SphereGeometry(particleRadius, 12, 12),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1, depthWrite: false, toneMapped: false }),
     );
+    const core = new THREE.Mesh(
+      new THREE.SphereGeometry(particleRadius * 0.7, 10, 10),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, depthWrite: false, toneMapped: false }),
+    );
+    const aura = new THREE.Mesh(
+      new THREE.SphereGeometry(particleRadius * 1.6, 12, 12),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.2, depthWrite: false, toneMapped: false }),
+    );
+    dot.add(core, aura);
+    dot.position.copy(curve.getPoint((i + 0.35) / dotCount));
     scene.add(dot);
     dots.push(dot);
-    powerObjects.push(dot);
   }
-  flowParticles.push({ curve, dots, type: name, tube, halo, opacity, glow });
+  flowParticles.push({ curve, dots, type: name, tube, halo, opacity: routeOpacity, glow: routeGlow });
   return tube;
 }
 
@@ -357,9 +540,10 @@ function buildPlant() {
   wall(19, -14, 32, 0.18);
   wall(35, -1, 0.18, 26);
   wall(19, 12, 32, 0.18);
-  tower(-34, -4);
-  tower(-34, 4);
-  const gridNode = new THREE.Vector3(-34, 2, -4);
+  const gridTowerX = -39;
+  const gridTowerZ = -4;
+  tower(gridTowerX, gridTowerZ);
+  const gridNode = new THREE.Vector3(gridTowerX, 2, gridTowerZ);
 
   const hub500 = equipment('eq.n500', 'eq.d500', -34, -7.35, 4.2, 3.2, 2.4, COLOR.blue, {
     zh: [-1.85, 3.45, -2.65],
@@ -414,12 +598,11 @@ function buildPlant() {
   cabinetDetails(lv, 4, 4.7, 5, 2.6, 0x22c55e);
   baseHalo(lv, COLOR.cyan);
 
-  const ats = equipment('eq.nAts', 'eq.dAts', -8, 4, 3.5, 4, 2.3, 0x22a559, {
-    zh: [0, 2.55, 0],
-    en: [-0.2, 3.25, 2.25],
+  const ats = equipment('eq.nAts', 'eq.dAts', -15, 4, 5.4, 4.8, 3, COLOR.blue, {
+    zh: [0, 4.35, 0.4],
+    en: [0, 4.35, 0.4],
   });
-  cabinetDetails(ats, 2, 3.5, 4, 2.3, 0x22c55e);
-  baseHalo(ats, 0x22a559);
+  decorateMediumVoltageAts(ats);
 
   const upsA = equipment('eq.nUps', 'eq.dUps', -1, -5.8, 3.1, 4.6, 2.3, 0x1677ff, {
     zh: [0, 2.85, 0],
@@ -500,36 +683,9 @@ function buildPlant() {
   const pduA = equipment('eq.nPdu', 'eq.dPdu', 5, -5.6, 3.4, 4.2, 2.2);
   cabinetDetails(pduA, 2, 3.4, 4.2, 2.2, COLOR.cyan);
 
-  const rowZ = [-4, 4];
-  racks = [];
-  rowZ.forEach((z, row) => {
-    for (let col = 0; col < 7; col += 1) {
-      const x = 11 + col * 3.3;
-      const r = box(2.2, 4.7, 2.5, materials.black);
-      r.position.set(x, 2.35, z);
-      const suffix = ` ${String.fromCharCode(65 + row)}-${col + 1}`;
-      r.userData = {
-        nameKey: 'eq.nRack',
-        descKey: 'eq.dRack',
-        nameSuffix: suffix,
-        name: `${t('eq.nRack')}${suffix}`,
-        desc: t('eq.dRack'),
-        baseY: 2.35,
-      };
-      selectable.push(r);
-      scene.add(r);
-      racks.push(r);
-      for (let u = -1.5; u <= 1.5; u += 0.55) {
-        const slot = box(1.75, 0.32, 0.05, materials.blue);
-        slot.position.set(x, 2.35 + u, z + 1.28);
-        scene.add(slot);
-      }
-    }
-  });
-  const rackLabel = addLabel(racks[10], t('eq.nRack'), t('eq.rackSub'), 3.1);
-  racks[10].userData.label = rackLabel;
-  racks[10].userData.labelEl = rackLabel.element;
-  racks[10].userData.subKey = 'eq.rackSub';
+  const rowZ = [-2.1, 2.1];
+  const rackXs = Array.from({ length: 7 }, (_, col) => 13 + col * 2.65);
+  buildSmartModule(rowZ, rackXs);
 
   rowZ.forEach((z, row) => {
     const bus = box(24, 0.34, 0.42, materials.cyan);
@@ -537,51 +693,53 @@ function buildPlant() {
     scene.add(bus);
     if (row === 0) {
       const lb = addLabel(bus, t('eq.nBusway'), t('eq.buswaySub'), 0.72);
-      lb.position.x = 2;
+      lb.position.x = -7;
       bus.userData = { nameKey: 'eq.nBusway', subKey: 'eq.buswaySub', label: lb, labelEl: lb.element };
     }
   });
   const rackPdu = box(0.18, 3.8, 0.14, materials.cyan);
-  rackPdu.position.set(21.6, 2.35, -2.72);
+  rackPdu.position.set(21.6, 2.55, -0.82);
   scene.add(rackPdu);
 
   const blue = COLOR.blue;
   const cyan = COLOR.cyan;
   const orange = COLOR.orange;
   const green = COLOR.green;
-  const trenchY = 0.58;
+  const trenchY = 0.9;
   const feederY = 1.2;
   const trayY = 2.45;
   const busY = 6.12;
   makePath([gridNode, new THREE.Vector3(-34, 2, -4), new THREE.Vector3(-34, 2, -7.35), new THREE.Vector3(-34, trenchY, -7.35)], blue, 'utility', { radius: 0.09, dotRadius: 0.15 });
   makePath([new THREE.Vector3(-31.9, trenchY, -7.35), new THREE.Vector3(-28.6, trenchY, -7.35), new THREE.Vector3(-28.6, trenchY, -1.15)], blue, 'utility', { radius: 0.08, dotRadius: 0.13 });
   makePath([new THREE.Vector3(-26, trenchY, -1.15), new THREE.Vector3(-24.2, trenchY, -1.15), new THREE.Vector3(-24.2, trenchY, -5.25), new THREE.Vector3(-23.3, trenchY, -5.25)], blue, 'utility', { radius: 0.08, dotRadius: 0.13 });
-  makePath([new THREE.Vector3(-18.7, trenchY, -5.25), new THREE.Vector3(-17.1, trenchY, -5.25)], blue, 'utility', { radius: 0.075, dotRadius: 0.12, dotCount: 3 });
+  // 市电和本场景的 10kV 柴发在中压侧切换，公共出线先进入变压器。
+  makePath([new THREE.Vector3(-18.7, trenchY, -5.25), new THREE.Vector3(-19.1, trenchY, -5.25), new THREE.Vector3(-19.1, trenchY, 4), new THREE.Vector3(-17.75, trenchY, 4)], blue, 'utility', { radius: 0.075, dotRadius: 0.12 });
+  makePath([new THREE.Vector3(-15, trenchY, 2.5), new THREE.Vector3(-15, trenchY, -3.7)], blue, 'atsOutput', { radius: 0.085, dotRadius: 0.14 });
   makePath([new THREE.Vector3(-13, trenchY, -5.25), new THREE.Vector3(-11.4, trenchY, -5.25)], cyan, 'lowVoltage', { radius: 0.075, dotRadius: 0.12, dotCount: 3 });
-  makePath([new THREE.Vector3(-8, 1.05, -1.7), new THREE.Vector3(-8, 1.05, 2.05)], cyan, 'lowVoltage', { radius: 0.07, dotRadius: 0.12, dotCount: 3 });
-  makePath([new THREE.Vector3(-6.2, feederY, 4), new THREE.Vector3(-4.6, feederY, 4), new THREE.Vector3(-4.6, feederY, -5.8), new THREE.Vector3(-1.3, feederY, -5.8), new THREE.Vector3(-1.3, 1.55, -5.8)], cyan, 'atsOutput', { radius: 0.07, dotRadius: 0.12 });
+  makePath([new THREE.Vector3(-6.65, feederY, -5.25), new THREE.Vector3(-4.4, feederY, -5.25), new THREE.Vector3(-4.4, feederY, -5.8), new THREE.Vector3(-2.55, feederY, -5.8)], cyan, 'lowVoltage', { radius: 0.07, dotRadius: 0.12 });
   makePath([new THREE.Vector3(-3.1, 0.72, 4.85), new THREE.Vector3(-4.65, 0.72, 4.85), new THREE.Vector3(-4.65, 0.72, -5.8), new THREE.Vector3(-1.65, 0.72, -5.8), new THREE.Vector3(-1.65, 1.55, -5.8)], orange, 'battery', { radius: 0.07, dotRadius: 0.13, glow: 0.24 });
   makePath([new THREE.Vector3(0.2, 0.72, 4.85), new THREE.Vector3(-4.65, 0.72, 4.85)], orange, 'battery', { radius: 0.055, dotRadius: 0.09, dotCount: 2, opacity: 0.7, glow: 0.16 });
   makePath([new THREE.Vector3(0.75, 2.05, -5.8), new THREE.Vector3(5, 2.05, -5.8)], cyan, 'upsOutput', { radius: 0.085, dotRadius: 0.14 });
   rowZ.forEach((z) => {
     makePath([new THREE.Vector3(6.75, trayY, -5.6), new THREE.Vector3(8.85, trayY, -5.6), new THREE.Vector3(8.85, trayY, z), new THREE.Vector3(8.85, busY, z), new THREE.Vector3(9.15, busY, z)], cyan, 'rackFeed', { radius: 0.075, dotRadius: 0.12 });
   });
-  makePath([new THREE.Vector3(-31.2, 0.78, 5.85), new THREE.Vector3(-10.5, 0.78, 5.85), new THREE.Vector3(-10.5, 0.98, 4.2), new THREE.Vector3(-8.2, 0.98, 4.2)], green, 'generator', { radius: 0.085, dotRadius: 0.14, glow: 0.22 });
+  makePath([new THREE.Vector3(-31.2, 0.78, 5.85), new THREE.Vector3(-16.1, 0.78, 5.85), new THREE.Vector3(-16.1, 0.78, 5.5)], green, 'generator', { radius: 0.085, dotRadius: 0.14, glow: 0.22 });
   rowZ.forEach((z) => {
-    for (let col = 0; col < 7; col += 1) {
-      const x = 11 + col * 3.3;
-      makePath([new THREE.Vector3(x, busY, z), new THREE.Vector3(x, 5.35, z), new THREE.Vector3(x, 4.7, z)], cyan, 'rackFeed', { radius: 0.045, dotRadius: 0.075, dotCount: 2, opacity: 0.72, glow: 0.1 });
-    }
+    rackXs.forEach((x) => {
+      makePath([new THREE.Vector3(x, busY, z), new THREE.Vector3(x, 5.35, z), new THREE.Vector3(x, 4.9, z)], cyan, 'rackFeed', { radius: 0.045, dotRadius: 0.075, dotCount: 2, opacity: 0.72, glow: 0.1 });
+    });
   });
   voltageLabel('volt.v500', -35.2, 2.4, -7.2);
   voltageLabel('volt.v220', -29.6, 1.25, -1.15);
   voltageLabel('volt.v10', -21, 1.2, -5.25);
+  voltageLabel('volt.vAts10', -15, 1.4, 6.7);
+  voltageLabel('volt.vGen10', -24, 1.4, 5.85);
   voltageLabel('volt.v380', -12.2, 1, -5.25);
-  voltageLabel('volt.vUpsIn', -4.3, 1.4, -2.7);
+  voltageLabel('volt.vUpsIn', -4.3, 1.4, -5.8);
   voltageLabel('volt.vBattery', -1.5, 1, 4.1, true);
   voltageLabel('volt.vUpsOut', 2, 2.7, -5.7);
-  voltageLabel('volt.vBusway', 12, 6.8, -4);
-  voltageLabel('volt.v48', 23, 3.2, -4, true);
+  voltageLabel('volt.vBusway', 12, 6.8, -2.1);
+  voltageLabel('volt.v48', 23, 3.2, -2.1, true);
 }
 
 function applyMode(next) {
@@ -594,15 +752,17 @@ function applyMode(next) {
   stateText.textContent = t(`mode.${next}Status`);
   progressText.textContent = t(`mode.${next}Progress`);
   const activeSet = ACTIVE[next];
+  transferIndicators.forEach(({ material, source }) => {
+    const active = source === 'utility' ? activeSet.has('utility') : source === 'generator' ? next === 'generator' : activeSet.has('atsOutput');
+    material.color.set(active ? 0x22c55e : 0x64748b);
+  });
   flowParticles.forEach((p) => {
     const active = activeSet.has(p.type);
     p.dots.forEach((d) => {
-      d.visible = linesVisible && active;
+      d.visible = active;
     });
-    p.tube.visible = linesVisible;
-    p.halo.visible = linesVisible;
-    p.tube.material.opacity = active ? p.opacity : 0.08;
-    p.halo.material.opacity = active ? p.glow : 0.035;
+    p.tube.material.opacity = active ? p.opacity : 0.1;
+    p.halo.material.opacity = active ? p.glow : 0.015;
     p.active = active;
   });
 }
@@ -657,16 +817,9 @@ function applySceneTheme() {
 
 function refreshDynamicCopy() {
   const voltagesBtn = document.getElementById('voltages');
-  const linesBtn = document.getElementById('lines');
-  const wallsBtn = document.getElementById('walls');
   const voltagesOn = voltageObjects[0]?.visible;
   voltagesBtn.textContent = t(voltagesOn ? 'controls.hideVoltages' : 'controls.showVoltages');
   voltagesBtn.setAttribute('aria-pressed', String(Boolean(voltagesOn)));
-  linesBtn.textContent = t(linesVisible ? 'controls.hideLines' : 'controls.showLines');
-  linesBtn.setAttribute('aria-pressed', String(linesVisible));
-  const wallsHidden = walls.some((w) => w.visible === false);
-  wallsBtn.textContent = t(wallsHidden ? 'controls.showWalls' : 'controls.hideWalls');
-  wallsBtn.setAttribute('aria-pressed', String(!wallsHidden));
   applyMode(mode);
   if (selected?.userData?.nameKey) {
     selected.userData.name = `${t(selected.userData.nameKey)}${selected.userData.nameSuffix || ''}`;
@@ -836,7 +989,7 @@ function bindControls() {
   document.getElementById('normal').addEventListener('click', restoreUtility);
   document.getElementById('outage').addEventListener('click', simulateOutage);
   document.getElementById('energyView').addEventListener('click', () => flyTo(new THREE.Vector3(2, 21, 31), new THREE.Vector3(-11, 1, 0)));
-  document.getElementById('hallView').addEventListener('click', () => flyTo(new THREE.Vector3(39, 23, 30), new THREE.Vector3(19, 2, -1)));
+  document.getElementById('hallView').addEventListener('click', () => flyTo(new THREE.Vector3(43, 17, 19), new THREE.Vector3(21, 2, 0)));
   document.getElementById('reset').addEventListener('click', () => flyTo(new THREE.Vector3(42, 31, 49), new THREE.Vector3(-5, 1, -1)));
   document.getElementById('voltages').addEventListener('click', () => {
     const show = !voltageObjects[0].visible;
@@ -845,21 +998,6 @@ function bindControls() {
     });
     numberedLabels.forEach((o) => {
       o.visible = !show;
-    });
-    refreshDynamicCopy();
-  });
-  document.getElementById('lines').addEventListener('click', () => {
-    linesVisible = !linesVisible;
-    powerObjects.forEach((o) => {
-      o.visible = linesVisible;
-    });
-    applyMode(mode);
-    refreshDynamicCopy();
-  });
-  document.getElementById('walls').addEventListener('click', () => {
-    const show = walls.some((w) => w.visible === false);
-    walls.forEach((w) => {
-      w.visible = show;
     });
     refreshDynamicCopy();
   });

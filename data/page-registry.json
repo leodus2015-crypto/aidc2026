@@ -74,15 +74,12 @@
       "embeds": [
         "ai-dc-room-layout.html",
         "ai-dc-room-layout-3d.html",
-        "ai-dc-power.html",
-        "ai-dc-liquid-rack.html",
         "ai-dc-tcp.html",
         "ai-dc-computeEst.html",
-        "ai-dc-layout.html",
+        "aidc-layout-Card2Power.html",
         "ai-dc-deployment-perf.html",
         "datacenter-3d-case-b.html",
         "datacenter-3d-v3-2.html",
-        "ai-dc-schedule-budget.html",
         "aidc-investment-roi.html"
       ],
       "assets": [
@@ -119,7 +116,7 @@
     {
       "path": "ai-dc-room-layout-3d.html",
       "id": "ai-dc-room-layout-3d",
-      "title": "机房布局 3D",
+      "title": "机房布局（立体）",
       "kind": "embedded",
       "visibility": "public",
       "parents": [
@@ -142,15 +139,9 @@
       "path": "ai-dc-power.html",
       "id": "ai-dc-power",
       "title": "机房供电",
-      "kind": "embedded",
+      "kind": "entry",
       "visibility": "public",
-      "parents": [
-        {
-          "path": "ai-dc-design.html",
-          "relation": "iframe",
-          "tab": "power"
-        }
-      ],
+      "parents": [],
       "embeds": [],
       "assets": [
         "js/ai-dc-power.js",
@@ -163,16 +154,10 @@
     {
       "path": "ai-dc-liquid-rack.html",
       "id": "ai-dc-liquid-rack",
-      "title": "机房液冷",
-      "kind": "embedded",
+      "title": "机房液冷（立体）",
+      "kind": "entry",
       "visibility": "public",
-      "parents": [
-        {
-          "path": "ai-dc-design.html",
-          "relation": "iframe",
-          "tab": "liquidRack"
-        }
-      ],
+      "parents": [],
       "embeds": [],
       "assets": [
         "js/ai-dc-liquid-rack.js",
@@ -183,18 +168,28 @@
       "dataSources": []
     },
     {
+      "path": "ai-dc-liquid-requirements.html",
+      "id": "ai-dc-liquid-requirements",
+      "title": "机房液冷层高承重",
+      "kind": "entry",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [],
+      "assets": [
+        "js/ai-dc-liquid-requirements.js",
+        "css/ai-dc-liquid-requirements.css",
+        "i18n/ai-dc-liquid-requirements.zh.json",
+        "i18n/ai-dc-liquid-requirements.en.json"
+      ],
+      "dataSources": []
+    },
+    {
       "path": "ai-dc-schedule-budget.html",
       "id": "ai-dc-schedule-budget",
       "title": "机房工期和造价",
-      "kind": "embedded",
+      "kind": "entry",
       "visibility": "public",
-      "parents": [
-        {
-          "path": "ai-dc-design.html",
-          "relation": "iframe",
-          "tab": "scheduleBudget"
-        }
-      ],
+      "parents": [],
       "embeds": [],
       "assets": [
         "js/ai-dc-schedule-budget.js",
@@ -286,10 +281,10 @@
       "dataSources": []
     },
     {
-      "path": "ai-dc-layout.html",
-      "id": "ai-dc-layout",
+      "path": "aidc-layout-Card2Power.html",
+      "id": "aidc-layout-Card2Power",
       "title": "机柜规划",
-      "kind": "embedded",
+      "kind": "entry",
       "visibility": "public",
       "parents": [
         {
@@ -298,6 +293,20 @@
           "tab": "plan"
         }
       ],
+      "embeds": [],
+      "assets": [
+        "i18n/aidc-layout-Card2Power.zh.json",
+        "i18n/aidc-layout-Card2Power.en.json"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "ai-dc-layout.html",
+      "id": "ai-dc-layout",
+      "title": "机柜规划（旧地址）",
+      "kind": "entry",
+      "visibility": "public",
+      "parents": [],
       "embeds": [],
       "assets": [
         "i18n/ai-dc-layout.zh.json",

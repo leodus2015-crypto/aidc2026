@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "AI Data Center Compute Estimation · Token → Card",
+    "title": "AI Data Center Compute Planning · Token → Card",
     "description": "Estimate the NPU cards required for AI inference from Token demand (Token → Card)."
   }
 }

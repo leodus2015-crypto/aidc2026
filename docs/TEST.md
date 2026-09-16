@@ -37,17 +37,18 @@ GitHub Actions：
 ### 入口与嵌套
 
 - [ ] 打开 `ai-dc-design.html`，默认 Tab 为机房布局，iframe 子页可见。
-- [ ] 依次切换：机房布局、机房布局 3D、机房供电、机房液冷、TCP、算力估算、机柜规划、产品协同、案例 A、案例 B、机房工期和造价、ROI；子页有内容，整站不卸载成空白。
-- [ ] 直达 `ai-dc-design.html?tab=tcp`、`?tab=computeEst`、`?tab=plan`、`?tab=roomLayout3d`、`?tab=power`、`?tab=liquidRack`、`?tab=scheduleBudget`，打开即对应面板。
-- [ ] 打开 `ai-dc-design.html?embed=1`（或子页 `?embed=1`），站点顶栏/大导航隐藏。
+- [ ] 规划容器内切换：机房布局、机房布局（立体）、TCP、算力估算、机柜规划、产品协同、案例 A、案例 B、ROI；子页有内容，整站不卸载成空白。
+- [ ] 直达 `ai-dc-design.html?tab=tcp`、`?tab=computeEst`、`?tab=plan`、`?tab=roomLayout3d`，打开即对应面板。
+- [ ] 旧地址 `?tab=power` / `?tab=liquidRack` / `?tab=liquidRequirements` / `?tab=scheduleBudget` 跳转到对应独立 HTML。
+- [ ] 打开 `ai-dc-design.html?embed=1`（或仍内嵌的子页 `?embed=1`），站点顶栏/大导航隐藏。
 
 ### 新页：TCP / 算力估算 / 机柜
 
-- [ ] `ai-dc-tcp.html`：切换 1024 液冷 / 768 风冷，链路数字与对照区同步变化（卡数、MW、面积）。
-- [ ] TCP 页「进入测算工具」落到算力估算，「进入布局工具」落到机柜规划（或带 `tab=` 的规划容器）。
-- [ ] `ai-dc-computeEst.html`：默认口径算出卡数（与 TCP 1024 档同量级，约 1024）；`batch`/渗透等改为 0 或非法时有错误，结果不是 NaN。
+- [ ] `ai-dc-tcp.html`：切换 1024 液冷 / 768 风冷，链路数字与对照区同步变化（卡数、MW、面积）；Hero 一度电标尺、5 年单位成本、大 EP / 双机实例划分随之更新。
+- [ ] TCP 页「进入测算工具」落到算力估算，「进入布局工具」落到 `aidc-layout-Card2Power.html`。
+- [ ] `ai-dc-computeEst.html`：默认 coding 口径（12700×100%，与 TCP 1024 档同量级）算出卡数约 1024；渗透等改为 0 或非法时有错误，结果不是 NaN。
 - [ ] 算力页改渗透率或冗余后，卡数与「显存下限 / 算力需求」约束标签更新。
-- [ ] `ai-dc-layout.html`：改卡数或功率后平面/汇总更新；断 API 仍可本机看图。
+- [ ] `aidc-layout-Card2Power.html`：改卡数或功率后平面/汇总更新；断 API 仍可本机看图。主导航「机柜规划」直达本页，不再走 `?tab=plan`。
 
 ### 推理计算
 
@@ -65,25 +66,32 @@ GitHub Actions：
 
 ### 机房工期和造价
 
-- [ ] `ai-dc-design.html?tab=scheduleBudget` 或主导航「机房工期和造价」：iframe 内工期甘特与造价区可见，不是空白。
-- [ ] 切换建设方案后周期与工作包更新；改卡数后造价更新；非法输入（卡数 0、PUE < 1）显示错误而不是 NaN。
-- [ ] 切中英和 Light/Dark 不整页重载；子页 `?embed=1` 时自带顶栏隐藏。
+- [ ] 打开 `ai-dc-schedule-budget.html` 或主导航「机房工期和造价」：工期甘特与造价区可见，不是空白；站点顶栏与大导航可用。
+- [ ] 切换建设方案后周期与工作包更新；改卡数或运维费率后造价与回收期更新；非法输入（卡数 0、PUE < 1、运维费率 > 100）显示错误而不是 NaN。
+- [ ] 切中英和 Light/Dark 不整页重载。
 
 ### 机房液冷
 
-- [ ] `ai-dc-design.html?tab=liquidRack` 或主导航「机房液冷」：iframe 内液冷机柜剖面可见，不是空白。
+- [ ] 打开 `ai-dc-liquid-rack.html`：液冷机柜剖面可见，不是空白；站点顶栏与大导航可用。
+- [ ] 「返回层高承重」落到 `ai-dc-liquid-requirements.html`。
 - [ ] 切换总览/正视、图层开关后场景仍在；切中英和 Light/Dark 不整页重载。
-- [ ] 子页 `?embed=1` 时自带顶栏隐藏；WebGL 不可用时显示回退说明。
+- [ ] WebGL 不可用时显示回退说明。
+
+### 机房液冷层高承重
+
+- [ ] 打开 `ai-dc-liquid-requirements.html` 或主导航「机房液冷层高承重」：层高/承重内容可见，不是空白；站点顶栏与大导航可用。
+- [ ] 「3D演示」落到 `ai-dc-liquid-rack.html`。
+- [ ] 切中英和 Light/Dark 不整页重载。
 
 ### 机房供电
 
-- [ ] `ai-dc-design.html?tab=power` 或主导航「机房供电」：iframe 内供电场景可见，不是空白。
+- [ ] 打开 `ai-dc-power.html` 或主导航「机房供电」：供电场景可见，不是空白；站点顶栏与大导航可用。
 - [ ] 「模拟停电」后状态文案变化；「正常供电」可恢复。切中英和 Light/Dark 不整页重载。
-- [ ] 子页 `?embed=1` 时自带顶栏隐藏；WebGL 不可用时显示回退说明。
+- [ ] WebGL 不可用时显示回退说明。
 
-### 机房布局 3D
+### 机房布局（立体）
 
-- [ ] `ai-dc-design.html?tab=roomLayout3d` 或主导航「机房布局 3D」：iframe 内 3D 场景可见，不是空白。
+- [ ] `ai-dc-design.html?tab=roomLayout3d` 或主导航「机房布局（立体）」：iframe 内场景可见，不是空白。
 - [ ] 子页 `?embed=1` 时自带顶栏隐藏；切中英和 Light/Dark 后场景仍在，不整页重载。
 - [ ] WebGL 不可用时显示回退说明，而不是空白或脚本报错裸奔。
 

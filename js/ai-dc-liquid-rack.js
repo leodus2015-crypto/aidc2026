@@ -28,7 +28,14 @@ function hostSize() {
 
 const initialSize = hostSize();
 const camera = new THREE.PerspectiveCamera(34, initialSize.w / initialSize.h, 0.05, 80);
-camera.position.set(6.9, 5.35, 7.6);
+function updateCameraProjection(w, h) {
+  camera.aspect = w / h;
+  // Keep enough horizontal field of view for both complete rows on narrow screens.
+  camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(34) / 2) / Math.min(1, camera.aspect)));
+  camera.updateProjectionMatrix();
+}
+updateCameraProjection(initialSize.w, initialSize.h);
+camera.position.set(10.8, 7.2, 12.2);
 
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(initialSize.w, initialSize.h, false);
@@ -50,7 +57,7 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.065;
 controls.target.set(0, 2.3, 0);
 controls.minDistance = 4.4;
-controls.maxDistance = 18;
+controls.maxDistance = 24;
 controls.maxPolarAngle = Math.PI * 0.62;
 
 const hemisphereLight = new THREE.HemisphereLight(0xdff7ff, 0x07101a, 2.25);
@@ -184,14 +191,14 @@ function makeStaticTube(points, radius, material, parent) {
   return tube;
 }
 
-// Structural slab and the 800 mm raised-floor void.
+// Structural slab and the 1000 mm raised-floor void.
 const floorComponent = component('floor');
 meshBox(10.6, .18, 7.2, materials.slab, new THREE.Vector3(0, -.09, 0), floorComponent);
 for (let x = -4.5; x <= 4.5; x += 1.5) {
   for (let z = -2.7; z <= 2.7; z += 1.35) {
     // Front-left cutaway exposes the complete underfloor liquid route while orbiting.
     if (x < .9 && Math.abs(z) < .75) continue;
-    const tile = meshBox(1.43, .08, 1.28, materials.tile.clone(), new THREE.Vector3(x, .76, z), floorComponent);
+    const tile = meshBox(1.43, .08, 1.28, materials.tile.clone(), new THREE.Vector3(x, .96, z), floorComponent);
     tile.userData.surfaceTile = true;
     const edge = new THREE.LineSegments(new THREE.EdgesGeometry(tile.geometry), materials.tileEdge);
     edge.position.copy(tile.position);
@@ -200,19 +207,19 @@ for (let x = -4.5; x <= 4.5; x += 1.5) {
 }
 for (const x of [-4.5, -3, -1.5, 0, 1.5, 3, 4.5]) {
   for (const z of [-2.7, -1.35, 0, 1.35, 2.7]) {
-    const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(.035, .055, .72, 8), materials.steel);
-    pedestal.position.set(x, .39, z);
+    const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(.035, .055, .92, 8), materials.steel);
+    pedestal.position.set(x, .49, z);
     floorComponent.add(pedestal);
   }
 }
-addSceneLabel(floorComponent, 'objects.floor.title', '', new THREE.Vector3(-3.7, .95, 2.4), 'water');
+addSceneLabel(floorComponent, 'objects.floor.title', '', new THREE.Vector3(-3.7, 1.15, 2.4), 'water');
 
 // Rack frame, transparent enclosure and detailed compute nodes.
 const rack = component('rack');
 const rackW = .82;
 const rackD = 1.28;
-const rackBottom = .8;
-const rackTop = 3.05;
+const rackBottom = 1;
+const rackTop = 3.3;
 for (const x of [-rackW / 2, rackW / 2]) {
   for (const z of [-rackD / 2, rackD / 2]) {
     meshBox(.055, 2.16, .055, materials.darkSteel, new THREE.Vector3(x, 1.925, z), rack);
@@ -227,10 +234,12 @@ for (const [w, h, d, x, y, z] of [
 ]) {
   const shell = meshBox(w, h, d, materials.glass.clone(), new THREE.Vector3(x, y, z), rack);
   shell.raycast = () => {};
+  shell.userData.shellPart = true;
   shellParts.push(shell);
 }
 const frontDoor = meshBox(rackW, 2.07, .018, materials.glass.clone(), new THREE.Vector3(0, 1.925, rackD / 2), rack);
 frontDoor.raycast = () => {};
+frontDoor.userData.shellPart = true;
 shellParts.push(frontDoor);
 const doorGrid = new THREE.GridHelper(2.02, 18, 0x6e8796, 0x304b5b);
 doorGrid.scale.set(.42, 1, .64);
@@ -240,9 +249,9 @@ doorGrid.position.set(0, 1.925, rackD / 2 + .012);
 doorGrid.material.transparent = true;
 doorGrid.material.opacity = .42;
 doorGrid.raycast = () => {};
+doorGrid.userData.shellPart = true;
 rack.add(doorGrid);
 shellParts.push(doorGrid);
-addSceneLabel(rack, 'objects.rack.title', '', new THREE.Vector3(0, 3.28, .15));
 
 const servers = component('servers');
 const nodeCount = 10;
@@ -281,15 +290,13 @@ addSceneLabel(manifold, 'objects.manifold.title', 'water-label', new THREE.Vecto
 const supplyRoute = makeFlowRoute({
   key: 'supply', color: 0x36e98a, radius: .105, parent: waterGroup,
   points: [
-    new THREE.Vector3(-5.1, .27, .34), new THREE.Vector3(.3, .27, .34),
-    new THREE.Vector3(.3, .27, -.48), new THREE.Vector3(.3, .9, -.48)
+    new THREE.Vector3(-5.1, .27, .34), new THREE.Vector3(3.1, .27, .34)
   ]
 });
 const returnRoute = makeFlowRoute({
   key: 'return', color: 0xff5548, radius: .095, parent: waterGroup, direction: -1,
   points: [
-    new THREE.Vector3(-5.1, .52, -.18), new THREE.Vector3(-.3, .52, -.18),
-    new THREE.Vector3(-.3, .52, -.48), new THREE.Vector3(-.3, .9, -.48)
+    new THREE.Vector3(-5.1, .52, -.18), new THREE.Vector3(3.1, .52, -.18)
   ]
 });
 for (const x of [-3.9, -2.2, -.8]) {
@@ -302,37 +309,125 @@ addSceneLabel(supplyRoute, 'objects.supply.title', 'water-label supply-label', n
 addSceneLabel(returnRoute, 'objects.return.title', 'water-label return-label', new THREE.Vector3(-3.7, .72, -.18), 'water');
 
 // Dual vertical PDUs inside the rack.
-const pduA = meshBox(.055, 1.82, .055, materials.powerA, new THREE.Vector3(-.34, 1.96, -.54), powerGroup);
-const pduB = meshBox(.055, 1.82, .055, materials.powerB, new THREE.Vector3(.34, 1.96, -.54), powerGroup);
+const rackPower = component('busway', powerGroup);
+meshBox(.055, 1.82, .055, materials.powerA, new THREE.Vector3(-.34, 1.96, -.54), rackPower);
+meshBox(.055, 1.82, .055, materials.powerB, new THREE.Vector3(.34, 1.96, -.54), rackPower);
 for (let index = 0; index < nodeCount; index += 1) {
   const y = 1.05 + index * .176;
-  makeStaticTube([new THREE.Vector3(-.34, y, -.54), new THREE.Vector3(-.27, y, -.28)], .008, materials.powerA, powerGroup);
-  makeStaticTube([new THREE.Vector3(.34, y, -.54), new THREE.Vector3(.27, y, -.28)], .008, materials.powerB, powerGroup);
+  makeStaticTube([new THREE.Vector3(-.34, y, -.54), new THREE.Vector3(-.27, y, -.28)], .008, materials.powerA, rackPower);
+  makeStaticTube([new THREE.Vector3(.34, y, -.54), new THREE.Vector3(.27, y, -.28)], .008, materials.powerB, rackPower);
 }
+
+// Dual rows face a shared enclosed aisle. Every rack retains its liquid nodes,
+// manifolds and A/B PDUs; layer controls apply to all copies.
+const rackXs = [-2.7, -1.8, -.9, 0, .9, 1.8, 2.7];
+const rackCells = [];
+const serverAssemblies = [servers];
+const prototypes = [rack, servers, manifold, rackPower];
+for (const [rowIndex, z] of [-1.45, 1.45].entries()) {
+  for (const x of rackXs) {
+    const rotation = rowIndex === 0 ? 0 : Math.PI;
+    const cell = { x, z, rotation };
+    rackCells.push(cell);
+    const first = rackCells.length === 1;
+    prototypes.forEach((source, index) => {
+      const assembly = first ? source : source.clone(true);
+      if (!first) {
+        const labels = [];
+        assembly.traverse((object) => { if (object.isCSS2DObject) labels.push(object); });
+        labels.forEach((label) => label.removeFromParent());
+        assembly.traverse((object) => {
+          if (object.userData.shellPart) {
+            object.raycast = () => {};
+            shellParts.push(object);
+          }
+        });
+        source.parent.add(assembly);
+        selectable.push(assembly);
+        if (index === 1) serverAssemblies.push(assembly);
+      }
+      assembly.position.set(x, .2, z);
+      assembly.rotation.y = rotation;
+    });
+  }
+}
+function cellPoint(cell, x, y, z) {
+  const sign = cell.rotation === 0 ? 1 : -1;
+  return new THREE.Vector3(cell.x + sign * x, y, cell.z + sign * z);
+}
+for (const cell of rackCells) {
+  const inlet = cellPoint(cell, .3, 1.1, -.48);
+  const outlet = cellPoint(cell, -.3, 1.1, -.48);
+  makeFlowRoute({ key: 'supply', color: 0x36e98a, radius: .035, parent: waterGroup, particles: 3,
+    points: [new THREE.Vector3(inlet.x, .27, .34), new THREE.Vector3(inlet.x, .27, inlet.z), inlet] });
+  makeFlowRoute({ key: 'return', color: 0xff5548, radius: .032, parent: waterGroup, particles: 3, direction: -1,
+    points: [new THREE.Vector3(outlet.x, .52, -.18), new THREE.Vector3(outlet.x, .52, outlet.z), outlet] });
+}
+const microModule = component('rack');
+microModule.position.y = .2;
+const enclosureGlass = materials.glass.clone();
+enclosureGlass.opacity = .3;
+function enclosurePanel(w, h, d, position) {
+  const panel = meshBox(w, h, d, enclosureGlass, position, microModule);
+  panel.raycast = () => {};
+  shellParts.push(panel);
+  return panel;
+}
+meshBox(6.6, .06, 1.55, materials.tile, new THREE.Vector3(0, .81, 0), microModule);
+for (const z of [-.79, .79]) {
+  meshBox(6.8, .08, .08, materials.darkSteel, new THREE.Vector3(0, 3.13, z), microModule);
+}
+for (const x of rackXs) {
+  enclosurePanel(.86, .025, 1.55, new THREE.Vector3(x, 3.13, 0));
+  meshBox(.04, .04, 1.6, materials.steel, new THREE.Vector3(x + .44, 3.15, 0), microModule);
+}
+for (const x of [-3.3, 3.3]) {
+  for (const z of [-.79, 0, .79]) {
+    meshBox(.055, 2.32, .055, materials.darkSteel, new THREE.Vector3(x, 1.97, z), microModule);
+  }
+  for (const z of [-.4, .4]) enclosurePanel(.025, 2.22, .73, new THREE.Vector3(x, 1.96, z));
+  meshBox(.08, .32, .035, materials.steel, new THREE.Vector3(x + .04, 1.92, .1), microModule);
+  meshBox(.09, .1, 1.75, materials.steel, new THREE.Vector3(x, 3.17, 0), microModule);
+}
+// Integrated row-end cooling and monitoring give the module its familiar form.
+for (const x of [-3.75, 3.75]) {
+  for (const z of [-1.45, 1.45]) {
+    meshBox(.72, 2.25, 1.28, materials.darkSteel, new THREE.Vector3(x, 1.925, z), microModule);
+    const faceZ = z + (z < 0 ? .65 : -.65);
+    for (let y = 1; y < 2.9; y += .12) meshBox(.6, .035, .025, materials.black, new THREE.Vector3(x, y, faceZ), microModule);
+    meshBox(.48, .028, .028, materials.fiber, new THREE.Vector3(x, 2.92, faceZ), microModule);
+  }
+}
+meshBox(.07, 1.4, .07, materials.steel, new THREE.Vector3(4.35, 1.5, 2.65), microModule);
+meshBox(.08, .55, .72, materials.black, new THREE.Vector3(4.35, 2.38, 2.65), microModule);
+meshBox(.015, .43, .59, new THREE.MeshBasicMaterial({ color: 0x08304b }), new THREE.Vector3(4.4, 2.38, 2.65), microModule);
+for (let index = 0; index < 4; index += 1) {
+  meshBox(.02, .05 + index * .065, .055, materials.fiber, new THREE.Vector3(4.415, 2.28 + index * .0325, 2.45 + index * .12), microModule);
+}
+addSceneLabel(microModule, 'objects.rack.title', '', new THREE.Vector3(0, 3.3, .6));
 
 // Overhead A/B busways and straight vertical drops.
 const busway = component('busway', powerGroup);
-meshBox(8.2, .19, .16, materials.powerA, new THREE.Vector3(0, 3.95, -.34), busway);
-meshBox(8.2, .19, .16, materials.powerB, new THREE.Vector3(0, 3.95, .34), busway);
+meshBox(8.2, .19, .16, materials.powerA, new THREE.Vector3(0, 4.15, -.34), busway);
+meshBox(8.2, .19, .16, materials.powerB, new THREE.Vector3(0, 4.15, .34), busway);
 for (const z of [-.34, .34]) {
-  for (let x = -3.7; x <= 3.7; x += .55) meshBox(.035, .215, .18, materials.darkSteel, new THREE.Vector3(x, 3.95, z), busway);
+  for (let x = -3.7; x <= 3.7; x += .55) meshBox(.035, .215, .18, materials.darkSteel, new THREE.Vector3(x, 4.15, z), busway);
 }
-addSceneLabel(busway, 'objects.busway.title', 'power-label', new THREE.Vector3(2.8, 4.08, 0), 'power-detail');
+addSceneLabel(busway, 'objects.busway.title', 'power-label', new THREE.Vector3(2.8, 4.28, 0), 'power-detail');
 
-makeFlowRoute({
-  key: 'busway', color: 0xffd34e, radius: .024, parent: powerGroup, particles: 7,
-  points: [
-    new THREE.Vector3(-3.8, 3.95, -.34), new THREE.Vector3(-.34, 3.95, -.34),
-    new THREE.Vector3(-.34, 3.14, -.34), new THREE.Vector3(-.34, 2.88, -.54)
-  ]
-});
-makeFlowRoute({
-  key: 'busway', color: 0xff6b48, radius: .024, parent: powerGroup, particles: 7,
-  points: [
-    new THREE.Vector3(3.8, 3.95, .34), new THREE.Vector3(.34, 3.95, .34),
-    new THREE.Vector3(.34, 3.14, .34), new THREE.Vector3(.34, 2.88, -.54)
-  ]
-});
+
+// Row distribution rails and individual A/B drops above every rack.
+for (const rowZ of [-1.45, 1.45]) {
+  for (const [offset, material, color] of [[-.12, materials.powerA, 0xffd34e], [.12, materials.powerB, 0xff6b48]]) {
+    meshBox(6.5, .09, .08, material, new THREE.Vector3(0, 4.05, rowZ + offset), busway);
+    makeStaticTube([new THREE.Vector3(-3.15, 4.15, offset < 0 ? -.34 : .34), new THREE.Vector3(-3.15, 4.05, rowZ + offset)], .024, material, busway);
+    for (const cell of rackCells.filter((item) => item.z === rowZ)) {
+      const pdu = cellPoint(cell, offset < 0 ? -.34 : .34, 3.08, -.54);
+      makeFlowRoute({ key: 'busway', color, radius: .016, parent: powerGroup, particles: 3,
+        points: [new THREE.Vector3(cell.x, 4.05, rowZ + offset), new THREE.Vector3(pdu.x, 4.05, rowZ + offset), pdu] });
+    }
+  }
+}
 
 function cableTray(key, y, z, material, width = 7.2, depth = .46) {
   const tray = component(key, powerGroup);
@@ -343,42 +438,43 @@ function cableTray(key, y, z, material, width = 7.2, depth = .46) {
   }
   return tray;
 }
-const powerTrayA = cableTray('powerBridge', 3.56, -1.35, materials.powerA, 7.4, .42);
-const powerTrayB = cableTray('powerBridge', 3.73, -1.35, materials.powerB, 7.4, .42);
-const fiberTray = cableTray('fiber', 3.34, -1.35, materials.fiber, 7.4, .38);
-addSceneLabel(powerTrayB, 'objects.powerBridge.title', 'power-label', new THREE.Vector3(-2.7, 3.87, -1.35), 'power');
-addSceneLabel(fiberTray, 'objects.fiber.title', '', new THREE.Vector3(2.7, 3.48, -1.35), 'power');
+const powerTrayA = cableTray('powerBridge', 3.76, -1.35, materials.powerA, 7.4, .42);
+const powerTrayB = cableTray('powerBridge', 3.93, -1.35, materials.powerB, 7.4, .42);
+const fiberTray = cableTray('fiber', 3.54, -1.35, materials.fiber, 7.4, .38);
+addSceneLabel(powerTrayB, 'objects.powerBridge.title', 'power-label', new THREE.Vector3(-2.7, 4.07, -1.35), 'power');
+addSceneLabel(fiberTray, 'objects.fiber.title', '', new THREE.Vector3(2.7, 3.68, -1.35), 'power');
 
 // Beam, ceiling return-air plane, and fire protection main from the reference section.
 const fire = component('fire');
-makeCylinderBetween(new THREE.Vector3(-4.2, 4.65, 1.45), new THREE.Vector3(4.2, 4.65, 1.45), .075, materials.fire, fire);
+makeCylinderBetween(new THREE.Vector3(-4.2, 5.35, 1.45), new THREE.Vector3(4.2, 5.35, 1.45), .075, materials.fire, fire);
 for (const x of [-2.6, 0, 2.6]) {
-  makeCylinderBetween(new THREE.Vector3(x, 4.65, 1.45), new THREE.Vector3(x, 4.58, 1.45), .022, materials.fire, fire);
+  makeCylinderBetween(new THREE.Vector3(x, 5.35, 1.45), new THREE.Vector3(x, 5.28, 1.45), .022, materials.fire, fire);
   const head = new THREE.Mesh(new THREE.ConeGeometry(.08, .06, 12), materials.fire);
-  head.position.set(x, 4.54, 1.45);
+  head.position.set(x, 5.24, 1.45);
   head.rotation.x = Math.PI;
   fire.add(head);
 }
-addSceneLabel(fire, 'objects.fire.title', '', new THREE.Vector3(2.7, 4.76, 1.45), 'power');
-meshBox(9.2, .3, .48, materials.beam, new THREE.Vector3(0, 4.9, -2.2));
+addSceneLabel(fire, 'objects.fire.title', '', new THREE.Vector3(2.7, 5.46, 1.45), 'power');
+meshBox(9.2, .3, .48, materials.beam, new THREE.Vector3(0, 6.65, -2.2));
 const ceilingComponent = component('ceiling');
-const ceiling = meshBox(9.8, .035, 6.4, materials.beam.clone(), new THREE.Vector3(0, 5.75, 0), ceilingComponent);
+const ceiling = meshBox(9.8, .035, 6.4, materials.beam.clone(), new THREE.Vector3(0, 6.48, 0), ceilingComponent);
 ceiling.material.opacity = .12;
-addSceneLabel(ceilingComponent, 'objects.ceiling.title', '', new THREE.Vector3(-2.8, 5.61, 1.8), 'power');
+addSceneLabel(ceilingComponent, 'objects.ceiling.title', '', new THREE.Vector3(-2.8, 5.85, 1.8), 'power');
 
 // Overhead supports emphasize depth without blocking the rack.
 for (const x of [-3.6, 3.6]) {
   for (const z of [-1.35, -.34, .34]) {
-    const supportBottom = z === -1.35 ? 3.32 : 3.84;
-    meshBox(.045, 4.75 - supportBottom, .045, materials.steel, new THREE.Vector3(x, (4.75 + supportBottom) / 2, z));
+    const supportBottom = z === -1.35 ? 3.52 : 4.04;
+    meshBox(.045, 6.5 - supportBottom, .045, materials.steel, new THREE.Vector3(x, (6.5 + supportBottom) / 2, z));
   }
-  meshBox(.045, .045, 2.5, materials.steel, new THREE.Vector3(x, 4.74, -.45));
+  meshBox(.045, .045, 2.5, materials.steel, new THREE.Vector3(x, 6.49, -.45));
 }
 
 // Red dimension lines reproduce the key elevations in Rack.png. The overview
 // keeps only the principal dimensions; specialist views reveal their details.
 const dimensionEntries = [];
 function dimension(x, y1, y2, label, descriptionKey, category = 'detail') {
+  if (x > 0) x += 3.1;
   const group = new THREE.Group();
   dimensionGroup.add(group);
   const material = new THREE.LineBasicMaterial({ color: 0xff6f68, transparent: true, opacity: .78 });
@@ -403,13 +499,12 @@ function dimension(x, y1, y2, label, descriptionKey, category = 'detail') {
   group.add(object);
   dimensionEntries.push({ group, category, descriptionNode });
 }
-dimension(1.15, 0, .8, '800 mm', 'dimensions.floor', 'water');
-dimension(1.48, .8, 3.05, '2250 mm', 'dimensions.rack', 'rack');
-dimension(1.81, 3.05, 4.55, '1450–1500 mm', 'dimensions.rackToPower', 'power');
-dimension(2.18, 0, 4.75, '≥ 4750 mm', 'dimensions.beamDatum', 'overall');
-dimension(2.55, 0, 5.5, '≥ 5500 mm', 'dimensions.roomHeight', 'overview');
-dimension(-2.3, 4.55, 4.75, '200 mm', 'dimensions.fireClearance', 'power');
-dimension(-2.68, 4.75, 5.75, '1000–1500 mm', 'dimensions.returnPlenum', 'power');
+dimension(1.15, 0, 1, '1000 mm', 'dimensions.floor', 'water');
+dimension(1.48, 1, 3.3, '2300 mm', 'dimensions.rack', 'rack');
+dimension(1.81, 3.3, 5.1, '1800 mm', 'dimensions.rackToPower', 'power');
+dimension(2.18, 0, 5.1, '≥ 5100 mm', 'dimensions.beamDatum', 'overall');
+dimension(2.55, 0, 6.5, '≥ 6500 mm', 'dimensions.roomHeight', 'overview');
+dimension(-2.68, 5.1, 6.5, '1400 mm', 'dimensions.returnPlenum', 'power');
 
 // A subtle grid and wall datum make perspective and scale easier to read.
 const grid = new THREE.GridHelper(10, 20, 0x31576e, 0x1d394a);
@@ -417,7 +512,7 @@ grid.position.y = .005;
 grid.material.transparent = true;
 grid.material.opacity = .38;
 scene.add(grid);
-const datumWall = meshBox(.035, 5.5, 5.8, materials.beam.clone(), new THREE.Vector3(-5.1, 2.75, 0));
+const datumWall = meshBox(.035, 6.5, 5.8, materials.beam.clone(), new THREE.Vector3(-5.1, 3.25, 0));
 datumWall.material.opacity = .08;
 
 function isDarkTheme() {
@@ -453,11 +548,11 @@ function applySceneTheme() {
   floorComponent.traverse((object) => {
     if (object.userData.surfaceTile && object.material?.color) object.material.color.setHex(palette.tile);
   });
-  servers.traverse((object) => {
+  serverAssemblies.forEach((assembly) => assembly.traverse((object) => {
     if (!object.isMesh || !object.material?.color) return;
     if (object.userData.serverBody) object.material.color.setHex(palette.server);
     if (object.userData.serverFace) object.material.color.setHex(palette.black);
-  });
+  }));
   ceiling.material.color.setHex(palette.beam);
   ceiling.material.opacity = dark ? .12 : .1;
   datumWall.material.color.setHex(palette.beam);
@@ -469,9 +564,9 @@ applySceneTheme();
 window.addEventListener('aidc-theme-change', applySceneTheme);
 
 const views = {
-  overview: [new THREE.Vector3(6.9, 5.35, 7.6), new THREE.Vector3(0, 2.45, -.05)],
-  front: [new THREE.Vector3(0, 3.0, 10.7), new THREE.Vector3(0, 2.45, 0)],
-  rack: [new THREE.Vector3(3.65, 3.35, 4.55), new THREE.Vector3(0, 1.95, 0)],
+  overview: [new THREE.Vector3(10.8, 7.2, 12.2), new THREE.Vector3(0, 2.45, -.05)],
+  front: [new THREE.Vector3(12.8, 3.5, 0), new THREE.Vector3(0, 2.05, 0)],
+  rack: [new THREE.Vector3(8.7, 4.9, 8.2), new THREE.Vector3(0, 1.95, 0)],
   water: [new THREE.Vector3(5.9, 1.55, 6.2), new THREE.Vector3(-.8, .55, -.1)],
   power: [new THREE.Vector3(5.8, 5.5, 6.5), new THREE.Vector3(0, 3.82, -.35)],
 };
@@ -734,8 +829,8 @@ function animate() {
         dot.scale.setScalar(1 + Math.sin(elapsed * 5.2 + dotIndex) * .18);
       });
     });
-    pduA.material.emissiveIntensity = .75 + Math.sin(elapsed * 2.4) * .18;
-    pduB.material.emissiveIntensity = .75 + Math.sin(elapsed * 2.4 + 1.2) * .18;
+    materials.powerA.emissiveIntensity = .75 + Math.sin(elapsed * 2.4) * .18;
+    materials.powerB.emissiveIntensity = .75 + Math.sin(elapsed * 2.4 + 1.2) * .18;
     if (selectionBox.visible) selectionBox.material.opacity = .6 + Math.sin(elapsed * 3.2) * .22;
   }
   controls.update();
@@ -778,8 +873,7 @@ startRendering();
 
 addEventListener('resize', () => {
   const { w, h } = hostSize();
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
+  updateCameraProjection(w, h);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setSize(w, h, false);
   labelRenderer.setSize(w, h);
@@ -800,8 +894,7 @@ window.AidcI18nBootstrap.bootstrap('ai-dc-liquid-rack', {
     updateDimensionLabels();
     refreshDimensions();
     const { w, h } = hostSize();
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+    updateCameraProjection(w, h);
     renderer.setSize(w, h, false);
     labelRenderer.setSize(w, h);
   },

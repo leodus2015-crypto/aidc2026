@@ -431,10 +431,35 @@ def check_design_nav(errors: list[str], loaded: dict[Path, Any], root: Path = RO
     if not design:
         return
     embeds = set(design.get("embeds") or [])
+    iframe_files = {src.split("?")[0] for _, src in iframe_pairs}
     for key, src in iframe_pairs:
         page = src.split("?")[0]
         if page not in embeds:
             errors.append(f"IFRAME_BASE {key} → {page} 未写入 page-registry embeds")
+
+    standalone_block = re.search(r"STANDALONE_BY_TAB = \{([^}]+)\}", js)
+    if not standalone_block:
+        errors.append("ai-dc-design-page.js 缺少 STANDALONE_BY_TAB")
+        return
+    standalone = dict(re.findall(r'(\w+):\s*"([^"]+\.html)"', standalone_block.group(1)))
+    expected_standalone = {
+        "power": "ai-dc-power.html",
+        "liquidRack": "ai-dc-liquid-rack.html",
+        "liquidRequirements": "ai-dc-liquid-requirements.html",
+        "scheduleBudget": "ai-dc-schedule-budget.html",
+    }
+    if standalone != expected_standalone:
+        errors.append(f"STANDALONE_BY_TAB 与约定不一致: {standalone}")
+    for tab, page in standalone.items():
+        if page in iframe_files:
+            errors.append(f"独立页 {page} 不应再出现在 IFRAME_BASE（tab={tab}）")
+        if not (root / page).is_file():
+            errors.append(f"独立页文件不存在: {page}")
+        pages = {item.get("path"): item for item in registry.get("pages") or [] if isinstance(item, dict)}
+        if page not in pages:
+            errors.append(f"独立页未登记 page-registry: {page}")
+        elif pages[page].get("kind") != "entry":
+            errors.append(f"独立页 {page} 注册 kind 应为 entry")
 
 
 def check_ci_workflow(errors: list[str], root: Path = ROOT) -> None:

@@ -5,6 +5,7 @@ data/analytics/sample-access.log
 data/analytics/geo-cache.json
 .env
 deploy.env
+deploy.env.huawei
 api/__pycache__/
 api/**/__pycache__/
 tests/__pycache__/

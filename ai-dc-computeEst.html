@@ -7,13 +7,13 @@
   <meta name="description" content="从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。" />
   <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-computeEst.html" />
   <title>AI 数据中心算力评估规划 · Token → Card</title>
-  <script src="js/aidc-theme.js?v=88"></script>
-  <script src="js/embed-mode.js?v=88"></script>
-  <script src="js/theme-switch.js?v=88"></script>
-  <script src="js/aidc-asset-version.js?v=88"></script>
-  <script src="js/aidc-locale-bridge.js?v=88"></script>
-  <link rel="stylesheet" href="css/theme.css?v=88" />
-  <link rel="stylesheet" href="css/embed.css?v=88" />
+  <script src="js/aidc-theme.js?v=89"></script>
+  <script src="js/embed-mode.js?v=89"></script>
+  <script src="js/theme-switch.js?v=89"></script>
+  <script src="js/aidc-asset-version.js?v=89"></script>
+  <script src="js/aidc-locale-bridge.js?v=89"></script>
+  <link rel="stylesheet" href="css/theme.css?v=89" />
+  <link rel="stylesheet" href="css/embed.css?v=89" />
   <style>
     :root {
       --s-50:#f8fafc; --s-100:#f1f5f9; --s-200:#e2e8f0; --s-300:#cbd5e1;
@@ -66,14 +66,17 @@
     }
     .brand-title { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: .01em; }
     .brand-sub { margin-top: 1px; color: var(--s-500); font-size: 12px; font-weight: 500; }
-    .header-actions { display: flex; align-items: center; gap: 10px; }
-    .locale-toggle {
-      min-height: 34px; padding: 0 12px;
-      border: 1px solid var(--s-200); border-radius: 10px;
-      background: var(--s-100); color: var(--b-700);
-      font-size: 12px; font-weight: 800;
+
+    .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .lang-toggle {
+      min-width: 54px; height: 34px; padding: 0 13px;
+      border: 1px solid var(--s-200); border-radius: 999px;
+      background: #fff; color: var(--s-600);
+      font-size: 12.5px; font-weight: 700; letter-spacing: .02em;
+      transition: border-color .15s, background .15s, color .15s;
     }
-    .locale-toggle:hover { border-color: var(--b-200); background: var(--b-50); }
+    .lang-toggle:hover { border-color: var(--b-200); background: var(--b-50); color: var(--b-700); }
+    html[lang="en"] .lang-toggle { font-family: inherit; }
 
 
 
@@ -131,6 +134,20 @@
       display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
       color: var(--s-700); font-size: 13px; font-weight: 600;
     }
+    /* 英文文案更长：标签允许换行，单位与只读单位略微收窄 */
+    html[lang="en"] .field label > span:first-child { line-height: 1.35; }
+    html[lang="en"] .unit { max-width: 72px; font-size: 11px; }
+    html[lang="en"] .readonly-box .ro-unit { font-size: 11px; }
+    html[lang="en"] .result-row-label { font-size: 12px; }
+    html[lang="en"] .result-row-value small { font-size: 10.5px; }
+    html[lang="en"] .kpi-label { font-size: 12px; }
+    html[lang="en"] .annual-table { min-width: 820px; }
+    /* 英文标签更长：标签页不换行，场景卡与公式区略作压缩 */
+    html[lang="en"] .tablist { flex-wrap: nowrap; }
+    html[lang="en"] .tab { white-space: nowrap; padding: 8px 13px; font-size: 13px; }
+    html[lang="en"] .scenario-name { font-size: 13px; line-height: 1.3; }
+    html[lang="en"] .definitions { font-size: 11.5px; }
+    html[lang="en"] .formula { font-size: 14px; white-space: normal; }
     .sym { color: var(--s-400); font-family: ui-serif, Georgia, "Songti SC", serif; font-weight: 500; }
 
     .input-wrap { position: relative; margin-top: 8px; }
@@ -429,6 +446,7 @@
 
     .disabled-results { opacity: .38; pointer-events: none; filter: grayscale(.35); }
     [hidden] { display: none !important; }
+    html[lang="en"] body { font-family: "Inter","Segoe UI",Arial,Helvetica,sans-serif; }
 
     /* ── dark theme ───────────────────────────────────────── */
     html[data-theme="dark"] {
@@ -453,11 +471,24 @@
     html[data-theme="dark"] .input-wrap select { background-color: #0f1c2e; color: var(--s-900); }
     html[data-theme="dark"] .tab:hover,
     html[data-theme="dark"] .tab[aria-selected="true"] { background: #162438; }
+    html[data-theme="dark"] .readonly-box,
     html[data-theme="dark"] .scenario-body .readonly-box { background: rgba(15,28,46,.76); }
     html[data-theme="dark"] .scenario[aria-pressed="true"]::after { background: #12233b; }
     html[data-theme="dark"] .chart-dot { fill: #0f1c2e; }
     html[data-theme="dark"] .result-panel { background-color: #020617; }
     html[data-theme="dark"] input.invalid { background: var(--rose-50); }
+    html[data-theme="dark"] .lang-toggle { background: #162438; color: var(--s-700); border-color: var(--s-200); }
+    html[data-theme="dark"] .tablist { background: var(--s-100); }
+    html[data-theme="dark"] .formula { background: var(--s-100); }
+    html[data-theme="dark"] .source-note { background: var(--b-50); }
+    html[data-theme="dark"] .ref-tail { background: var(--s-100); }
+    html[data-theme="dark"] .alert.error { background: var(--rose-50); }
+    html[data-theme="dark"] .alert.warning { background: var(--amber-50); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
 
     /* ── responsive ───────────────────────────────────────── */
     @media (max-width: 1180px) {
@@ -502,7 +533,7 @@
       </div>
       <div class="header-actions">
         <div id="theme-switch-root"></div>
-        <button class="locale-toggle" id="langToggle" type="button" aria-label="切换语言">EN</button>
+        <button class="lang-toggle" type="button" id="langToggle" aria-label="切换到英文">EN</button>
       </div>
     </div>
   </header>
@@ -557,7 +588,7 @@
                     <div class="field">
                       <label for="inTokens"><span>单用户日均输入 Token</span><span class="sym">T<sub>in</sub></span></label>
                       <div class="input-wrap">
-                        <input id="inTokens" data-key="inTokens" type="text" inputmode="decimal" autocomplete="off" value="21,000,000" />
+                        <input id="inTokens" data-key="inTokens" type="text" inputmode="decimal" autocomplete="off" value="9,900,000" />
                         <span class="unit">token</span>
                       </div>
                       <div class="hint" id="inTokensHint">—</div>
@@ -565,7 +596,7 @@
                     <div class="field">
                       <label for="outTokens"><span>单用户日均输出 Token</span><span class="sym">T<sub>out</sub></span></label>
                       <div class="input-wrap">
-                        <input id="outTokens" data-key="outTokens" type="text" inputmode="decimal" autocomplete="off" value="300,000" />
+                        <input id="outTokens" data-key="outTokens" type="text" inputmode="decimal" autocomplete="off" value="100,000" />
                         <span class="unit">token</span>
                       </div>
                       <div class="hint" id="outTokensHint">—</div>
@@ -601,7 +632,7 @@
                   <div class="field">
                     <label for="dau"><span>当前 AI 日活用户数</span><span class="sym">DAU</span></label>
                     <div class="input-wrap">
-                      <input id="dau" data-key="dau" type="text" inputmode="decimal" autocomplete="off" min="1" step="1" value="3,180" />
+                      <input id="dau" data-key="dau" type="text" inputmode="decimal" autocomplete="off" min="1" step="1" value="12,700" />
                       <span class="unit">人</span>
                     </div>
                   </div>
@@ -612,7 +643,7 @@
                   <div class="field">
                     <label for="currentPenetration"><span>当前用户渗透率</span><span class="sym">R<sub>0</sub></span></label>
                     <div class="input-wrap">
-                      <input id="currentPenetration" data-key="currentPenetration" type="text" inputmode="decimal" autocomplete="off" min="0.01" max="100" step="0.1" value="60" />
+                      <input id="currentPenetration" data-key="currentPenetration" type="text" inputmode="decimal" autocomplete="off" min="0.01" max="100" step="0.1" value="100" />
                       <span class="unit">%</span>
                     </div>
                   </div>
@@ -694,14 +725,14 @@
                   <div class="field">
                     <label for="peakMultiplier"><span>峰值倍数</span><span class="sym">M</span></label>
                     <div class="input-wrap">
-                      <input id="peakMultiplier" data-key="peakMultiplier" type="text" inputmode="decimal" autocomplete="off" min="1" step="0.1" value="5" />
+                      <input id="peakMultiplier" data-key="peakMultiplier" type="text" inputmode="decimal" autocomplete="off" min="1" step="0.1" value="3" />
                       <span class="unit">倍</span>
                     </div>
                   </div>
                   <div class="field">
                     <label for="utilization"><span>算力综合利用率</span><span class="sym">N</span></label>
                     <div class="input-wrap">
-                      <input id="utilization" data-key="utilization" type="text" inputmode="decimal" autocomplete="off" min="1" max="100" step="1" value="40" />
+                      <input id="utilization" data-key="utilization" type="text" inputmode="decimal" autocomplete="off" min="1" max="100" step="1" value="45" />
                       <span class="unit">%</span>
                     </div>
                     <div class="hint">一级规划经验值通常 30%–50%</div>
@@ -709,7 +740,7 @@
                   <div class="field">
                     <label for="computeMargin"><span>算力规划冗余</span><span class="sym">K<sub>compute</sub></span></label>
                     <div class="input-wrap">
-                      <input id="computeMargin" data-key="computeMargin" type="text" inputmode="decimal" autocomplete="off" min="0.1" step="0.05" value="2" />
+                      <input id="computeMargin" data-key="computeMargin" type="text" inputmode="decimal" autocomplete="off" min="0.1" step="0.05" value="1.2" />
                       <span class="unit">倍</span>
                     </div>
                   </div>
@@ -1142,316 +1173,111 @@
     (() => {
       "use strict";
 
+      const I18N_STATIC = {"AI 数据中心算力评估规划": "AI Data Center Compute Planning","Token &gt; Card · 由业务 Token 量推算 NPU 卡数需求": "Token &gt; Card · Sizing NPU capacity from token workload","算力卡数匡算": "Compute Capacity Sizing","选择推理场景或自定义单用户用量，由 AI 渗透用户规模推算 Token 总量，再换算为所需算力卡数。": "Pick an inference scenario or enter your own per-user volumes. The tool derives total token throughput from the AI-adopting user base, then converts it into the required number of accelerator cards.","业务调研": "Business Inputs","算力产品": "Hardware","<span class=\"legend-icon\" aria-hidden=\"true\">💬</span>Token 业务量推算": "<span aria-hidden=\"true\" class=\"legend-icon\">💬</span>Token Workload","<span class=\"scenario-icon\" aria-hidden=\"true\">📝</span>办公助手": "<span aria-hidden=\"true\" class=\"scenario-icon\">📝</span>Office Assistant","<span class=\"scenario-icon\" aria-hidden=\"true\">⚙️</span>自定义": "<span aria-hidden=\"true\" class=\"scenario-icon\">⚙️</span>Custom","<span>单用户日均输入 Token</span><span class=\"sym\">T<sub>in</sub></span>": "<span>Input tokens / user / day</span><span class=\"sym\">T<sub>in</sub></span>","<span>单用户日均输出 Token</span><span class=\"sym\">T<sub>out</sub></span>": "<span>Output tokens / user / day</span><span class=\"sym\">T<sub>out</sub></span>","<span>缓存命中率</span><span class=\"sym\">H</span>": "<span>Cache hit rate</span><span class=\"sym\">H</span>","仅折减输入侧 Token，输出侧不受缓存影响": "Discounts input tokens only — output tokens are unaffected by caching","<span>单用户有效日均 Token</span><span class=\"sym\">T<sub>user</sub></span>": "<span>Effective tokens / user / day</span><span class=\"sym\">T<sub>user</sub></span>","<span id=\"perUserTokensOut\">—</span><span class=\"ro-unit\">token/人·日</span>": "<span id=\"perUserTokensOut\">—</span><span class=\"ro-unit\">tokens/user/day</span>","<span>折算全网日均 Token</span><span class=\"sym\">T<sub>d</sub></span>": "<span>Total daily tokens (platform-wide)</span><span class=\"sym\">T<sub>d</sub></span>","<span id=\"dailyTokensOut\">—</span><span class=\"ro-unit\">亿/日</span>": "<span id=\"dailyTokensOut\">—</span><span class=\"ro-unit\">B / day</span>","<span class=\"legend-icon\" aria-hidden=\"true\">👥</span>用户规模与渗透": "<span aria-hidden=\"true\" class=\"legend-icon\">👥</span>User Base &amp; Adoption","<span>当前 AI 日活用户数</span><span class=\"sym\">DAU</span>": "<span>Current AI DAU</span><span class=\"sym\">DAU</span>","人": "users","<span>当前 AI 渗透用户数</span><span class=\"sym\">U<sub>0</sub></span>": "<span>AI-adopting users</span><span class=\"sym\">U<sub>0</sub></span>","<span id=\"activeUsersOut\">—</span><span class=\"ro-unit\">人</span>": "<span id=\"activeUsersOut\">—</span><span class=\"ro-unit\">users</span>","<span>当前用户渗透率</span><span class=\"sym\">R<sub>0</sub></span>": "<span>Current adoption rate</span><span class=\"sym\">R<sub>0</sub></span>","<span>目标用户渗透率</span><span class=\"sym\">R<sub>N</sub></span>": "<span>Target adoption rate</span><span class=\"sym\">R<sub>N</sub></span>","<span class=\"legend-icon\" aria-hidden=\"true\">🧠</span>模型与算力换算": "<span aria-hidden=\"true\" class=\"legend-icon\">🧠</span>Model &amp; Compute Conversion","<span>大模型型号</span><span class=\"sym\">Model</span>": "<span>Model</span><span class=\"sym\">Model</span>","其他模型 · 支持自定义输入参数": "Other model · enter parameters manually","选择型号后自动填入下方两项参数；也可直接手动改写，型号会切换为「其他型号」": "Selecting a model fills in the two fields below. Editing them manually switches the selector to “Other model”.","<span>大模型激活参数量</span><span class=\"sym\">P<sub>act</sub></span>": "<span>Activated parameters</span><span class=\"sym\">P<sub>act</sub></span>","决定算力需求；MoE 按每 Token 实际激活参数量填写": "Drives compute demand. For MoE, enter the parameters actually activated per token.","<span>大模型总参数量</span><span class=\"sym\">P<sub>total</sub></span>": "<span>Total parameters</span><span class=\"sym\">P<sub>total</sub></span>","决定权重显存，用于卡数下限校验": "Drives weight memory — used for the minimum card count check","<span>浮点运算量倍数</span><span class=\"sym\">F</span>": "<span>FLOPs multiplier</span><span class=\"sym\">F</span>","每 Token 每参数的 FLOP 数，缺省 2（乘加各计 1）": "FLOPs per parameter per token. Default 2 — one multiply plus one add.","<span>峰值倍数</span><span class=\"sym\">M</span>": "<span>Peak-to-average ratio</span><span class=\"sym\">M</span>","倍": "×","<span>算力综合利用率</span><span class=\"sym\">N</span>": "<span>Effective utilization (MFU)</span><span class=\"sym\">N</span>","一级规划经验值通常 30%–50%": "Typically 30%–50% for first-order planning","<span>算力规划冗余</span><span class=\"sym\">K<sub>compute</sub></span>": "<span>Compute headroom</span><span class=\"sym\">K<sub>compute</sub></span>","<span class=\"legend-icon\" aria-hidden=\"true\">📈</span>未来增长规划": "<span aria-hidden=\"true\" class=\"legend-icon\">📈</span>Growth Projection","<span>规划年限</span><span class=\"sym\">N<sub>year</sub></span>": "<span>Planning horizon</span><span class=\"sym\">N<sub>year</sub></span>","年": "yrs","<span>使用频率提升</span><span class=\"sym\">K<sub>freq</sub></span>": "<span>Usage frequency growth</span><span class=\"sym\">K<sub>freq</sub></span>","指第 N 年终值，不是每年复利倍数": "End-state value in year N — not a compound annual rate","<span>Agent 放大系数</span><span class=\"sym\">K<sub>Agent</sub></span>": "<span>Agentic amplification</span><span class=\"sym\">K<sub>Agent</sub></span>","多轮推理、工具调用与任务分解的综合放大": "Combined uplift from multi-turn reasoning, tool calls and task decomposition","<span class=\"legend-icon\" aria-hidden=\"true\">🖥️</span>算力产品参数": "<span aria-hidden=\"true\" class=\"legend-icon\">🖥️</span>Accelerator Specs","<span>产品单卡算力</span><span class=\"sym\">C<sub>card</sub></span>": "<span>Compute per card</span><span class=\"sym\">C<sub>card</sub></span>","默认按 FP8 精度 919 TFLOPS 计算；FP16 为 486 TFLOPS，FP4 为 1784 TFLOPS，也可直接改写数值": "Defaults to 919 TFLOPS at FP8. FP16 is 486 TFLOPS and FP4 is 1784 TFLOPS; the value can also be overwritten directly.","<span>单设备卡数</span><span class=\"sym\">Q<sub>unit</sub></span>": "<span>Cards per server</span><span class=\"sym\">Q<sub>unit</sub></span>","卡/台": "cards/svr","仅用于把卡数折算为整机台数参考，卡数结果不受影响": "Only used to convert cards into a server count — the card result is unaffected","<span class=\"legend-icon\" aria-hidden=\"true\">💾</span>显存与部署卡数下限": "<span aria-hidden=\"true\" class=\"legend-icon\">💾</span>Memory Floor","<span>单卡显存容量</span><span class=\"sym\">V<sub>card</sub></span>": "<span>Memory per card</span><span class=\"sym\">V<sub>card</sub></span>","<span>权重存储精度</span><span class=\"sym\">B<sub>w</sub></span>": "<span>Weight precision</span><span class=\"sym\">B<sub>w</sub></span>","FP16 · 2 Byte/参数": "FP16 · 2 bytes/param","FP8 · 1 Byte/参数": "FP8 · 1 byte/param","FP4 · 0.5 Byte/参数": "FP4 · 0.5 bytes/param","<span>权重可用显存占比</span><span class=\"sym\">η</span>": "<span>Memory available for weights</span><span class=\"sym\">η</span>","其余留给 KV Cache、激活与框架开销": "The remainder is reserved for KV cache, activations and framework overhead","<span>部署卡数下限</span><span class=\"sym\">n<sub>min</sub></span>": "<span>Minimum card count</span><span class=\"sym\">n<sub>min</sub></span>","<span id=\"minCardsOut\">—</span><span class=\"ro-unit\">卡</span>": "<span id=\"minCardsOut\">—</span><span class=\"ro-unit\">cards</span>","<strong>下限口径：</strong>权重显存 = 总参数量 × 单参数字节数，除以「单卡显存 × 可用占比」并向上取整， 得到<strong>模型能被装下所需的最少卡数</strong>。最终规划卡数取<strong>算力需求卡数与该下限的较大值</strong>， 避免 Token 量偏小时算出无法实际承载模型的卡数。下限未强制对齐 TP/PP 并行度与整机粒度， 实际组网通常还需向上取到 <code>单设备卡数</code> 的整数倍。": "<strong>How the floor works:</strong> weight memory = total parameters × bytes per parameter, divided by “memory per card × available share” and rounded up. This yields the <strong>minimum number of cards needed to hold the model at all</strong>. The final plan takes the <strong>greater of the compute-driven card count and this floor</strong>, so a small token volume can never produce a card count too low to actually host the model. The floor is not aligned to TP/PP parallelism or whole-server granularity — real deployments usually round up to a multiple of <code>cards per server</code>.","<span class=\"result-value\" id=\"heroCards\">—</span> <span class=\"result-unit\">卡</span> <span class=\"result-aside\" id=\"heroPflops\"></span>": "<span class=\"result-value\" id=\"heroCards\">—</span> <span class=\"result-unit\">cards</span> <span class=\"result-aside\" id=\"heroPflops\"></span>","<span class=\"result-row-label\">全网日均 Token</span> <span class=\"result-row-value\" id=\"rowDailyTokens\">—<small>亿/日</small></span>": "<span class=\"result-row-label\">Total daily tokens</span> <span class=\"result-row-value\" id=\"rowDailyTokens\">—<small>B/day</small></span>","<span class=\"result-row-label\">秒级 Token 吞吐 T<sub>s</sub></span> <span class=\"result-row-value\" id=\"rowTokenPerSec\">—<small>token/s</small></span>": "<span class=\"result-row-label\">Token throughput T<sub>s</sub></span> <span class=\"result-row-value\" id=\"rowTokenPerSec\">—<small>tok/s</small></span>","<span class=\"result-row-label\">算力需求卡数（含冗余）</span> <span class=\"result-row-value\" id=\"rowComputeCards\">—<small>卡</small></span>": "<span class=\"result-row-label\">Compute-driven cards (with headroom)</span> <span class=\"result-row-value\" id=\"rowComputeCards\">—<small>cards</small></span>","<span class=\"result-row-label\">显存部署卡数下限</span> <span class=\"result-row-value\" id=\"rowMinCards\">—<small>卡</small></span>": "<span class=\"result-row-label\">Memory floor</span> <span class=\"result-row-value\" id=\"rowMinCards\">—<small>cards</small></span>","<span class=\"result-row-label\" id=\"rowFutureLabel\">未来 5 年卡数</span> <span class=\"result-row-value\" id=\"rowFutureCards\">—<small>卡</small></span>": "<span class=\"result-row-label\" id=\"rowFutureLabel\">Cards in year 5</span> <span class=\"result-row-value\" id=\"rowFutureCards\">—<small>cards</small></span>","<span class=\"result-row-label\">整机台数参考</span> <span class=\"result-row-value\" id=\"rowDevices\">—<small>台</small></span>": "<span class=\"result-row-label\">Servers (reference)</span> <span class=\"result-row-value\" id=\"rowDevices\">—<small>svr</small></span>","<strong>计算口径：</strong>单 Token 前向计算量按 <code>F × 激活参数量</code> 估算（F 缺省 2，乘加各计 1 次 FLOP）； 日均 Token 先均摊到秒级再乘峰值倍数 <code>M</code>，除以算力综合利用率 <code>N</code> 得到峰值算力需求， 除以单卡算力 <code>C<sub>card</sub></code> 并乘规划冗余得到算力卡数，最后与显存部署下限取大值。 本工具用于规划阶段一级匡算，未计入 Prefill / Decode 分离、并发与时延 SLO 及长序列注意力开销。": "<strong>Methodology:</strong> forward-pass compute per token is estimated as <code>F × activated parameters</code> (F defaults to 2 — one multiply and one add). Daily tokens are averaged to a per-second rate, multiplied by the peak-to-average ratio <code>M</code> and divided by effective utilization <code>N</code> to give peak compute demand. Dividing by compute per card <code>C<sub>card</sub></code> and applying planning headroom gives the card count, which is then floored by the memory-based minimum. This is a first-order planning estimate: it does not model prefill/decode disaggregation, concurrency and latency SLOs, or long-sequence attention overhead.","当前理论算力需求": "Theoretical compute demand","算力需求": "Compute","<span id=\"baseCards\">—</span><span class=\"kpi-unit\">卡</span>": "<span id=\"baseCards\">—</span><span class=\"kpi-unit\">cards</span>","算力卡数": "Cards","未含规划冗余的裸需求": "Raw demand, before planning headroom","考虑冗余的算力需求": "Compute demand with headroom","<span id=\"currentCards\">—</span><span class=\"kpi-unit\">卡</span>": "<span id=\"currentCards\">—</span><span class=\"kpi-unit\">cards</span>","规划卡数": "Planned cards","冗余系数 <strong id=\"computeMarginOut\">—</strong> · 约 <strong id=\"currentDevices\">—</strong> 台整机": "Headroom <strong id=\"computeMarginOut\">—</strong> · approx. <strong id=\"currentDevices\">—</strong> servers","未来 5 年算力需求": "Compute demand in year 5","<span id=\"futureCards\">—</span><span class=\"kpi-unit\">卡</span>": "<span id=\"futureCards\">—</span><span class=\"kpi-unit\">cards</span>","净增 <strong id=\"futureDeltaPflops\">—</strong> PFLOPS / <strong id=\"futureDeltaCards\">—</strong> 卡": "Net add <strong id=\"futureDeltaPflops\">—</strong> PFLOPS / <strong id=\"futureDeltaCards\">—</strong> cards","未来总增长倍数": "Total growth multiple","<span id=\"growthMultiple\">—</span><span class=\"kpi-unit\">倍</span>": "<span id=\"growthMultiple\">—</span><span class=\"kpi-unit\">×</span>","未来 AI 渗透用户约 <strong id=\"futureDau\">—</strong> 人<br>单卡 <strong id=\"cardTflopsOut\">—</strong> TFLOPS · <strong id=\"cardVramOut\">—</strong> GB": "Future AI-adopting users approx. <strong id=\"futureDau\">—</strong><br/>Per card <strong id=\"cardTflopsOut\">—</strong> TFLOPS · <strong id=\"cardVramOut\">—</strong> GB","未来 5 年算力卡数增长路径": "5-Year Card Growth Path","渗透率线性推进；频率与 Agent 终值按复合平滑展开": "Adoption ramps linearly; frequency and agentic uplift compound smoothly to their end-state values","第 5 年终值": "Year-5 end state","增长因子拆解": "Growth Factor Breakdown","使用未舍入值计算；渗透率提升同时放大渗透用户与 Token 总量": "Computed on unrounded values. Rising adoption scales both the user base and total token volume.","用户渗透率": "Adoption rate","使用频率": "Usage frequency","Agent 放大": "Agentic uplift","逐年算力卡数规划明细": "Year-by-Year Capacity Plan","频率与 Agent 输入是第 N 年终值；表内为累计系数": "Frequency and agentic inputs are year-N end states; the table shows cumulative factors","橙色数值 = 受显存下限约束": "Amber = constrained by the memory floor","规划年度": "Year","渗透率": "Adoption","频率系数": "Frequency","Agent 系数": "Agentic","总增长倍数": "Total growth","规划算力 PFLOPS": "Planned PFLOPS","整机台数": "Servers","计算公式与口径": "Formulas &amp; Methodology","规划测算所使用的全部公式与参数定义": "Every formula and parameter used in the model","培训讲解区": "Reference","公式一 · 由用户规模推算 Token 业务量": "Formula 1 · Deriving token volume from the user base","<span><b>DAU</b> 日活用户数</span> <span><b>R<sub>0</sub></b> 当前用户渗透率</span> <span><b>U<sub>0</sub></b> 当前 AI 渗透用户数</span> <span><b>T<sub>in</sub></b> 单用户日均输入 Token</span> <span><b>T<sub>out</sub></b> 单用户日均输出 Token</span> <span><b>H</b> 缓存命中率</span>": "<span><b>DAU</b> daily active users</span> <span><b>R<sub>0</sub></b> current adoption rate</span> <span><b>U<sub>0</sub></b> AI-adopting users</span> <span><b>T<sub>in</sub></b> input tokens / user / day</span> <span><b>T<sub>out</sub></b> output tokens / user / day</span> <span><b>H</b> cache hit rate</span>","公式二 · 由 Token 推算算力需求与卡数": "Formula 2 · From tokens to compute demand and card count","C<sub>理论</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N": "C<sub>theory</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N","n<sub>compute</sub> = ⌈ C<sub>理论</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉": "n<sub>compute</sub> = ⌈ C<sub>theory</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉","<span><b>T<sub>s</sub></b> 秒级 Token 数</span> <span><b>F</b> 浮点运算量倍数</span> <span><b>P<sub>act</sub></b> 激活参数量</span> <span><b>M</b> 峰值倍数</span> <span><b>N</b> 算力综合利用率</span> <span><b>K<sub>compute</sub></b> 算力规划冗余</span> <span><b>C<sub>card</sub></b> 单卡算力</span>": "<span><b>T<sub>s</sub></b> tokens per second</span> <span><b>F</b> FLOPs multiplier</span> <span><b>P<sub>act</sub></b> activated parameters</span> <span><b>M</b> peak-to-average ratio</span> <span><b>N</b> effective utilization</span> <span><b>K<sub>compute</sub></b> compute headroom</span> <span><b>C<sub>card</sub></b> compute per card</span>","<b>依据：</b>系数 <b>F = 2</b> 源自 Kaplan et al. (2020) 对 Transformer 前向计算量的估计 <i>C<sub>forward</sub> ≈ 2N</i>（每 Token 每参数约 2 次浮点运算，即乘加各 1 次）； <b>N</b> 对应 Chowdhery et al. (2022) 在 PaLM 中提出的 <b>MFU</b>（Model FLOPs Utilization）； MoE 取<b>激活参数量</b>而非总参数量，依据 Fedus et al. (2021) 的稀疏激活结论。 完整出处与业界同口径案例见下方「公式依据」。": "<b>Basis:</b> the coefficient <b>F = 2</b> comes from Kaplan et al. (2020), whose estimate of Transformer forward-pass cost is <i>C<sub>forward</sub> ≈ 2N</i> — about two floating-point operations per parameter per token (one multiply, one add). <b>N</b> corresponds to <b>MFU</b> (Model FLOPs Utilization) as defined by Chowdhery et al. (2022) in PaLM. Using <b>activated</b> rather than total parameters for MoE follows the sparse-activation result of Fedus et al. (2021). Full citations and industry precedents are in “Provenance” below.","公式三 · 显存部署卡数下限与最终取值": "Formula 3 · Memory floor and the final card count","<span><b>P<sub>total</sub></b> 大模型总参数量</span> <span><b>B<sub>w</sub></b> 权重单参数字节数（FP16=2 / FP8=1 / FP4=0.5）</span> <span><b>V<sub>card</sub></b> 单卡显存容量</span> <span><b>η</b> 权重可用显存占比</span> <span>取大值可避免小 Token 量算出无法承载模型的卡数</span>": "<span><b>P<sub>total</sub></b> total parameters</span> <span><b>B<sub>w</sub></b> bytes per parameter (FP16=2 / FP8=1 / FP4=0.5)</span> <span><b>V<sub>card</sub></b> memory per card</span> <span><b>η</b> share of memory available for weights</span> <span>Taking the greater value prevents a small token volume from yielding a card count that cannot host the model</span>","公式四 · 未来增长与逐年平滑展开": "Formula 4 · Growth projection and year-by-year ramp","C<sub>未来</sub> = C<sub>规划</sub> × (R<sub>N</sub> ÷ R<sub>0</sub>) × K<sub>freq</sub> × K<sub>Agent</sub>": "C<sub>future</sub> = C<sub>planned</sub> × (R<sub>N</sub> ÷ R<sub>0</sub>) × K<sub>freq</sub> × K<sub>Agent</sub>","整机台数 n<sub>unit</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>unit</sub> ⌉": "Servers n<sub>unit</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>unit</sub> ⌉","<span><b>R<sub>N</sub></b> 目标用户渗透率</span> <span><b>y</b> 规划第 y 年</span> <span><b>N<sub>year</sub></b> 规划年限</span> <span><b>Q<sub>unit</sub></b> 单设备卡数</span> <span>渗透率按线性推进，频率与 Agent 按复合平滑</span>": "<span><b>R<sub>N</sub></b> target adoption rate</span> <span><b>y</b> planning year y</span> <span><b>N<sub>year</sub></b> planning horizon</span> <span><b>Q<sub>unit</sub></b> cards per server</span> <span>Adoption ramps linearly; frequency and agentic uplift compound smoothly</span>","公式依据 · 学术出处与业界同口径实践": "Provenance · Academic sources and industry precedents","<b>一、公式的学术出处</b>": "<b>1 · Academic sources</b>","<b>每 Token 计算量 ≈ 2 × 参数量</b>（对应参数 <b>F</b>）<br> Kaplan, J. et al. <i>Scaling Laws for Neural Language Models.</i> arXiv:2001.08361, 2020 — Table 1 给出 <i>C<sub>forward</sub> ≈ 2N + 2·n<sub>layer</sub>·n<sub>ctx</sub>·d<sub>attn</sub></i>， 并说明反向传播约为前向的 2 倍，故训练侧 <i>C ≈ 6N</i>。本工具只做推理，取前向项 <b>F = 2</b>。 <a href=\"https://arxiv.org/abs/2001.08361\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2001.08361</a>": "<b>Compute per token ≈ 2 × parameters</b> (parameter <b>F</b>)<br/> Kaplan, J. et al. <i>Scaling Laws for Neural Language Models.</i> arXiv:2001.08361, 2020 — Table 1 gives <i>C<sub>forward</sub> ≈ 2N + 2·n<sub>layer</sub>·n<sub>ctx</sub>·d<sub>attn</sub></i> and notes that the backward pass costs roughly twice the forward pass, hence <i>C ≈ 6N</i> for training. This tool models inference only and therefore takes the forward term, <b>F = 2</b>. <a href=\"https://arxiv.org/abs/2001.08361\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2001.08361</a>","<b>算力综合利用率</b>（对应参数 <b>N</b>）<br> Chowdhery, A. et al. <i>PaLM: Scaling Language Modeling with Pathways.</i> arXiv:2204.02311, 2022 — §4.1 提出 <b>MFU</b>：实测吞吐与硬件峰值算力所对应理论吞吐之比，是跨硬件、跨实现可比的效率指标， 即本工具中的 N。 <a href=\"https://arxiv.org/abs/2204.02311\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2204.02311</a>": "<b>Effective compute utilization</b> (parameter <b>N</b>)<br/> Chowdhery, A. et al. <i>PaLM: Scaling Language Modeling with Pathways.</i> arXiv:2204.02311, 2022 — §4.1 introduces <b>MFU</b>: observed throughput relative to the theoretical throughput of the hardware running at peak FLOPs. It is deliberately comparable across hardware and implementations, and is exactly the N used here. <a href=\"https://arxiv.org/abs/2204.02311\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2204.02311</a>","<b>推理侧算力 / 带宽 / 利用率的解析模型</b><br> Pope, R. et al. <i>Efficiently Scaling Transformer Inference.</i> arXiv:2211.05102, 2022（MLSys 2023）— 给出推理效率的解析建模方法，并区分 Prefill 与 Decode 两阶段的成本结构。 <a href=\"https://arxiv.org/abs/2211.05102\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2211.05102</a>": "<b>Analytical model of inference compute, bandwidth and utilization</b><br/> Pope, R. et al. <i>Efficiently Scaling Transformer Inference.</i> arXiv:2211.05102, 2022 (MLSys 2023) — presents an analytical method for modelling inference efficiency and separates the cost structures of the prefill and decode phases. <a href=\"https://arxiv.org/abs/2211.05102\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2211.05102</a>","<b>MoE 按激活参数量计算</b>（对应参数 <b>P<sub>act</sub></b>）<br> Fedus, W., Zoph, B., Shazeer, N. <i>Switch Transformers.</i> arXiv:2101.03961, 2021 — 稀疏 MoE 每 Token 只路由激活少量专家，计算量由激活参数量决定，与总参数量解耦。 <a href=\"https://arxiv.org/abs/2101.03961\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2101.03961</a>": "<b>MoE sized on activated parameters</b> (parameter <b>P<sub>act</sub></b>)<br/> Fedus, W., Zoph, B., Shazeer, N. <i>Switch Transformers.</i> arXiv:2101.03961, 2021 — a sparse MoE routes each token to only a few experts, so compute is set by the activated parameter count and is decoupled from the total. <a href=\"https://arxiv.org/abs/2101.03961\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2101.03961</a>","<b>二、业界采用同一口径的公开案例</b>": "<b>2 · Industry precedents using the same method</b>","<b>Epoch AI</b>（AI 算力研究机构）<br> Denain, JS., Ho, A., Sevilla, J. <i>How many digital workers could OpenAI deploy?</i> 2025-10-03 — 测算 OpenAI 服务能力时明确采用：「GPT-5 激活参数量约 500 亿–3000 亿， <b>按每激活参数 2 FLOP</b> 计，每 Token 约 1000 亿–6000 亿 FLOP」， 并叠加「<b>推理利用率约 5%–30%</b>」，据此反推日均可处理 Token 量。 与本工具「F × P<sub>act</sub> ÷ N」的结构完全一致。 <a href=\"https://epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy\" target=\"_blank\" rel=\"noopener\">epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy</a>": "<b>Epoch AI</b> (AI compute research institute)<br/> Denain, JS., Ho, A., Sevilla, J. <i>How many digital workers could OpenAI deploy?</i> 2025-10-03 — in sizing OpenAI’s serving capacity the authors state: “We estimate that GPT-5 has between 50 billion and 300 billion active parameters, so <b>at 2 FLOP per active parameter</b>, we get 100 billion to 600 billion FLOP per token,” then apply an <b>inference utilization of around 5% to 30%</b> to infer daily token volume. Structurally identical to the <i>F × P<sub>act</sub> ÷ N</i> used here. <a href=\"https://epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy\" rel=\"noopener\" target=\"_blank\">epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy</a>","<b>VMware（Broadcom）× NVIDIA</b> 企业级选型指南<br> Fu, Y. <i>LLM Inference Sizing and Performance Guidance.</i> VMware Cloud Foundation Blog, 2024 — 面向 VMware Private AI Foundation with NVIDIA 的容量规划文档， Prefill 阶段直接按 <i>(8B 参数 × 2) FLOP ÷ 加速卡算力 TFLOP/s</i> 估算， 即同一「每 Token 算力 ≈ 2 × 参数量」口径。 <a href=\"https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/\" target=\"_blank\" rel=\"noopener\">blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance</a>": "<b>VMware (Broadcom) × NVIDIA</b> enterprise sizing guide<br/> Fu, Y. <i>LLM Inference Sizing and Performance Guidance.</i> VMware Cloud Foundation Blog, 2024 — a capacity-planning document for VMware Private AI Foundation with NVIDIA. Prefill time is estimated directly as <i>(8B params × 2) FLOP ÷ accelerator TFLOP/s</i> — the same “compute per token ≈ 2 × parameters” convention. <a href=\"https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/\" rel=\"noopener\" target=\"_blank\">blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance</a>","「每 Token 算力 ≈ F × 激活参数量、以 <b>MFU</b> 表征有效利用率」是学术论文与业界容量测算的<b>通行口径</b>， 本工具的公式二即建立在该口径之上。": "Expressing compute per token as <i>F × activated parameters</i> and capturing real-world efficiency through <b>MFU</b> is the <b>standard convention</b> in both the literature and industry capacity sizing. Formula 2 is built directly on it.","本工具用于规划阶段的算力卡数一级匡算；未来测算默认模型规模、峰值倍数、利用率与卡型不变。 工程落地还需结合并发与时延 SLO、精度与稀疏性、KV Cache 命中率、PD 分离部署形态与产品实测数据进一步核实。 <span class=\"signature\">@数据中心产品组合</span>": "A first-order card-count estimate for the planning stage. Forward projections assume model size, peak-to-average ratio, utilization and card type stay unchanged. Before committing to a build, validate against concurrency and latency SLOs, precision and sparsity, KV cache hit rates, prefill/decode disaggregation and measured product benchmarks. <span class=\"signature\">@Data Center Product Portfolio</span>","token": "tokens"};
+      const I18N_JS = {"scen_office": {"zh": "办公助手","en": "Office Assistant"},"scen_custom": {"zh": "自定义","en": "Custom"},"model_other": {"zh": "其他型号","en": "Other model"},"lbl_inTokens": {"zh": "单用户日均输入 Token","en": "Input tokens per user per day"},"lbl_outTokens": {"zh": "单用户日均输出 Token","en": "Output tokens per user per day"},"lbl_cacheHitRate": {"zh": "缓存命中率","en": "Cache hit rate"},"lbl_dau": {"zh": "日活用户数","en": "Daily active users"},"lbl_currentPenetration": {"zh": "当前用户渗透率","en": "Current adoption rate"},"lbl_futurePenetration": {"zh": "未来目标渗透率","en": "Target adoption rate"},"lbl_activeParams": {"zh": "大模型激活参数量","en": "Activated parameters"},"lbl_totalParams": {"zh": "大模型总参数量","en": "Total parameters"},"lbl_flopsMultiplier": {"zh": "浮点运算量倍数","en": "FLOPs multiplier"},"lbl_peakMultiplier": {"zh": "峰值倍数","en": "Peak-to-average ratio"},"lbl_utilization": {"zh": "算力综合利用率","en": "Effective utilization"},"lbl_computeMargin": {"zh": "算力规划冗余","en": "Compute headroom"},"lbl_years": {"zh": "规划年限","en": "Planning horizon"},"lbl_frequencyFactor": {"zh": "使用频率提升","en": "Usage frequency growth"},"lbl_agentFactor": {"zh": "Agent 放大系数","en": "Agentic amplification"},"lbl_cardTflops": {"zh": "产品单卡算力","en": "Compute per card"},"lbl_cardsPerDevice": {"zh": "单设备卡数","en": "Cards per server"},"lbl_cardVram": {"zh": "单卡显存容量","en": "Memory per card"},"lbl_vramUsable": {"zh": "权重可用显存占比","en": "Memory available for weights"},"err_gt0": {"zh": "必须大于 0","en": " must be greater than 0"},"err_in_neg": {"zh": "单用户日均输入 Token 不能为负","en": "Input tokens per user cannot be negative"},"err_out_neg": {"zh": "单用户日均输出 Token 不能为负","en": "Output tokens per user cannot be negative"},"err_both_zero": {"zh": "单用户输入与输出 Token 不能同时为 0","en": "Input and output tokens cannot both be zero"},"err_cache": {"zh": "缓存命中率须在 0–100% 之间（不含 100%）","en": "Cache hit rate must be between 0% and 100% (100% excluded)"},"err_years": {"zh": "规划年限须为 1–20 年的整数","en": "Planning horizon must be a whole number of years between 1 and 20"},"err_dau_int": {"zh": "日活用户数须为整数","en": "Daily active users must be a whole number"},"err_cards_int": {"zh": "单设备卡数须为整数","en": "Cards per server must be a whole number"},"err_util": {"zh": "算力综合利用率须在 0–100% 之间","en": "Effective utilization must be between 0% and 100%"},"err_pen0": {"zh": "当前用户渗透率须在 0–100% 之间","en": "Current adoption rate must be between 0% and 100%"},"err_penN": {"zh": "未来目标渗透率须在 0–100% 之间","en": "Target adoption rate must be between 0% and 100%"},"err_vram": {"zh": "权重可用显存占比须在 0–100% 之间","en": "Memory available for weights must be between 0% and 100%"},"warn_total_lt_act": {"zh": "总参数量小于激活参数量，请核对模型口径（MoE 总参数应大于每 Token 激活参数）。","en": "Total parameters are smaller than activated parameters — please check the model figures (for MoE, the total should exceed the per-token activated count)."},"warn_pen_down": {"zh": "目标渗透率低于当前渗透率，未来结果将体现用户覆盖下降。","en": "The target adoption rate is below the current rate, so the projection will show shrinking coverage."},"warn_margin": {"zh": "算力规划冗余系数小于 1，可能低估规划容量。","en": "Compute headroom below 1 may understate the capacity actually required."},"warn_util_high": {"zh": "算力综合利用率高于 60%，一级规划通常偏乐观，建议复核。","en": "Effective utilization above 60% is optimistic for first-order planning — worth double-checking."},"yr_current_suffix": {"zh": "（当前）","en": " (current)"},"yr_now": {"zh": "当前","en": "Now"},"unit_per_user": {"zh": "token/人·日","en": "tokens/user/day"},"derive_src": {"zh": "由 {u} AI 渗透用户 × {t} token 推算，共 {a} token/日","en": "{u} AI-adopting users × {t} tokens = {a} tokens/day"},"pen_role": {"zh": "当前渗透率同时决定<b>渗透用户数</b>与未来增长基数；目标渗透率决定未来放大倍数。","en": "The current adoption rate sets both the <b>adopting user base</b> and the growth baseline; the target rate sets the future multiple."},"min_hint": {"zh": "权重约 <b>{g}</b> GiB ÷ (<b>{v}</b> GB × <b>{p}</b>%)","en": "Weights approx. <b>{g}</b> GiB ÷ (<b>{v}</b> GB × <b>{p}</b>%)"},"subtitle": {"zh": "{tok} 亿 Token/日 · {model} · {tf} TFLOPS/卡{prec}","en": "{tok}B tokens/day · {model} · {tf} TFLOPS/card{prec}"},"hero_pflops": {"zh": "≈ {p} PFLOPS 规划算力","en": "≈ {p} PFLOPS planned compute"},"bound_memory": {"zh": "受显存下限约束 · 算力需求仅 {n} 卡","en": "Memory-bound · compute needs only {n} cards"},"bound_compute": {"zh": "受算力需求约束 · 显存下限 {n} 卡","en": "Compute-bound · memory floor {n} cards"},"unit_yi_day": {"zh": "亿/日","en": "B/day"},"unit_card": {"zh": "卡","en": "cards"},"unit_server": {"zh": "台","en": "svr"},"row_future": {"zh": "未来 {y} 年卡数","en": "Cards in year {y}"},"kpi_future": {"zh": "未来 {y} 年算力需求","en": "Compute demand in year {y}"},"trend_title": {"zh": "未来 {y} 年算力卡数增长路径","en": "{y}-Year Card Growth Path"},"chart_end": {"zh": "第 {y} 年终值","en": "Year-{y} end state"},"chart_tip": {"zh": "{label}：{n} 卡","en": "{label}: {n} cards"},"chart_val": {"zh": "{n}卡","en": "{n}"},"chart_floor": {"zh": "显存下限 {n} 卡","en": "Memory floor {n} cards"},"chart_axis": {"zh": "卡数","en": "Cards"},"formula_mem": {"zh": "n<sub>card</sub> = max({c}, ⌈{tp}B × {bw}B/参数 ÷ {v}GB×{p}%⌉) = {f}","en": "n<sub>card</sub> = max({c}, ⌈{tp}B × {bw}B/param ÷ {v}GB×{p}%⌉) = {f}"},"page_title": {"zh": "AI 数据中心算力评估规划 · Token → Card","en": "AI Data Center Compute Planning · Token → Card"},"toggle": {"zh": "EN","en": "中文"},"toggle_aria": {"zh": "切换到英文","en": "Switch to Chinese"}};
+
+      /* ── 中英文切换 ──────────────────────────────────────
+         静态文案：加载时按「最深且含中文的元素」建立索引，切换时整段替换 innerHTML，
+         保留其中带 id 的动态占位 span，随后由 calculate() 重新填值。
+         动态文案：统一走 t(key, vars)。 */
       const LOCALE_SELF_SOURCE = "ai-dc-compute-est";
-      const locale = globalThis.AidcLocaleBridge?.getLocale?.()
-        || (new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh");
-      const IS_EN = locale === "en";
+      let LANG = globalThis.AidcLocaleBridge
+        ? (AidcLocaleBridge.getLocale() === "en" ? "en" : "zh")
+        : (new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh");
 
-      const EN_TEXT = {
-        "AI 数据中心算力评估规划 · Token → Card": "AI Data Center Compute Estimation · Token → Card",
-        "从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。": "Estimate the NPU cards required for AI inference from Token demand (Token → Card).",
-        "AI 数据中心算力评估规划": "AI Data Center Compute Estimation",
-        "Token > Card · 由业务 Token 量推算 NPU 卡数需求": "Token > Card · Estimate NPU card demand from business Token volume",
-        "算力卡数匡算": "Compute Card Estimation",
-        "选择推理场景或自定义单用户用量，由 AI 渗透用户规模推算 Token 总量，再换算为所需算力卡数。": "Choose an inference scenario or customize per-user usage, estimate total Tokens from AI user adoption, then convert the demand into required compute cards.",
-        "业务调研": "Business Inputs",
-        "算力产品": "Compute Product",
-        "Token 业务量推算": "Token Demand Estimation",
-        "办公助手": "Office Assistant",
-        "自定义": "Custom",
-        "单用户日均输入 Token": "Daily Input Tokens per User",
-        "单用户日均输出 Token": "Daily Output Tokens per User",
-        "缓存命中率": "Cache Hit Rate",
-        "仅折减输入侧 Token，输出侧不受缓存影响": "Reduces input Tokens only; output Tokens are unaffected",
-        "单用户有效日均 Token": "Effective Daily Tokens per User",
-        "折算全网日均 Token": "Estimated Network-wide Daily Tokens",
-        "用户规模与渗透": "User Scale and Adoption",
-        "当前 AI 日活用户数": "Current AI Daily Active Users",
-        "当前 AI 渗透用户数": "Current AI Users",
-        "当前用户渗透率": "Current User Adoption",
-        "目标用户渗透率": "Target User Adoption",
-        "模型与算力换算": "Model and Compute Conversion",
-        "大模型型号": "Model",
-        "其他模型 · 支持自定义输入参数": "Other model · Custom parameters",
-        "选择型号后自动填入下方两项参数；也可直接手动改写，型号会切换为「其他型号」": "Selecting a model fills the two parameters below; manual edits switch the model to “Other model”.",
-        "大模型激活参数量": "Active Model Parameters",
-        "决定算力需求；MoE 按每 Token 实际激活参数量填写": "Determines compute demand; for MoE use parameters activated per Token",
-        "大模型总参数量": "Total Model Parameters",
-        "决定权重显存，用于卡数下限校验": "Determines weight memory and the minimum card count",
-        "浮点运算量倍数": "FLOP Multiplier",
-        "每 Token 每参数的 FLOP 数，缺省 2（乘加各计 1）": "FLOPs per parameter per Token; default 2 (multiply and add counted separately)",
-        "峰值倍数": "Peak Multiplier",
-        "算力综合利用率": "Effective Compute Utilization",
-        "一级规划经验值通常 30%–50%": "Typical early-stage planning range: 30%–50%",
-        "算力规划冗余": "Compute Planning Headroom",
-        "未来增长规划": "Future Growth Planning",
-        "规划年限": "Planning Horizon",
-        "使用频率提升": "Usage Frequency Growth",
-        "指第 N 年终值，不是每年复利倍数": "End value in year N, not an annual compound multiplier",
-        "Agent 放大系数": "Agent Multiplier",
-        "多轮推理、工具调用与任务分解的综合放大": "Combined uplift from multi-turn reasoning, tool calls, and task decomposition",
-        "算力产品参数": "Compute Product Parameters",
-        "产品单卡算力": "Per-card Compute",
-        "默认按 FP8 精度 919 TFLOPS 计算；FP16 为 486 TFLOPS，FP4 为 1784 TFLOPS，也可直接改写数值": "Default: 919 TFLOPS at FP8; FP16 is 486 TFLOPS and FP4 is 1784 TFLOPS. Values remain editable.",
-        "单设备卡数": "Cards per Device",
-        "仅用于把卡数折算为整机台数参考，卡数结果不受影响": "Used only to convert cards into device count; does not affect the card result",
-        "显存与部署卡数下限": "Memory and Minimum Deployment Cards",
-        "单卡显存容量": "Memory per Card",
-        "权重存储精度": "Weight Precision",
-        "权重可用显存占比": "Memory Available for Weights",
-        "其余留给 KV Cache、激活与框架开销": "The remainder is reserved for KV Cache, activations, and framework overhead",
-        "部署卡数下限": "Minimum Deployment Cards",
-        "下限口径：": "Minimum-card methodology:",
-        "权重显存 = 总参数量 × 单参数字节数，除以「单卡显存 × 可用占比」并向上取整，": "weight memory equals total parameters times bytes per parameter, divided by per-card memory times usable share, rounded up.",
-        "得到模型能被装下所需的最少卡数。最终规划卡数取算力需求卡数与该下限的较大值，": "This gives the minimum cards needed to hold the model. Final planning uses the larger of compute-demand cards and this minimum.",
-        "避免 Token 量偏小时算出无法实际承载模型的卡数。下限未强制对齐 TP/PP 并行度与整机粒度，": "This prevents low Token demand from producing an undeployable result. The minimum is not forced to TP/PP or device granularity.",
-        "实际组网通常还需向上取到 单设备卡数 的整数倍。": "Actual deployments usually round up to a multiple of cards per device.",
-        "核心测算结果": "Core Estimation Result",
-        "全网日均 Token": "Network-wide Daily Tokens",
-        "秒级 Token 吞吐": "Token Throughput per Second",
-        "算力需求卡数（含冗余）": "Compute-demand Cards (with Headroom)",
-        "显存部署卡数下限": "Memory-based Minimum Cards",
-        "整机台数参考": "Estimated Device Count",
-        "计算口径：": "Methodology:",
-        "当前理论算力需求": "Current Theoretical Compute Demand",
-        "考虑冗余的算力需求": "Compute Demand with Headroom",
-        "未含规划冗余的裸需求": "Raw demand before planning headroom",
-        "算力需求": "Compute Demand",
-        "算力卡数": "Compute Cards",
-        "规划卡数": "Planned Cards",
-        "未来总增长倍数": "Total Future Growth",
-        "增长因子拆解": "Growth Factor Breakdown",
-        "用户渗透率": "User Adoption",
-        "使用频率": "Usage Frequency",
-        "Agent 放大": "Agent Uplift",
-        "逐年算力卡数规划明细": "Annual Compute Card Plan",
-        "频率与 Agent 输入是第 N 年终值；表内为累计系数": "Frequency and Agent inputs are year-N end values; the table shows cumulative factors.",
-        "橙色数值 = 受显存下限约束": "Amber value = constrained by memory minimum",
-        "规划年度": "Planning Year",
-        "渗透率": "Adoption",
-        "频率系数": "Frequency Factor",
-        "Agent 系数": "Agent Factor",
-        "总增长倍数": "Total Growth",
-        "规划算力 PFLOPS": "Planned Compute PFLOPS",
-        "整机台数": "Devices",
-        "计算公式与口径": "Formulas and Methodology",
-        "规划测算所使用的全部公式与参数定义": "All formulas and parameter definitions used by the estimate",
-        "培训讲解区": "Training Notes",
-        "公式一 · 由用户规模推算 Token 业务量": "Formula 1 · Estimate Token demand from user scale",
-        "公式二 · 由 Token 推算算力需求与卡数": "Formula 2 · Convert Tokens into compute demand and cards",
-        "公式三 · 显存部署卡数下限与最终取值": "Formula 3 · Memory minimum and final card count",
-        "公式四 · 未来增长与逐年平滑展开": "Formula 4 · Future growth and annual ramp",
-        "公式依据 · 学术出处与业界同口径实践": "Formula Basis · Academic sources and industry practice",
-        "日活用户数": "Daily active users",
-        "未来目标渗透率": "Target user adoption",
-        "当前 AI 渗透用户数": "Current AI users",
-        "秒级 Token 数": "Tokens per second",
-        "激活参数量": "Active parameters",
-        "单卡算力": "Per-card compute",
-        "权重单参数字节数（FP16=2 / FP8=1 / FP4=0.5）": "Bytes per weight parameter (FP16=2 / FP8=1 / FP4=0.5)",
-        "取大值可避免小 Token 量算出无法承载模型的卡数": "Taking the maximum prevents a card count too small to hold the model",
-        "规划第 y 年": "Planning year y",
-        "渗透率按线性推进，频率与 Agent 按复合平滑": "Adoption ramps linearly; frequency and Agent factors compound smoothly",
-        "一、公式的学术出处": "1. Academic sources",
-        "二、业界采用同一口径的公开案例": "2. Public industry examples using the same methodology",
-        "每 Token 计算量 ≈ 2 × 参数量": "Compute per Token ≈ 2 × parameters",
-        "算力综合利用率": "Effective compute utilization",
-        "推理侧算力 / 带宽 / 利用率的解析模型": "Analytical model for inference compute, bandwidth, and utilization",
-        "MoE 按激活参数量计算": "MoE compute uses active parameters",
-        "企业级选型指南": "Enterprise sizing guide",
-        "依据：": "Basis:",
-        "系数 F = 2 源自 Kaplan et al. (2020) 对 Transformer 前向计算量的估计": "The F = 2 factor follows Kaplan et al. (2020)’s estimate of Transformer forward-pass compute",
-        "每 Token 每参数约 2 次浮点运算，即乘加各 1 次": "about 2 floating-point operations per parameter per Token, counting multiply and add separately",
-        "N 对应 Chowdhery et al. (2022) 在 PaLM 中提出的 MFU（Model FLOPs Utilization）；": "N corresponds to MFU (Model FLOPs Utilization), introduced for PaLM by Chowdhery et al. (2022);",
-        "MoE 取激活参数量而非总参数量，依据 Fedus et al. (2021) 的稀疏激活结论。": "MoE uses active rather than total parameters, following the sparse-activation result of Fedus et al. (2021).",
-        "完整出处与业界同口径案例见下方「公式依据」。": "Full sources and comparable industry examples appear under “Formula Basis” below.",
-        "Table 1 给出": "Table 1 gives",
-        "并说明反向传播约为前向的 2 倍，故训练侧": "and states that backpropagation is about twice the forward pass, so training",
-        "本工具只做推理，取前向项 F = 2。": "This tool models inference only and therefore uses the forward-pass factor F = 2.",
-        "提出 MFU：实测吞吐与硬件峰值算力所对应理论吞吐之比，是跨硬件、跨实现可比的效率指标，": "defines MFU as measured throughput divided by theoretical throughput at peak hardware compute, an efficiency metric comparable across hardware and implementations,",
-        "即本工具中的 N。": "which is N in this tool.",
-        "给出推理效率的解析建模方法，并区分 Prefill 与 Decode 两阶段的成本结构。": "provides an analytical model of inference efficiency and separates the cost structures of Prefill and Decode.",
-        "稀疏 MoE 每 Token 只路由激活少量专家，计算量由激活参数量决定，与总参数量解耦。": "Sparse MoE routes each Token to only a few active experts, so compute is determined by active parameters rather than total parameters.",
-        "测算 OpenAI 服务能力时明确采用：": "explicitly estimates OpenAI serving capacity using:",
-        "按每激活参数 2 FLOP": "2 FLOPs per active parameter",
-        "并叠加「推理利用率约 5%–30%」，据此反推日均可处理 Token 量。": "and applies roughly 5%–30% inference utilization to derive daily Token capacity.",
-        "与本工具「F × Pact ÷ N」的结构完全一致。": "This matches the tool’s F × P_act ÷ N structure.",
-        "面向 VMware Private AI Foundation with NVIDIA 的容量规划文档，": "In sizing guidance for VMware Private AI Foundation with NVIDIA,",
-        "即同一「每 Token 算力 ≈ 2 × 参数量」口径。": "using the same “compute per Token ≈ 2 × parameters” methodology.",
-        "「每 Token 算力 ≈ F × 激活参数量、以 MFU 表征有效利用率」是学术论文与业界容量测算的通行口径，": "“Compute per Token ≈ F × active parameters, with MFU representing effective utilization” is standard in academic and industry sizing,",
-        "本工具的公式二即建立在该口径之上。": "and Formula 2 in this tool is based on that methodology.",
-        "总参数量小于激活参数量，请核对模型口径（MoE 总参数应大于每 Token 激活参数）。": "Total parameters are smaller than active parameters. Check the model definition; MoE total parameters should exceed active parameters per Token.",
-        "目标渗透率低于当前渗透率，未来结果将体现用户覆盖下降。": "Target adoption is below current adoption; the projection will reflect declining user coverage.",
-        "算力规划冗余系数小于 1，可能低估规划容量。": "Compute planning headroom is below 1 and may underestimate capacity.",
-        "算力综合利用率高于 60%，一级规划通常偏乐观，建议复核。": "Effective compute utilization above 60% is optimistic for early-stage planning; review the assumption.",
-        "单用户日均输入 Token 不能为负": "Daily input Tokens per user cannot be negative",
-        "单用户日均输出 Token 不能为负": "Daily output Tokens per user cannot be negative",
-        "单用户输入与输出 Token 不能同时为 0": "Input and output Tokens per user cannot both be zero",
-        "缓存命中率须在 0–100% 之间（不含 100%）": "Cache hit rate must be between 0% and 100% (exclusive of 100%)",
-        "规划年限须为 1–20 年的整数": "Planning horizon must be an integer from 1 to 20 years",
-        "日活用户数须为整数": "Daily active users must be an integer",
-        "单设备卡数须为整数": "Cards per device must be an integer",
-        "算力综合利用率须在 0–100% 之间": "Effective compute utilization must be between 0% and 100%",
-        "当前用户渗透率须在 0–100% 之间": "Current user adoption must be between 0% and 100%",
-        "未来目标渗透率须在 0–100% 之间": "Target user adoption must be between 0% and 100%",
-        "权重可用显存占比须在 0–100% 之间": "Memory available for weights must be between 0% and 100%",
-        "本工具用于规划阶段的算力卡数一级匡算；未来测算默认模型规模、峰值倍数、利用率与卡型不变。": "This tool provides an early-stage compute-card estimate; future projections assume unchanged model size, peak multiplier, utilization, and card type.",
-        "工程落地还需结合并发与时延 SLO、精度与稀疏性、KV Cache 命中率、PD 分离部署形态与产品实测数据进一步核实。": "Implementation must also validate concurrency and latency SLOs, precision and sparsity, KV Cache hit rate, PD-disaggregated deployment, and measured product performance.",
-        "@数据中心产品组合": "@Data Center Product Portfolio",
-        "参数类别": "Parameter category",
-        "推理场景预设": "Inference scenario presets",
-        "单卡算力快捷选项": "Per-card compute shortcuts",
-        "算力需求汇总": "Compute demand summary",
-        "未来年度算力卡数趋势图": "Future annual compute-card trend",
-        "切换语言": "Switch language",
-        "人": "users",
-        "年": "years",
-        "倍": "×",
-        "卡/台": "cards/device",
-        "卡": "cards",
-        "台": "devices",
-        "亿/日": "100M/day",
-        "token/人·日": "token/user/day",
-        "当前": "Current"
-      };
-
-      const EN_FRAGMENTS = {
-        "未来 ": "Future ",
-        " 年算力需求": "-year Compute Demand",
-        " 年算力卡数增长路径": "-year Compute-card Growth Path",
-        " 年卡数": "-year Cards",
-        "第 ": "Year ",
-        " 年终值": " End Value",
-        "约 ": "about ",
-        "受显存下限约束": "Constrained by memory minimum",
-        "受算力需求约束": "Constrained by compute demand",
-        "显存下限": "memory minimum",
-        "算力需求仅 ": "compute demand only ",
-        "规划算力": "planned compute",
-        "冗余系数": "Headroom",
-        "台整机": "devices",
-        "净增": "Increase",
-        "未来 AI 渗透用户": "Future AI users",
-        "单卡": "per card",
-        "由 ": "From ",
-        "AI 渗透用户": "AI users",
-        "推算，共 ": " gives ",
-        "当前渗透率同时决定": "Current adoption determines both ",
-        "渗透用户数": "AI users",
-        "与未来增长基数；目标渗透率决定未来放大倍数。": " and the future growth baseline; target adoption determines future scaling.",
-        "权重约 ": "Weights: about ",
-        "必须大于 0": "must be greater than 0",
-        "（当前）": " (Current)",
-        "亿 Token/日": " × 100M Tokens/day",
-        "Token/日": "Tokens/day",
-        "卡数": "Cards",
-        "台数": "Devices",
-        "公式": "Formula",
-        "当前理论": "Current theoretical",
-        "参数": "parameter",
-        "当前）": "Current)",
-        "橙色": "Amber"
-      };
-
-      function translateString(value) {
-        if (!IS_EN || !value) return value;
-        const leading = value.match(/^\s*/)?.[0] || "";
-        const trailing = value.match(/\s*$/)?.[0] || "";
-        let core = value.slice(leading.length, value.length - trailing.length || undefined);
-        if (Object.prototype.hasOwnProperty.call(EN_TEXT, core)) {
-          return leading + EN_TEXT[core] + trailing;
-        }
-        Object.entries(EN_TEXT)
-          .filter(([key]) => key.length > 1)
-          .sort((a, b) => b[0].length - a[0].length)
-          .forEach(([zh, en]) => { core = core.split(zh).join(en); });
-        Object.entries(EN_FRAGMENTS)
-          .sort((a, b) => b[0].length - a[0].length)
-          .forEach(([zh, en]) => { core = core.split(zh).join(en); });
-        core = core
-          .replace(/(\d[\d,.]*)\s*卡/g, "$1 cards")
-          .replace(/(\d[\d,.]*)\s*台/g, "$1 devices")
-          .replace(/(\d[\d,.]*)\s*人/g, "$1 users");
-        return leading + core + trailing;
+      function t(key, vars) {
+        const entry = I18N_JS[key];
+        let s = entry ? (entry[LANG] !== undefined ? entry[LANG] : entry.zh) : key;
+        if (vars) Object.keys(vars).forEach(k => { s = s.split("{" + k + "}").join(vars[k]); });
+        return s;
       }
 
-      function translateDom(root = document.body) {
-        if (!IS_EN || !root) return;
-        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-        const nodes = [];
-        while (walker.nextNode()) {
-          const parent = walker.currentNode.parentElement;
-          if (!parent || ["SCRIPT", "STYLE"].includes(parent.tagName)) continue;
-          nodes.push(walker.currentNode);
-        }
-        nodes.forEach(node => { node.nodeValue = translateString(node.nodeValue); });
-        root.querySelectorAll("[aria-label], [title], [placeholder]").forEach(element => {
-          ["aria-label", "title", "placeholder"].forEach(attribute => {
-            if (element.hasAttribute(attribute)) {
-              element.setAttribute(attribute, translateString(element.getAttribute(attribute)));
-            }
-          });
+      /** Token 总量的显示单位：中文用「亿」(1e8)，英文用 B (1e9)。 */
+      const bigTokens = (raw) => raw / (LANG === "zh" ? 1e8 : 1e9);
+
+      const INLINE_TAGS = new Set(["B","I","STRONG","EM","SUB","SUP","CODE","SPAN","A","SMALL","BR"]);
+      const CJK_RE = /[\u4e00-\u9fff]/;
+      let i18nIndex = [];
+
+      /** 与生成词典时相同的选点规则，保证键能对上。 */
+      function buildI18nIndex() {
+        const out = [];
+        document.querySelectorAll("body *").forEach(el => {
+          const tag = el.tagName;
+          if (tag === "SCRIPT" || tag === "STYLE" || tag === "svg") return;
+          if (el.closest("svg")) return;
+          const text = el.textContent || "";
+          if (!CJK_RE.test(text)) return;
+          const kids = Array.from(el.children);
+          if (!kids.every(k => INLINE_TAGS.has(k.tagName))) return;
+          out.push(el);
+        });
+        // 只保留最外层（去掉被其他候选包含的）
+        const final = out.filter(el => !out.some(o => o !== el && o.contains(el)));
+        // 补收纯 ASCII 的单位 span（如 token），它们不含中文但仍需本地化
+        document.querySelectorAll(".unit").forEach(el => {
+          const key = el.innerHTML.replace(/\s+/g, " ").trim();
+          if (I18N_STATIC[key] && !final.includes(el)) final.push(el);
+        });
+        i18nIndex = final.map(el => {
+          const zh = el.innerHTML.replace(/\s+/g, " ").trim();
+          return { el, zh, en: I18N_STATIC[zh] };
+        });
+        const miss = i18nIndex.filter(x => !x.en).map(x => x.zh);
+        if (miss.length) console.warn("[i18n] 未翻译节点", miss);
+      }
+
+      function applyStatic() {
+        i18nIndex.forEach(({ el, zh, en }) => {
+          const html = LANG === "en" ? (en || zh) : zh;
+          if (el.innerHTML.replace(/\s+/g, " ").trim() !== html) el.innerHTML = html;
         });
       }
 
-      function applyLocale() {
-        document.documentElement.lang = IS_EN ? "en" : "zh-CN";
-        document.title = IS_EN ? EN_TEXT["AI 数据中心算力评估规划 · Token → Card"] : "AI 数据中心算力评估规划 · Token → Card";
-        const description = document.querySelector('meta[name="description"]');
-        if (description && IS_EN) description.content = EN_TEXT["从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。"];
-        const button = document.getElementById("langToggle");
-        if (button) {
-          button.textContent = IS_EN ? "中文" : "EN";
-          button.setAttribute("aria-label", IS_EN ? "Switch to Chinese" : "切换为英文");
+      function setLang(lang) {
+        LANG = lang;
+        document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+        document.title = t("page_title");
+        const btn = $("langToggle");
+        if (btn) {
+          btn.textContent = t("toggle");
+          btn.setAttribute("aria-label", t("toggle_aria"));
         }
-        translateDom();
+        // 数字格式随语言切换（千分位一致，但小数点与分组规则交由 Intl 处理）
+        setNumberLocale(lang === "en" ? "en-US" : "zh-CN");
+        // 「其他模型」选项文本由下拉框自身承载，需单独刷新
+        const other = document.querySelector('#modelPreset option[value=""]');
+        if (other) other.textContent = LANG === "en" ? I18N_STATIC["其他模型 · 支持自定义输入参数"] : "其他模型 · 支持自定义输入参数";
+        applyStatic();
+        calculate();
       }
-
-      function switchLocale() {
-        const next = IS_EN ? "zh" : "en";
-        globalThis.AidcLocaleBridge?.setLocale?.(next, { source: LOCALE_SELF_SOURCE });
-        const url = new URL(location.href);
-        if (next === "en") url.searchParams.set("lang", "en");
-        else url.searchParams.delete("lang");
-        location.replace(url);
-      }
-
-      applyLocale();
-      globalThis.AidcLocaleBridge?.initIframeListener?.((nextLocale) => {
-        const next = nextLocale === "en" ? "en" : "zh";
-        if (next === locale) return;
-        const url = new URL(location.href);
-        if (next === "en") url.searchParams.set("lang", "en");
-        else url.searchParams.delete("lang");
-        location.replace(url);
-      }, { selfSource: LOCALE_SELF_SOURCE });
 
       const GIB = 1024 ** 3;
 
       /** 场景预设：覆盖 Token 取数、模型规模与算力换算参数，未列字段保持当前值。
-          coding 与 TCP COMMON + SC["1024"] 同口径（dau=3180, pen=60, Tin/Tout/hit 一致）。
-          改这些默认必须同步 tests/test_formulas.py 与 ai-dc-tcp.html COMMON。 */
+          coding 与 TCP 总览 2026-09 1024 档同口径（dau=12700, pen=100, Tin 9.9M, Tout 0.1M, M=3, N=45, K=1.2）。
+          改这些默认必须同步 tests/test_formulas.py 的 test_compute_est_coding_*。 */
       const scenarios = {
         coding: {
           name: "AI Coding",
-          dau: 3180, currentPenetration: 60,
-          inTokens: 21000000, cacheHitRate: 0, outTokens: 300000,
+          dau: 12700, currentPenetration: 100,
+          inTokens: 9900000, cacheHitRate: 0, outTokens: 100000,
           flopsMultiplier: 2, totalParams: 744, activeParams: 40,
-          peakMultiplier: 5, utilization: 40, computeMargin: 2
+          peakMultiplier: 3, utilization: 45, computeMargin: 1.2
         },
         office: {
           name: "办公助手",
-          dau: 3000, currentPenetration: 60,
-          inTokens: 6000000, cacheHitRate: 0, outTokens: 500000,
+          dau: 20000, currentPenetration: 60,
+          inTokens: 3000000, cacheHitRate: 0, outTokens: 250000,
           flopsMultiplier: 2, totalParams: 284, activeParams: 13,
-          peakMultiplier: 10, utilization: 40, computeMargin: 2
+          peakMultiplier: 5, utilization: 40, computeMargin: 1.2
         },
         superapp: {
           name: "SuperApp",
-          dau: 410000, currentPenetration: 60,
-          inTokens: 80000, cacheHitRate: 0, outTokens: 5000,
+          dau: 1000000, currentPenetration: 60,
+          inTokens: 120000, cacheHitRate: 0, outTokens: 25000,
           flopsMultiplier: 2, totalParams: 120, activeParams: 5.1,
-          peakMultiplier: 50, utilization: 35, computeMargin: 2
+          peakMultiplier: 10, utilization: 35, computeMargin: 1.2
         },
         // 中等规模自建场景（Qwen3-235B-A22B）：理论 96 卡，按 2 倍冗余规划为 192 卡
         custom: {
@@ -1492,10 +1318,13 @@
       let lastResult = null;
 
       const $ = (id) => document.getElementById(id);
-      const numberLocale = IS_EN ? "en-US" : "zh-CN";
-      const nf0 = new Intl.NumberFormat(numberLocale, { maximumFractionDigits: 0 });
-      const nf1 = new Intl.NumberFormat(numberLocale, { minimumFractionDigits: 0, maximumFractionDigits: 1 });
-      const nf2 = new Intl.NumberFormat(numberLocale, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      let nf0, nf1, nf2;
+      function setNumberLocale(loc) {
+        nf0 = new Intl.NumberFormat(loc, { maximumFractionDigits: 0 });
+        nf1 = new Intl.NumberFormat(loc, { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+        nf2 = new Intl.NumberFormat(loc, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      }
+      setNumberLocale("zh-CN");
 
       function number(value, digits = 1) {
         if (!Number.isFinite(value)) return "—";
@@ -1519,7 +1348,11 @@
       }
 
       const precisions = { 486: "FP16", 919: "FP8", 1784: "FP4" };
-      const precisionOf = (tflops) => (precisions[tflops] ? `（${precisions[tflops]}）` : "");
+      const precisionOf = (tflops) => {
+        const n = precisions[tflops];
+        if (!n) return "";
+        return LANG === "en" ? ` (${n})` : `（${n}）`;
+      };
 
       /** 模型规模标签：≥1000B 记为 T，形如 1.6T-A49B。 */
       function modelLabel(totalB, activeB) {
@@ -1528,16 +1361,7 @@
         return `${total}-A${number(activeB, 1)}B`;
       }
 
-      const labels = {
-        inTokens: "单用户日均输入 Token", outTokens: "单用户日均输出 Token",
-        cacheHitRate: "缓存命中率", dau: "日活用户数", currentPenetration: "当前用户渗透率",
-        futurePenetration: "未来目标渗透率", activeParams: "大模型激活参数量", totalParams: "大模型总参数量",
-        flopsMultiplier: "浮点运算量倍数", peakMultiplier: "峰值倍数", utilization: "算力综合利用率",
-        computeMargin: "算力规划冗余", years: "规划年限", frequencyFactor: "使用频率提升",
-        agentFactor: "Agent 放大系数", cardTflops: "产品单卡算力", cardsPerDevice: "单设备卡数",
-        cardVram: "单卡显存容量", vramUsable: "权重可用显存占比"
-      };
-      const labelFor = (key) => labels[key] || key;
+      const labelFor = (key) => (I18N_JS["lbl_" + key] ? t("lbl_" + key) : key);
 
       /* ── 输入框千分位格式化 ───────────────────────────── */
 
@@ -1605,15 +1429,7 @@
       function showMessages(id, messages) {
         const box = $(id);
         box.classList.toggle("show", messages.length > 0);
-        box.replaceChildren();
-        if (!messages.length) return;
-        const ul = document.createElement("ul");
-        messages.forEach((message) => {
-          const li = document.createElement("li");
-          li.textContent = message;
-          ul.appendChild(li);
-        });
-        box.appendChild(ul);
+        box.innerHTML = messages.length ? `<ul>${messages.map(m => `<li>${m}</li>`).join("")}</ul>` : "";
       }
 
       function validate(v) {
@@ -1627,26 +1443,26 @@
 
         inputs.forEach(input => input.classList.remove("invalid"));
         positive.forEach(key => {
-          if (!Number.isFinite(v[key]) || v[key] <= 0) errors.push(`${labelFor(key)}必须大于 0`);
+          if (!Number.isFinite(v[key]) || v[key] <= 0) errors.push(`${labelFor(key)}${t("err_gt0")}`);
         });
 
-        if (!Number.isFinite(v.inTokens) || v.inTokens < 0) errors.push("单用户日均输入 Token 不能为负");
-        if (!Number.isFinite(v.outTokens) || v.outTokens < 0) errors.push("单用户日均输出 Token 不能为负");
-        if (v.inTokens + v.outTokens <= 0) errors.push("单用户输入与输出 Token 不能同时为 0");
-        if (!(v.cacheHitRate >= 0 && v.cacheHitRate < 100)) errors.push("缓存命中率须在 0–100% 之间（不含 100%）");
+        if (!Number.isFinite(v.inTokens) || v.inTokens < 0) errors.push(t("err_in_neg"));
+        if (!Number.isFinite(v.outTokens) || v.outTokens < 0) errors.push(t("err_out_neg"));
+        if (v.inTokens + v.outTokens <= 0) errors.push(t("err_both_zero"));
+        if (!(v.cacheHitRate >= 0 && v.cacheHitRate < 100)) errors.push(t("err_cache"));
 
-        if (!Number.isInteger(v.years) || v.years < 1 || v.years > 20) errors.push("规划年限须为 1–20 年的整数");
-        if (!Number.isInteger(v.dau)) errors.push("日活用户数须为整数");
-        if (!Number.isInteger(v.cardsPerDevice)) errors.push("单设备卡数须为整数");
-        if (!(v.utilization > 0 && v.utilization <= 100)) errors.push("算力综合利用率须在 0–100% 之间");
-        if (!(v.currentPenetration > 0 && v.currentPenetration <= 100)) errors.push("当前用户渗透率须在 0–100% 之间");
-        if (!(v.futurePenetration > 0 && v.futurePenetration <= 100)) errors.push("未来目标渗透率须在 0–100% 之间");
-        if (!(v.vramUsable > 0 && v.vramUsable <= 100)) errors.push("权重可用显存占比须在 0–100% 之间");
+        if (!Number.isInteger(v.years) || v.years < 1 || v.years > 20) errors.push(t("err_years"));
+        if (!Number.isInteger(v.dau)) errors.push(t("err_dau_int"));
+        if (!Number.isInteger(v.cardsPerDevice)) errors.push(t("err_cards_int"));
+        if (!(v.utilization > 0 && v.utilization <= 100)) errors.push(t("err_util"));
+        if (!(v.currentPenetration > 0 && v.currentPenetration <= 100)) errors.push(t("err_pen0"));
+        if (!(v.futurePenetration > 0 && v.futurePenetration <= 100)) errors.push(t("err_penN"));
+        if (!(v.vramUsable > 0 && v.vramUsable <= 100)) errors.push(t("err_vram"));
 
-        if (v.totalParams < v.activeParams) warnings.push("总参数量小于激活参数量，请核对模型口径（MoE 总参数应大于每 Token 激活参数）。");
-        if (v.futurePenetration < v.currentPenetration) warnings.push("目标渗透率低于当前渗透率，未来结果将体现用户覆盖下降。");
-        if (v.computeMargin < 1) warnings.push("算力规划冗余系数小于 1，可能低估规划容量。");
-        if (v.utilization > 60) warnings.push("算力综合利用率高于 60%，一级规划通常偏乐观，建议复核。");
+        if (v.totalParams < v.activeParams) warnings.push(t("warn_total_lt_act"));
+        if (v.futurePenetration < v.currentPenetration) warnings.push(t("warn_pen_down"));
+        if (v.computeMargin < 1) warnings.push(t("warn_margin"));
+        if (v.utilization > 60) warnings.push(t("warn_util_high"));
 
         inputs.forEach(input => {
           const bad = errors.some(message => message.includes(labelFor(input.dataset.key)));
@@ -1657,10 +1473,6 @@
         return errors.length === 0;
       }
 
-      /* 默认 coding：dau=3180、currentPenetration=60、C_card=919、N=40，与 TCP 1024 档同量级。
-         改这些默认必须同步 tests/test_formulas.py（及 ai-dc-tcp.html COMMON）。
-         对照：test_tcp_1024_* / test_compute_est_zero_users_yields_zero_tokens / test_hbm_floor_can_bind_planned_cards
-         Python 端口：tests/formulas.py daily_tokens / compute_cards / min_hbm_cards / planned_cards */
       function calculate() {
         const v = readValues();
         const valid = validate(v);
@@ -1711,8 +1523,8 @@
           const cards = Math.max(rawCards, minCards);
           years.push({
             year,
-            label: year === 0 ? `${calendarYear}（当前）` : `${calendarYear + year}`,
-            shortLabel: year === 0 ? "当前" : `Y${year}`,
+            label: year === 0 ? `${calendarYear}${t("yr_current_suffix")}` : `${calendarYear + year}`,
+            shortLabel: year === 0 ? t("yr_now") : `Y${year}`,
             penetration, kFrequency, kAgent, total, pflops, cards,
             memoryBound: minCards > rawCards,
             devices: Math.ceil(cards / v.cardsPerDevice)
@@ -1732,53 +1544,61 @@
         renderGrowth(lastResult);
         renderChart(years, minCards);
         renderAnnualTable(years);
-        translateDom();
       }
 
       /** 表单内的派生只读显示与提示文案。 */
       function renderInputEchoes(r) {
-        $("inTokensHint").innerHTML = `= <b>${tokenScale(r.v.inTokens)}</b> token/人·日`;
-        $("outTokensHint").innerHTML = `= <b>${tokenScale(r.v.outTokens)}</b> token/人·日`;
+        $("inTokensHint").innerHTML = `= <b>${tokenScale(r.v.inTokens)}</b> ${t("unit_per_user")}`;
+        $("outTokensHint").innerHTML = `= <b>${tokenScale(r.v.outTokens)}</b> ${t("unit_per_user")}`;
         $("perUserTokensOut").textContent = number(r.perUserTokens, 0);
         $("activeUsersOut").textContent = number(r.activeUsers, 0);
-        $("dailyTokensOut").textContent = number(r.dailyTokensRaw / 1e8, 2);
-        $("dailyTokensSource").innerHTML =
-          `由 <b>${number(r.activeUsers, 0)}</b> AI 渗透用户 × <b>${tokenScale(r.perUserTokens)}</b> token 推算，共 <b>${tokenScale(r.dailyTokensRaw)}</b> token/日`;
-        $("penetrationRoleHint").innerHTML =
-          "当前渗透率同时决定<b>渗透用户数</b>与未来增长基数；目标渗透率决定未来放大倍数。";
+        $("dailyTokensOut").textContent = number(bigTokens(r.dailyTokensRaw), 2);
+        $("dailyTokensSource").innerHTML = t("derive_src", {
+          u: `<b>${number(r.activeUsers, 0)}</b>`,
+          t: `<b>${tokenScale(r.perUserTokens)}</b>`,
+          a: `<b>${tokenScale(r.dailyTokensRaw)}</b>`
+        });
+        $("penetrationRoleHint").innerHTML = t("pen_role");
 
         syncModelPreset(r.v.totalParams, r.v.activeParams);
 
         $("minCardsOut").textContent = number(r.minCards, 0);
         const weightGiB = r.v.totalParams * 1e9 * r.v.weightPrecision / GIB;
-        $("minCardsHint").innerHTML =
-          `权重约 <b>${number(weightGiB, 1)}</b> GiB ÷ (<b>${number(r.v.cardVram, 0)}</b> GB × <b>${number(r.v.vramUsable, 0)}</b>%)`;
+        $("minCardsHint").innerHTML = t("min_hint", {
+          g: number(weightGiB, 1), v: number(r.v.cardVram, 0), p: number(r.v.vramUsable, 0)
+        });
       }
 
       function renderHero(r) {
-        $("resultSubtitle").textContent =
-          `${number(r.dailyTokensRaw / 1e8, 1)} 亿 Token/日 · ${modelLabel(r.v.totalParams, r.v.activeParams)} · ${number(r.v.cardTflops, 1)} TFLOPS/卡${precisionOf(r.v.cardTflops)}`;
+        $("resultSubtitle").textContent = t("subtitle", {
+          tok: number(bigTokens(r.dailyTokensRaw), 1),
+          model: modelLabel(r.v.totalParams, r.v.activeParams),
+          tf: number(r.v.cardTflops, 1),
+          prec: precisionOf(r.v.cardTflops)
+        });
         $("heroCards").textContent = number(r.currentCards, 0);
-        $("heroPflops").textContent = `≈ ${number(r.plannedPflops, 0)} PFLOPS 规划算力`;
+        $("heroPflops").textContent = t("hero_pflops", { p: number(r.plannedPflops, 0) });
 
         const tag = $("boundTag");
         tag.className = `bound-tag ${r.memoryBound ? "memory" : "compute"}`;
         tag.textContent = r.memoryBound
-          ? `受显存下限约束 · 算力需求仅 ${number(r.computeCards, 0)} 卡`
-          : `受算力需求约束 · 显存下限 ${number(r.minCards, 0)} 卡`;
+          ? t("bound_memory", { n: number(r.computeCards, 0) })
+          : t("bound_compute", { n: number(r.minCards, 0) });
 
         $("heroFormula").innerHTML = r.memoryBound
-          ? `n<sub>card</sub> = max(${number(r.computeCards, 0)}, ⌈${number(r.v.totalParams, 0)}B × ${number(r.v.weightPrecision, 1)}B/参数 ÷ ${number(r.v.cardVram, 0)}GB×${number(r.v.vramUsable, 0)}%⌉) = ${number(r.currentCards, 0)}`
+          ? t("formula_mem", { c: number(r.computeCards, 0), tp: number(r.v.totalParams, 0),
+              bw: number(r.v.weightPrecision, 1), v: number(r.v.cardVram, 0),
+              p: number(r.v.vramUsable, 0), f: number(r.currentCards, 0) })
           : `n<sub>card</sub> = ${number(r.tokenPerSecond, 0)} × ${number(r.v.flopsMultiplier, 1)} × ${number(r.v.activeParams, 1)}B × ${number(r.v.peakMultiplier, 1)} ÷ ${number(r.v.utilization, 0)}% × ${number(r.v.computeMargin, 2)} ÷ ${number(r.v.cardTflops, 1)}T`;
 
-        $("rowDailyTokens").innerHTML = `${number(r.dailyTokensRaw / 1e8, 2)}<small>亿/日</small>`;
+        $("rowDailyTokens").innerHTML = `${number(bigTokens(r.dailyTokensRaw), 2)}<small>${t("unit_yi_day")}</small>`;
         $("rowTokenPerSec").innerHTML = `${number(r.tokenPerSecond, 0)}<small>token/s</small>`;
-        $("rowComputeCards").innerHTML = `${number(r.computeCards, 0)}<small>卡</small>`;
-        $("rowMinCards").innerHTML = `${number(r.minCards, 0)}<small>卡</small>`;
+        $("rowComputeCards").innerHTML = `${number(r.computeCards, 0)}<small>${t("unit_card")}</small>`;
+        $("rowMinCards").innerHTML = `${number(r.minCards, 0)}<small>${t("unit_card")}</small>`;
         $("rowMinWrap").classList.toggle("is-binding", r.memoryBound);
-        $("rowFutureLabel").textContent = `未来 ${r.v.years} 年卡数`;
-        $("rowFutureCards").innerHTML = `${number(r.futureCards, 0)}<small>卡</small>`;
-        $("rowDevices").innerHTML = `${number(r.currentDevices, 0)}<small>台</small>`;
+        $("rowFutureLabel").textContent = t("row_future", { y: r.v.years });
+        $("rowFutureCards").innerHTML = `${number(r.futureCards, 0)}<small>${t("unit_card")}</small>`;
+        $("rowDevices").innerHTML = `${number(r.currentDevices, 0)}<small>${t("unit_server")}</small>`;
       }
 
       function renderSummary(r) {
@@ -1788,7 +1608,7 @@
         $("currentCards").textContent = number(r.currentCards, 0);
         $("computeMarginOut").textContent = `${number(r.v.computeMargin, 2)}×`;
         $("currentDevices").textContent = number(r.currentDevices, 0);
-        $("futureKpiLabel").textContent = `未来 ${r.v.years} 年算力需求`;
+        $("futureKpiLabel").textContent = t("kpi_future", { y: r.v.years });
         $("futurePflops").textContent = number(r.futurePflops, 0);
         $("futureCards").textContent = number(r.futureCards, 0);
         $("futureDeltaPflops").textContent = number(r.futurePflops - r.plannedPflops, 0);
@@ -1797,8 +1617,8 @@
         $("futureDau").textContent = number(r.futureActiveUsers, 0);
         $("cardTflopsOut").textContent = number(r.v.cardTflops, 1);
         $("cardVramOut").textContent = number(r.v.cardVram, 0);
-        $("trendTitle").textContent = `未来 ${r.v.years} 年算力卡数增长路径`;
-        $("chartEndLabel").textContent = `第 ${r.v.years} 年终值`;
+        $("trendTitle").textContent = t("trend_title", { y: r.v.years });
+        $("chartEndLabel").textContent = t("chart_end", { y: r.v.years });
         $("memBoundPill").hidden = !r.years.some(row => row.memoryBound);
       }
 
@@ -1834,13 +1654,13 @@
                  `<text class="chart-axis" x="${left - 8}" y="${py + 3}" text-anchor="end">${compact(value)}</text>`;
         }).join("");
         const labelsRow = rows.map((row, i) => `<text class="chart-axis" x="${x(i)}" y="${height - 10}" text-anchor="middle">${row.shortLabel}</text>`).join("");
-        const dots = rows.map((row, i) => `<circle class="chart-dot" cx="${x(i)}" cy="${y(row.cards)}" r="4"><title>${row.label}：${number(row.cards, 0)} 卡</title></circle>`).join("");
-        const values = rows.map((row, i) => `<text class="chart-value-label" x="${x(i)}" y="${Math.max(13, y(row.cards) - 10)}" text-anchor="middle">${number(row.cards, 0)}卡</text>`).join("");
+        const dots = rows.map((row, i) => `<circle class="chart-dot" cx="${x(i)}" cy="${y(row.cards)}" r="4"><title>${t("chart_tip", { label: row.label, n: number(row.cards, 0) })}</title></circle>`).join("");
+        const values = rows.map((row, i) => `<text class="chart-value-label" x="${x(i)}" y="${Math.max(13, y(row.cards) - 10)}" text-anchor="middle">${t("chart_val", { n: number(row.cards, 0) })}</text>`).join("");
 
         // 显存下限落在可视范围内时画一条参考线
         const floor = (minCards > 0 && minCards < max)
           ? `<line class="chart-floor" x1="${left}" y1="${y(minCards)}" x2="${width - right}" y2="${y(minCards)}"/>` +
-            `<text class="chart-floor-label" x="${width - right}" y="${y(minCards) - 5}" text-anchor="end">显存下限 ${number(minCards, 0)} 卡</text>`
+            `<text class="chart-floor-label" x="${width - right}" y="${y(minCards) - 5}" text-anchor="end">${t("chart_floor", { n: number(minCards, 0) })}</text>`
           : "";
 
         svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
@@ -1856,7 +1676,7 @@
           ${dots}
           ${values}
           ${labelsRow}
-          <text class="chart-axis" x="${left}" y="12">卡数</text>`;
+          <text class="chart-axis" x="${left}" y="12">${t("chart_axis")}</text>`;
       }
 
       function renderAnnualTable(rows) {
@@ -1947,7 +1767,6 @@
         });
       }
 
-      $("langToggle")?.addEventListener("click", switchLocale);
       inputs.forEach(input => {
         input.addEventListener("input", () => {
           if (input.tagName !== "SELECT") reformatInput(input);
@@ -1957,6 +1776,17 @@
         input.addEventListener("change", () => { setActiveScenario(null); calculate(); });
       });
 
+      buildI18nIndex();
+      $("langToggle")?.addEventListener("click", () => {
+        const next = LANG === "zh" ? "en" : "zh";
+        setLang(next);
+        globalThis.AidcLocaleBridge?.setLocale?.(next, { source: LOCALE_SELF_SOURCE });
+      });
+      globalThis.AidcLocaleBridge?.initIframeListener?.((nextLocale) => {
+        const next = nextLocale === "en" ? "en" : "zh";
+        if (next === LANG) return;
+        setLang(next);
+      }, { selfSource: LOCALE_SELF_SOURCE });
       setupTabs();
       setupScenarios();
       setupModelPreset();
@@ -1964,7 +1794,8 @@
       setupResponsiveChart();
       writeValues(defaults);
       setActiveScenario(DEFAULT_SCENARIO);
-      calculate();
+      if (LANG === "en") setLang("en");
+      else calculate();
     })();
   </script>
 </body>

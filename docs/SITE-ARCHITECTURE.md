@@ -34,7 +34,7 @@ aidc/
 
 ## 3. 顶层入口
 
-- `ai-dc-design.html`：AI DC 规划容器，也是站点 Logo 的默认入口。
+- `ai-dc-design.html`：AI DC 规划容器，也是站点 Logo 的默认入口。供电、液冷、层高承重、工期造价为独立 HTML，不再作为本页 `?tab=`。
 - `index.html`：Agentic 推理容器，同时承载混部、分离和 KV Cache 计算。
 - `post-training.html`：后训练独立页面。
 - `topic.html`：Topic 目录（卡片网格）。子页包括白皮书 PDF 预览与观点 HTML。旧地址 `white-paper.html` 由 Nginx 301 到本页。
@@ -52,19 +52,22 @@ ai-dc-design.html
 │   ├── fourLayer   → ai-dc-four-layer.html
 │   └── floorDetail → ai-dc-floor-detail.html
 ├── tab=roomLayout3d → ai-dc-room-layout-3d.html
-├── tab=power      → ai-dc-power.html
-├── tab=liquidRack → ai-dc-liquid-rack.html
 ├── tab=tcp        → ai-dc-tcp.html
 ├── tab=computeEst → ai-dc-computeEst.html
-├── tab=plan       → ai-dc-layout.html
+├── tab=plan       → aidc-layout-Card2Power.html
 ├── tab=synergy    → ai-dc-deployment-perf.html
 ├── tab=a          → datacenter-3d-case-b.html
 ├── tab=b          → datacenter-3d-v3-2.html
-├── tab=scheduleBudget → ai-dc-schedule-budget.html
 └── tab=roi        → aidc-investment-roi.html
+
+独立入口（主导航直达 HTML；旧 ?tab= 会跳转到对应文件）
+├── ai-dc-power.html
+├── ai-dc-liquid-requirements.html
+├── ai-dc-liquid-rack.html
+└── ai-dc-schedule-budget.html
 ```
 
-第一层 iframe 关系由 `js/ai-dc-design-page.js` 管理。机房布局的第二层 iframe 由 `js/ai-dc-room-layout-page.js` 管理。父页负责选择 Tab、拼接 `embed=1` 和语言参数；子页负责响应主题及语言同步。
+第一层 iframe 关系由 `js/ai-dc-design-page.js` 管理。机房布局的第二层 iframe 由 `js/ai-dc-room-layout-page.js` 管理。父页负责选择 Tab、拼接 `embed=1` 和语言参数；子页负责响应主题及语言同步。`aidc-layout-Card2Power.html` 仍可在 `tab=plan` 内嵌，同时作为独立入口。
 
 注意：`datacenter-3d-case-b.html` 当前对应界面“案例 A”，文件历史名称与展示名称不一致。修改名称或 URL 前需提供兼容迁移，不能直接重命名。
 
@@ -121,7 +124,7 @@ topic.html                Topic 目录（data/topics.json）
 
 ## 7. 数据与 API 关系
 
-- 机房布局 3D / 机房供电 / 机房液冷：纯前端 Three.js 场景，无 API / 数据库依赖；WebGL 不可用时显示回退说明。
+- 机房布局（立体） / 机房供电 / 机房液冷（立体）：纯前端 Three.js 场景，无 API / 数据库依赖；WebGL 不可用时显示回退说明。
 - 机房工期和造价：纯前端工期甘特与风冷/液冷造价估算，无 API / 数据库依赖；造价公式在 `js/ai-dc-schedule-budget-model.js`。
 - 3D 案例 A/B：读取 `/api/config/dc3d.case_a`、`dc3d.case_b`，失败时回退 `data/dc3d-case-*.defaults.json`。
 - Investment ROI：读取和管理 `/api/config/roi.*`，本地默认由页面初始化脚本和 `data/config-seeds/` 保持。

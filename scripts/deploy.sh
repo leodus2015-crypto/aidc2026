@@ -29,6 +29,8 @@ usage() {
 
 环境:
   复制 deploy.env.example → deploy.env 并填写 SSH 信息
+  华为冷备：deploy.env.huawei.example → deploy.env.huawei（填 ECS 后自动双 rsync）
+  仅同步华为：./scripts/sync-huawei.sh
 
 角色:
   本机 = 最新源；腾讯云 = 部署版（只走本脚本 rsync）；GitHub = 开源归档（不自动部署）
@@ -189,6 +191,16 @@ main() {
     [[ "${FULL_RESET}" -eq 1 ]] && server_full_reset
     rsync_to_server
     verify_deploy
+    if [[ -f "${ROOT}/deploy.env.huawei" ]] && [[ "${HUAWEI_SYNC:-1}" != "0" ]]; then
+      # shellcheck disable=SC1091
+      source "${ROOT}/deploy.env.huawei" 2>/dev/null || true
+      if [[ -n "${HUAWEI_DEPLOY_HOST:-}" ]]; then
+        echo ">> 华为云冷备同步"
+        bash "${ROOT}/scripts/sync-huawei.sh"
+      else
+        echo ">> 跳过华为（deploy.env.huawei 未填 HUAWEI_DEPLOY_HOST）"
+      fi
+    fi
   fi
 
   echo ">> 部署完成"

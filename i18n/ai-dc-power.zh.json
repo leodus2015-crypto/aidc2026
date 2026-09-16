@@ -21,22 +21,18 @@
     "hallView": "机房区",
     "showVoltages": "显示电压",
     "hideVoltages": "隐藏电压",
-    "hideLines": "隐藏线路",
-    "showLines": "显示线路",
-    "hideWalls": "隐藏墙体",
-    "showWalls": "显示墙体",
     "reset": "重置视角",
     "hint": "拖动旋转 · 滚轮缩放 · 点击设备查看"
   },
   "info": {
     "title": "供电系统全景",
-    "copy": "供电链路从高架 500kV 枢纽站逐级降压至 220kV、10kV 与 380V，经过 UPS 与输出配电后送入 AI 服务器机柜。"
+    "copy": "市电逐级降至 10kV，与 10kV 柴油发电机在中压 ATS 柜完成联锁切换，再经 10kV/380V 变压器、低压配电和 UPS，为微模块供电。"
   },
   "legend": {
     "high": "500/220/10kV",
     "low": "380V / UPS输出",
     "battery": "电池 DC",
-    "gen": "发电机"
+    "gen": "发电机 10kV"
   },
   "fallback": {
     "title": "当前浏览器无法显示 3D 场景",
@@ -49,25 +45,34 @@
     "d220": "将 500kV 降至 220kV，作为园区级高压电源",
     "n10": "③ 10kV 中压室",
     "d10": "220kV 经站内主变降至 10kV 后接入，完成保护、计量和分路",
-    "nTransformer": "④ 10kV / 380V 变压器",
+    "nTransformer": "⑤ 10kV / 380V 变压器",
     "dTransformer": "将 10kV 中压电转换为 380V 三相低压电",
-    "nLv": "⑤ 380V 低压室",
+    "nLv": "⑥ 380V 低压室",
     "dLv": "接收变压器输出的 380V 三相电，完成低压配电与动力分路",
-    "nAts": "⑥ ATS / 应急切换柜",
-    "dAts": "在市电与发电机之间完成安全切换",
+    "nAts": "④ 10kV ATS / 应急切换柜",
+    "dAts": "中压金属铠装开关柜列：市电进线、10kV 柴发进线、母线测控和变压器出线；真空断路器由保护测控联锁，先断后合，避免市电与柴发非同期并列。切换后的 10kV 电源先进入变压器，再降至 380V。",
+    "atsUtility": "市电进线",
+    "atsGenerator": "柴发进线",
+    "atsControl": "母线测控",
+    "atsFeeder": "变压器出线",
     "nUps": "⑦ UPS",
     "dUps": "在线双变换 UPS：380V AC → DC → 380V AC",
     "nBattery1": "电池柜-1",
     "dBattery1": "UPS 直流储能，市电中断后瞬时接管",
     "nBattery2": "电池柜-2",
     "dBattery2": "UPS 储能扩展柜，与电池柜-1 并联提供后备时间",
-    "nGen": "柴油发电机（室外）",
-    "dGen": "长时间停电后的备用交流电源，经 ATS 接管",
+    "nGen": "10kV 柴油发电机（室外）",
+    "dGen": "本场景采用 10kV 柴油发电机。停电后启动，电压与频率稳定后经中压 ATS 联锁接入，再通过变压器降至 380V；启动与切换期间由 UPS 电池支撑 IT 负载。",
     "nPdu": "⑧ 输出配电 / PDU",
     "dPdu": "UPS 输出配电，送往机房配电母线槽",
     "nRack": "⑩ AI 服务器机柜",
     "dRack": "机柜 PDU 为服务器电源模块供电，服务器内部 Power Shelf 转换为 48V DC",
     "rackSub": "380V 输入 · PSU / 48V Power Shelf",
+    "nModule": "⑩ 微模块",
+    "moduleSub": "双排封闭冷通道",
+    "dModule": "微模块功能示意：双排机柜正面相对、透明通道顶板、滑动端门、列间空调、顶部走线和端部监控屏。380V 电源经母线槽与机柜 PDU 送入 IT 设备。",
+    "nCooling": "微模块列间空调",
+    "dCooling": "与 IT 机柜并排布置的列间制冷单元，向封闭冷通道送风；图中为功能示意。",
     "nBusway": "⑨ 配电母线槽",
     "buswaySub": "380V AC · 三相输出路径"
   },
@@ -75,6 +80,8 @@
     "v500": "500 kV AC · 高架进线",
     "v220": "220 kV AC · 园区高压",
     "v10": "10 kV AC · 中压",
+    "vAts10": "ATS：10 kV AC · 中压切换",
+    "vGen10": "柴发：10 kV AC",
     "v380": "380 V AC · 三相",
     "vUpsIn": "380 V AC · UPS 输入",
     "vBattery": "384–576 V DC · 电池侧",
@@ -84,14 +91,14 @@
   },
   "mode": {
     "normalStatus": "市电正常",
-    "normalProgress": "500kV 市电逐级降压至 380V · UPS 输出正常",
+    "normalProgress": "市电 10kV → 中压 ATS → 变压器 380V → UPS → 智能微模块",
     "batteryStatus": "电池接管",
     "batteryProgress": "市电中断 · UPS 电池 DC 瞬时接管",
     "startingStatus": "发电机启动中",
     "startingProgress": "电池继续支撑 IT 负载 · 柴油发电机正在启动并稳定",
     "generatorStatus": "发电机供电",
-    "generatorProgress": "ATS 已切换 · 发电机为 UPS 输入供电",
+    "generatorProgress": "10kV 柴发 → 中压 ATS → 变压器 380V → UPS · IT 负载持续供电",
     "rechargingStatus": "市电已恢复",
-    "rechargingProgress": "ATS 切回市电 · UPS 电池进入恢复充电阶段"
+    "rechargingProgress": "10kV ATS 联锁切回市电 · 经变压器恢复低压供电 · UPS 电池充电"
   }
 }

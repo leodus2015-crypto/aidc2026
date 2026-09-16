@@ -7,9 +7,18 @@ Keep in sync with:
 - ai-dc-tcp.html COMMON / SC
 - js/ai-dc-schedule-budget-model.js calculateScenario / compareScenarios
 
-TCP 1024 / computeEst coding golden defaults (do not change unless product asks):
-dau=3180, pen=60, tin=21_000_000, tout=300_000, hit=0, N=40, K=2.0, C_card=919
-→ daily tokens 40_640_400_000, cards 1024
+TCP 2026-09 overview golden defaults (ai-dc-tcp.html COMMON + SC):
+dau=12700 / 9525, pen=100, tin=9_900_000, tout=100_000, hit=0, M=3, N=45, K=1.2, C_card=919
+→ daily tokens 127_000_000_000 / 95_250_000_000, cards 1024 / 768
+→ room power round(2096×1.20)=2515 kW / round(2500×1.50)=3750 kW
+
+computeEst coding golden (ai-dc-computeEst.html scenarios.coding; same inputs as TCP 1024):
+dau=12700, pen=100, tin=9_900_000, tout=100_000, hit=0, M=3, N=45, K=1.2, C_card=919
+→ daily tokens 127_000_000_000, cards 1024
+
+Schedule-budget golden (js/ai-dc-schedule-budget.js SCENARIO_DEFAULTS, 1024 cards, $8/W, $0.132/kWh, 5y):
+air 3kW/card PUE1.5 $85000 2.5% O&M; liquid 2kW/card PUE1.2 $110000 3% O&M
+年 OPEX = 年电费 + CAPEX×运维费率
 """
 
 from __future__ import annotations
@@ -119,6 +128,11 @@ def planned_cards(compute: int, memory_min: int) -> int:
     return max(compute, memory_min)
 
 
+def room_power_kw(design_kw: float, pue: float) -> int:
+    """TCP roomPowerKW: P_room = round(P_IT × PUE), kW integer."""
+    return round(design_kw * pue)
+
+
 def schedule_scenario(
     cards: float,
     card_power_kw: float,
@@ -127,6 +141,7 @@ def schedule_scenario(
     infra_per_w: float,
     electricity: float,
     years: float,
+    maintenance_rate: float = 0.0,
 ) -> dict[str, float] | None:
     """机房工期和造价。非法输入返回 None，不传播 NaN。
 
@@ -134,21 +149,36 @@ def schedule_scenario(
     机房 MW = ICT MW × PUE
     L0+L1 = 机房 MW × 10⁶ × $/W
     ICT = cards × $/card
-    年 OPEX = 机房 MW × 1000 × 8760 × $/kWh
+    年电费 = 机房 MW × 1000 × 8760 × $/kWh
+    年运维 = CAPEX × 运维费率(%) / 100
+    年 OPEX = 年电费 + 年运维
     """
-    values = (cards, card_power_kw, pue, unit_cost, infra_per_w, electricity, years)
+    values = (
+        cards,
+        card_power_kw,
+        pue,
+        unit_cost,
+        infra_per_w,
+        electricity,
+        years,
+        maintenance_rate,
+    )
     if any(not math.isfinite(value) for value in values):
         return None
     if cards < 1 or pue < 1 or years < 1:
         return None
     if card_power_kw < 0 or unit_cost < 0 or infra_per_w < 0 or electricity < 0:
         return None
+    if maintenance_rate < 0 or maintenance_rate > 100:
+        return None
     ict_mw = cards * card_power_kw / 1000
     facility_mw = ict_mw * pue
     ict_cost = cards * unit_cost
     infra_cost = facility_mw * 1e6 * infra_per_w
     capex = ict_cost + infra_cost
-    annual_opex = facility_mw * 1000 * 8760 * electricity
+    annual_electricity = facility_mw * 1000 * 8760 * electricity
+    annual_maintenance = capex * maintenance_rate / 100
+    annual_opex = annual_electricity + annual_maintenance
     opex = annual_opex * years
     return {
         "ict_mw": ict_mw,
@@ -156,6 +186,8 @@ def schedule_scenario(
         "ict_cost": ict_cost,
         "infra_cost": infra_cost,
         "capex": capex,
+        "annual_electricity": annual_electricity,
+        "annual_maintenance": annual_maintenance,
         "annual_opex": annual_opex,
         "opex": opex,
         "total": capex + opex,

@@ -197,7 +197,7 @@ function addGround() {
 
   const roadColor = themeColor(0x8798a3, COLORS.road);
   box([35, 0.03, 2.1], [0, 0.01, 7.4], material(roadColor, { roughness: 1 }));
-  box([2.1, 0.035, 23], [-3.8, 0.015, 0.5], material(roadColor, { roughness: 1 }));
+  box([0.8, 0.035, 23], [3.1, 0.015, 0.5], material(roadColor, { roughness: 1 }));
   box([17, 0.03, 1.25], [5.8, 0.02, -4.6], material(roadColor, { roughness: 1 }));
 
   const lakeMat = material(themeColor(0x70b7cf, 0x174b66), { roughness: 0.25, metalness: 0.1, transparent: true, opacity: 0.8 });
@@ -329,8 +329,8 @@ function addGeneratorPlant() {
 
 function buildCampus() {
   addGround();
-  createCampusBuilding({ labelKey: 'objects.a02', x: 0.7, z: -1.1, w: 13.8, d: 5.8, h: 5.3, hot: true, action: { type: 'building' } });
-  createCampusBuilding({ labelKey: 'objects.a01', x: 8.4, z: 5.3, w: 10.4, d: 5.4, h: 4.5 });
+  createCampusBuilding({ labelKey: 'objects.a02', x: -1.8, z: -0.4, w: 8.4, d: 6.6, h: 4.8, hot: true, action: { type: 'building' } });
+  createCampusBuilding({ labelKey: 'objects.a01', x: 8.0, z: -0.4, w: 8.4, d: 6.6, h: 4.8 });
   createCampusBuilding({ labelKey: 'objects.office', x: -10.6, z: 5.1, w: 6.2, d: 4.3, h: 3.2, color: themeColor(0x91a4b2, 0x516678) });
   createCampusBuilding({ labelKey: 'objects.substation', x: -11.35, z: -5.15, w: 2.4, d: 2.35, h: 1.65, color: themeColor(0x8198a7, 0x3d5363) });
   addSubstationYard();
@@ -585,34 +585,52 @@ function addEhuEquipment(x, z, w) {
   const sectionMat = material(themeColor(0x8298a5, 0x1d3546), { metalness: 0.56, roughness: 0.34 });
   const fanMat = material(themeColor(0x4b6270, 0x102635), { metalness: 0.7, roughness: 0.26 });
   const pipeMat = material(0x14b8a6, { emissive: 0x14b8a6, emissiveIntensity: 0.12, metalness: 0.48, roughness: 0.3 });
+  const airflowMat = material(0x38bdf8, { transparent: true, opacity: 0.65, emissive: 0x38bdf8, emissiveIntensity: 0.3 });
+  const direction = z < 0 ? 1 : -1;
   const count = 4;
+  const wallWidth = w - 1.2;
+  const moduleWidth = wallWidth / count;
+  const fanZ = z + direction * 0.73;
+  // 连续风墙：四个并排模块，每个模块两行两列风机，送风面朝向机柜区。
   for (let index = 0; index < count; index += 1) {
-    const px = x - w / 2 + 1.35 + index * ((w - 2.7) / (count - 1));
-    const unit = box([1.82, 1.28, 1.18], [px, 0.94, z], unitMat.clone());
+    const px = x - wallWidth / 2 + moduleWidth * (index + 0.5);
+    const unit = box([moduleWidth - 0.06, 2.0, 1.4], [px, 1.28, z], unitMat.clone());
     addEdges(unit, 0x38bdf8, 0.24);
     makePickable(unit, t('objects.ehu'));
 
-    // AHU 典型分段：过滤/盘管段、风机段和顶部送风风管。
-    box([0.06, 1.12, 1.2], [px - 0.18, 0.94, z], sectionMat.clone());
-    [-0.24, -0.12, 0, 0.12, 0.24].forEach((offset) => {
-      box([0.58, 0.035, 0.025], [px - 0.5, 0.94 + offset, z + 0.605], fanMat.clone());
-    });
-    const fanRing = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.045, 8, 28), fanMat.clone());
-    fanRing.position.set(px + 0.43, 0.97, z + 0.61);
-    modelRoot.add(fanRing);
-    [0, Math.PI / 2].forEach((rotation) => {
-      const blade = box([0.07, 0.48, 0.025], [px + 0.43, 0.97, z + 0.615], fanMat.clone());
-      blade.rotation.z = rotation;
-    });
-    const duct = box([1.0, 0.42, 0.76], [px, 1.79, z], sectionMat.clone());
-    addEdges(duct, 0x7dd3fc, 0.2);
-
-    [-0.7, 0.7].forEach((offset) => {
-      const riser = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.92, 12), pipeMat.clone());
-      riser.position.set(px + offset, 1.45, z - 0.42);
-      modelRoot.add(riser);
+    // 背部过滤/换热面与顶部水路，不再使用独立箱机的顶部送风风管。
+    box([moduleWidth - 0.18, 1.82, 0.06], [px, 1.28, z - direction * 0.73], sectionMat.clone());
+    for (let fin = 0; fin < 10; fin += 1) {
+      box([moduleWidth - 0.3, 0.035, 0.045], [px, 0.5 + fin * 0.17, z - direction * 0.775], fanMat.clone());
+    }
+    box([moduleWidth - 0.18, 1.82, 0.035], [px, 1.28, fanZ - direction * 0.015], sectionMat.clone());
+    [-moduleWidth * 0.24, moduleWidth * 0.24].forEach((offset) => {
+      [0.82, 1.72].forEach((fanY) => {
+        const fanX = px + offset;
+        const fanRing = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.045, 8, 28), fanMat.clone());
+        fanRing.position.set(fanX, fanY, fanZ + direction * 0.035);
+        modelRoot.add(fanRing);
+        [Math.PI / 4, -Math.PI / 4].forEach((rotation) => {
+          const blade = box([0.12, 0.57, 0.035], [fanX, fanY, fanZ + direction * 0.06], fanMat.clone());
+          blade.rotation.z = rotation;
+        });
+        const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.07, 12), pipeMat.clone());
+        hub.rotation.x = Math.PI / 2;
+        hub.position.set(fanX, fanY, fanZ + direction * 0.08);
+        modelRoot.add(hub);
+      });
     });
   }
+  [-0.12, 0.12].forEach((offset) => {
+    box([wallWidth, 0.075, 0.075], [x, 2.38, z - direction * (0.48 + offset)], pipeMat.clone());
+  });
+  [-wallWidth / 3, 0, wallWidth / 3].forEach((offset) => {
+    box([0.07, 0.07, 0.62], [x + offset, 0.65, z + direction * 1.08], airflowMat.clone());
+    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.3, 12), airflowMat.clone());
+    arrow.rotation.x = direction * Math.PI / 2;
+    arrow.position.set(x + offset, 0.65, z + direction * 1.5);
+    modelRoot.add(arrow);
+  });
 }
 
 function addSwitchgearLineup(room, kind) {
@@ -881,21 +899,21 @@ function buildFloorDetail() {
   addInspectionRoutes();
 
   [-6.7, 6.7].forEach((x) => {
-    addRoom({ x, z: -7.2, w: 12, d: 2.45, color: COLORS.ehu, labelKey: 'objects.ehu', labelY: 2.18 });
+    addRoom({ x, z: -7.2, w: 12, d: 2.45, color: COLORS.ehu, labelKey: 'objects.ehu', labelY: 2.98 });
     addEhuEquipment(x, -7.2, 12);
-    addRoom({ x, z: -4.2, w: 12, d: 2.9, color: COLORS.hall, labelKey: 'objects.hall', label: false });
+    addRoom({ x, z: -4.2, w: 12, d: 2.9, color: COLORS.hall, labelKey: 'objects.smartModule', labelY: 2.98 });
     addRackArray(x, -4.2, 10.9, 2.35);
     addAisleDetails(x, -4.2, 10.9, 2.35, x < 0 ? 1 : -1);
     addColdAisleContainment(x, -4.2, 10.9);
     addRackPowerUnits(x, -4.2, 10.9);
     addOverheadServices(x, -4.2, 10.9);
-    addRoom({ x, z: 4.2, w: 12, d: 2.9, color: COLORS.hall, labelKey: 'objects.hall', label: false });
+    addRoom({ x, z: 4.2, w: 12, d: 2.9, color: COLORS.hall, labelKey: 'objects.smartModule', labelY: 2.98 });
     addRackArray(x, 4.2, 10.9, 2.35);
     addAisleDetails(x, 4.2, 10.9, 2.35, x < 0 ? -1 : 1);
     addColdAisleContainment(x, 4.2, 10.9);
     addRackPowerUnits(x, 4.2, 10.9);
     addOverheadServices(x, 4.2, 10.9);
-    addRoom({ x, z: 7.2, w: 12, d: 2.45, color: COLORS.ehu, labelKey: 'objects.ehu', labelY: 2.18 });
+    addRoom({ x, z: 7.2, w: 12, d: 2.45, color: COLORS.ehu, labelKey: 'objects.ehu', labelY: 2.98 });
     addEhuEquipment(x, 7.2, 12);
   });
 
@@ -931,7 +949,7 @@ function buildFloorDetail() {
 }
 
 const PRESETS = {
-  campus: { camera: [27, 22, 30], target: [0, 1.6, 1], min: 16, max: 58 },
+  campus: { camera: [7, 22, 36], target: [0, 1.6, 1], min: 16, max: 58 },
   building: { camera: [22, 17, 24], target: [0, 5.4, 0], min: 13, max: 48 },
   floor: { camera: [24, 15.5, 25], target: [0, 1.05, 0], min: 12, max: 48 },
 };

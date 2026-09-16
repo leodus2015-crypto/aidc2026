@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Room Layout 3D · AI Data Center",
-    "shortTitle": "Room Layout 3D",
+    "title": "Room Layout (Spatial) · AI Data Center",
+    "shortTitle": "Room Layout (Spatial)",
     "description": "Interactive 3D AI data center layout covering the campus, four-level building, and detailed data floor."
   },
   "app": {
@@ -33,7 +33,7 @@
   "floor": {
     "title": "A02 · {floor} Detailed Data Floor",
     "description": "Drag to inspect raised functional zones, contained aisles, overhead services and rack arrays. Every floor uses the same standardized POD modules.",
-    "info": "Each floor is about 133m × 92m. EHU rooms use AHU-style casing, filters, coils, fans and supply ducts; hydraulic modules show pumps, heat exchangers, supply/return headers and valves. Capacity remains 1,280 racks.",
+    "info": "Each floor is about 133m × 92m. EHU rooms show continuous fan walls with fan arrays, rear filter/coil faces and airflow arrows toward the racks; hydraulic modules show pumps, heat exchangers, supply/return headers and valves. Capacity remains 1,280 racks.",
     "selected": "Current floor",
     "rackRows": "Rack arrays",
     "zones": "Functional zones"
@@ -62,6 +62,7 @@
     "rf": "RF Equipment Level",
     "ehu": "EHU Plant Room",
     "hall": "Air / Liquid-Cooled Hall",
+    "smartModule": "Intelligent Micro Module",
     "power": "Low-Voltage Power",
     "powerFunction": "Power Distribution Zone",
     "medium": "Medium-Voltage Room",
