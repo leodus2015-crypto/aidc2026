@@ -16,7 +16,7 @@ RELEASE_FILE = ROOT / "data" / "site-release.json"
 ASSET_VERSION_JS = ROOT / "js" / "aidc-asset-version.js"
 FALLBACK_RE = re.compile(r"var FALLBACK = '\d+';")
 LOCAL_ASSET_RE = re.compile(
-    r'(?P<prefix>(?:src|href)=")((?:\.\./)?(?:js|css|i18n)/[^"?#]+)(?P<q>\?v=\d+)?(?P<suffix>")',
+    r'(?P<prefix>(?:src|href)=")((?:\.\./)?(?:js|css|i18n)/[^"?#]+)(?:\?v=\d+(?P<extra>&[^"]*)?)?(?P<suffix>")',
     re.IGNORECASE,
 )
 INFERENCE_STYLE_RE = re.compile(r'(?P<prefix>href="styles\.css)(?:\?v=\d+)?(?P<suffix>")')
@@ -69,19 +69,20 @@ def sync_asset_version_js(version: str) -> bool:
     return False
 
 
+def rewrite_local_asset_refs(text: str, version: str) -> str:
+    def repl(match: re.Match[str]) -> str:
+        extra = match.group("extra") or ""
+        return f'{match.group("prefix")}{match.group(2)}?v={version}{extra}{match.group("suffix")}'
+
+    return LOCAL_ASSET_RE.sub(repl, text)
+
+
 def patch_html_file(path: Path, version: str) -> bool:
     text = path.read_text(encoding="utf-8")
     original = text
 
     text = text.replace("js/aidc-asset-version.js?v={v}", f"js/aidc-asset-version.js?v={version}")
-
-    def repl(match: re.Match[str]) -> str:
-        prefix = match.group("prefix")
-        asset = match.group(2)
-        suffix = match.group("suffix")
-        return f'{prefix}{asset}?v={version}{suffix}'
-
-    text = LOCAL_ASSET_RE.sub(repl, text)
+    text = rewrite_local_asset_refs(text, version)
     text = INFERENCE_STYLE_RE.sub(
         lambda match: f'{match.group("prefix")}?v={version}{match.group("suffix")}',
         text,

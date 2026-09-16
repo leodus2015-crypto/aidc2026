@@ -48,6 +48,11 @@ ATTR_RE = re.compile(
     r"""(?:src|href)\s*=\s*['"]([^'"]+)['"]""",
     re.IGNORECASE,
 )
+LOCAL_VERSIONED_ASSET_RE = re.compile(
+    r"""(?:src|href)\s*=\s*["']((?:\.\./)?(?:js|css|i18n)/[^"'?#]+)(\?[^"'#]*)?""",
+    re.IGNORECASE,
+)
+ASSET_V_PARAM_RE = re.compile(r"(?:^|[?&])v=(\d+)(?:&|$)")
 I18N_PAGE_RE = re.compile(r'data-i18n-page="([^"]+)"')
 EXCLUDE_RE = re.compile(r"""--exclude\s+['"]([^'"]+)['"]""")
 MIGRATION_RE = re.compile(r"^(\d{4})_[a-z0-9_]+\.sql$")
@@ -156,6 +161,28 @@ def optional_html_refs(loaded: dict[Path, Any], root: Path = ROOT) -> set[str]:
     return optional
 
 
+def expected_asset_version(root: Path = ROOT) -> str | None:
+    path = root / "data" / "asset-version.json"
+    if not path.is_file():
+        return None
+    data = json.loads(path.read_text(encoding="utf-8"))
+    version = str(data.get("version") or "").strip()
+    return version or None
+
+
+def check_html_asset_versions(errors: list[str], rel: str, text: str, root: Path = ROOT) -> None:
+    expected = expected_asset_version(root)
+    if not expected:
+        return
+    for asset, query in LOCAL_VERSIONED_ASSET_RE.findall(text):
+        found = ASSET_V_PARAM_RE.search(query or "")
+        if not found:
+            errors.append(f"{rel} 本地资源缺少 ?v=: {asset}")
+            continue
+        if found.group(1) != expected:
+            errors.append(f"{rel} 资源版本 {found.group(1)} 应为 {expected}: {asset}{query}")
+
+
 def check_html_refs(errors: list[str], loaded: dict[Path, Any] | None = None, root: Path = ROOT) -> None:
     optional = optional_html_refs(loaded or {}, root)
     root_resolved = root.resolve()
@@ -177,6 +204,8 @@ def check_html_refs(errors: list[str], loaded: dict[Path, Any] | None = None, ro
                 continue
             if not target.is_file():
                 errors.append(f"{rel} 引用缺失: {raw}")
+
+        check_html_asset_versions(errors, rel, text, root)
 
         page_id = None
         match = I18N_PAGE_RE.search(text)
