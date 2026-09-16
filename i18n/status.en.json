@@ -6,7 +6,7 @@
   "gate": {
     "eyebrow": "Internal",
     "title": "Site Status",
-    "hint": "Enter the server ADMIN_TOKEN from environment (no hardcoded default on this page).",
+    "hint": "Enter the server ADMIN_TOKEN (English letters are case-insensitive; no hardcoded default on this page).",
     "label": "Admin token",
     "placeholder": "Password",
     "error": "Invalid token or unauthorized",

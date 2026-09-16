@@ -121,6 +121,46 @@ def test_verify_admin_accepts_valid_bearer():
     assert res.json() == {"authenticated": True}
 
 
+def test_admin_token_matches_ignores_english_case():
+    assert main.admin_token_matches("  AbC-12  ", "abc-12")
+    assert main.admin_token_matches("STRONG-TEST-TOKEN", "Strong-Test-Token")
+    assert not main.admin_token_matches("abc-13", "abc-12")
+    assert not main.admin_token_matches("abc", "abcd")
+
+
+def test_admin_protected_routes_accept_english_case_variants():
+    mixed = "StRoNg-TeSt-ToKeN"
+    with patch.object(main, "ADMIN_TOKEN", "Strong-Test-Token"), patch.object(
+        main, "query_summary", side_effect=DatabaseError("unavailable")
+    ):
+        verify = client.post(
+            "/api/admin/verify",
+            headers={"Authorization": f"Bearer {mixed}"},
+        )
+        put = client.put(
+            "/api/config/roi.defaults",
+            json={"data": {}},
+            headers={"Authorization": f"Bearer {mixed}"},
+        )
+        summary = client.get(
+            "/api/analytics/summary",
+            headers={"Authorization": f"Bearer {mixed}"},
+        )
+        pages = client.get(
+            "/api/analytics/pages",
+            headers={"Authorization": f"Bearer {mixed}"},
+        )
+        ips = client.get(
+            "/api/analytics/ips",
+            headers={"Authorization": f"Bearer {mixed}"},
+        )
+    assert verify.status_code == 200
+    assert put.status_code == 422
+    assert summary.status_code == 200
+    assert pages.status_code == 200
+    assert ips.status_code == 200
+
+
 def test_verify_admin_rejects_invalid_scheme_and_token():
     with patch.object(main, "ADMIN_TOKEN", "strong-test-token"):
         invalid_scheme = client.post(

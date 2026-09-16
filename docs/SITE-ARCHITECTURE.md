@@ -133,7 +133,7 @@ topic.html                Topic 目录（data/topics.json）
 - Topic 目录：读取 `data/topics.json`；卡片可指向白皮书 PDF 预览页或观点 HTML。`assets/aidc-whitepaper-2024-zh.pdf` 允许缺失，预览页必须显示就绪提示。主权 AI 观点页按语言嵌入 `topic/sovereign-ai/sovereign-ai-zh.html` / `topic/sovereign-ai/sovereign-ai.html`；配图在 `topic/sovereign-ai/assets/`。演讲稿留在该目录，不作为站点入口。
 - 页面文案：所有标准页面读取 `i18n/common.*.json` 和自己的页面 bundle。
 
-管理凭据仅存在于服务端 `ADMIN_TOKEN` 环境变量。ROI 与 3D 页面由用户输入凭据并调用服务端验证；公共配置接口不得返回口令或其验证材料。
+管理凭据仅存在于服务端 `ADMIN_TOKEN` 环境变量。ROI、3D 案例与站点状态都走同一套服务端校验；英文字母大小写不敏感，数字与符号仍须一致。公共配置接口不得返回口令或其验证材料。
 
 API 成功响应由 `api/schemas.py` 定义并保持现有主体兼容。错误统一返回 `error.code`、`error.message`、`error.request_id`；数据库驱动异常只写服务端日志，不返回浏览器。前端生成的 `X-Request-ID` 会由 API 校验并在响应头回传。
 

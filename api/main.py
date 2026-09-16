@@ -85,7 +85,18 @@ async def handle_unexpected_error(request: Request, exc: Exception):
     return error_response(request, 500, "INTERNAL_ERROR", "服务器内部错误")
 
 
+def admin_token_matches(provided: str, expected: str) -> bool:
+    """English letters are compared case-insensitively; other characters stay exact."""
+    left = provided.strip().casefold().encode("utf-8")
+    right = expected.casefold().encode("utf-8")
+    if len(left) != len(right):
+        hmac.compare_digest(right, right)
+        return False
+    return hmac.compare_digest(left, right)
+
+
 def require_admin(authorization: Optional[str]) -> None:
+    """站点状态、ROI、3D 解锁与配置写入共用的口令校验。"""
     if not ADMIN_TOKEN:
         raise HTTPException(status_code=503, detail="ADMIN_TOKEN 未配置")
     scheme, separator, token = (authorization or "").partition(" ")
@@ -93,7 +104,7 @@ def require_admin(authorization: Optional[str]) -> None:
         separator != " "
         or scheme.lower() != "bearer"
         or not token
-        or not hmac.compare_digest(token.strip(), ADMIN_TOKEN)
+        or not admin_token_matches(token, ADMIN_TOKEN)
     ):
         raise HTTPException(status_code=401, detail="未授权")
 
