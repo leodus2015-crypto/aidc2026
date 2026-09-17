@@ -1095,6 +1095,10 @@ function initIndexPage() {
     resultMessageSep.textContent = t('results.sepPlaceholder');
 
     selectDeploymentTab(initialTabFromUrl());
+    updateEstimateMixed();
+    updateEstimateSeparated();
+    syncKvProfileFromModel();
+    updateKvCacheEstimate();
     scrollToInferenceSection();
 
     if (!window.__aidcIndexPopstateBound) {
@@ -1124,6 +1128,10 @@ function initIndexPage() {
               ? 'dataflow'
               : 'principles';
     selectDeploymentTab(mode);
+    updateEstimateMixed();
+    updateEstimateSeparated();
+    syncKvProfileFromModel();
+    updateKvCacheEstimate();
   };
 }
 window.initIndexPage = initIndexPage;

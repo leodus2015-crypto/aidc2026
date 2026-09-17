@@ -7,13 +7,13 @@
   <meta name="description" content="从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。" />
   <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-computeEst.html" />
   <title>AI 数据中心算力评估规划 · Token → Card</title>
-  <script src="js/aidc-theme.js?v=93"></script>
-  <script src="js/embed-mode.js?v=93"></script>
-  <script src="js/theme-switch.js?v=93"></script>
-  <script src="js/aidc-asset-version.js?v=93"></script>
-  <script src="js/aidc-locale-bridge.js?v=93"></script>
-  <link rel="stylesheet" href="css/theme.css?v=93" />
-  <link rel="stylesheet" href="css/embed.css?v=93" />
+  <script src="js/aidc-theme.js?v=94"></script>
+  <script src="js/embed-mode.js?v=94"></script>
+  <script src="js/theme-switch.js?v=94"></script>
+  <script src="js/aidc-asset-version.js?v=94"></script>
+  <script src="js/aidc-locale-bridge.js?v=94"></script>
+  <link rel="stylesheet" href="css/theme.css?v=94" />
+  <link rel="stylesheet" href="css/embed.css?v=94" />
   <style>
     :root {
       --s-50:#f8fafc; --s-100:#f1f5f9; --s-200:#e2e8f0; --s-300:#cbd5e1;
@@ -666,31 +666,31 @@
                     <div class="input-wrap">
                       <select id="modelPreset">
                         <optgroup label="DeepSeek">
-                          <option value="ds-v4-pro"   data-total="1600" data-active="49">DeepSeek-V4-Pro　1.6T-A49B（MoE）</option>
-                          <option value="ds-v4-flash" data-total="284"  data-active="13">DeepSeek-V4-Flash　284B-A13B（MoE）</option>
-                          <option value="ds-v3"       data-total="671"  data-active="37">DeepSeek-V3　671B-A37B（MoE）</option>
-                          <option value="ds-r1"       data-total="671"  data-active="37">DeepSeek-R1　671B-A37B（MoE）</option>
+                          <option value="ds-v4-pro"   data-total="1600" data-active="49">DeepSeek-V4-Pro 1.6T-A49B(MoE)</option>
+                          <option value="ds-v4-flash" data-total="284"  data-active="13">DeepSeek-V4-Flash 284B-A13B(MoE)</option>
+                          <option value="ds-v3"       data-total="671"  data-active="37">DeepSeek-V3 671B-A37B(MoE)</option>
+                          <option value="ds-r1"       data-total="671"  data-active="37">DeepSeek-R1 671B-A37B(MoE)</option>
                         </optgroup>
                         <optgroup label="GLM">
-                          <option value="glm-5.2" data-total="744" data-active="40">GLM-5.2　744B-A40B（MoE）</option>
-                          <option value="glm-5.1" data-total="744" data-active="40">GLM-5.1　744B-A40B（MoE）</option>
-                          <option value="glm-4"   data-total="9"   data-active="9">GLM-4　9B（Dense）</option>
+                          <option value="glm-5.2" data-total="744" data-active="40">GLM-5.2 744B-A40B(MoE)</option>
+                          <option value="glm-5.1" data-total="744" data-active="40">GLM-5.1 744B-A40B(MoE)</option>
+                          <option value="glm-4"   data-total="9"   data-active="9">GLM-4 9B(Dense)</option>
                         </optgroup>
                         <optgroup label="Kimi">
-                          <option value="kimi-k3"          data-total="2780" data-active="104">Kimi-K3　2.78T-A104B（MoE）</option>
-                          <option value="kimi-k2.7-coding" data-total="1040" data-active="32.6">Kimi-K2.7-Coding　1.04T-A32.6B（MoE）</option>
-                          <option value="kimi-k2.6"        data-total="1040" data-active="32.6">Kimi-K2.6　1.04T-A32.6B（MoE）</option>
-                          <option value="kimi-k2.5"        data-total="1040" data-active="32.6">Kimi-K2.5　1.04T-A32.6B（MoE）</option>
+                          <option value="kimi-k3"          data-total="2780" data-active="104">Kimi-K3 2.78T-A104B(MoE)</option>
+                          <option value="kimi-k2.7-coding" data-total="1040" data-active="32.6">Kimi-K2.7-Coding 1.04T-A32.6B(MoE)</option>
+                          <option value="kimi-k2.6"        data-total="1040" data-active="32.6">Kimi-K2.6 1.04T-A32.6B(MoE)</option>
+                          <option value="kimi-k2.5"        data-total="1040" data-active="32.6">Kimi-K2.5 1.04T-A32.6B(MoE)</option>
                         </optgroup>
                         <optgroup label="Qwen">
-                          <option value="qwen3.6-35b-a3b"  data-total="35"  data-active="3">Qwen3.6-35B-A3B（MoE）</option>
-                          <option value="qwen3.5-397b"     data-total="397" data-active="17">Qwen3.5-397B-A17B（MoE）</option>
-                          <option value="qwen3.5-122b"     data-total="122" data-active="10">Qwen3.5-122B-A10B（MoE）</option>
-                          <option value="qwen3.5-35b-a3b"  data-total="35"  data-active="3">Qwen3.5-35B-A3B（MoE）</option>
-                          <option value="qwen3-235b"       data-total="235" data-active="22">Qwen3-235B-A22B（MoE）</option>
+                          <option value="qwen3.6-35b-a3b"  data-total="35"  data-active="3">Qwen3.6-35B-A3B(MoE)</option>
+                          <option value="qwen3.5-397b"     data-total="397" data-active="17">Qwen3.5-397B-A17B(MoE)</option>
+                          <option value="qwen3.5-122b"     data-total="122" data-active="10">Qwen3.5-122B-A10B(MoE)</option>
+                          <option value="qwen3.5-35b-a3b"  data-total="35"  data-active="3">Qwen3.5-35B-A3B(MoE)</option>
+                          <option value="qwen3-235b"       data-total="235" data-active="22">Qwen3-235B-A22B(MoE)</option>
                         </optgroup>
                         <optgroup label="Others">
-                          <option value="gpt-oss-120b" data-total="117" data-active="5.1">GPT-OSS-120B　117B-A5.1B（MoE）</option>
+                          <option value="gpt-oss-120b" data-total="117" data-active="5.1">GPT-OSS-120B 117B-A5.1B(MoE)</option>
                           <option value="">其他模型 · 支持自定义输入参数</option>
                         </optgroup>
                       </select>
@@ -1234,6 +1234,24 @@
         });
       }
 
+      function applyAriaI18n() {
+        const ariaEn = {
+          "参数类别": "Parameter groups",
+          "推理场景预设": "Inference scenario presets",
+          "单卡算力快捷选项": "Compute-per-card shortcuts",
+          "核心测算结果": "Headline results",
+          "算力需求汇总": "Compute demand summary",
+          "未来年度算力卡数趋势图": "Projected accelerator-card trend",
+        };
+        document.querySelectorAll("[aria-label]").forEach((el) => {
+          if (el.id === "langToggle") return;
+          const zh = el.getAttribute("data-aria-zh") || el.getAttribute("aria-label") || "";
+          if (!CJK_RE.test(zh)) return;
+          if (!el.hasAttribute("data-aria-zh")) el.setAttribute("data-aria-zh", zh);
+          el.setAttribute("aria-label", LANG === "en" ? (ariaEn[zh] || zh) : zh);
+        });
+      }
+
       function setLang(lang) {
         LANG = lang;
         document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
@@ -1249,6 +1267,7 @@
         const other = document.querySelector('#modelPreset option[value=""]');
         if (other) other.textContent = LANG === "en" ? I18N_STATIC["其他模型 · 支持自定义输入参数"] : "其他模型 · 支持自定义输入参数";
         applyStatic();
+        applyAriaI18n();
         calculate();
       }
 

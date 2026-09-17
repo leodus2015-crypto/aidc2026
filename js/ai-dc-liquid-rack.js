@@ -7,6 +7,40 @@ const loading = document.getElementById('loading');
 const fallback = document.getElementById('fallback');
 
 let renderer;
+window.AidcI18nBootstrap.bootstrap('ai-dc-liquid-rack', {
+  onReady() {
+    if (!renderer) return;
+    applyCanvasAria();
+    updateSceneLabels();
+    showComponent(currentKey);
+    updateCardsButton();
+    updateIndividualCardButtons();
+    updateDimensionLabels();
+    refreshDimensions();
+    const { w, h } = hostSize();
+    updateCameraProjection(w, h);
+    renderer.setSize(w, h, false);
+    labelRenderer.setSize(w, h);
+  },
+  onLocaleChange() {
+    if (!renderer) return;
+    applyCanvasAria();
+    updateSceneLabels();
+    showComponent(currentKey);
+    updateCardsButton();
+    updateIndividualCardButtons();
+    updateDimensionLabels();
+  },
+});
+
+if (window.AidcLocaleBridge) {
+  window.AidcLocaleBridge.initIframeListener((locale) => {
+    if (window.AidcI18n && window.AidcI18n.getLocale() !== locale) {
+      window.AidcI18n.setLocale(locale, { page: 'ai-dc-liquid-rack', common: true, basePath: 'i18n/' });
+    }
+  }, { selfSource: 'ai-dc-liquid-rack' });
+}
+
 try {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
 } catch (error) {
@@ -882,36 +916,4 @@ addEventListener('resize', () => {
 
 function applyCanvasAria() {
   renderer?.domElement?.setAttribute('aria-label', t('app.aria'));
-}
-
-window.AidcI18nBootstrap.bootstrap('ai-dc-liquid-rack', {
-  onReady() {
-    applyCanvasAria();
-    updateSceneLabels();
-    showComponent(currentKey);
-    updateCardsButton();
-    updateIndividualCardButtons();
-    updateDimensionLabels();
-    refreshDimensions();
-    const { w, h } = hostSize();
-    updateCameraProjection(w, h);
-    renderer.setSize(w, h, false);
-    labelRenderer.setSize(w, h);
-  },
-  onLocaleChange() {
-    applyCanvasAria();
-    updateSceneLabels();
-    showComponent(currentKey);
-    updateCardsButton();
-    updateIndividualCardButtons();
-    updateDimensionLabels();
-  },
-});
-
-if (window.AidcLocaleBridge) {
-  window.AidcLocaleBridge.initIframeListener((locale) => {
-    if (window.AidcI18n && window.AidcI18n.getLocale() !== locale) {
-      window.AidcI18n.setLocale(locale, { page: 'ai-dc-liquid-rack', common: true, basePath: 'i18n/' });
-    }
-  }, { selfSource: 'ai-dc-liquid-rack' });
 }
