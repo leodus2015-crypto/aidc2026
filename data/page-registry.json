@@ -463,6 +463,28 @@
       ]
     },
     {
+      "path": "white-paper-2026.html",
+      "id": "white-paper-2026",
+      "title": "AI DC 白皮书 2026",
+      "kind": "entry",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [],
+      "assets": [
+        "js/white-paper-2026-page.js",
+        "i18n/white-paper-2026.zh.json",
+        "i18n/white-paper-2026.en.json"
+      ],
+      "dataSources": [
+        "topic/ai-dc-white-paper-2026-cn.pdf",
+        "topic/ai-dc-white-paper-2026-en.pdf"
+      ],
+      "optionalDataSources": [
+        "topic/ai-dc-white-paper-2026-cn.pdf",
+        "topic/ai-dc-white-paper-2026-en.pdf"
+      ]
+    },
+    {
       "path": "topic-sovereign-ai.html",
       "id": "topic-sovereign-ai",
       "title": "主权 AI，从工厂开始",

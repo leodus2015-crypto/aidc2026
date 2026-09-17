@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "AI DC White Paper 2026 · Topic",
+    "description": "AI DC White Paper 2026: Chinese and English editions, with online preview and download."
+  },
+  "page": {
+    "back": "Back to Topic",
+    "kind": "White Paper · 2026",
+    "h1": "AI DC White Paper 2026",
+    "intro1": "The 2026 white paper centers on Agent, Token, and WaTt. It systematically presents the Agentic-era AI DC innovation paradigm, solution architecture, and proven practices. We hope it can serve as a reference for enterprises building an AI compute foundation, and contribute to the rapid, healthy development of intelligent-computing infrastructure."
+  },
+  "edition": {
+    "title": "2026 Edition",
+    "desc": "Chinese and English PDFs are available. Switching site language switches the preview; you can also download either edition directly.",
+    "openNew": "Open in new window",
+    "downloadZh": "Download Chinese edition",
+    "downloadEn": "Download English edition",
+    "downloadNameZh": "AI DC白皮书2026_中文版.pdf",
+    "downloadNameEn": "AI DC White Paper 2026_English.pdf",
+    "iframeTitle": "AI DC White Paper 2026",
+    "fallbackHint": "If the preview fails to load, use “Open in new window” or download the PDF.",
+    "missingTitle": "PDF not available yet",
+    "missingDesc": "The white paper PDF for the current language is not available. Try the other edition, or retry later.",
+    "missingDeployHint": "Deploy: place the Chinese edition at topic/ai-dc-white-paper-2026-cn.pdf and the English edition at topic/ai-dc-white-paper-2026-en.pdf."
+  }
+}

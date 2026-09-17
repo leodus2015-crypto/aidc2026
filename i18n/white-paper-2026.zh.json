@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "AI DC 白皮书 2026 · Topic",
+    "description": "AI DC 白皮书 2026：中英双语，在线预览与下载。"
+  },
+  "page": {
+    "back": "返回 Topic",
+    "kind": "白皮书 · 2026",
+    "h1": "AI DC 白皮书 2026",
+    "intro1": "2026白皮书以Agent、Token、WaTt为中心，系统性阐述了Agentic时代AI DC创新范式、方案架构以及优秀实践，希望能够为企业构建AI算力底座提供参考，为智算基础设施的快速、健康发展贡献力量。"
+  },
+  "edition": {
+    "title": "2026 版",
+    "desc": "提供中文版与英文版 PDF。切换站点语言可切换在线预览；也可直接下载对应语种。",
+    "openNew": "新窗口打开",
+    "downloadZh": "下载中文版",
+    "downloadEn": "下载英文版",
+    "downloadNameZh": "AI DC白皮书2026_中文版.pdf",
+    "downloadNameEn": "AI DC White Paper 2026_English.pdf",
+    "iframeTitle": "AI DC 白皮书 2026",
+    "fallbackHint": "若预览未能加载，请使用「新窗口打开」或下载 PDF。",
+    "missingTitle": "PDF 暂未就绪",
+    "missingDesc": "当前语言对应的白皮书 PDF 暂不可用。请尝试下载另一语种，或稍后重试。",
+    "missingDeployHint": "部署说明：将中文版放在 topic/ai-dc-white-paper-2026-cn.pdf，英文版放在 topic/ai-dc-white-paper-2026-en.pdf。"
+  }
+}

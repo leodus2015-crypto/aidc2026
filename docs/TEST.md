@@ -97,11 +97,11 @@ GitHub Actions：
 
 ### Topic
 
-- [ ] 主导航显示 **Topic**（中英相同）；打开 `topic.html` 见短引言与卡片网格，不是整页 PDF。
-- [ ] 2024 白皮书卡进入 `white-paper-2024.html`：PDF 可用时预览/下载可用；PDF 缺失时显示就绪提示而不是空白 iframe。
+- [ ] 主导航显示 **Topic**（中英相同）；打开 `topic.html` 见短引言与卡片网格，不是整页 PDF。中文目录第一张为 2026 白皮书；英文目录不显示仅有中文版的 2024 白皮书卡。
+- [ ] 中文下 2024 白皮书卡进入 `white-paper-2024.html`：PDF 可用时预览/下载可用；PDF 缺失时显示就绪提示而不是空白 iframe。
 - [ ] 观点卡进入 `topic-sovereign-ai.html`，中文加载 `topic/sovereign-ai/sovereign-ai-zh.html` 幻灯片（含配图），切 EN 后加载 `topic/sovereign-ai/sovereign-ai.html`，切主题不重载 iframe；可返回 Topic 目录。页面不展示演讲稿。
 - [ ] 窗口内可直接翻页；窗口外右下角小按钮「全屏播放」进入演讲全屏（站点壳隐藏，16:9 铺满）；方向键/空格翻页；Esc 退出，F 可切换。不支持 Fullscreen API 时仍铺满视口。
-- [ ] 2026 白皮书卡为「即将发布」，无跳转。
+- [ ] 2026 白皮书卡进入 `white-paper-2026.html`：中文预览/下载 `topic/ai-dc-white-paper-2026-cn.pdf`，切 EN 后预览/下载 `topic/ai-dc-white-paper-2026-en.pdf`；两份 PDF 均可直接下载。PDF 缺失时显示就绪提示而不是空白 iframe。
 - [ ] 切中英和 Light/Dark：目录与子页文案/颜色正确，卡片不横向溢出。
 
 ### 3D 配置

@@ -21,8 +21,19 @@
       .replace(/'/g, '&#39;');
   }
 
+  function currentLocale() {
+    const loc = global.AidcI18n?.getLocale?.() || 'zh';
+    return loc === 'en' ? 'en' : 'zh';
+  }
+
   function isPublished(topic) {
     return Boolean(topic && topic.status === 'published' && typeof topic.href === 'string' && topic.href.trim());
+  }
+
+  function isVisibleForLocale(topic, locale) {
+    const locales = topic && topic.locales;
+    if (!Array.isArray(locales) || locales.length === 0) return true;
+    return locales.indexOf(locale) !== -1;
   }
 
   function applyI18n(root) {
@@ -80,8 +91,10 @@
     if (!grid) return;
 
     grid.replaceChildren();
+    const locale = currentLocale();
     (topics || []).forEach((topic) => {
       if (!topic || !topic.id) return;
+      if (!isVisibleForLocale(topic, locale)) return;
       grid.appendChild(renderTopicCard(topic));
     });
 

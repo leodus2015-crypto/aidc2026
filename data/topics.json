@@ -2,11 +2,11 @@
   "version": 1,
   "topics": [
     {
-      "id": "whitepaper-2024",
+      "id": "whitepaper-2026",
       "kind": "pdf",
       "status": "published",
-      "year": "2024",
-      "href": "white-paper-2024.html"
+      "year": "2026",
+      "href": "white-paper-2026.html"
     },
     {
       "id": "sovereign-ai",
@@ -15,11 +15,12 @@
       "href": "topic-sovereign-ai.html"
     },
     {
-      "id": "whitepaper-2026",
+      "id": "whitepaper-2024",
       "kind": "pdf",
-      "status": "coming",
-      "year": "2026",
-      "href": null
+      "status": "published",
+      "year": "2024",
+      "href": "white-paper-2024.html",
+      "locales": ["zh"]
     }
   ]
 }

@@ -30,10 +30,42 @@ def test_topics_catalog_is_valid():
         year = topic.get("year")
         if year is not None:
             assert isinstance(year, str) and year.isdigit()
+        locales = topic.get("locales")
+        if locales is not None:
+            assert isinstance(locales, list) and locales
+            assert all(item in {"zh", "en"} for item in locales)
 
     assert len(ids) == len(set(ids))
+    assert ids[0] == "whitepaper-2026"
     assert "whitepaper-2024" in ids
+    assert "whitepaper-2026" in ids
     assert "sovereign-ai" in ids
+    wp2024 = next(item for item in topics if item["id"] == "whitepaper-2024")
+    assert wp2024.get("locales") == ["zh"]
+    js = (ROOT / "js" / "topic-page.js").read_text(encoding="utf-8")
+    assert "isVisibleForLocale" in js
+
+
+def test_whitepaper_2026_page_and_pdfs():
+    page = ROOT / "white-paper-2026.html"
+    js = (ROOT / "js" / "white-paper-2026-page.js").read_text(encoding="utf-8")
+    topics = json.loads(TOPICS_PATH.read_text(encoding="utf-8"))
+    entry = next(item for item in topics["topics"] if item["id"] == "whitepaper-2026")
+    assert page.is_file()
+    assert entry["status"] == "published"
+    assert entry["href"] == "white-paper-2026.html"
+    assert "topic/ai-dc-white-paper-2026-cn.pdf" in js
+    assert "topic/ai-dc-white-paper-2026-en.pdf" in js
+    html = page.read_text(encoding="utf-8")
+    assert 'data-i18n-page="white-paper-2026"' in html
+    assert "topic/ai-dc-white-paper-2026-cn.pdf" in html
+    assert "topic/ai-dc-white-paper-2026-en.pdf" in html
+    zh = json.loads((ROOT / "i18n" / "white-paper-2026.zh.json").read_text(encoding="utf-8"))
+    en = json.loads((ROOT / "i18n" / "white-paper-2026.en.json").read_text(encoding="utf-8"))
+    assert "Agent" in zh["page"]["intro1"] and "WaTt" in zh["page"]["intro1"]
+    assert "Agent" in en["page"]["intro1"] and "WaTt" in en["page"]["intro1"]
+    topic_zh = json.loads((ROOT / "i18n" / "topic.zh.json").read_text(encoding="utf-8"))
+    assert topic_zh["topics"]["whitepaper-2026"]["summary"] == zh["page"]["intro1"]
 
 
 def test_live_html_links_topic_hub_not_retired_white_paper():
