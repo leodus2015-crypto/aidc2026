@@ -505,6 +505,28 @@ def check_ci_workflow(errors: list[str], root: Path = ROOT) -> None:
         errors.append("ci.yml 不得部署（发现 rsync）")
 
 
+def check_public_seo_files(errors: list[str], root: Path = ROOT) -> None:
+    required = {
+        "favicon.ico": None,
+        "robots.txt": "User-agent:",
+        "sitemap.xml": "<urlset",
+    }
+    for rel, needle in required.items():
+        path = root / rel
+        if not path.is_file():
+            errors.append(f"缺少 {rel}")
+            continue
+        if needle and needle not in path.read_text(encoding="utf-8"):
+            errors.append(f"{rel} 缺少必要内容: {needle}")
+    sitemap = root / "sitemap.xml"
+    if sitemap.is_file():
+        text = sitemap.read_text(encoding="utf-8")
+        if text.count("<loc>") < 8:
+            errors.append("sitemap.xml 至少应包含 8 个核心页面 URL")
+        if "https://www.aidc2026.cn/ai-dc-design.html" not in text:
+            errors.append("sitemap.xml 缺少首页 ai-dc-design.html")
+
+
 def check_deploy_excludes(errors: list[str]) -> None:
     sh_path = ROOT / "scripts" / "deploy.sh"
     yml_path = ROOT / ".github" / "workflows" / "deploy.yml"
@@ -529,6 +551,7 @@ def main() -> int:
     check_config_seeds(errors)
     check_migrations(errors)
     check_deploy_excludes(errors)
+    check_public_seo_files(errors)
     check_ci_workflow(errors)
     return fail(errors)
 

@@ -38,6 +38,22 @@ body {
   transition: background-color 160ms ease, color 160ms ease;
 }
 
+/* 无 JS 时仍可见（不依赖 Tailwind CDN 脚本） */
+.aidc-noscript {
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #f59e0b;
+  background: #fffbeb;
+  color: #78350f;
+  font: 14px/1.55 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+html[data-theme='dark'] .aidc-noscript {
+  border-bottom-color: #b45309;
+  background: #422006;
+  color: #fde68a;
+}
+
 html {
   scroll-padding-top: 5rem;
 }

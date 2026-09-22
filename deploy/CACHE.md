@@ -27,6 +27,8 @@ python3 scripts/bump-asset-version.py --bump --sync
 `./scripts/deploy.sh "说明"` 在有未提交改动时会 **自动 `--bump`**。  
 跳过 bump：`SKIP_BUMP=1 ./scripts/deploy.sh --no-commit --sync-only`
 
+HTTP→HTTPS 与根路径跳转写在 `deploy/nginx-static-cache.conf`：`if ($scheme != "https")` 以及 `location = /` 指向 `https://$host/ai-dc-design.html`。rsync 之后在服务器 **reload nginx** 才会生效。
+
 ## 服务器
 
 1. 宝塔 / Nginx：将 `deploy/nginx-static-cache.conf` 合并进站点配置  

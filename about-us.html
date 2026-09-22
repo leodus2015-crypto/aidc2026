@@ -1,18 +1,22 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="About US · AIDC 2026 站点使命、AI 使用与开发团队介绍。" />
   <meta name="theme-color" content="#f8fafc" />
   <link rel="canonical" href="https://www.aidc2026.cn/about-us.html" />
   <title>About US · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=95"></script>
-  <script src="js/theme-switch.js?v=95"></script>
+  <script src="js/aidc-theme.js?v=96"></script>
+  <script src="js/theme-switch.js?v=96"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/theme.css?v=95" />
+  <link rel="stylesheet" href="css/theme.css?v=96" />
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="about-us">
+  <noscript>
+  <p class="aidc-noscript" role="status">当前浏览器未启用 JavaScript。导航与静态正文仍可阅读；语言切换、主题与互动功能需要启用脚本。 JavaScript is off: navigation and static copy remain readable; language, theme, and interactive tools need scripts.</p>
+</noscript>
   <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
     <nav
       class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl"
@@ -40,119 +44,119 @@
   <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
     <section class="flex flex-col gap-8 lg:gap-10">
       <div class="w-full max-w-3xl xl:max-w-4xl">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1"></h1>
+        <h1 class="text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1">About US</h1>
       </div>
 
       <div class="grid gap-6 lg:gap-8">
         <article id="mission" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="mission.tag"></p>
-          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="mission.title"></h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="mission.tag">Mission</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="mission.title">网站构建目的</h2>
           <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
-            <p data-i18n="mission.p1"></p>
-            <p data-i18n="mission.p2"></p>
+            <p data-i18n="mission.p1">面向AI DC （AI数据中心）领域的知识分享和演示，辅助快速理解关键概念与公式。</p>
+            <p data-i18n="mission.p2">AI Native，100%代码AI生成</p>
           </div>
         </article>
 
         <article id="code-volume" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="codeVolume.tag"></p>
-          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="codeVolume.title"></h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="codeVolume.tag">Code Volume</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="codeVolume.title">代码量</h2>
           <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
-            <p data-i18n-html="codeVolume.intro"></p>
+            <p data-i18n-html="codeVolume.intro">统计本仓库内全部源代码文件（HTML、JavaScript、Shell、SVG 等），不含 PDF 等二进制资源与 <code class="rounded bg-slate-100 px-1.5 py-0.5 text-sm text-slate-800">.git</code> 目录。</p>
           </div>
           <dl class="mt-6 grid gap-4 sm:grid-cols-3">
             <div class="aidc-inset-panel rounded-2xl px-4 py-3">
-              <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statLinesLabel"></dt>
+              <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statLinesLabel">总代码行数 · Prompt 折算</dt>
               <dd class="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span class="text-lg font-semibold text-slate-900" data-i18n="codeVolume.statLinesValue"></span>
+                <span class="text-lg font-semibold text-slate-900" data-i18n="codeVolume.statLinesValue">38,324 行</span>
                 <span class="text-sm font-medium text-slate-400" aria-hidden="true">≈</span>
-                <span class="text-lg font-semibold text-blue-700" data-i18n="codeVolume.statTokensValue"></span>
+                <span class="text-lg font-semibold text-blue-700" data-i18n="codeVolume.statTokensValue">968K Tokens</span>
               </dd>
-              <p class="mt-2 text-xs leading-5 text-slate-500" data-i18n="codeVolume.statLinesNote"></p>
+              <p class="mt-2 text-xs leading-5 text-slate-500" data-i18n="codeVolume.statLinesNote">若将全部源码一次性作为 Prompt 输入；2,421,701 字符 ÷ 2.5 字符/Token，区间约 807K–1210K。</p>
             </div>
             <div class="aidc-inset-panel rounded-2xl px-4 py-3">
-              <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statFilesLabel"></dt>
-              <dd class="mt-1 text-lg font-semibold text-slate-900" data-i18n="codeVolume.statFilesValue"></dd>
+              <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statFilesLabel">代码文件数</dt>
+              <dd class="mt-1 text-lg font-semibold text-slate-900" data-i18n="codeVolume.statFilesValue">70 个</dd>
             </div>
             <div class="aidc-inset-panel rounded-2xl px-4 py-3">
-              <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statLangLabel"></dt>
-              <dd class="mt-1 text-sm font-medium text-slate-800" data-i18n="codeVolume.statLangValue"></dd>
+              <dt class="text-xs font-medium text-slate-500" data-i18n="codeVolume.statLangLabel">主要语言</dt>
+              <dd class="mt-1 text-sm font-medium text-slate-800" data-i18n="codeVolume.statLangValue">HTML · JavaScript · Shell · SVG</dd>
             </div>
           </dl>
           <div class="mt-8">
-            <h3 class="text-sm font-semibold text-slate-900" data-i18n="codeVolume.langChartTitle"></h3>
+            <h3 class="text-sm font-semibold text-slate-900" data-i18n="codeVolume.langChartTitle">Languages 类型与占比</h3>
             <ul class="mt-4 space-y-4" role="list">
               <li>
                 <div class="flex items-center justify-between gap-4 text-sm">
                   <span class="font-medium text-slate-800">HTML</span>
-                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langHtmlShare"></span>
+                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langHtmlShare">28,130 行 · 73.4%</span>
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-blue-600" style="width: 73.4%"></div></div>
-                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langHtmlNote"></p>
+                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langHtmlNote">30 个页面文件（首页、推理原理、推理服务数据流、Agentic 推理、后训练、AI DC 规划、机房布局、3D 案例、ROI、About 等）</p>
               </li>
               <li>
                 <div class="flex items-center justify-between gap-4 text-sm">
                   <span class="font-medium text-slate-800">JavaScript</span>
-                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langJsShare"></span>
+                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langJsShare">9,602 行 · 25.1%</span>
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-amber-500" style="width: 25.1%"></div></div>
-                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langJsNote"></p>
+                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langJsNote">32 个脚本（i18n、各页逻辑、配置加载与语言桥接等）</p>
               </li>
               <li>
                 <div class="flex items-center justify-between gap-4 text-sm">
                   <span class="font-medium text-slate-800">SVG</span>
-                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langSvgShare"></span>
+                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langSvgShare">104 行 · 0.3%</span>
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-violet-500" style="width: 0.3%"></div></div>
-                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langSvgNote"></p>
+                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langSvgNote">1 个矢量资源（站点 Logo）</p>
               </li>
               <li>
                 <div class="flex items-center justify-between gap-4 text-sm">
                   <span class="font-medium text-slate-800">Shell</span>
-                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langShellShare"></span>
+                  <span class="shrink-0 tabular-nums text-slate-600" data-i18n="codeVolume.langShellShare">488 行 · 1.3%</span>
                 </div>
                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true"><div class="h-full rounded-full bg-emerald-500" style="width: 1.3%"></div></div>
-                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langShellNote"></p>
+                <p class="mt-1.5 text-xs text-slate-500" data-i18n="codeVolume.langShellNote">7 个脚本（本地预览、部署、API 启动与校验等）</p>
               </li>
             </ul>
           </div>
         </article>
 
         <article id="usage" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="usage.tag"></p>
-          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="usage.title"></h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="usage.tag">Usage</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="usage.title">AI Tokens 消耗</h2>
           <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
-            <p data-i18n-html="usage.intro"></p>
+            <p data-i18n-html="usage.intro">记录 AIDC 2026 站点在 Cursor 等 AI 辅助工具下的 Token 消耗。数据来自控制台 Included Usage 导出 CSV，按账单周期汇总；重复导入时按事件日期<strong>合并增量</strong>。展示为输入（缓存未命中）、输入（缓存命中）、输出三类。</p>
             <p class="text-sm text-slate-500">
-              <span data-i18n="usage.dataSourceLabel"></span>
+              <span data-i18n="usage.dataSourceLabel">数据来源：</span>
               <span id="usageSource">Cursor Dashboard · Included Usage</span>
             </p>
           </div>
           <dl class="mt-6 grid gap-4 sm:grid-cols-2">
             <div class="aidc-inset-panel rounded-2xl px-4 py-3">
-              <dt class="text-xs font-medium text-slate-500" data-i18n="usage.totalLabel"></dt>
+              <dt class="text-xs font-medium text-slate-500" data-i18n="usage.totalLabel">累计 Tokens</dt>
               <dd id="usageTotalTokens" class="mt-1 text-lg font-semibold text-slate-900">—</dd>
             </div>
             <div class="aidc-inset-panel rounded-2xl px-4 py-3">
-              <dt class="text-xs font-medium text-slate-500" data-i18n="usage.updatedLabel"></dt>
+              <dt class="text-xs font-medium text-slate-500" data-i18n="usage.updatedLabel">最近更新</dt>
               <dd id="usageUpdatedAt" class="mt-1 text-sm font-medium text-slate-800">—</dd>
             </div>
           </dl>
           <div class="mt-8">
-            <h3 id="usageBreakdownTitle" class="text-sm font-semibold text-slate-900" data-i18n="usage.breakdownTitle"></h3>
+            <h3 id="usageBreakdownTitle" class="text-sm font-semibold text-slate-900" data-i18n="usage.breakdownTitle">Token 类型分布（累计）</h3>
             <ul id="usageBreakdown" class="mt-4 space-y-4" role="list"></ul>
           </div>
           <div class="mt-8">
-            <h3 class="text-sm font-semibold text-slate-900" data-i18n="usage.periodsTitle"></h3>
+            <h3 class="text-sm font-semibold text-slate-900" data-i18n="usage.periodsTitle">统计周期</h3>
             <ul id="usagePeriodList" class="mt-3 space-y-2 text-sm text-slate-700" role="list"></ul>
           </div>
-          <p id="usageNote" class="mt-6 text-xs leading-5 text-slate-500" data-i18n="usage.note"></p>
+          <p id="usageNote" class="mt-6 text-xs leading-5 text-slate-500" data-i18n="usage.note">各周期 Token 为当期 Included Usage 快照，请勿跨周期累加；以 Cursor 控制台账单为准。历史周期若缺少字段明细，按近期实测比例估算三类拆分。</p>
         </article>
 
         <article id="team" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="team.tag"></p>
-          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="team.title"></h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="team.tag">Team</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="team.title">开发团队介绍</h2>
           <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
-            <p data-i18n="team.motto"></p>
+            <p data-i18n="team.motto">知行合一 ｜Talk is cheap. Execution is truth.</p>
           </div>
           <ul class="mt-6 space-y-4">
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
@@ -169,8 +173,8 @@
                 <span class="aidc-status-avatar__badge" data-i18n="team.statusEntryBadge">状态</span>
               </a>
               <div class="min-w-0">
-                <p class="font-semibold text-slate-900" data-i18n="team.m1Name"></p>
-                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m1Role"></p>
+                <p class="font-semibold text-slate-900" data-i18n="team.m1Name">来自大城市的人 · 版主</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m1Role">网站负责人、整体规划和设计</p>
               </div>
             </li>
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
@@ -178,8 +182,8 @@
                 <img src="assets/feifei.jpg" data-i18n-alt="team.m5Alt" alt="飞飞" width="48" height="48" class="h-full w-full object-cover" />
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-slate-900" data-i18n="team.m5Name"></p>
-                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m5Role"></p>
+                <p class="font-semibold text-slate-900" data-i18n="team.m5Name">飞飞 · 程序员</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m5Role">负责 AI DC 规划页面</p>
               </div>
             </li>
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
@@ -187,8 +191,8 @@
                 <img src="assets/little-star.jpg" data-i18n-alt="team.m7Alt" alt="闪亮小星星" width="48" height="48" class="h-full w-full object-cover" />
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-slate-900" data-i18n="team.m7Name"></p>
-                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m7Role"></p>
+                <p class="font-semibold text-slate-900" data-i18n="team.m7Name">闪亮小星星 · 程序员</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m7Role">负责机房规划相关页面</p>
               </div>
             </li>
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
@@ -196,8 +200,8 @@
                 <img src="assets/tiger.png" data-i18n-alt="team.m3Alt" alt="虎哥" width="48" height="48" class="h-full w-full object-cover" />
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-slate-900" data-i18n="team.m3Name"></p>
-                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m3Role"></p>
+                <p class="font-semibold text-slate-900" data-i18n="team.m3Name">虎哥 · 程序员</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m3Role">负责后训练页面设计和开发</p>
               </div>
             </li>
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
@@ -205,8 +209,8 @@
                 <img src="assets/Johnson.jpg" data-i18n-alt="team.m4Alt" alt="Johnson" width="48" height="48" class="h-full w-full object-cover" />
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-slate-900" data-i18n="team.m4Name"></p>
-                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m4Role"></p>
+                <p class="font-semibold text-slate-900" data-i18n="team.m4Name">Johnson · 程序员</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m4Role">负责 AI DC 布局案例页面</p>
               </div>
             </li>
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
@@ -214,8 +218,8 @@
                 <img src="assets/Andy.png" data-i18n-alt="team.m6Alt" alt="Andy" width="48" height="48" class="h-full w-full object-cover" />
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-slate-900" data-i18n="team.m6Name"></p>
-                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m6Role"></p>
+                <p class="font-semibold text-slate-900" data-i18n="team.m6Name">Andy · 架构师</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m6Role">负责核心公式设计和校对</p>
               </div>
             </li>
             <li class="flex gap-4 aidc-inset-panel rounded-2xl p-4">
@@ -223,22 +227,22 @@
                 <img src="assets/cursor-logo.png" data-i18n-alt="team.m2Alt" alt="Cursor" width="48" height="48" class="h-full w-full object-cover" />
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-slate-900" data-i18n="team.m2Name"></p>
-                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m2Role"></p>
+                <p class="font-semibold text-slate-900" data-i18n="team.m2Name">Cursor Agent · 程序员</p>
+                <p class="mt-1 text-sm leading-6 text-slate-600" data-i18n="team.m2Role">组织若干个大模型，将产品经理的构想落地</p>
               </div>
             </li>
           </ul>
         </article>
 
         <article id="open-source" class="scroll-mt-28 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/70 sm:p-8">
-          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="openSource.tag"></p>
-          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="openSource.title"></h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600" data-i18n="openSource.tag">Open Source</p>
+          <h2 class="mt-2 text-xl font-bold text-slate-950 sm:text-2xl" data-i18n="openSource.title">开源仓库</h2>
           <div class="mt-4 space-y-3 text-base leading-7 text-slate-600">
-            <p data-i18n="openSource.p1"></p>
+            <p data-i18n="openSource.p1">本网站全部页面源码已托管于 GitHub，仓库随每次发布更新；版本号与更新日期见下方在线站点信息。</p>
           </div>
 
           <div class="mt-6 aidc-inset-panel rounded-2xl px-4 py-4 sm:px-5 sm:py-5">
-            <p class="text-xs font-medium uppercase tracking-wide text-slate-500" data-i18n="openSource.siteLabel"></p>
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500" data-i18n="openSource.siteLabel">在线站点</p>
             <a
               id="openSourceSiteLink"
               href="https://www.aidc2026.cn"
@@ -252,8 +256,8 @@
           </div>
 
           <div class="mt-4 aidc-inset-panel rounded-2xl px-4 py-4 sm:px-5 sm:py-5">
-            <p class="text-sm leading-6 text-slate-700" data-i18n="openSource.summary"></p>
-            <p class="mt-4 text-xs font-medium uppercase tracking-wide text-slate-500" data-i18n="openSource.repoLabel"></p>
+            <p class="text-sm leading-6 text-slate-700" data-i18n="openSource.summary">本站面向 AI 数据中心（AI DC）领域的研究与学习，代码开源仅供查阅与参考，欢迎 fork 后按需改造。</p>
+            <p class="mt-4 text-xs font-medium uppercase tracking-wide text-slate-500" data-i18n="openSource.repoLabel">GitHub 仓库</p>
             <a
               href="https://github.com/leodus2015-crypto/aidc2026"
               target="_blank"
@@ -265,7 +269,7 @@
               </svg>
               <span class="break-all">github.com/leodus2015-crypto/aidc2026</span>
             </a>
-            <p class="mt-3 text-sm leading-6 text-slate-500" data-i18n="openSource.repoNote"></p>
+            <p class="mt-3 text-sm leading-6 text-slate-500" data-i18n="openSource.repoNote">链接将在新标签页打开 GitHub；提交 Issue 或 Pull Request 均欢迎。</p>
           </div>
         </article>
       </div>
@@ -274,23 +278,23 @@
 
   <footer class="border-t border-slate-200 bg-white py-6">
     <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
-      <span><span data-i18n="footer.miit"></span>
+      <span><span data-i18n="footer.miit">工信部备案号：</span>
         <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a>
       </span>
       <span class="hidden sm:inline" aria-hidden="true">|</span>
-      <span><span data-i18n="footer.publicSecurity"></span>
+      <span><span data-i18n="footer.publicSecurity">公安备案号：</span>
         <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a>
       </span>
     </p>
   </footer>
 
-    <script src="js/aidc-asset-version.js?v=95"></script>
-<script src="js/i18n.js?v=95"></script>
-  <script src="js/lang-switch.js?v=95"></script>
-  <script src="js/aidc-refresh-flash.js?v=95"></script>
-<script src="js/aidc-mega-nav.js?v=95"></script>
-  <script src="js/i18n-bootstrap.js?v=95"></script>
-  <script src="js/about-us-page.js?v=95"></script>
+    <script src="js/aidc-asset-version.js?v=96"></script>
+<script src="js/i18n.js?v=96"></script>
+  <script src="js/lang-switch.js?v=96"></script>
+  <script src="js/aidc-refresh-flash.js?v=96"></script>
+<script src="js/aidc-mega-nav.js?v=96"></script>
+  <script src="js/i18n-bootstrap.js?v=96"></script>
+  <script src="js/about-us-page.js?v=96"></script>
   <script>
     AidcI18nBootstrap.bootstrap('about-us', { onReady: function () { initAboutUsPage(); } });
   </script>

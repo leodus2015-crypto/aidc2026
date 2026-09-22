@@ -132,7 +132,8 @@ topic.html                Topic 目录（data/topics.json）
 - 站点状态：使用 `/api/analytics/summary`，必须服务端认证。
 - About US：读取 `data/ai-usage.json` 和 `data/site-release.json`。
 - Topic 目录：读取 `data/topics.json`（条目顺序即卡片顺序）；卡片可指向白皮书 PDF 预览页或观点 HTML。条目可设 `locales`（如 2024 白皮书 `["zh"]`），英文目录不展示仅中文的卡片。`assets/aidc-whitepaper-2024-zh.pdf` 允许缺失，预览页必须显示就绪提示。2026 白皮书预览页按语言切换 `topic/ai-dc-white-paper-2026-cn.pdf` / `topic/ai-dc-white-paper-2026-en.pdf`。主权 AI 观点页按语言嵌入 `topic/sovereign-ai/sovereign-ai-zh.html` / `topic/sovereign-ai/sovereign-ai.html`；配图在 `topic/sovereign-ai/assets/`。演讲稿留在该目录，不作为站点入口。
-- 页面文案：所有标准页面读取 `i18n/common.*.json` 和自己的页面 bundle。
+- 页面文案：所有标准页面读取 `i18n/common.*.json` 和自己的页面 bundle。无 JS 时靠 HTML 内中文 fallback 与 `<noscript>` / `.aidc-noscript` 提示，不依赖 Tailwind CDN。
+- 站点根公开文件：`favicon.ico`、`robots.txt`、`sitemap.xml`（8 个核心入口）。HTTP 跳 HTTPS 在 `deploy/nginx-static-cache.conf`，部署后需 reload nginx。
 
 管理凭据仅存在于服务端 `ADMIN_TOKEN` 环境变量。ROI、3D 案例与站点状态都走同一套服务端校验；英文字母大小写不敏感，数字与符号仍须一致。公共配置接口不得返回口令或其验证材料。
 

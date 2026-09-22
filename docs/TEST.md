@@ -125,5 +125,10 @@ GitHub Actions：
 - [ ] `https://www.aidc2026.cn/ai-dc-design.html` HTTP 200
 - [ ] `https://www.aidc2026.cn/js/lang-switch.js` HTTP 200
 - [ ] `https://www.aidc2026.cn/i18n/common.zh.json` HTTP 200
+- [ ] `https://aidc2026.cn/favicon.ico` 与 `https://www.aidc2026.cn/favicon.ico` HTTP 200
+- [ ] `https://www.aidc2026.cn/robots.txt` HTTP 200，含 `User-agent: *` 与 `Allow: /`
+- [ ] `https://www.aidc2026.cn/sitemap.xml` HTTP 200，`Content-Type` 含 xml，含 8 个核心页
+- [ ] `curl -sI http://aidc2026.cn/` 的 `Location` 为 `https://…`
+- [ ] 浏览器禁用 JS 后，主导航页可见 `<noscript>` 提示与静态正文，不是白屏
 
 暂不上 Playwright。清单稳定、同一路径反复回归时再补 5～6 条自动化，不要全站录屏。
