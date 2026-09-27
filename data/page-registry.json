@@ -398,6 +398,7 @@
       "embeds": [],
       "assets": [
         "js/aidc-investment-roi-init.js",
+        "js/aidc-investment-roi-xlsx.js",
         "js/aidc-investment-roi-page.js",
         "i18n/aidc-investment-roi.zh.json",
         "i18n/aidc-investment-roi.en.json"
@@ -562,6 +563,67 @@
         "topic/sovereign-ai/assets/ai-sovereign-factory-signal.png",
         "topic/sovereign-ai/assets/ai-full-stack-signal.png"
       ]
+    },
+    {
+      "path": "topic-swarmtraces.html",
+      "id": "topic-swarmtraces",
+      "title": "AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face",
+      "kind": "container",
+      "visibility": "public",
+      "parents": [],
+      "embeds": [
+        "topic/swarmtraces/swarmtraces技术分析报告.html",
+        "topic/swarmtraces/swarmtraces-technical-analysis.html"
+      ],
+      "assets": [
+        "js/topic-swarmtraces-page.js",
+        "i18n/topic-swarmtraces.zh.json",
+        "i18n/topic-swarmtraces.en.json"
+      ],
+      "dataSources": [
+        "topic/swarmtraces/swarmtraces技术分析报告.pdf"
+      ],
+      "optionalDataSources": [
+        "topic/swarmtraces/swarmtraces技术分析报告.pdf"
+      ]
+    },
+    {
+      "path": "topic/swarmtraces/swarmtraces技术分析报告.html",
+      "id": "topic-swarmtraces-html",
+      "title": "AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "topic-swarmtraces.html",
+          "relation": "iframe"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "topic/swarmtraces/report.css",
+        "topic/swarmtraces/report-shell.js"
+      ],
+      "dataSources": []
+    },
+    {
+      "path": "topic/swarmtraces/swarmtraces-technical-analysis.html",
+      "id": "topic-swarmtraces-html-en",
+      "title": "A New Cybersecurity Challenge in the AI Era: OpenAI Agents Intrude on Hugging Face",
+      "kind": "embedded",
+      "visibility": "public",
+      "parents": [
+        {
+          "path": "topic-swarmtraces.html",
+          "relation": "iframe"
+        }
+      ],
+      "embeds": [],
+      "assets": [
+        "topic/swarmtraces/report.css",
+        "topic/swarmtraces/report-shell.js"
+      ],
+      "dataSources": []
     },
     {
       "path": "about-us.html",

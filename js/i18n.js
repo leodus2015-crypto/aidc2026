@@ -42,9 +42,10 @@
     return key;
   }
 
-  async function loadJson(url) {
+  async function loadJson(url, bundleRev) {
     const sep = url.includes('?') ? '&' : '?';
-    const res = await fetch(`${url}${sep}v=${BUNDLE_VERSION}`);
+    const rev = bundleRev ? `&rev=${encodeURIComponent(bundleRev)}` : '';
+    const res = await fetch(`${url}${sep}v=${BUNDLE_VERSION}${rev}`);
     if (!res.ok) throw new Error(`i18n load failed: ${url} (${res.status})`);
     return res.json();
   }
@@ -139,7 +140,7 @@
   async function loadBundles(nextLocale, options) {
     const base = options.basePath || 'i18n/';
     const common = options.common ? await loadJson(`${base}common.${nextLocale}.json`) : {};
-    const page = options.page ? await loadJson(`${base}${options.page}.${nextLocale}.json`) : {};
+    const page = options.page ? await loadJson(`${base}${options.page}.${nextLocale}.json`, options.bundleRev) : {};
     return deepMerge(common, page);
   }
 
@@ -148,6 +149,7 @@
       page: options.page || null,
       common: options.common !== false,
       basePath: options.basePath || 'i18n/',
+      bundleRev: options.bundleRev || null,
     };
     pageId = initOptions.page;
     locale = options.locale || detectInitialLocale();
@@ -165,7 +167,7 @@
     } catch (_) {
       /* ignore */
     }
-    const bundleOptions = options || initOptions;
+    const bundleOptions = { ...initOptions, ...(options || {}) };
     messages = await loadBundles(locale, bundleOptions);
     applyMeta();
     applyDom();

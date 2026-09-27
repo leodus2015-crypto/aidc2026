@@ -21,6 +21,8 @@ CHROMELESS_HTML: set[str] = {
     "topic/sovereign-ai/sovereign-ai.html",
     "topic/sovereign-ai/sovereign-ai-zh.html",
     "topic/sovereign-ai/versions/index.2026-09-09-v19.html",
+    "topic/swarmtraces/swarmtraces技术分析报告.html",
+    "topic/swarmtraces/swarmtraces-technical-analysis.html",
 }
 
 # Known extra ALLOWED_CONFIG_KEYS that have no file in data/config-seeds/.

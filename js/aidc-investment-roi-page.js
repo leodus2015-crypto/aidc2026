@@ -643,6 +643,41 @@
     $('keyParamsPanel').classList.toggle('hidden', !visible);
     $('calcProcessPanel').classList.toggle('hidden', !visible);
     $('keyParamsToggle').checked = visible;
+    const downloadBtn = $('downloadXlsxBtn');
+    if (downloadBtn) downloadBtn.classList.toggle('hidden', !visible);
+  }
+
+  function downloadXlsx() {
+    const hint = $('xlsxExportHint');
+    if (!keyParamsUnlocked) {
+      if (hint) {
+        hint.textContent = L('请先开启并解锁关键参数');
+        hint.className = 'text-xs text-rose-600';
+      }
+      return;
+    }
+    try {
+      if (!window.AidcInvestmentRoiXlsx?.download) {
+        throw new Error('xlsx');
+      }
+      AidcInvestmentRoiXlsx.download({
+        locale: getLocale(),
+        t: L,
+        inputs: collectRoiConfigForSave(),
+        computed: readState(),
+        cloudCompare: CLOUD_COMPARE,
+        activeScenario,
+      });
+      if (hint) {
+        hint.textContent = L('导出当前数值与公式，可在 Excel 中改黄色输入格后自动重算');
+        hint.className = 'text-xs text-slate-500';
+      }
+    } catch (err) {
+      if (hint) {
+        hint.textContent = L('Excel 导出失败，请重试。');
+        hint.className = 'text-xs text-rose-600';
+      }
+    }
   }
 
   function bindEvents() {
@@ -719,6 +754,7 @@
       });
     });
     $('syncConfigBtn').addEventListener('click', syncConfigToCloud);
+    $('downloadXlsxBtn')?.addEventListener('click', downloadXlsx);
   }
 
   async function bootPage() {
@@ -753,5 +789,7 @@
     boot: bootPage,
     renderAll,
     applyPageConfig,
+    downloadXlsx,
+    setKeyParamsVisible,
   };
 })();

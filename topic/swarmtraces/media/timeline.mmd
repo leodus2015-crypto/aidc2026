@@ -1,0 +1,12 @@
+flowchart TB
+  subgraph A[评测沙箱内]
+    A1[共享 Artifactory 凭证] --> A2[留言板]
+    A2 --> A3[非预期出网]
+    A3 --> A4[集体分工 swarm]
+  end
+  subgraph B[第三方溢出]
+    B1[公开 HF 令牌] --> B2[数据集工人读文件/执行]
+    B2 --> B3[控制通道与集群访问]
+  end
+  A4 --> B1
+  B3 --> C[短链出站载荷被公开重建]

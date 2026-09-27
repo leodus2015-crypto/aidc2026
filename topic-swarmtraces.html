@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="专题：AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face。在线阅读 HTML 报告；中文可下载 PDF。" />
+  <meta name="theme-color" content="#f8fafc" />
+  <link rel="canonical" href="https://www.aidc2026.cn/topic-swarmtraces.html" />
+  <title>AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face · Topic</title>
+  <script src="js/aidc-theme.js?v=97"></script>
+  <script src="js/theme-switch.js?v=97"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/theme.css?v=97" />
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900" data-i18n-page="topic-swarmtraces">
+  <noscript>
+  <p class="aidc-noscript" role="status">当前浏览器未启用 JavaScript。导航与静态正文仍可阅读；语言切换、主题与互动功能需要启用脚本。 JavaScript is off: navigation and static copy remain readable; language, theme, and interactive tools need scripts.</p>
+</noscript>
+  <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <nav
+      class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8 xl:max-w-7xl"
+      data-i18n-aria-label="nav.aria"
+      aria-label="主导航"
+    >
+      <a href="ai-dc-design.html" class="flex min-w-0 shrink-0 items-center" data-i18n-aria-label="nav.homeAria" aria-label="AIDC 2026 · 首页">
+        <img
+          src="aidc2026-logo.svg"
+          alt="AIDC 2026 · AI Data Center"
+          width="593"
+          height="118"
+          class="h-8 w-auto max-h-10 object-contain object-left sm:h-9 md:h-10"
+        />
+      </a>
+
+      <div class="ml-auto flex flex-wrap items-center gap-4">
+        <ul class="flex flex-wrap items-center gap-6 text-sm font-semibold">
+          <li>
+            <a
+              href="ai-dc-design.html"
+              class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+              data-i18n="nav.aiDcLayout"
+            >AI DC规划</a>
+          </li>
+          <li>
+            <a
+              href="index.html#inference"
+              class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+              data-i18n="nav.inference"
+            >Agentic推理</a>
+          </li>
+          <li>
+            <a
+              href="post-training.html"
+              class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+              data-i18n="nav.postTraining"
+            >后训练</a>
+          </li>
+          <li>
+            <a
+              href="topic.html"
+              class="inline-block border-b-2 border-blue-600 pb-1 text-blue-700"
+              data-i18n="nav.whitePaper"
+            >Topic</a>
+          </li>
+          <li>
+            <a
+              href="about-us.html"
+              class="inline-block border-b-2 border-transparent pb-1 text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
+              data-i18n="nav.aboutUs"
+            >About US</a>
+          </li>
+        </ul>
+        <div id="lang-switch-root" class="shrink-0"></div>
+        <div id="theme-switch-root" class="shrink-0"></div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8 xl:max-w-7xl 2xl:px-10">
+    <p class="mb-6">
+      <a href="topic.html" class="text-sm font-semibold text-blue-700 hover:underline" data-i18n="page.back">返回 Topic</a>
+    </p>
+
+    <section class="flex flex-col gap-8 lg:gap-10">
+      <div class="w-full max-w-3xl xl:max-w-4xl">
+        <p class="text-sm font-semibold uppercase tracking-wide text-blue-700" data-i18n="page.kind">专题 · 2026</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl" data-i18n="page.h1">AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face</h1>
+        <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg" data-i18n="page.intro">人工智能（AI）时代的网络安全新挑战，是把一批早已存在的弱点，交给一群不会交白卷、会互相交接、且没有人在场逐步指挥的智能体（Agent），以机器的速度串成一次多日入侵。切断与加固仍主要由人完成；AI 在这次事件里既帮了防守，也耽误过把人叫到现场。</p>
+      </div>
+
+      <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+        <div class="flex flex-col gap-4 border-b border-slate-200 px-6 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-8">
+          <div>
+            <h2 class="text-lg font-bold text-slate-950" data-i18n="edition.title">HTML 图文版</h2>
+            <p class="mt-1 text-sm text-slate-500" data-i18n="edition.desc">在线阅读中文 HTML。可新窗口打开，或下载同目录 PDF。</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="topic/swarmtraces/swarmtraces技术分析报告.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-swarmtraces-action="open"
+              class="inline-flex items-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50"
+              data-i18n="edition.openNew"
+            >新窗口打开</a>
+            <a
+              href="topic/swarmtraces/swarmtraces技术分析报告.pdf"
+              download="SwarmTraces技术分析报告.pdf"
+              data-swarmtraces-action="download"
+              class="inline-flex items-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+              data-i18n="edition.downloadPdf"
+            >下载 PDF</a>
+          </div>
+        </div>
+        <iframe
+          id="swarmtraces-viewer"
+          title="SwarmTraces 技术分析报告"
+          data-i18n-title="edition.iframeTitle"
+          src="topic/swarmtraces/swarmtraces技术分析报告.html"
+          class="block h-[min(85vh,56rem)] w-full border-0 bg-[#fafaf9]"
+        ></iframe>
+        <p class="border-t border-slate-100 px-6 py-3 text-xs text-slate-400 sm:px-8" data-i18n="edition.fallbackHint">若预览未能加载，请使用「新窗口打开」或下载 PDF。</p>
+      </article>
+      <p class="text-sm leading-6 text-slate-500" data-i18n-html="page.attribution">声明：本专题主要内容来自 <a class="font-medium text-blue-700 underline-offset-2 hover:underline" href="https://swarmtraces.org/" target="_blank" rel="noopener noreferrer">https://swarmtraces.org/</a>。我们尊重其知识产权；查阅原文、图表或数据集请以该站为准。</p>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white py-6">
+    <p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-slate-500">
+      <span><span data-i18n="footer.miit">工信部备案号：</span>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏ICP备2026026790号-3</a>
+      </span>
+      <span class="hidden sm:inline" aria-hidden="true">|</span>
+      <span><span data-i18n="footer.publicSecurity">公安备案号：</span>
+        <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32010602012455" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-700">苏公网安备32010602012455号</a>
+      </span>
+    </p>
+  </footer>
+
+  <script src="js/aidc-asset-version.js?v=97"></script>
+  <script src="js/i18n.js?v=97"></script>
+  <script src="js/lang-switch.js?v=97"></script>
+  <script src="js/aidc-refresh-flash.js?v=97"></script>
+  <script src="js/aidc-mega-nav.js?v=97"></script>
+  <script src="js/i18n-bootstrap.js?v=97"></script>
+  <script src="js/topic-swarmtraces-page.js?v=97&rev=en-html-2"></script>
+  <script>
+    AidcI18nBootstrap.bootstrap('topic-swarmtraces', {
+      bundleRev: 'credit-1',
+      onReady: function () {
+        initTopicSwarmtracesPage();
+      },
+      onLocaleChange: function () {
+        initTopicSwarmtracesPage();
+      },
+    });
+  </script>
+</body>
+</html>

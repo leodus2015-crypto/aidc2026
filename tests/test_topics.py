@@ -37,9 +37,9 @@ def test_topics_catalog_is_valid():
 
     assert len(ids) == len(set(ids))
     assert ids[0] == "whitepaper-2026"
-    assert "whitepaper-2024" in ids
-    assert "whitepaper-2026" in ids
-    assert "sovereign-ai" in ids
+    assert ids[1] == "sovereign-ai"
+    assert ids[2] == "swarmtraces"
+    assert ids[3] == "whitepaper-2024"
     wp2024 = next(item for item in topics if item["id"] == "whitepaper-2024")
     assert wp2024.get("locales") == ["zh"]
     js = (ROOT / "js" / "topic-page.js").read_text(encoding="utf-8")
@@ -79,6 +79,79 @@ def test_live_html_links_topic_hub_not_retired_white_paper():
     assert leftover == []
     nav = (ROOT / "ai-dc-design.html").read_text(encoding="utf-8")
     assert 'href="topic.html"' in nav
+
+
+def test_swarmtraces_html_and_pdf_linked():
+    page = ROOT / "topic-swarmtraces.html"
+    html = page.read_text(encoding="utf-8")
+    js = (ROOT / "js" / "topic-swarmtraces-page.js").read_text(encoding="utf-8")
+    topics = json.loads(TOPICS_PATH.read_text(encoding="utf-8"))
+    entry = next(item for item in topics["topics"] if item["id"] == "swarmtraces")
+    article_zh = ROOT / "topic/swarmtraces/swarmtraces技术分析报告.html"
+    article_en = ROOT / "topic/swarmtraces/swarmtraces-technical-analysis.html"
+    pdf = ROOT / "topic/swarmtraces/swarmtraces技术分析报告.pdf"
+    assert page.is_file()
+    assert article_zh.is_file()
+    assert article_en.is_file()
+    assert pdf.is_file()
+    assert (ROOT / "topic/swarmtraces/report.css").is_file()
+    assert (ROOT / "topic/swarmtraces/report-shell.js").is_file()
+    css = (ROOT / "topic/swarmtraces/report.css").read_text(encoding="utf-8")
+    shell = (ROOT / "topic/swarmtraces/report-shell.js").read_text(encoding="utf-8")
+    zh_html = article_zh.read_text(encoding="utf-8")
+    en_html = article_en.read_text(encoding="utf-8")
+    assert "report-shell.js" in zh_html
+    assert "report-shell.js" in en_html
+    assert "is-standalone" in css
+    assert "is-embed" in shell
+    assert "topic-swarmtraces.html" in shell
+    assert entry["status"] == "published"
+    assert entry["kind"] == "html"
+    assert entry["href"] == "topic-swarmtraces.html"
+    assert 'data-i18n-page="topic-swarmtraces"' in html
+    assert "topic/swarmtraces/swarmtraces技术分析报告.html" in html
+    assert "topic/swarmtraces/swarmtraces技术分析报告.pdf" in html
+    assert "topic/swarmtraces/swarmtraces技术分析报告.html" in js
+    assert "topic/swarmtraces/swarmtraces-technical-analysis.html" in js
+    assert "topic/swarmtraces/swarmtraces技术分析报告.pdf" in js
+    assert "locale === 'zh'" in js
+    assert "downloadLink.hidden = !showPdf" in js
+    assert "downloadLink.classList.toggle('hidden', !showPdf)" in js
+    zh = json.loads((ROOT / "i18n" / "topic-swarmtraces.zh.json").read_text(encoding="utf-8"))
+    en = json.loads((ROOT / "i18n" / "topic-swarmtraces.en.json").read_text(encoding="utf-8"))
+    topic_zh = json.loads((ROOT / "i18n" / "topic.zh.json").read_text(encoding="utf-8"))
+    topic_en = json.loads((ROOT / "i18n" / "topic.en.json").read_text(encoding="utf-8"))
+    assert zh["page"]["h1"] == "AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face"
+    assert topic_zh["topics"]["swarmtraces"]["title"] == zh["page"]["h1"]
+    assert topic_zh["topics"]["swarmtraces"]["summary"] == zh["page"]["intro"]
+    assert topic_en["topics"]["swarmtraces"]["title"] == en["page"]["h1"]
+    assert topic_en["topics"]["swarmtraces"]["summary"] == en["page"]["intro"]
+    assert "No PDF" in en["edition"]["desc"]
+    assert "PDF" not in en["edition"]["fallbackHint"]
+    assert "swarmtraces.org" in zh["page"]["attribution"]
+    assert "intellectual-property" in en["page"]["attribution"]
+    assert 'data-i18n-html="page.attribution"' in html
+    assert "swarmtraces.org" in zh_html
+    assert "swarmtraces.org" in en_html
+    assert "class=\"attribution\"" in zh_html
+    assert "class=\"attribution\"" in en_html
+    assert "media/timeline-six-periods.en.svg" in en_html
+    assert "media/scale-metrics.en.svg" in en_html
+    assert "media/jul11-peak.en.svg" in en_html
+    assert "media/response-clocks.en.svg" in en_html
+    for name in (
+        "timeline-six-periods.en.svg",
+        "scale-metrics.en.svg",
+        "jul11-peak.en.svg",
+        "response-clocks.en.svg",
+    ):
+        assert (ROOT / "topic/swarmtraces/media" / name).is_file()
+    assert "AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face" in article_zh.read_text(
+        encoding="utf-8"
+    )
+    assert "A New Cybersecurity Challenge in the AI Era: OpenAI Agents Intrude on Hugging Face" in article_en.read_text(
+        encoding="utf-8"
+    )
 
 
 def test_sovereign_ai_deck_files_and_images_exist():

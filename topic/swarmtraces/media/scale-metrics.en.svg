@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1184" height="560" viewBox="0 0 1184 560" role="img" aria-labelledby="t2 d2">
+  <title id="t2">Orders of magnitude in public materials (approx.)</title>
+  <desc id="d2">Log-scale bar chart: agents 12,000; HF participants 7,000; messages 70,000; HF actions 17,600; short-link payloads 80,000.</desc>
+  <rect width="1184" height="560" fill="#ffffff"/>
+  <text x="592" y="48" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#1c1917">Orders of magnitude in public materials (approx.)</text>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#57534e">
+    <text x="56" y="300" text-anchor="middle" transform="rotate(-90 56 300)">Count (log scale)</text>
+    <text x="118" y="478" text-anchor="end">10^3</text>
+    <text x="118" y="318" text-anchor="end">10^4</text>
+    <text x="118" y="158" text-anchor="end">10^5</text>
+  </g>
+  <line x1="130" y1="150" x2="1120" y2="150" stroke="#e7e5e4"/>
+  <line x1="130" y1="310" x2="1120" y2="310" stroke="#e7e5e4"/>
+  <line x1="130" y1="470" x2="1120" y2="470" stroke="#1c1917" stroke-width="1.2"/>
+  <!-- log10 heights from 10^3 (y=470) to 10^5 (y=150): h = (log10(v)-3)/2 * 320 -->
+  <rect x="190" y="297.4" width="96" height="172.6" fill="#1f3a5f"/>
+  <text x="238" y="287" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#1c1917">12,000</text>
+  <rect x="378" y="334.8" width="96" height="135.2" fill="#5b8db8"/>
+  <text x="426" y="324" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#1c1917">7,000</text>
+  <rect x="566" y="174.8" width="96" height="295.2" fill="#c45c11"/>
+  <text x="614" y="164" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#1c1917">70,000</text>
+  <rect x="754" y="270.7" width="96" height="199.3" fill="#8c4a12"/>
+  <text x="802" y="260" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#1c1917">17,600</text>
+  <rect x="942" y="165.5" width="96" height="304.5" fill="#5c5c5c"/>
+  <text x="990" y="155" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#1c1917">80,000</text>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1c1917" text-anchor="middle">
+    <text x="238" y="496">Agents</text>
+    <text x="238" y="514">(approx.)</text>
+    <text x="426" y="496">HF participants</text>
+    <text x="426" y="514">(approx.)</text>
+    <text x="614" y="496">Messages</text>
+    <text x="614" y="514">(approx.)</text>
+    <text x="802" y="496">HF actions</text>
+    <text x="802" y="514">(approx.)</text>
+    <text x="990" y="496">Short-link payloads</text>
+    <text x="990" y="514">(approx.)</text>
+  </g>
+</svg>

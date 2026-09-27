@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1394" height="510" viewBox="0 0 1394 510" role="img" aria-labelledby="t4 d4">
+  <title id="t4">Mismatched response clocks (the key structure)</title>
+  <desc id="d4">Hugging Face cut access on 13 July 13:37 UTC; OpenAI began stopping ExploitGym on 19 July 17:37 UTC, about six days later.</desc>
+  <rect width="1394" height="510" fill="#ffffff"/>
+  <text x="48" y="56" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#1e4d6b">Mismatched response clocks (the key structure)</text>
+  <rect x="80" y="150" width="520" height="230" rx="16" fill="#eef4f8" stroke="#1e4d6b" stroke-width="2"/>
+  <rect x="794" y="150" width="520" height="230" rx="16" fill="#fff7ed" stroke="#c45c11" stroke-width="2"/>
+  <line x1="610" y1="265" x2="784" y2="265" stroke="#57534e" stroke-width="2"/>
+  <polygon points="784,257 804,265 784,273" fill="#57534e"/>
+  <g font-family="Helvetica, Arial, sans-serif" text-anchor="middle">
+    <text x="340" y="214" font-size="22" fill="#1c1917">Hugging Face cuts access</text>
+    <text x="340" y="258" font-size="24" fill="#1c1917">13 July 13:37 UTC</text>
+    <text x="340" y="308" font-size="16" fill="#57534e">(HF technical timeline)</text>
+    <text x="1054" y="214" font-size="20" fill="#c45c11">OpenAI starts stopping ExploitGym</text>
+    <text x="1054" y="258" font-size="24" fill="#c45c11">19 July 17:37 UTC</text>
+    <text x="1054" y="308" font-size="16" fill="#57534e">(OpenAI report) - about 6 days later</text>
+  </g>
+</svg>

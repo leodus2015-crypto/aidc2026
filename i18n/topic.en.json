@@ -26,6 +26,10 @@
     "whitepaper-2026": {
       "title": "AI DC White Paper 2026",
       "summary": "The 2026 white paper centers on Agent, Token, and WaTt. It systematically presents the Agentic-era AI DC innovation paradigm, solution architecture, and proven practices. We hope it can serve as a reference for enterprises building an AI compute foundation, and contribute to the rapid, healthy development of intelligent-computing infrastructure."
+    },
+    "swarmtraces": {
+      "title": "A New Cybersecurity Challenge in the AI Era: OpenAI Agents Intrude on Hugging Face",
+      "summary": "The new cybersecurity challenge of the AI era is handing a set of long-standing weaknesses to a swarm of agents that will not hand in a blank paper, will pass work to one another, and need no human on site to step them through—then stringing that into a multi-day intrusion at machine speed. Cutoff and hardening are still done mainly by people; in this incident AI both helped the defense and delayed calling a human to the scene."
     }
   }
 }

@@ -63,6 +63,7 @@ GitHub Actions：
 - [ ] API 正常时：错误管理凭据不能解锁；正确 `ADMIN_TOKEN`（英文字母大小写不敏感）可解锁并写入配置。
 - [ ] API 不可用时：只读测算仍可用，但关键参数不能解锁或写入。
 - [ ] 云端配置版本冲突时：当前输入保留，提示重新加载，不覆盖他人更新。
+- [ ] 未解锁「关键参数」时没有下载按钮；口令解锁后出现「下载 Excel」，文件含当前输入与页面同构公式（黄色可改、蓝色为公式）。
 
 ### 机房工期和造价
 
@@ -97,11 +98,14 @@ GitHub Actions：
 
 ### Topic
 
-- [ ] 主导航显示 **Topic**（中英相同）；打开 `topic.html` 见短引言与卡片网格，不是整页 PDF。中文目录第一张为 2026 白皮书；英文目录不显示仅有中文版的 2024 白皮书卡。
+- [ ] 主导航显示 **Topic**（中英相同）；打开 `topic.html` 见短引言与卡片网格，不是整页 PDF。卡片顺序：2026 白皮书 → 主权 AI → SwarmTraces 报告；中文另有 2024 白皮书卡，英文目录不显示仅有中文版的 2024 白皮书卡。
 - [ ] 中文下 2024 白皮书卡进入 `white-paper-2024.html`：PDF 可用时预览/下载可用；PDF 缺失时显示就绪提示而不是空白 iframe。
 - [ ] 观点卡进入 `topic-sovereign-ai.html`，中文加载 `topic/sovereign-ai/sovereign-ai-zh.html` 幻灯片（含配图），切 EN 后加载 `topic/sovereign-ai/sovereign-ai.html`，切主题不重载 iframe；可返回 Topic 目录。页面不展示演讲稿。
 - [ ] 窗口内可直接翻页；窗口外右下角小按钮「全屏播放」进入演讲全屏（站点壳隐藏，16:9 铺满）；方向键/空格翻页；Esc 退出，F 可切换。不支持 Fullscreen API 时仍铺满视口。
 - [ ] 2026 白皮书卡进入 `white-paper-2026.html`：中文预览/下载 `topic/ai-dc-white-paper-2026-cn.pdf`，切 EN 后预览/下载 `topic/ai-dc-white-paper-2026-en.pdf`；两份 PDF 均可直接下载。PDF 缺失时显示就绪提示而不是空白 iframe。
+- [ ] SwarmTraces 卡进入 `topic-swarmtraces.html`：中文 iframe 显示 `topic/swarmtraces/swarmtraces技术分析报告.html`，「下载 PDF」指向同目录 PDF。切 EN 后 iframe 换成 `topic/swarmtraces/swarmtraces-technical-analysis.html`，不显示 PDF 下载。切主题不重载 iframe。iframe 内仍是单栏阅读，不出现独立顶栏/左侧目录。
+- [ ] 「新窗口打开」后：手机宽度保持单栏；电脑宽度顶部为站点链接（含返回 Topic），左侧目录、右侧正文。点击目录可跳转到对应小节。
+- [ ] 专题页底部与 HTML 文末有 swarmtraces.org 来源与知识产权声明，链接可打开。
 - [ ] 切中英和 Light/Dark：目录与子页文案/颜色正确，卡片不横向溢出。
 
 ### 3D 配置

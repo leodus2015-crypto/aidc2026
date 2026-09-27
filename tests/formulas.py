@@ -2,7 +2,8 @@
 
 Keep in sync with:
 - js/index-page.js computeStandardKvCacheBytes / computeMlaKvCacheBytes
-- js/aidc-investment-roi-page.js tokenMix / blendedCloudPrice / formatYiPerDay
+- js/aidc-investment-roi-page.js tokenMix / blendedCloudPrice / formatYiPerDay / readState
+- js/aidc-investment-roi-xlsx.js MODEL_FORMULAS
 - ai-dc-computeEst.html calculate() and scenarios.coding
 - ai-dc-tcp.html COMMON / SC
 - js/ai-dc-schedule-budget-model.js calculateScenario / compareScenarios
@@ -51,6 +52,108 @@ def compute_mla_kv_cache_bytes(
 ) -> float:
     per_layer_per_token = compressed_kv_dim + rope_head_dim
     return layers * per_layer_per_token * seq_len * batch_size * dtype_bytes
+
+
+def js_round(value: float) -> int:
+    """Match JavaScript Math.round (half away from zero for positives)."""
+    if value >= 0:
+        return int(math.floor(value + 0.5))
+    return int(math.ceil(value - 0.5))
+
+
+def roi_state(inp: Mapping[str, float | str], refs: Mapping[str, float]) -> dict[str, float]:
+    """Port of aidc-investment-roi-page.js readState() in yuan / fraction units."""
+    compute_p = float(inp["computeP"])
+    cluster_mw = float(inp["clusterMw"])
+    npu_count = js_round(compute_p)
+    unit_price_wan = float(inp["npuUnitPrice"])
+    ascend_pct = float(inp["ascendInItPct"]) / 100
+    it_pct = float(inp["pctItDevice"]) / 100
+    power_pct = float(inp["pctPowerCool"]) / 100
+    land_pct = float(inp["pctLandBuild"]) / 100
+    deprec_years = float(inp["deprecYears"])
+    pue = float(inp["pue"])
+    elec_price = float(inp["elecPrice"])
+    utilization = float(inp["utilization"]) / 100
+    annual_fixed_opex_yuan = float(inp["annualFixedOpex"]) * 10000
+    capex_opex_pct = float(inp["capexOpexPct"]) / 100
+    tps_miss = float(inp["tpsInputMiss"])
+    tps_hit = float(inp["tpsInputHit"])
+    tps_out = float(inp["tpsOutput"])
+    mix_miss = float(inp["pctMixMiss"]) / 100
+    mix_hit = float(inp["pctMixHit"]) / 100
+    mix_out = float(inp["pctMixOut"]) / 100
+
+    ascend_cost = npu_count * unit_price_wan * 10000
+    it_equipment = ascend_cost / ascend_pct if ascend_pct > 0 else math.nan
+    total_capex = it_equipment / it_pct if it_pct > 0 else math.nan
+    annual_miss = npu_count * tps_miss * 86400 * 365 * utilization
+    annual_hit = npu_count * tps_hit * 86400 * 365 * utilization
+    annual_out = npu_count * tps_out * 86400 * 365 * utilization
+    annual_total = annual_miss + annual_hit + annual_out
+    annual_dep = total_capex / deprec_years
+    annual_power = cluster_mw * 1000 * 8760 * pue * utilization * elec_price
+    annual_maint = total_capex * capex_opex_pct
+    annual_ops = annual_fixed_opex_yuan + annual_maint
+    annual_cost = annual_dep + annual_power + annual_ops
+    miss_m = annual_miss / 1e6
+    hit_m = annual_hit / 1e6
+    out_m = annual_out / 1e6
+    total_m = annual_total / 1e6
+    cost_miss = (annual_cost * mix_miss) / miss_m if miss_m > 0 else math.nan
+    cost_hit = (annual_cost * mix_hit) / hit_m if hit_m > 0 else math.nan
+    cost_out = (annual_cost * mix_out) / out_m if out_m > 0 else math.nan
+    cost_per_m = annual_cost / out_m if out_m > 0 else math.nan
+    cost_blended = annual_cost / total_m if total_m > 0 else math.nan
+    mix = token_mix(tps_miss, tps_hit, tps_out)
+    ref_blended = (
+        mix["miss"] * float(refs["refInputMiss"])
+        + mix["hit"] * float(refs["refInputHit"])
+        + mix["out"] * float(refs["refOutput"])
+    )
+    revenue = total_m * ref_blended
+    profit = revenue - annual_cost
+    fixed = annual_dep + annual_ops
+    tokens_base_m = total_m / utilization if utilization > 0 else 0.0
+    power_base = annual_power / utilization if utilization > 0 else annual_power
+    marginal = ref_blended * tokens_base_m - power_base
+    breakeven = fixed / marginal if marginal > 0 else math.nan
+    payback = total_capex / profit if profit > 0 else math.nan
+    return {
+        "npuCount": npu_count,
+        "ascendCost": ascend_cost,
+        "itEquipment": it_equipment,
+        "totalCapex": total_capex,
+        "powerCapex": total_capex * power_pct,
+        "landCapex": total_capex * land_pct,
+        "annualMissTokens": annual_miss,
+        "annualHitTokens": annual_hit,
+        "annualOutputTokens": annual_out,
+        "annualTotalTokens": annual_total,
+        "annualDep": annual_dep,
+        "annualPower": annual_power,
+        "annualMaint": annual_maint,
+        "annualFixedOpexYuan": annual_fixed_opex_yuan,
+        "annualOps": annual_ops,
+        "annualOpexTotal": annual_power + annual_ops,
+        "annualCost": annual_cost,
+        "annualCostPerDay": annual_cost / 365,
+        "costPerMMiss": cost_miss,
+        "costPerMHit": cost_hit,
+        "costPerMOut": cost_out,
+        "costPerM": cost_per_m,
+        "costPerMBlended": cost_blended,
+        "refBlended": ref_blended,
+        "revenue": revenue,
+        "profit": profit,
+        "breakeven": breakeven,
+        "payback": payback,
+        "utilization": utilization,
+        "ascendPct": ascend_pct,
+        "itPct": it_pct,
+        "powerPct": power_pct,
+        "landPct": land_pct,
+    }
 
 
 def token_mix(tps_miss: float, tps_hit: float, tps_out: float) -> dict[str, float]:

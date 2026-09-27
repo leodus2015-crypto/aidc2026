@@ -16,7 +16,7 @@
     caseB: 'datacenter-3d-v3-2.html?embed=1',
     plan: 'aidc-layout-Card2Power.html?embed=1',
     synergy: 'ai-dc-deployment-perf.html?embed=1',
-    roi: 'aidc-investment-roi.html?embed=1',
+    roi: 'aidc-investment-roi.html?embed=1&rev=xlsx-1',
   };
 
   const STANDALONE_BY_TAB = {

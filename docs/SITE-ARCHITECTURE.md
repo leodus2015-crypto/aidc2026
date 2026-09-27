@@ -88,11 +88,14 @@ iframe URL 与语言同步由 `js/index-page.js` 管理。`inference/styles.css`
 
 ```text
 topic.html                Topic 目录（data/topics.json）
-├── white-paper-2024.html     白皮书 PDF 预览（2024）
 ├── white-paper-2026.html     白皮书 PDF 预览（2026，中英）
-└── topic-sovereign-ai.html   观点：主权 AI，从工厂开始
-    ├── topic/sovereign-ai/sovereign-ai-zh.html  中文幻灯片
-    └── topic/sovereign-ai/sovereign-ai.html     英文幻灯片
+├── topic-sovereign-ai.html   观点：主权 AI，从工厂开始
+│   ├── topic/sovereign-ai/sovereign-ai-zh.html  中文幻灯片
+│   └── topic/sovereign-ai/sovereign-ai.html     英文幻灯片
+├── topic-swarmtraces.html    专题：中英 HTML；仅中文提供 PDF 下载
+│   ├── topic/swarmtraces/swarmtraces技术分析报告.html
+│   └── topic/swarmtraces/swarmtraces-technical-analysis.html
+└── white-paper-2024.html     白皮书 PDF 预览（2024）
 ```
 
 后续白皮书或观点只需在 `data/topics.json` 增加条目，并补对应 HTML / PDF。`kind` 为 `pdf` 或 `html`，`status` 为 `published` 或 `coming`。
@@ -128,12 +131,12 @@ topic.html                Topic 目录（data/topics.json）
 - 机房布局（立体） / 机房供电 / 机房液冷（立体）：纯前端 Three.js 场景，无 API / 数据库依赖；WebGL 不可用时显示回退说明。
 - 机房工期和造价：纯前端工期甘特与风冷/液冷造价估算，无 API / 数据库依赖；造价公式在 `js/ai-dc-schedule-budget-model.js`。
 - 3D 案例 A/B：读取 `/api/config/dc3d.case_a`、`dc3d.case_b`，失败时回退 `data/dc3d-case-*.defaults.json`。
-- Investment ROI：读取和管理 `/api/config/roi.*`，本地默认由页面初始化脚本和 `data/config-seeds/` 保持。
+- Investment ROI：读取和管理 `/api/config/roi.*`，本地默认由页面初始化脚本和 `data/config-seeds/` 保持。解锁「关键参数」后可下载与页面公式同构的 Excel（`js/aidc-investment-roi-xlsx.js`）。
 - 站点状态：使用 `/api/analytics/summary`，必须服务端认证。
 - About US：读取 `data/ai-usage.json` 和 `data/site-release.json`。
-- Topic 目录：读取 `data/topics.json`（条目顺序即卡片顺序）；卡片可指向白皮书 PDF 预览页或观点 HTML。条目可设 `locales`（如 2024 白皮书 `["zh"]`），英文目录不展示仅中文的卡片。`assets/aidc-whitepaper-2024-zh.pdf` 允许缺失，预览页必须显示就绪提示。2026 白皮书预览页按语言切换 `topic/ai-dc-white-paper-2026-cn.pdf` / `topic/ai-dc-white-paper-2026-en.pdf`。主权 AI 观点页按语言嵌入 `topic/sovereign-ai/sovereign-ai-zh.html` / `topic/sovereign-ai/sovereign-ai.html`；配图在 `topic/sovereign-ai/assets/`。演讲稿留在该目录，不作为站点入口。
+- Topic 目录：读取 `data/topics.json`（条目顺序即卡片顺序）；卡片可指向白皮书 PDF 预览页或观点 HTML。条目可设 `locales`（如 2024 白皮书 `["zh"]`），英文目录不展示仅中文的卡片。`assets/aidc-whitepaper-2024-zh.pdf` 允许缺失，预览页必须显示就绪提示。2026 白皮书预览页按语言切换 `topic/ai-dc-white-paper-2026-cn.pdf` / `topic/ai-dc-white-paper-2026-en.pdf`。SwarmTraces 专题页按语言嵌入 `topic/swarmtraces/swarmtraces技术分析报告.html` / `topic/swarmtraces/swarmtraces-technical-analysis.html`；同目录 PDF 仅中文提供下载，英文不提供 PDF。独立新窗口由 `report-shell.js` 在桌面宽度加顶栏站点链接与左侧目录；iframe 与窄屏保持单栏。主权 AI 观点页按语言嵌入 `topic/sovereign-ai/sovereign-ai-zh.html` / `topic/sovereign-ai/sovereign-ai.html`；配图在 `topic/sovereign-ai/assets/`。演讲稿留在该目录，不作为站点入口。
 - 页面文案：所有标准页面读取 `i18n/common.*.json` 和自己的页面 bundle。无 JS 时靠 HTML 内中文 fallback 与 `<noscript>` / `.aidc-noscript` 提示，不依赖 Tailwind CDN。
-- 站点根公开文件：`favicon.ico`、`robots.txt`、`sitemap.xml`（8 个核心入口）。HTTP 跳 HTTPS 在 `deploy/nginx-static-cache.conf`，部署后需 reload nginx。
+- 站点根公开文件：`favicon.ico`、`robots.txt`、`sitemap.xml`（9 个核心入口）。HTTP 跳 HTTPS 在 `deploy/nginx-static-cache.conf`，部署后需 reload nginx。
 
 管理凭据仅存在于服务端 `ADMIN_TOKEN` 环境变量。ROI、3D 案例与站点状态都走同一套服务端校验；英文字母大小写不敏感，数字与符号仍须一致。公共配置接口不得返回口令或其验证材料。
 

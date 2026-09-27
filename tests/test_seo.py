@@ -21,8 +21,9 @@ def test_favicon_robots_sitemap_exist():
         "https://www.aidc2026.cn/white-paper-2026.html",
         "https://www.aidc2026.cn/white-paper-2024.html",
         "https://www.aidc2026.cn/topic-sovereign-ai.html",
+        "https://www.aidc2026.cn/topic-swarmtraces.html",
     ]
-    assert sitemap.count("<loc>") == 8
+    assert sitemap.count("<loc>") == 9
     for loc in locs:
         assert loc in sitemap
 
@@ -36,6 +37,7 @@ def test_chrome_pages_have_noscript_and_icon():
         "about-us.html",
         "white-paper-2026.html",
         "white-paper-2024.html",
+        "topic-swarmtraces.html",
         "404.html",
     )
     for rel in chrome:

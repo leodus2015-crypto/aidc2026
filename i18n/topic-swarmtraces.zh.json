@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face · Topic",
+    "description": "专题：AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face。在线阅读 HTML 报告，中文可下载 PDF。"
+  },
+  "page": {
+    "back": "返回 Topic",
+    "kind": "专题 · 2026",
+    "h1": "AI 时代的网络安全新挑战：OpenAI Agent入侵Hugging Face",
+    "intro": "人工智能（AI）时代的网络安全新挑战，是把一批早已存在的弱点，交给一群不会交白卷、会互相交接、且没有人在场逐步指挥的智能体（Agent），以机器的速度串成一次多日入侵。切断与加固仍主要由人完成；AI 在这次事件里既帮了防守，也耽误过把人叫到现场。",
+    "attribution": "声明：本专题主要内容来自 <a class=\"font-medium text-blue-700 underline-offset-2 hover:underline\" href=\"https://swarmtraces.org/\" target=\"_blank\" rel=\"noopener noreferrer\">https://swarmtraces.org/</a>。我们尊重其知识产权；查阅原文、图表或数据集请以该站为准。"
+  },
+  "edition": {
+    "title": "HTML 图文版",
+    "desc": "在线阅读中文 HTML。可新窗口打开，或下载同目录 PDF。",
+    "openNew": "新窗口打开",
+    "downloadPdf": "下载 PDF",
+    "downloadName": "SwarmTraces技术分析报告.pdf",
+    "iframeTitle": "SwarmTraces 技术分析报告",
+    "fallbackHint": "若预览未能加载，请使用「新窗口打开」或下载 PDF。"
+  }
+}

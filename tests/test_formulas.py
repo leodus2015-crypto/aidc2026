@@ -8,6 +8,7 @@ from formulas import (
     daily_tokens,
     min_hbm_cards,
     planned_cards,
+    roi_state,
     room_power_kw,
     schedule_compare,
     schedule_scenario,
@@ -178,6 +179,42 @@ def test_schedule_budget_country_china_case():
     assert air is not None
     assert air["infra_cost"] == pytest.approx(13_824_000)
     assert air["capex"] == pytest.approx(100_864_000)
+
+
+def test_roi_state_default_shares_and_opex():
+    state = roi_state(
+        {
+            "computeP": 768,
+            "clusterMw": 2.5,
+            "pctItDevice": 70,
+            "pctPowerCool": 10,
+            "pctLandBuild": 20,
+            "npuUnitPrice": 60,
+            "ascendInItPct": 85,
+            "deprecYears": 4,
+            "pue": 1.5,
+            "elecPrice": 0.70,
+            "utilization": 75,
+            "tpsInputMiss": 600,
+            "tpsInputHit": 12000,
+            "tpsOutput": 100,
+            "pctMixMiss": 20,
+            "pctMixHit": 70,
+            "pctMixOut": 10,
+            "annualFixedOpex": 800,
+            "capexOpexPct": 3,
+        },
+        {"refInputMiss": 2.0, "refInputHit": 0.04, "refOutput": 8.0},
+    )
+    assert state["npuCount"] == 768
+    assert state["ascendCost"] == 768 * 60 * 10000
+    assert state["itEquipment"] == pytest.approx(state["ascendCost"] / 0.85)
+    assert state["totalCapex"] == pytest.approx(state["itEquipment"] / 0.70)
+    assert state["powerCapex"] == pytest.approx(state["totalCapex"] * 0.10)
+    assert state["landCapex"] == pytest.approx(state["totalCapex"] * 0.20)
+    assert state["annualDep"] == pytest.approx(state["totalCapex"] / 4)
+    assert state["annualPower"] == pytest.approx(2.5 * 1000 * 8760 * 1.5 * 0.75 * 0.70)
+    assert state["annualCost"] == pytest.approx(state["annualDep"] + state["annualPower"] + state["annualOps"])
 
 
 def test_schedule_budget_rejects_invalid_inputs():

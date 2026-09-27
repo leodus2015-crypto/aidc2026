@@ -46,7 +46,8 @@ aidc 静态站点归档
   index.html              首页（Agentic 推理：原理 / 数据流 / 混部 / 分离 / KV）
   ai-dc-design.html       AI DC 规划（Tab 壳页，内嵌 iframe）
   post-training.html      后训练
-  white-paper.html        白皮书
+  topic.html              Topic 目录
+  topic-swarmtraces.html  SwarmTraces 专题（中英 HTML；仅中文提供 PDF）
   about-us.html           About US
   404.html                404 页
 
@@ -62,6 +63,7 @@ aidc 静态站点归档
   datacenter-3d-v3-2.html     Tab「案例 B（风冷）」
   aidc-investment-roi.html    Tab「Investment ROI」（中英文统一入口）
   js/aidc-investment-roi-page.js  ROI 页共享逻辑
+  js/aidc-investment-roi-xlsx.js  ROI 页 Excel 公式导出
 
 【内部 / 运维页】
   status.html             站点状态（访问观测）；i18n/status.{zh,en}.json、js/status-page.js
@@ -164,3 +166,4 @@ aidc 静态站点归档
   capacity.html、docs.html、aidc-investment-roi.en.html
   aidc-calculation.html、datacenter-hot-aisle-demo.html
   white-paper-2.0.html、white-paper-2.0-draft.html、whitepaper2026-outline.html
+  white-paper.html（已 301 至 topic.html）

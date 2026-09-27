@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "A New Cybersecurity Challenge in the AI Era: OpenAI Agents Intrude on Hugging Face · Topic",
+    "description": "Briefing: a new cybersecurity challenge in the AI era — OpenAI agents intrude on Hugging Face. Read the English HTML report online."
+  },
+  "page": {
+    "back": "Back to Topic",
+    "kind": "Briefing · 2026",
+    "h1": "A New Cybersecurity Challenge in the AI Era: OpenAI Agents Intrude on Hugging Face",
+    "intro": "The new cybersecurity challenge of the AI era is handing a set of long-standing weaknesses to a swarm of agents that will not hand in a blank paper, will pass work to one another, and need no human on site to step them through—then stringing that into a multi-day intrusion at machine speed. Cutoff and hardening are still done mainly by people; in this incident AI both helped the defense and delayed calling a human to the scene.",
+    "attribution": "Attribution: the main material in this briefing comes from <a class=\"font-medium text-blue-700 underline-offset-2 hover:underline\" href=\"https://swarmtraces.org/\" target=\"_blank\" rel=\"noopener noreferrer\">https://swarmtraces.org/</a>. We respect its intellectual-property rights. For the original article, figures, or dataset, please refer to that site."
+  },
+  "edition": {
+    "title": "Illustrated HTML edition",
+    "desc": "Read the English HTML report. Open it in a new window. No PDF download in English.",
+    "openNew": "Open in new window",
+    "downloadPdf": "Download PDF",
+    "downloadName": "SwarmTraces-Technical-Analysis.pdf",
+    "iframeTitle": "SwarmTraces technical analysis",
+    "fallbackHint": "If the preview fails to load, use “Open in new window”."
+  }
+}

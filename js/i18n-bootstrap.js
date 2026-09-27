@@ -17,6 +17,7 @@
       page: pageId,
       common: true,
       basePath: opts.basePath || 'i18n/',
+      bundleRev: opts.bundleRev || null,
     });
     global.AidcI18n.applyDom();
     global.__aidcI18nAfterLocaleChange = function () {
