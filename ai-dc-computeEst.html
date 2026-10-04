@@ -8,13 +8,13 @@
   <meta name="description" content="从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。" />
   <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-computeEst.html" />
   <title>AI 数据中心算力评估规划 · Token → Card</title>
-  <script src="js/aidc-theme.js?v=98"></script>
-  <script src="js/embed-mode.js?v=98"></script>
-  <script src="js/theme-switch.js?v=98"></script>
-  <script src="js/aidc-asset-version.js?v=98"></script>
-  <script src="js/aidc-locale-bridge.js?v=98"></script>
-  <link rel="stylesheet" href="css/theme.css?v=98" />
-  <link rel="stylesheet" href="css/embed.css?v=98" />
+  <script src="js/aidc-theme.js?v=99"></script>
+  <script src="js/embed-mode.js?v=99"></script>
+  <script src="js/theme-switch.js?v=99"></script>
+  <script src="js/aidc-asset-version.js?v=99"></script>
+  <script src="js/aidc-locale-bridge.js?v=99"></script>
+  <link rel="stylesheet" href="css/theme.css?v=99" />
+  <link rel="stylesheet" href="css/embed.css?v=99" />
   <style>
     :root {
       --s-50:#f8fafc; --s-100:#f1f5f9; --s-200:#e2e8f0; --s-300:#cbd5e1;
@@ -1496,11 +1496,30 @@
         return errors.length === 0;
       }
 
+      function blankResults() {
+        [
+          "resultSubtitle", "heroCards", "heroPflops", "boundTag", "heroFormula",
+          "rowDailyTokens", "rowTokenPerSec", "rowComputeCards", "rowMinCards", "rowFutureCards", "rowDevices",
+          "basePflops", "baseCards", "plannedPflops", "currentCards", "computeMarginOut", "currentDevices",
+          "futurePflops", "futureCards", "futureDeltaPflops", "futureDeltaCards", "growthMultiple", "futureDau",
+          "cardTflopsOut", "cardVramOut", "penetrationFactor", "frequencyFactorOut", "agentFactorOut", "factorTotal"
+        ].forEach(id => { $(id).textContent = "—"; });
+        ["penetrationBar", "frequencyBar", "agentBar"].forEach(id => { $(id).style.width = "0"; });
+        $("trendChart").replaceChildren();
+        $("annualBody").replaceChildren();
+        $("memBoundPill").hidden = true;
+        $("rowMinWrap").classList.remove("is-binding");
+      }
+
       function calculate() {
         const v = readValues();
         const valid = validate(v);
         $("resultsRoot").classList.toggle("disabled-results", !valid);
-        if (!valid) return;
+        if (!valid) {
+          lastResult = null;
+          blankResults();
+          return;
+        }
 
         // ── Token 取数：AI 渗透用户数 × 单用户有效用量 ──
         const activeUsers = v.dau * v.currentPenetration / 100;

@@ -131,7 +131,7 @@ GitHub Actions：
 - [ ] `https://www.aidc2026.cn/i18n/common.zh.json` HTTP 200
 - [ ] `https://aidc2026.cn/favicon.ico` 与 `https://www.aidc2026.cn/favicon.ico` HTTP 200
 - [ ] `https://www.aidc2026.cn/robots.txt` HTTP 200，含 `User-agent: *` 与 `Allow: /`
-- [ ] `https://www.aidc2026.cn/sitemap.xml` HTTP 200，`Content-Type` 含 xml，含 8 个核心页
+- [ ] `https://www.aidc2026.cn/sitemap.xml` HTTP 200，`Content-Type` 含 xml，含 9 个核心页
 - [ ] `curl -sI http://aidc2026.cn/` 的 `Location` 为 `https://…`
 - [ ] 浏览器禁用 JS 后，主导航页可见 `<noscript>` 提示与静态正文，不是白屏
 

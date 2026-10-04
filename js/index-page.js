@@ -54,6 +54,7 @@ function initIndexPage() {
     const kvcResultSubtitle = document.getElementById('kvcResultSubtitle');
     const kvcResultGb = document.getElementById('kvcResultGb');
     const kvcResultMiB = document.getElementById('kvcResultMiB');
+    const kvcResultError = document.getElementById('kvcResultError');
     const kvcResultFormula = document.getElementById('kvcResultFormula');
 
     const TAB_ACTIVE_CLASS =
@@ -421,6 +422,27 @@ function initIndexPage() {
       kvcHeadDimRo.value = String(prof.headDim);
     }
 
+    function showKvInputError(message, invalidInput) {
+      kvcResultGb.textContent = '--';
+      kvcResultMiB.textContent = '';
+      kvcResultFormula.textContent = '';
+      if (kvcResultError) {
+        kvcResultError.hidden = false;
+        kvcResultError.textContent = message;
+      }
+      kvcBatchSize.setAttribute('aria-invalid', invalidInput === kvcBatchSize ? 'true' : 'false');
+      kvcTokenCount.setAttribute('aria-invalid', invalidInput === kvcTokenCount ? 'true' : 'false');
+    }
+
+    function clearKvInputError() {
+      if (kvcResultError) {
+        kvcResultError.hidden = true;
+        kvcResultError.textContent = '';
+      }
+      kvcBatchSize.removeAttribute('aria-invalid');
+      kvcTokenCount.removeAttribute('aria-invalid');
+    }
+
     function updateKvCacheEstimate() {
       const key = modelNameKvc.value;
       const prof = kvModelProfiles[key];
@@ -429,6 +451,7 @@ function initIndexPage() {
       const batchSize = Number(kvcBatchSize.value);
 
       if (!prof) {
+        clearKvInputError();
         kvcResultGb.textContent = '--';
         kvcResultMiB.textContent = '';
         kvcResultFormula.textContent = t('msg.kvcNoProfile');
@@ -441,18 +464,16 @@ function initIndexPage() {
       kvcResultSubtitle.textContent = t('msg.kvcSubtitleQuant', { label: quant.label, dtype: quant.dtypeBytes });
 
       if (!Number.isInteger(batchSize) || batchSize < 1) {
-        kvcResultGb.textContent = '--';
-        kvcResultMiB.textContent = '';
-        kvcResultFormula.textContent = t('msg.kvcErrBatch');
+        showKvInputError(t('msg.kvcErrBatch'), kvcBatchSize);
         return;
       }
 
       if (!Number.isInteger(seqLen) || seqLen < 1) {
-        kvcResultGb.textContent = '--';
-        kvcResultMiB.textContent = '';
-        kvcResultFormula.textContent = t('msg.kvcErrSeq');
+        showKvInputError(t('msg.kvcErrSeq'), kvcTokenCount);
         return;
       }
+
+      clearKvInputError();
 
       const dtypeBytes = quant.dtypeBytes;
       const bytes = computeKvCacheBytes(key, prof, quant, seqLen, batchSize);
