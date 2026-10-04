@@ -12,11 +12,12 @@ Pace: about 130–140 words per minute. Slow down on numbers. Hold half a beat o
 | 03 | China demand | 3.5 min | 0.5 |
 | 04 | National action | 3 min | 0.5 |
 | 05 | Model concentration | 3 min | 0.5 |
-| 06 | Sovereignty | 3 min | 0.5 |
-| 07 | Four-layer stack | 2.5 min | 0.5 |
-| 08 | Token → Card → Power | 3.5 min | 0.5 |
-| 09 | The decision | 3 min | 0.5 |
-| 10 | Forest close | 1.5 min | 1.0 (wait for the animation) |
+| 06 | Owning AI | 2 min | 0.5 |
+| 07 | Sovereignty | 3 min | 0.5 |
+| 08 | Four-layer stack | 2.5 min | 0.5 |
+| 09 | Token → Card → Power | 3.5 min | 0.5 |
+| 10 | The decision | 3 min | 0.5 |
+| 11 | Forest close | 1.5 min | 1.0 (wait for the animation) |
 | **Total** | | **~27 min spoken** | **~5.5 min rhythm** → **about 30–32 minutes** |
 
 Do not read every line on the slide. Use the figures on the page; do not convert tokens into megawatts in the room. Do not add the country figures together or rank them. They are different kinds of number.
@@ -33,7 +34,7 @@ The title of this briefing is AI Data Centers. Please do not hear that as anothe
 
 The subtitle is the brief in one line: from national strategy to secure, scalable AI capability. The footer tells you who it is for — a practical path for governments and leading enterprises. This is not a technology exhibition, and it is not a vendor shortlist.
 
-We will walk ten slides on one argument. First, why now: AI took more than sixty years to reach this scale. Then, how far demand has already gone, and how leading economies are turning policy into capital, compute, and power. Then the risk: what happens if critical capability sits in a single external model. Then the structure: a sovereign AI factory, four connected layers, and Token → Card → Power as the method that sizes the factory. We close on a decision. Sovereign AI is not a model you rent. It is a factory you own. The AI data center is the foundation.
+We will walk eleven slides on one argument. First, why now: AI took more than sixty years to reach this scale. Then, how far demand has already gone, and how leading economies are turning policy into capital, compute, and power. Then the risk: what happens if critical capability sits in a single external model. Then owning AI: private data, process and experience settle in the agent, and the agent calls models. Then the structure: a sovereign AI factory, four connected layers, and Token → Card → Power as the method that sizes the factory. We close on a decision. Sovereign AI is not a model you rent. It is a factory you own. The AI data center is the foundation.
 
 If you take only one sentence from the cover, take this one: **a strategy without a foundation is still a plan.**
 
@@ -88,41 +89,56 @@ One sentence must be said in the room, and the page already says it: **token vol
 **On screen:** *Leading economies link AI policy with compute, data, talent and power*  
 **Close:** *Action at scale*
 
-Once demand moved, leading economies did the same thing. They did not leave AI in a white paper. They tied policy to four things: **compute, data, talent, and power.**
+Three cells on the first row, four on the second. Each cell says whose number it is.
 
-Walk the six cells. I will only hit the scale and what it stands on.
+United States. Stargate: a four-year private pledge of 500 billion dollars, with 100 billion to start. The government does not own this capex.  
+China. The 15th Five-Year compute network. On 31 July 2026 the NDRC cited an institution estimate: about 4 trillion yuan of new direct investment from 2026 to 2030, about 590 billion dollars. That is not a fiscal budget. The dollar figure is only a comparison, at about 6.8 yuan to the dollar in mid-2026.  
+European Union. InvestAI: 200 billion euros to be mobilized, including AI gigafactories. That is capital to be raised, not money already spent.
 
-United States. Stargate: a private commitment of 500 billion dollars over four years. Target: 10 GW of AI infrastructure. Capital written as electrical capacity.  
-European Union. InvestAI: 200 billion euros to be mobilized, including 20 billion for AI Gigafactories. The policy language is already “factory.”  
-China. A national AI industry fund of 60 billion yuan. Intelligent compute reached 1,590 EFLOPS in 2025. Money and installed capacity appear together.  
-India. IndiaAI Mission: a five-year public mission of 103.7 billion rupees. National compute passed 34,000 GPUs by May 2025. A public mission mapped onto cards.  
-United Kingdom. AI Opportunities Action Plan: 14 billion pounds in private data-center commitments announced with the 2025 plan.  
-United Arab Emirates. The UAE–US AI Campus: 5 GW planned, including a 1 GW AI data center in Abu Dhabi. For a city, one gigawatt is already a national power project.
+Malaysia. MIDA: 385.7 billion ringgit of data-center-related investment from 2021 through the first half of 2026, about 95 billion dollars at MIDA’s published first-half 2026 rate of 4.08 ringgit to the dollar. Corporate projects, not a national AI budget.  
+Kazakhstan. On 15 June 2026 the government signed a 10 billion dollar AI package with Firebird and NVIDIA for Data Center Valley. That is a signed package, not construction spending already paid out.  
+Brazil. A government AI supercomputing package of 2.3 billion reais, about 444 million dollars in Reuters’ own conversion. Ascenty’s 1.2 billion dollars and 150 megawatts are corporate, and they stay separate.  
+Saudi Arabia. The 140 billion dollars is not a signed budget. HUMAIN puts AI data-center build cost at about 10 to 12 million dollars per megawatt. More than 14 gigawatts at 10 million dollars per megawatt is about 140 billion dollars. The 14 gigawatts is still a target built with the private sector. Project capacities overlap. Do not add them up.
 
-Look at the small line under the close. These figures **are not the same kind of number.** Some are public budgets. Some are private commitments. Some are mobilized capital. Some are installed compute. Some are planned capacity. Do not add them up in the room. Do not rank who is largest.
-
-Take one sentence: **leading economies are turning AI policy into capital, compute, and power.** If a strategy still has blanks in all three, it is not yet capability. The next slide asks what happens if that capability sits in one external model instead of in your own hands.
+The close is the point. **Leading economies are turning AI policy into capital, compute, and power.** The small line says these figures are not the same kind of number. The next slide is what happens when interaction goes into someone else’s model.
 
 ---
 
 ## 05  Model concentration  ·  about 3 minutes spoken
 
-**On screen:** *A foundation model can become a single point of strategic dependence*  
-**Close:** *One model*
+**On screen:** *What you send a public-cloud model becomes its training data*  
+**Close:** *A sky full of stars, not one black hole*
 
-The picture on the right is moving. Treat it as a diagram, not a leak demo. The public internet, language and culture, industry knowledge, and interaction data flow into one model. The larger the model, the more of the world it draws in.
+The picture on the right is moving. Treat it as a diagram. The public internet, language and culture, industry knowledge, and interaction data flow into one model.
 
-On the left, Meta’s Llama 4 is a frontier-scale example, not a purchase recommendation. Behemoth: about 2 trillion parameters. The overall training mixture: more than 30 trillion tokens. The point is only this: a foundation model is now large enough to become the default door to a set of critical services.
+On the left, DeepSeek V4 Pro is a frontier-scale example, not a purchase recommendation. Total parameters: 1.6 trillion. Training data: 33 trillion tokens. That is how large this hole already is.
 
-The page is careful about how knowledge enters, and I will stay inside that line. Pretraining predicts the next token across broad data. It compresses statistical patterns into weights. It is not a readable copy of every document. Prompts do not automatically change those weights. Whether anything is retained, and whether it enters later training, depends on the provider, the contract, and the controls in your deployment.
+Read the line on the left as written: **interaction is training data.** Every question, upload, and call to a public-cloud model enters its training corpus and is absorbed by the model.
 
-The line to watch is the alert in the corner: **concentration risk.** Knowledge, access, and operating control can converge on one external platform. For a nation, or for a critical enterprise, that is a strategic single point of dependence. If the service stops, if the terms change, if the data leaves the country, if the model roadmap turns, you have no fallback. Not because the other party is hostile. Because you put the critical path in one place.
+The corner says: **one black hole rules everything.**
 
-So the close reads: **one model should not become the only path to critical AI services.** Strategic AI needs three things at once: model choice, controlled data paths, and sovereign capacity. The next slide is what that capacity looks like.
+The close is: **a sky full of stars, not one black hole.** The next slide is how to build your own star.
 
 ---
 
-## 06  Sovereignty  ·  about 3 minutes spoken
+## 06  Owning AI  ·  about 2 minutes spoken
+
+**On screen:** *The Shift From Using AI to Owning AI*  
+**Close:** *Own it*
+
+The last slide said that interaction with a public-cloud model is absorbed. This slide is the other move.
+
+Microsoft CEO Satya Nadella’s point is that a company should eventually build AI on its own data, processes and experience, rather than only subscribe to a general model. A general assistant is strong, and it does not know how your business runs. The advantage that is hard to copy is the business knowledge inside it, and that advantage compounds.
+
+Look at the figure. Across the top of the left frame are four applications: operations, customer service, decision making and innovation. Knowledge and enterprise data enter the agent from either side. The agent orchestrates, plans and acts. General-purpose computing and storage are the base. The right frame is not a handover of that material into someone else’s training set. The agent calls models through a gateway: a general model, a domain model and a custom model. AI computing sits underneath those models.
+
+The close is **Own it.** Your data, your process, your experience. Private data, process and experience enter the agent and stay there.
+
+The next slide puts this inside a national and enterprise control boundary.
+
+---
+
+## 07  Sovereignty  ·  about 3 minutes spoken
 
 **On screen:** *A national AI factory builds capability under local control*  
 **Close:** *Local control*
@@ -145,10 +161,10 @@ The close is Local control. Keep sensitive data in approved environments. Extern
 
 ---
 
-## 07  Four connected layers  ·  about 2.5 minutes spoken
+## 08  Four connected layers  ·  about 2.5 minutes spoken
 
-**On screen:** *A sovereign AI factory combines four connected layers*  
-**Close:** *Four layers*
+**On screen:** *A four-layer AI DC architecture underpins sovereign AI strategy*  
+**Close:** *Stable, extensible* — an AI DC needs a stable architecture that scales flexibly and keeps pace with rapid change in foundation models.
 
 Read from the bottom up. The cutaway on the right is the same building as the list on the left.
 
@@ -160,19 +176,19 @@ L3, AI Intelligence. Agents, knowledge, data, models. This is where intelligence
 
 L4, Applications. Public services, industry copilots, research tools, learning tools. This is what the country and the public see. It cannot be bought on its own. It sits on L3, L3 sits on L2, L2 sits on L1.
 
-The most important engineering line on the page is the small sentence beside the close: **capacity at one layer sets the ceiling for every layer above it.** Applications can be ambitious. Models can be strong. If the facility and the power are short, the system dies at the bottom. So you scale the four layers as one system. You do not sign for a model and backfill the building later.
+The close is the engineering judgement: an AI DC needs a stable architecture that scales flexibly and keeps pace with rapid change in foundation models. Applications can be ambitious. Models can change quickly. If the architecture underneath cannot scale with them, the system dies at the bottom. So you scale the four layers as one system. You do not sign for a model and backfill the building later.
 
 This is a vendor-neutral reference architecture for planning and procurement. Names can change with local rules. The causal chain between the layers should not. Next we turn “how big” from a slogan into a chain you can calculate.
 
 ---
 
-## 08  Planning method  ·  about 3.5 minutes spoken
+## 09  Planning method  ·  about 3.5 minutes spoken
 
 **On screen:** *AI DC planning methodology: Token → Card → Power*
 
 There is one causal chain: Token → Card → Power. Size compute from the business workload. Then size power, cooling, and floor area from the cards. Each stage has a formula. You can run it forward, or reverse from megawatts or floor area. Reverse is useful. Many programmes know the power they can secure before they know the workload they can support.
 
-Stage one. Token. Business workload. Start from users, penetration, and usage. Convert that into daily tokens, Td, and peak throughput, Ts. The formulae are on the page: Td equals users times tokens per user. Ts equals Td divided by 86,400 — the seconds in a day. Watch three things: whether the product form lifts tokens per user, whether cache hit rate cuts effective throughput, and the mix of inference work. Chat, finished office work, and coding agents do not share a token curve.
+Stage one. Token. Business workload. Start from users, penetration, and usage. Convert that into daily tokens, Td, and peak throughput, Ts. Td equals users times tokens per user. Ts equals Td divided by 86,400 — the seconds in a day. Watch three things: whether the product form lifts tokens per user, whether cache hit rate cuts effective throughput, and the mix of inference work. Chat, finished office work, and coding agents do not share a token curve.
 
 Stage two. Card. Accelerator count. Convert Ts into theoretical FLOPS, then into NPU count with margin, and check the HBM memory floor. The formula takes the larger of the compute result and the memory floor. Stress the second half. The usual error in the room is to size only for FLOPS, then find the model will not fit in memory. Also watch FLOPS per token, utilization, and how you hold redundancy.
 
@@ -186,7 +202,7 @@ We have the layers and the method. The last question is when to decide, and why 
 
 ---
 
-## 09  The decision  ·  about 3 minutes spoken
+## 10  The decision  ·  about 3 minutes spoken
 
 **On screen:** *Sovereign AI needs a sovereign factory*  
 **Close:** *Decide now*
@@ -212,7 +228,7 @@ So the close is Decide now. I will read the line as written:
 
 ---
 
-## 10  Forest  ·  about 1.5 minutes spoken (silence first)
+## 11  Forest  ·  about 1.5 minutes spoken (silence first)
 
 **On screen:** Five trees. Roots do not cross. The canopies become a forest.  
 **Line order:** after the canopy is fully lit, the line under the roots appears first, then the line above the canopy.
@@ -235,18 +251,18 @@ That is the briefing. I am happy to take questions.
 
 ## Timing cuts
 
-- **Must finish in 25 minutes:** keep one number per case on slide 3; on slide 4 take only the United States, the EU, and China; on slide 8 read only “1,024 cards / 2.10 MW / 206 m²” and the air-cooled contrast.
+- **Must finish in 25 minutes:** keep one number per case on slide 3; on slide 4 take only the United States, the EU, and China; on slide 9 read only “1,024 cards / 2.10 MW / 206 m²” and the air-cooled contrast.
 - **Running long:** on slide 2 keep 1956, 2012, 2022, and 2025; on slide 5 skip how weights form and go straight to concentration risk.
 - **Slide 5 motion:** atmosphere only. Do not describe it as a leak demonstration.
-- **Slide 10:** do not talk over the lighting or the two lines. After the two sentences, stop. Do not open a new argument.
+- **Slide 11:** do not talk over the lighting or the two lines. After the two sentences, stop. Do not open a new argument.
 
 ## Likely questions (not inside the 30 minutes)
 
-1. **Are tokens power?** No. Slide 3 says token volume measures usage, not power. Power is the chain on slide 8.  
+1. **Are tokens power?** No. Slide 3 says token volume measures usage, not power. Power is the chain on slide 9.  
 2. **Which country is spending the most?** The figures are different measures. Slide 4 already says so. Do not rank them.  
 3. **Should we deploy 1,024 cards?** No. That is a worked example. The page says it is not a target.  
 4. **Can we launch applications and wait on the building?** Applications take 3–6 months. The facility takes 12–18. Parallel work does not remove that floor.  
-5. **Does sovereignty mean we refuse global models?** No. Slide 6 is explicit: use global technology, keep local control, and hold a fallback for critical services.
+5. **Does sovereignty mean we refuse global models?** No. Slide 7 is explicit: use global technology, keep local control, and hold a fallback for critical services.
 
 ## Figure card
 
@@ -254,8 +270,8 @@ That is the briefing. I am happy to take questions.
 |---|---|
 | 02 | 66 years; 1956–2025 |
 | 03 | 7T → >140T; ~15 months; ~20×; 21.1 quadrillion (2025); Doubao 382M, 54.8 uses/user/month; WorkBuddy 30M+, ~15 minutes; DeepSeek 1M context, 82.7 |
-| 04 | US $500B / 10 GW; EU €200B / €20B Gigafactories; China ¥60B / 1,590 EFLOPS; India ₹103.7B / >34,000 GPUs; UK £14B; UAE 5 GW / 1 GW |
-| 05 | Llama 4 Behemoth ~2T parameters; 30T+ tokens in the training mixture |
-| 08 | Example: 40.6B tokens/day, 1,024 cards, 2.10 MW IT / 2.41 MW room / 206 m²; 768-card air-cooled 2.50 MW / 404 m² |
-| 09 | Facility 12–18 months; platform 6–9; applications 3–6 |
-| 10 | Silence 8–10 seconds, then the two lines |
+| 04 | US $500B private; China ¥4T (~$590B) estimate; EU €200B to be mobilized; Malaysia RM385.7B (~$95B) corporate DC; Kazakhstan $10B Data Center Valley; Brazil public R$2.3B (~$444M), Ascenty separate; Saudi $140B is the >14 GW target at about $10M/MW, do not add capacities |
+| 05 | DeepSeek V4 Pro 1.6T parameters; 33T training tokens |
+| 09 | Example: 40.6B tokens/day, 1,024 cards, 2.10 MW IT / 2.41 MW room / 206 m²; 768-card air-cooled 2.50 MW / 404 m² |
+| 10 | Facility 12–18 months; platform 6–9; applications 3–6 |
+| 11 | Silence 8–10 seconds, then the two lines |
