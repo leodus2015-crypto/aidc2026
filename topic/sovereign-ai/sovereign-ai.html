@@ -295,6 +295,47 @@
     .sovereign-caption.gateway h3 { color: var(--gold); font-size: 19px; }
     .sovereign-caption.services { left: 6%; top: 85%; width: 320px; }
     .sovereign-caption.people { left: 57%; top: 91%; width: 360px; }
+    .sovereign-flow { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; max-width: none; max-height: none; pointer-events: none; }
+    .sov-comet { fill: none; stroke: #fff8e4; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 16 100; filter: url(#sovGlow); opacity: 0; }
+    .sovereignty-slide.visible .sov-comet.data { animation: sovCometData 5.6s linear infinite; }
+    .sovereignty-slide.visible .sov-comet.out { animation: sovCometOut 5.6s linear infinite; }
+    .sov-lines { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: #fff6dc; mask-repeat: no-repeat; mask-position: center; mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; -webkit-mask-size: contain; opacity: 0; filter: drop-shadow(0 0 1px #fff8e4) drop-shadow(0 0 4px rgba(243,212,138,.95)) drop-shadow(0 0 9px rgba(200,168,112,.55)); }
+    .sov-lines.factory { mask-image: url("assets/ai-sovereign-glow-factory.png"); -webkit-mask-image: url("assets/ai-sovereign-glow-factory.png"); }
+    .sov-lines.services { mask-image: url("assets/ai-sovereign-glow-services.png"); -webkit-mask-image: url("assets/ai-sovereign-glow-services.png"); }
+    .sov-lines.people { mask-image: url("assets/ai-sovereign-glow-people.png"); -webkit-mask-image: url("assets/ai-sovereign-glow-people.png"); }
+    .sovereignty-slide.visible .sov-lines.factory { animation: sovLinesFactory 5.6s ease-out infinite; }
+    .sovereignty-slide.visible .sov-lines.local { animation: sovLinesLocal 5.6s ease-out infinite; }
+    @keyframes sovCometData {
+      0% { stroke-dashoffset: 16; opacity: 0; }
+      4% { opacity: 1; }
+      24% { stroke-dashoffset: -84; opacity: 1; }
+      31% { stroke-dashoffset: -108; opacity: 0; }
+      100% { stroke-dashoffset: -108; opacity: 0; }
+    }
+    @keyframes sovLinesFactory {
+      0%, 22% { opacity: 0; }
+      30% { opacity: 1; }
+      36% { opacity: 1; }
+      45% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+    @keyframes sovCometOut {
+      0%, 46% { stroke-dashoffset: 16; opacity: 0; }
+      50% { opacity: 1; }
+      70% { stroke-dashoffset: -84; opacity: 1; }
+      77% { stroke-dashoffset: -108; opacity: 0; }
+      100% { stroke-dashoffset: -108; opacity: 0; }
+    }
+    @keyframes sovLinesLocal {
+      0%, 68% { opacity: 0; }
+      76% { opacity: 1; }
+      82% { opacity: 1; }
+      91% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sov-comet, .sov-lines { animation: none; opacity: 0; }
+    }
     .sovereignty-purposes { display: grid; grid-template-rows: 48px repeat(4, 1fr); height: 680px; border-top: 2px solid var(--gold); }
     .sovereignty-purposes > h3 { padding-top: 16px; color: var(--gold); font: 500 14px "IBM Plex Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
     .sovereignty-purpose { display: grid; grid-template-columns: 48px 1fr; gap: 18px; align-content: center; border-top: 1px solid var(--border-dark); padding: 15px 0; }
@@ -370,10 +411,12 @@
     .own-slide .app-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; position: relative; z-index: 3; }
     .own-slide .app-card, .own-slide .infra-card { height: 62px; display: flex; align-items: center; justify-content: center; gap: 14px; border: 1.4px solid #C8A870; border-radius: 11px; background: rgba(255,255,255,.72); font-size: 14px; font-weight: 600; white-space: nowrap; }
     .own-slide .mini-icon { width: 34px; height: 34px; color: var(--gold); flex: 0 0 auto; }
-    .own-slide .app-bus { position: absolute; top: 175px; left: 206px; right: 142px; height: 38px; border-bottom: 2px solid #C8A870; border-left: 2px solid #C8A870; border-right: 2px solid #C8A870; border-radius: 0 0 3px 3px; }
-    .own-slide .app-bus::before, .own-slide .app-bus::after { content: ""; position: absolute; top: -35px; width: 0; height: 36px; border-left: 2px solid #C8A870; }
-    .own-slide .app-bus::before { left: 0; }
-    .own-slide .app-bus::after { right: 0; }
+    .own-slide .app-bus { position: absolute; top: 149px; left: 172px; right: 172px; height: 64px; border: 0; border-radius: 0; background: linear-gradient(#C8A870, #C8A870) left bottom / 100% 2px no-repeat; }
+    .own-slide .app-bus i { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #C8A870; border-radius: 0; }
+    .own-slide .app-bus i:nth-child(1) { left: 0; }
+    .own-slide .app-bus i:nth-child(2) { left: 33.3803%; }
+    .own-slide .app-bus i:nth-child(3) { left: 66.6197%; }
+    .own-slide .app-bus i:nth-child(4) { left: 100%; }
     .own-slide .hero { position: absolute; left: calc(50% - 110px); top: 245px; width: 220px; height: 220px; border: 1.8px solid var(--gold); border-radius: 50%; background: rgba(247,244,238,.96); box-shadow: 0 0 0 11px rgba(200,168,112,.16), 0 0 0 20px rgba(200,168,112,.08); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; }
     .own-slide .hero .robot { width: 52px; height: 44px; color: var(--gold); }
     .own-slide .hero strong { margin-top: 4px; color: var(--navy); font-family: "Source Serif 4", serif; font-size: 28px; font-weight: 600; }
@@ -391,6 +434,26 @@
     .own-slide .side-arrow::after { content: ""; position: absolute; right: -1px; top: -5px; border-left: 9px solid var(--gold); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
     .own-slide .side-arrow.left { left: 239px; }
     .own-slide .side-arrow.right { right: 239px; transform: rotate(180deg); }
+    .own-slide .side-arrow::before { content: ""; position: absolute; top: 50%; left: 0; width: 42px; height: 7px; margin-top: -3.5px; border-radius: 7px; background: linear-gradient(90deg, transparent 0%, rgba(255,236,190,.15) 28%, #fff8e4 78%, #f3d48a 100%); box-shadow: 0 0 10px 2px rgba(226,186,104,.8); opacity: 0; pointer-events: none; animation: ownArrowGlow 2.6s linear infinite; animation-play-state: paused; }
+    .own-slide.visible .side-arrow::before { animation-play-state: running; }
+    .own-slide.visible .hero { animation: ownAgentAbsorb 2.6s ease-out infinite; }
+    @keyframes ownArrowGlow {
+      0% { transform: translateX(-6px); opacity: 0; }
+      10% { opacity: 1; }
+      68% { transform: translateX(104px); opacity: 1; }
+      82% { transform: translateX(120px); opacity: 0; }
+      100% { transform: translateX(120px); opacity: 0; }
+    }
+    @keyframes ownAgentAbsorb {
+      0%, 60% { transform: scale(1); box-shadow: 0 0 0 11px rgba(200,168,112,.16), 0 0 0 20px rgba(200,168,112,.08); }
+      76% { transform: scale(1.055); box-shadow: inset 0 12px 16px rgba(255,252,245,.9), inset 0 -10px 14px rgba(200,168,112,.38), 0 0 0 7px rgba(255,244,214,.55), 0 0 26px 8px rgba(226,186,104,.5), 0 0 0 18px rgba(200,168,112,.22); }
+      100% { transform: scale(1); box-shadow: 0 0 0 11px rgba(200,168,112,.16), 0 0 0 20px rgba(200,168,112,.08); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .own-slide .side-arrow::before,
+      .own-slide.visible .hero { animation: none; }
+      .own-slide .side-arrow::before { opacity: 0; }
+    }
     .own-slide .base-row { position: absolute; bottom: 31px; left: 127px; right: 89px; display: grid; grid-template-columns: 1.06fr .94fr; gap: 15px; z-index: 5; }
     .own-slide .base-row .infra-card { height: 82px; justify-content: flex-start; padding: 0 55px; }
     .own-slide .infra-card .label { display: flex; flex-direction: column; gap: 5px; }
@@ -794,7 +857,7 @@
                     <div class="app-card"><svg class="mini-icon icon" viewBox="0 0 40 40"><path d="M6 32h28M10 29V20m8 9V14m8 15V8M8 16l7-6 6 3 10-8"/></svg>Decision Making</div>
                     <div class="app-card"><svg class="mini-icon icon" viewBox="0 0 40 40"><path d="M20 5v4m0 22v4M5 20h4m22 0h4M9.4 9.4l2.8 2.8m15 15l2.8 2.8m0-21.2l-2.8 2.8m-15 15l-2.8 2.8"/><circle cx="20" cy="20" r="9"/></svg>Innovation</div>
                   </div>
-                  <div class="app-bus"></div><div class="pyramid"></div>
+                  <div class="app-bus" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="pyramid"></div>
                   <div class="side-node left"><svg class="side-icon icon" viewBox="0 0 48 48"><path d="M7 9h15a6 6 0 0 1 6 6v24H13a6 6 0 0 0-6 6zM41 9H26a6 6 0 0 0-6 6v24h15a6 6 0 0 1 6 6z"/><path d="M14 17h7m5 0h7"/></svg><h3>Knowledge</h3><p>Domain Knowledge<br>&amp; Experience</p></div>
                   <div class="side-node right"><svg class="side-icon icon" viewBox="0 0 48 48"><ellipse cx="24" cy="10" rx="15" ry="6"/><path d="M9 10v22c0 3 7 6 15 6s15-3 15-6V10M9 21c0 3 7 6 15 6s15-3 15-6"/></svg><h3>Data</h3><p>Enterprise Data<br>&amp; Real-time Data</p></div>
                   <div class="side-arrow left"></div><div class="side-arrow right"></div>
@@ -838,6 +901,20 @@
         <div class="sovereignty-layout">
           <div class="sovereign-map reveal" role="group" aria-label="Sovereign AI factory ecosystem with a controlled connection to global technology">
             <img class="sovereign-art" src="assets/ai-sovereign-factory-signal.png" alt="An AI data center connects protected local data with public services, industry, schools and people. A gateway connects the control area to external technology.">
+            <svg class="sovereign-flow" viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <defs>
+                <filter id="sovGlow" x="-80%" y="-80%" width="260%" height="260%">
+                  <feGaussianBlur stdDeviation="3.4" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <path class="sov-comet data" pathLength="100" d="M 416 390 L 434 397 L 459 405 L 490 415 L 519 425 L 528 431 L 530 445 L 544 453"/>
+              <path class="sov-comet out" pathLength="100" d="M 596 584 L 578 596 L 546 612 L 521 623 L 508 630 L 492 638 L 464 654 L 442 666"/>
+              <path class="sov-comet out" pathLength="100" d="M 916 618 L 934 627 L 960 640 L 988 652 L 1004 658 L 1025 670 L 1046 682 L 1061 692"/>
+            </svg>
+            <div class="sov-lines factory" aria-hidden="true"></div>
+            <div class="sov-lines local services" aria-hidden="true"></div>
+            <div class="sov-lines local people" aria-hidden="true"></div>
             <div class="sovereign-caption control"><p>Sovereign control boundary</p></div>
             <div class="sovereign-caption factory"><h3>Sovereign AI factory</h3><p>Secure compute and model platform</p></div>
             <div class="sovereign-caption data"><h3>Control strategic data</h3><p>Government, enterprises and the public</p></div>
