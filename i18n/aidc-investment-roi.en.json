@@ -100,8 +100,8 @@
     "低于自建": "Below self-built",
     "高于自建": "Above self-built",
     "更新 {date}": "Updated {date}",
-    "DeepSeek-V4.1-Flash（deepseek-flash）高峰时段公开价，2026-09-10 起生效（api-docs.deepseek.com/zh-cn）；各云按官网现价整理，未跟降者仍列旧高峰价，单位元/百万 Token": "DeepSeek-V4.1-Flash (deepseek-flash) peak-hour list prices effective 2026-09-10 per api-docs.deepseek.com; other clouds keep published CNY/M; providers that have not followed remain at prior peak rates.",
-    "GLM-5.2 公开价；智谱 AI 开放平台 open.bigmodel.cn 价目，单位元/百万 Token": "GLM-5.2 list prices from Zhipu open platform (open.bigmodel.cn); CNY/M tokens.",
+    "DeepSeek-V4.1-Flash（deepseek-flash）高峰/忙时公开价，单位元/百万 Token。官方 2026-09-10 起峰谷价见 api-docs.deepseek.com；各云按官网忙时档整理（阿里云百炼缓存命中 0.2，其余多为 0.04）。": "DeepSeek-V4.1-Flash (deepseek-flash) peak/busy-hour list prices, CNY per million tokens. Official peak/off-peak from 2026-09-10 (api-docs.deepseek.com); clouds use published busy-hour rates (Alibaba Cloud Bailian cache-hit 0.2, others mostly 0.04).",
+    "GLM-5.2 公开价，单位元/百万 Token。智谱 docs.bigmodel.cn 与硅基流动、阿里云百炼、火山方舟、腾讯云 TokenHub、京东云 JoyMaaS 刊例均为输入 8 / 缓存命中 2 / 输出 28。": "GLM-5.2 list prices, CNY per million tokens. Zhipu docs.bigmodel.cn, SiliconFlow, Alibaba Cloud Bailian, Volcengine Ark, Tencent Cloud TokenHub and JD Cloud JoyMaaS all publish input 8 / cache-hit 2 / output 28.",
     "OPEX 结果": "OPEX results",
     "年电费": "Annual electricity",
     "年运维（固定+维保）": "Annual ops (fixed + maintenance)",
@@ -281,6 +281,20 @@
     "年全成本 ÷ 365": "Total annual cost ÷ 365",
     "t/s × 86400 ÷ 10⁸": "t/s × 86400 ÷ 10⁸",
     "年维保 = 总投资 CAPEX × 年维保（%）": "Annual maintenance = total CAPEX × maintenance %",
-    "年电费 = MW × 1000 × 8760 × PUE × 利用率 × 电价": "Annual electricity = MW × 1000 × 8760 × PUE × utilization × price"
+    "年电费 = MW × 1000 × 8760 × PUE × 利用率 × 电价": "Annual electricity = MW × 1000 × 8760 × PUE × utilization × price",
+    "输入": "Inputs",
+    "计算": "Model",
+    "云价": "Cloud",
+    "工作表": "Worksheets",
+    "AIDC Token 收益": "AIDC Token ROI",
+    "万元/卡": "×10k CNY/card",
+    "元/kWh": "CNY/kWh",
+    "元/天": "CNY/day",
+    "Token": "Token",
+    "昇腾采购 ÷ IT 内昇腾占比": "Ascend procurement ÷ Ascend share in IT",
+    "MW × 1000 × 8760 × PUE × u × 电价": "MW × 1000 × 8760 × PUE × u × electricity price",
+    "总投资 CAPEX × 年维保（%）": "Total CAPEX × annual maintenance %",
+    "年运维 = 固定运维 + 年维保": "Annual ops = fixed ops + maintenance",
+    "固定运维 + 年维保": "Fixed ops + maintenance"
   }
 }

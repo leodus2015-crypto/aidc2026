@@ -8,13 +8,13 @@
   <meta name="description" content="从 Token 业务量测算 AI 推理所需 NPU 算力卡数（Token → Card）。" />
   <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-computeEst.html" />
   <title>AI 数据中心算力评估规划 · Token → Card</title>
-  <script src="js/aidc-theme.js?v=100"></script>
-  <script src="js/embed-mode.js?v=100"></script>
-  <script src="js/theme-switch.js?v=100"></script>
-  <script src="js/aidc-asset-version.js?v=100"></script>
-  <script src="js/aidc-locale-bridge.js?v=100"></script>
-  <link rel="stylesheet" href="css/theme.css?v=100" />
-  <link rel="stylesheet" href="css/embed.css?v=100" />
+  <script src="js/aidc-theme.js?v=101"></script>
+  <script src="js/embed-mode.js?v=101"></script>
+  <script src="js/theme-switch.js?v=101"></script>
+  <script src="js/aidc-asset-version.js?v=101"></script>
+  <script src="js/aidc-locale-bridge.js?v=101"></script>
+  <link rel="stylesheet" href="css/theme.css?v=101" />
+  <link rel="stylesheet" href="css/embed.css?v=101" />
   <style>
     :root {
       --s-50:#f8fafc; --s-100:#f1f5f9; --s-200:#e2e8f0; --s-300:#cbd5e1;
@@ -78,6 +78,64 @@
     }
     .lang-toggle:hover { border-color: var(--b-200); background: var(--b-50); color: var(--b-700); }
     html[lang="en"] .lang-toggle { font-family: inherit; }
+
+    .export-card { padding: 16px 20px; }
+    .export-card-row {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .export-card-title { margin: 0; font-size: 14px; font-weight: 800; color: var(--s-900); }
+    .export-card-note { margin: 4px 0 0; color: var(--s-500); font-size: 12px; }
+    .export-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .export-btn {
+      height: 36px; padding: 0 16px; border: 0; border-radius: 12px;
+      background: var(--b-600); color: #fff;
+      font-size: 13px; font-weight: 700;
+    }
+    .export-btn:hover { background: var(--b-700); }
+    .export-btn[hidden] { display: none !important; }
+    .unlock-toggle {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--s-600); font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .unlock-toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .unlock-switch {
+      position: relative; width: 48px; height: 28px; border-radius: 999px;
+      background: var(--s-200); transition: background .15s;
+    }
+    .unlock-switch::after {
+      content: ""; position: absolute; top: 2px; left: 2px;
+      width: 24px; height: 24px; border-radius: 50%; background: #fff;
+      box-shadow: 0 1px 3px rgba(15,23,42,.2); transition: transform .15s;
+    }
+    .unlock-toggle input:checked + .unlock-switch { background: var(--b-600); }
+    .unlock-toggle input:checked + .unlock-switch::after { transform: translateX(20px); }
+    .export-hint { margin: 10px 0 0; }
+    .pwd-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      display: none; align-items: center; justify-content: center;
+      padding: 16px; background: rgba(15, 23, 42, .4); backdrop-filter: blur(8px);
+    }
+    .pwd-overlay.is-open { display: flex; }
+    .pwd-dialog {
+      width: 100%; max-width: 360px; padding: 24px;
+      border-radius: 20px; background: #fff; box-shadow: var(--card-shadow);
+    }
+    .pwd-dialog h3 { margin: 0; font-size: 18px; font-weight: 800; }
+    .pwd-dialog p { margin: 8px 0 0; color: var(--s-600); font-size: 13px; }
+    .pwd-dialog label { display: block; margin: 16px 0 6px; color: var(--s-700); font-size: 13px; font-weight: 600; }
+    .pwd-dialog input {
+      width: 100%; height: 44px; padding: 0 12px;
+      border: 1px solid var(--s-200); border-radius: 14px; outline: none;
+    }
+    .pwd-dialog input:focus { border-color: var(--b-500); box-shadow: 0 0 0 4px var(--b-100); }
+    .pwd-error { margin-top: 8px; color: var(--rose-600); font-size: 13px; }
+    .pwd-error[hidden] { display: none !important; }
+    .pwd-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+    .pwd-actions button { height: 36px; padding: 0 14px; border: 0; border-radius: 12px; font-size: 13px; font-weight: 700; }
+    .pwd-cancel { background: transparent; color: var(--s-600); }
+    .pwd-cancel:hover { background: var(--s-100); }
+    .pwd-ok { background: var(--b-600); color: #fff; }
+    .pwd-ok:hover { background: var(--b-700); }
 
 
 
@@ -478,6 +536,8 @@
     html[data-theme="dark"] .chart-dot { fill: #0f1c2e; }
     html[data-theme="dark"] .result-panel { background-color: #020617; }
     html[data-theme="dark"] input.invalid { background: var(--rose-50); }
+    html[data-theme="dark"] .export-card,
+    html[data-theme="dark"] .pwd-dialog { background-color: #0f1c2e; }
     html[data-theme="dark"] .lang-toggle { background: #162438; color: var(--s-700); border-color: var(--s-200); }
     html[data-theme="dark"] .tablist { background: var(--s-100); }
     html[data-theme="dark"] .formula { background: var(--s-100); }
@@ -1022,6 +1082,24 @@
         </div>
       </section>
 
+      <section class="card export-card" id="exportCard">
+        <div class="export-card-row">
+          <div>
+            <p class="export-card-title" id="exportCardTitle">Excel 导出</p>
+            <p class="export-card-note" id="exportCardNote">默认锁定；开启后可下载当前测算数值与公式</p>
+          </div>
+          <div class="export-bar">
+            <button type="button" id="downloadXlsxBtn" class="export-btn" hidden>下载 Excel</button>
+            <label class="unlock-toggle">
+              <span id="exportUnlockLabel">显示导出</span>
+              <input id="exportUnlockToggle" type="checkbox" />
+              <span class="unlock-switch" aria-hidden="true"></span>
+            </label>
+          </div>
+        </div>
+        <p class="hint export-hint" id="xlsxExportHint"></p>
+      </section>
+
       <!-- ══ 公式 ══ -->
       <section class="card card-sm">
         <div class="card-head-row">
@@ -1173,12 +1251,29 @@
     </div>
   </main>
 
+  <div id="pwdOverlay" class="pwd-overlay" hidden>
+    <div class="pwd-dialog" role="dialog" aria-modal="true" aria-labelledby="pwdTitle">
+      <h3 id="pwdTitle">输入访问密码</h3>
+      <p id="pwdHint">解锁导出需验证身份（不区分大小写）。</p>
+      <label for="pwdInput" id="pwdLabel">密码</label>
+      <input id="pwdInput" type="password" autocomplete="current-password" placeholder="密码" />
+      <p id="pwdError" class="pwd-error" hidden>密码错误，请重试。</p>
+      <div class="pwd-actions">
+        <button type="button" id="pwdCancel" class="pwd-cancel">取消</button>
+        <button type="button" id="pwdOk" class="pwd-ok">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/aidc-api-client.js?v=101"></script>
+  <script src="js/config-loader.js?v=101&rev=local-admin-1"></script>
+  <script src="js/aidc-compute-est-xlsx.js?v=101&rev=xlsx-2"></script>
   <script>
     (() => {
       "use strict";
 
       const I18N_STATIC = {"AI 数据中心算力评估规划": "AI Data Center Compute Planning","Token &gt; Card · 由业务 Token 量推算 NPU 卡数需求": "Token &gt; Card · Sizing NPU capacity from token workload","算力卡数匡算": "Compute Capacity Sizing","选择推理场景或自定义单用户用量，由 AI 渗透用户规模推算 Token 总量，再换算为所需算力卡数。": "Pick an inference scenario or enter your own per-user volumes. The tool derives total token throughput from the AI-adopting user base, then converts it into the required number of accelerator cards.","业务调研": "Business Inputs","算力产品": "Hardware","<span class=\"legend-icon\" aria-hidden=\"true\">💬</span>Token 业务量推算": "<span aria-hidden=\"true\" class=\"legend-icon\">💬</span>Token Workload","<span class=\"scenario-icon\" aria-hidden=\"true\">📝</span>办公助手": "<span aria-hidden=\"true\" class=\"scenario-icon\">📝</span>Office Assistant","<span class=\"scenario-icon\" aria-hidden=\"true\">⚙️</span>自定义": "<span aria-hidden=\"true\" class=\"scenario-icon\">⚙️</span>Custom","<span>单用户日均输入 Token</span><span class=\"sym\">T<sub>in</sub></span>": "<span>Input tokens / user / day</span><span class=\"sym\">T<sub>in</sub></span>","<span>单用户日均输出 Token</span><span class=\"sym\">T<sub>out</sub></span>": "<span>Output tokens / user / day</span><span class=\"sym\">T<sub>out</sub></span>","<span>缓存命中率</span><span class=\"sym\">H</span>": "<span>Cache hit rate</span><span class=\"sym\">H</span>","仅折减输入侧 Token，输出侧不受缓存影响": "Discounts input tokens only — output tokens are unaffected by caching","<span>单用户有效日均 Token</span><span class=\"sym\">T<sub>user</sub></span>": "<span>Effective tokens / user / day</span><span class=\"sym\">T<sub>user</sub></span>","<span id=\"perUserTokensOut\">—</span><span class=\"ro-unit\">token/人·日</span>": "<span id=\"perUserTokensOut\">—</span><span class=\"ro-unit\">tokens/user/day</span>","<span>折算全网日均 Token</span><span class=\"sym\">T<sub>d</sub></span>": "<span>Total daily tokens (platform-wide)</span><span class=\"sym\">T<sub>d</sub></span>","<span id=\"dailyTokensOut\">—</span><span class=\"ro-unit\">亿/日</span>": "<span id=\"dailyTokensOut\">—</span><span class=\"ro-unit\">B / day</span>","<span class=\"legend-icon\" aria-hidden=\"true\">👥</span>用户规模与渗透": "<span aria-hidden=\"true\" class=\"legend-icon\">👥</span>User Base &amp; Adoption","<span>当前 AI 日活用户数</span><span class=\"sym\">DAU</span>": "<span>Current AI DAU</span><span class=\"sym\">DAU</span>","人": "users","<span>当前 AI 渗透用户数</span><span class=\"sym\">U<sub>0</sub></span>": "<span>AI-adopting users</span><span class=\"sym\">U<sub>0</sub></span>","<span id=\"activeUsersOut\">—</span><span class=\"ro-unit\">人</span>": "<span id=\"activeUsersOut\">—</span><span class=\"ro-unit\">users</span>","<span>当前用户渗透率</span><span class=\"sym\">R<sub>0</sub></span>": "<span>Current adoption rate</span><span class=\"sym\">R<sub>0</sub></span>","<span>目标用户渗透率</span><span class=\"sym\">R<sub>N</sub></span>": "<span>Target adoption rate</span><span class=\"sym\">R<sub>N</sub></span>","<span class=\"legend-icon\" aria-hidden=\"true\">🧠</span>模型与算力换算": "<span aria-hidden=\"true\" class=\"legend-icon\">🧠</span>Model &amp; Compute Conversion","<span>大模型型号</span><span class=\"sym\">Model</span>": "<span>Model</span><span class=\"sym\">Model</span>","其他模型 · 支持自定义输入参数": "Other model · enter parameters manually","选择型号后自动填入下方两项参数；也可直接手动改写，型号会切换为「其他型号」": "Selecting a model fills in the two fields below. Editing them manually switches the selector to “Other model”.","<span>大模型激活参数量</span><span class=\"sym\">P<sub>act</sub></span>": "<span>Activated parameters</span><span class=\"sym\">P<sub>act</sub></span>","决定算力需求；MoE 按每 Token 实际激活参数量填写": "Drives compute demand. For MoE, enter the parameters actually activated per token.","<span>大模型总参数量</span><span class=\"sym\">P<sub>total</sub></span>": "<span>Total parameters</span><span class=\"sym\">P<sub>total</sub></span>","决定权重显存，用于卡数下限校验": "Drives weight memory — used for the minimum card count check","<span>浮点运算量倍数</span><span class=\"sym\">F</span>": "<span>FLOPs multiplier</span><span class=\"sym\">F</span>","每 Token 每参数的 FLOP 数，缺省 2（乘加各计 1）": "FLOPs per parameter per token. Default 2 — one multiply plus one add.","<span>峰值倍数</span><span class=\"sym\">M</span>": "<span>Peak-to-average ratio</span><span class=\"sym\">M</span>","倍": "×","<span>算力综合利用率</span><span class=\"sym\">N</span>": "<span>Effective utilization (MFU)</span><span class=\"sym\">N</span>","一级规划经验值通常 30%–50%": "Typically 30%–50% for first-order planning","<span>算力规划冗余</span><span class=\"sym\">K<sub>compute</sub></span>": "<span>Compute headroom</span><span class=\"sym\">K<sub>compute</sub></span>","<span class=\"legend-icon\" aria-hidden=\"true\">📈</span>未来增长规划": "<span aria-hidden=\"true\" class=\"legend-icon\">📈</span>Growth Projection","<span>规划年限</span><span class=\"sym\">N<sub>year</sub></span>": "<span>Planning horizon</span><span class=\"sym\">N<sub>year</sub></span>","年": "yrs","<span>使用频率提升</span><span class=\"sym\">K<sub>freq</sub></span>": "<span>Usage frequency growth</span><span class=\"sym\">K<sub>freq</sub></span>","指第 N 年终值，不是每年复利倍数": "End-state value in year N — not a compound annual rate","<span>Agent 放大系数</span><span class=\"sym\">K<sub>Agent</sub></span>": "<span>Agentic amplification</span><span class=\"sym\">K<sub>Agent</sub></span>","多轮推理、工具调用与任务分解的综合放大": "Combined uplift from multi-turn reasoning, tool calls and task decomposition","<span class=\"legend-icon\" aria-hidden=\"true\">🖥️</span>算力产品参数": "<span aria-hidden=\"true\" class=\"legend-icon\">🖥️</span>Accelerator Specs","<span>产品单卡算力</span><span class=\"sym\">C<sub>card</sub></span>": "<span>Compute per card</span><span class=\"sym\">C<sub>card</sub></span>","默认按 FP8 精度 919 TFLOPS 计算；FP16 为 486 TFLOPS，FP4 为 1784 TFLOPS，也可直接改写数值": "Defaults to 919 TFLOPS at FP8. FP16 is 486 TFLOPS and FP4 is 1784 TFLOPS; the value can also be overwritten directly.","<span>单设备卡数</span><span class=\"sym\">Q<sub>unit</sub></span>": "<span>Cards per server</span><span class=\"sym\">Q<sub>unit</sub></span>","卡/台": "cards/svr","仅用于把卡数折算为整机台数参考，卡数结果不受影响": "Only used to convert cards into a server count — the card result is unaffected","<span class=\"legend-icon\" aria-hidden=\"true\">💾</span>显存与部署卡数下限": "<span aria-hidden=\"true\" class=\"legend-icon\">💾</span>Memory Floor","<span>单卡显存容量</span><span class=\"sym\">V<sub>card</sub></span>": "<span>Memory per card</span><span class=\"sym\">V<sub>card</sub></span>","<span>权重存储精度</span><span class=\"sym\">B<sub>w</sub></span>": "<span>Weight precision</span><span class=\"sym\">B<sub>w</sub></span>","FP16 · 2 Byte/参数": "FP16 · 2 bytes/param","FP8 · 1 Byte/参数": "FP8 · 1 byte/param","FP4 · 0.5 Byte/参数": "FP4 · 0.5 bytes/param","<span>权重可用显存占比</span><span class=\"sym\">η</span>": "<span>Memory available for weights</span><span class=\"sym\">η</span>","其余留给 KV Cache、激活与框架开销": "The remainder is reserved for KV cache, activations and framework overhead","<span>部署卡数下限</span><span class=\"sym\">n<sub>min</sub></span>": "<span>Minimum card count</span><span class=\"sym\">n<sub>min</sub></span>","<span id=\"minCardsOut\">—</span><span class=\"ro-unit\">卡</span>": "<span id=\"minCardsOut\">—</span><span class=\"ro-unit\">cards</span>","<strong>下限口径：</strong>权重显存 = 总参数量 × 单参数字节数，除以「单卡显存 × 可用占比」并向上取整， 得到<strong>模型能被装下所需的最少卡数</strong>。最终规划卡数取<strong>算力需求卡数与该下限的较大值</strong>， 避免 Token 量偏小时算出无法实际承载模型的卡数。下限未强制对齐 TP/PP 并行度与整机粒度， 实际组网通常还需向上取到 <code>单设备卡数</code> 的整数倍。": "<strong>How the floor works:</strong> weight memory = total parameters × bytes per parameter, divided by “memory per card × available share” and rounded up. This yields the <strong>minimum number of cards needed to hold the model at all</strong>. The final plan takes the <strong>greater of the compute-driven card count and this floor</strong>, so a small token volume can never produce a card count too low to actually host the model. The floor is not aligned to TP/PP parallelism or whole-server granularity — real deployments usually round up to a multiple of <code>cards per server</code>.","<span class=\"result-value\" id=\"heroCards\">—</span> <span class=\"result-unit\">卡</span> <span class=\"result-aside\" id=\"heroPflops\"></span>": "<span class=\"result-value\" id=\"heroCards\">—</span> <span class=\"result-unit\">cards</span> <span class=\"result-aside\" id=\"heroPflops\"></span>","<span class=\"result-row-label\">全网日均 Token</span> <span class=\"result-row-value\" id=\"rowDailyTokens\">—<small>亿/日</small></span>": "<span class=\"result-row-label\">Total daily tokens</span> <span class=\"result-row-value\" id=\"rowDailyTokens\">—<small>B/day</small></span>","<span class=\"result-row-label\">秒级 Token 吞吐 T<sub>s</sub></span> <span class=\"result-row-value\" id=\"rowTokenPerSec\">—<small>token/s</small></span>": "<span class=\"result-row-label\">Token throughput T<sub>s</sub></span> <span class=\"result-row-value\" id=\"rowTokenPerSec\">—<small>tok/s</small></span>","<span class=\"result-row-label\">算力需求卡数（含冗余）</span> <span class=\"result-row-value\" id=\"rowComputeCards\">—<small>卡</small></span>": "<span class=\"result-row-label\">Compute-driven cards (with headroom)</span> <span class=\"result-row-value\" id=\"rowComputeCards\">—<small>cards</small></span>","<span class=\"result-row-label\">显存部署卡数下限</span> <span class=\"result-row-value\" id=\"rowMinCards\">—<small>卡</small></span>": "<span class=\"result-row-label\">Memory floor</span> <span class=\"result-row-value\" id=\"rowMinCards\">—<small>cards</small></span>","<span class=\"result-row-label\" id=\"rowFutureLabel\">未来 5 年卡数</span> <span class=\"result-row-value\" id=\"rowFutureCards\">—<small>卡</small></span>": "<span class=\"result-row-label\" id=\"rowFutureLabel\">Cards in year 5</span> <span class=\"result-row-value\" id=\"rowFutureCards\">—<small>cards</small></span>","<span class=\"result-row-label\">整机台数参考</span> <span class=\"result-row-value\" id=\"rowDevices\">—<small>台</small></span>": "<span class=\"result-row-label\">Servers (reference)</span> <span class=\"result-row-value\" id=\"rowDevices\">—<small>svr</small></span>","<strong>计算口径：</strong>单 Token 前向计算量按 <code>F × 激活参数量</code> 估算（F 缺省 2，乘加各计 1 次 FLOP）； 日均 Token 先均摊到秒级再乘峰值倍数 <code>M</code>，除以算力综合利用率 <code>N</code> 得到峰值算力需求， 除以单卡算力 <code>C<sub>card</sub></code> 并乘规划冗余得到算力卡数，最后与显存部署下限取大值。 本工具用于规划阶段一级匡算，未计入 Prefill / Decode 分离、并发与时延 SLO 及长序列注意力开销。": "<strong>Methodology:</strong> forward-pass compute per token is estimated as <code>F × activated parameters</code> (F defaults to 2 — one multiply and one add). Daily tokens are averaged to a per-second rate, multiplied by the peak-to-average ratio <code>M</code> and divided by effective utilization <code>N</code> to give peak compute demand. Dividing by compute per card <code>C<sub>card</sub></code> and applying planning headroom gives the card count, which is then floored by the memory-based minimum. This is a first-order planning estimate: it does not model prefill/decode disaggregation, concurrency and latency SLOs, or long-sequence attention overhead.","当前理论算力需求": "Theoretical compute demand","算力需求": "Compute","<span id=\"baseCards\">—</span><span class=\"kpi-unit\">卡</span>": "<span id=\"baseCards\">—</span><span class=\"kpi-unit\">cards</span>","算力卡数": "Cards","未含规划冗余的裸需求": "Raw demand, before planning headroom","考虑冗余的算力需求": "Compute demand with headroom","<span id=\"currentCards\">—</span><span class=\"kpi-unit\">卡</span>": "<span id=\"currentCards\">—</span><span class=\"kpi-unit\">cards</span>","规划卡数": "Planned cards","冗余系数 <strong id=\"computeMarginOut\">—</strong> · 约 <strong id=\"currentDevices\">—</strong> 台整机": "Headroom <strong id=\"computeMarginOut\">—</strong> · approx. <strong id=\"currentDevices\">—</strong> servers","未来 5 年算力需求": "Compute demand in year 5","<span id=\"futureCards\">—</span><span class=\"kpi-unit\">卡</span>": "<span id=\"futureCards\">—</span><span class=\"kpi-unit\">cards</span>","净增 <strong id=\"futureDeltaPflops\">—</strong> PFLOPS / <strong id=\"futureDeltaCards\">—</strong> 卡": "Net add <strong id=\"futureDeltaPflops\">—</strong> PFLOPS / <strong id=\"futureDeltaCards\">—</strong> cards","未来总增长倍数": "Total growth multiple","<span id=\"growthMultiple\">—</span><span class=\"kpi-unit\">倍</span>": "<span id=\"growthMultiple\">—</span><span class=\"kpi-unit\">×</span>","未来 AI 渗透用户约 <strong id=\"futureDau\">—</strong> 人<br>单卡 <strong id=\"cardTflopsOut\">—</strong> TFLOPS · <strong id=\"cardVramOut\">—</strong> GB": "Future AI-adopting users approx. <strong id=\"futureDau\">—</strong><br/>Per card <strong id=\"cardTflopsOut\">—</strong> TFLOPS · <strong id=\"cardVramOut\">—</strong> GB","未来 5 年算力卡数增长路径": "5-Year Card Growth Path","渗透率线性推进；频率与 Agent 终值按复合平滑展开": "Adoption ramps linearly; frequency and agentic uplift compound smoothly to their end-state values","第 5 年终值": "Year-5 end state","增长因子拆解": "Growth Factor Breakdown","使用未舍入值计算；渗透率提升同时放大渗透用户与 Token 总量": "Computed on unrounded values. Rising adoption scales both the user base and total token volume.","用户渗透率": "Adoption rate","使用频率": "Usage frequency","Agent 放大": "Agentic uplift","逐年算力卡数规划明细": "Year-by-Year Capacity Plan","频率与 Agent 输入是第 N 年终值；表内为累计系数": "Frequency and agentic inputs are year-N end states; the table shows cumulative factors","橙色数值 = 受显存下限约束": "Amber = constrained by the memory floor","规划年度": "Year","渗透率": "Adoption","频率系数": "Frequency","Agent 系数": "Agentic","总增长倍数": "Total growth","规划算力 PFLOPS": "Planned PFLOPS","整机台数": "Servers","计算公式与口径": "Formulas &amp; Methodology","规划测算所使用的全部公式与参数定义": "Every formula and parameter used in the model","培训讲解区": "Reference","公式一 · 由用户规模推算 Token 业务量": "Formula 1 · Deriving token volume from the user base","<span><b>DAU</b> 日活用户数</span> <span><b>R<sub>0</sub></b> 当前用户渗透率</span> <span><b>U<sub>0</sub></b> 当前 AI 渗透用户数</span> <span><b>T<sub>in</sub></b> 单用户日均输入 Token</span> <span><b>T<sub>out</sub></b> 单用户日均输出 Token</span> <span><b>H</b> 缓存命中率</span>": "<span><b>DAU</b> daily active users</span> <span><b>R<sub>0</sub></b> current adoption rate</span> <span><b>U<sub>0</sub></b> AI-adopting users</span> <span><b>T<sub>in</sub></b> input tokens / user / day</span> <span><b>T<sub>out</sub></b> output tokens / user / day</span> <span><b>H</b> cache hit rate</span>","公式二 · 由 Token 推算算力需求与卡数": "Formula 2 · From tokens to compute demand and card count","C<sub>理论</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N": "C<sub>theory</sub> = T<sub>s</sub> × F × P<sub>act</sub> × M ÷ N","n<sub>compute</sub> = ⌈ C<sub>理论</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉": "n<sub>compute</sub> = ⌈ C<sub>theory</sub> × K<sub>compute</sub> ÷ C<sub>card</sub> ⌉","<span><b>T<sub>s</sub></b> 秒级 Token 数</span> <span><b>F</b> 浮点运算量倍数</span> <span><b>P<sub>act</sub></b> 激活参数量</span> <span><b>M</b> 峰值倍数</span> <span><b>N</b> 算力综合利用率</span> <span><b>K<sub>compute</sub></b> 算力规划冗余</span> <span><b>C<sub>card</sub></b> 单卡算力</span>": "<span><b>T<sub>s</sub></b> tokens per second</span> <span><b>F</b> FLOPs multiplier</span> <span><b>P<sub>act</sub></b> activated parameters</span> <span><b>M</b> peak-to-average ratio</span> <span><b>N</b> effective utilization</span> <span><b>K<sub>compute</sub></b> compute headroom</span> <span><b>C<sub>card</sub></b> compute per card</span>","<b>依据：</b>系数 <b>F = 2</b> 源自 Kaplan et al. (2020) 对 Transformer 前向计算量的估计 <i>C<sub>forward</sub> ≈ 2N</i>（每 Token 每参数约 2 次浮点运算，即乘加各 1 次）； <b>N</b> 对应 Chowdhery et al. (2022) 在 PaLM 中提出的 <b>MFU</b>（Model FLOPs Utilization）； MoE 取<b>激活参数量</b>而非总参数量，依据 Fedus et al. (2021) 的稀疏激活结论。 完整出处与业界同口径案例见下方「公式依据」。": "<b>Basis:</b> the coefficient <b>F = 2</b> comes from Kaplan et al. (2020), whose estimate of Transformer forward-pass cost is <i>C<sub>forward</sub> ≈ 2N</i> — about two floating-point operations per parameter per token (one multiply, one add). <b>N</b> corresponds to <b>MFU</b> (Model FLOPs Utilization) as defined by Chowdhery et al. (2022) in PaLM. Using <b>activated</b> rather than total parameters for MoE follows the sparse-activation result of Fedus et al. (2021). Full citations and industry precedents are in “Provenance” below.","公式三 · 显存部署卡数下限与最终取值": "Formula 3 · Memory floor and the final card count","<span><b>P<sub>total</sub></b> 大模型总参数量</span> <span><b>B<sub>w</sub></b> 权重单参数字节数（FP16=2 / FP8=1 / FP4=0.5）</span> <span><b>V<sub>card</sub></b> 单卡显存容量</span> <span><b>η</b> 权重可用显存占比</span> <span>取大值可避免小 Token 量算出无法承载模型的卡数</span>": "<span><b>P<sub>total</sub></b> total parameters</span> <span><b>B<sub>w</sub></b> bytes per parameter (FP16=2 / FP8=1 / FP4=0.5)</span> <span><b>V<sub>card</sub></b> memory per card</span> <span><b>η</b> share of memory available for weights</span> <span>Taking the greater value prevents a small token volume from yielding a card count that cannot host the model</span>","公式四 · 未来增长与逐年平滑展开": "Formula 4 · Growth projection and year-by-year ramp","C<sub>未来</sub> = C<sub>规划</sub> × (R<sub>N</sub> ÷ R<sub>0</sub>) × K<sub>freq</sub> × K<sub>Agent</sub>": "C<sub>future</sub> = C<sub>planned</sub> × (R<sub>N</sub> ÷ R<sub>0</sub>) × K<sub>freq</sub> × K<sub>Agent</sub>","整机台数 n<sub>unit</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>unit</sub> ⌉": "Servers n<sub>unit</sub> = ⌈ n<sub>card</sub> ÷ Q<sub>unit</sub> ⌉","<span><b>R<sub>N</sub></b> 目标用户渗透率</span> <span><b>y</b> 规划第 y 年</span> <span><b>N<sub>year</sub></b> 规划年限</span> <span><b>Q<sub>unit</sub></b> 单设备卡数</span> <span>渗透率按线性推进，频率与 Agent 按复合平滑</span>": "<span><b>R<sub>N</sub></b> target adoption rate</span> <span><b>y</b> planning year y</span> <span><b>N<sub>year</sub></b> planning horizon</span> <span><b>Q<sub>unit</sub></b> cards per server</span> <span>Adoption ramps linearly; frequency and agentic uplift compound smoothly</span>","公式依据 · 学术出处与业界同口径实践": "Provenance · Academic sources and industry precedents","<b>一、公式的学术出处</b>": "<b>1 · Academic sources</b>","<b>每 Token 计算量 ≈ 2 × 参数量</b>（对应参数 <b>F</b>）<br> Kaplan, J. et al. <i>Scaling Laws for Neural Language Models.</i> arXiv:2001.08361, 2020 — Table 1 给出 <i>C<sub>forward</sub> ≈ 2N + 2·n<sub>layer</sub>·n<sub>ctx</sub>·d<sub>attn</sub></i>， 并说明反向传播约为前向的 2 倍，故训练侧 <i>C ≈ 6N</i>。本工具只做推理，取前向项 <b>F = 2</b>。 <a href=\"https://arxiv.org/abs/2001.08361\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2001.08361</a>": "<b>Compute per token ≈ 2 × parameters</b> (parameter <b>F</b>)<br/> Kaplan, J. et al. <i>Scaling Laws for Neural Language Models.</i> arXiv:2001.08361, 2020 — Table 1 gives <i>C<sub>forward</sub> ≈ 2N + 2·n<sub>layer</sub>·n<sub>ctx</sub>·d<sub>attn</sub></i> and notes that the backward pass costs roughly twice the forward pass, hence <i>C ≈ 6N</i> for training. This tool models inference only and therefore takes the forward term, <b>F = 2</b>. <a href=\"https://arxiv.org/abs/2001.08361\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2001.08361</a>","<b>算力综合利用率</b>（对应参数 <b>N</b>）<br> Chowdhery, A. et al. <i>PaLM: Scaling Language Modeling with Pathways.</i> arXiv:2204.02311, 2022 — §4.1 提出 <b>MFU</b>：实测吞吐与硬件峰值算力所对应理论吞吐之比，是跨硬件、跨实现可比的效率指标， 即本工具中的 N。 <a href=\"https://arxiv.org/abs/2204.02311\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2204.02311</a>": "<b>Effective compute utilization</b> (parameter <b>N</b>)<br/> Chowdhery, A. et al. <i>PaLM: Scaling Language Modeling with Pathways.</i> arXiv:2204.02311, 2022 — §4.1 introduces <b>MFU</b>: observed throughput relative to the theoretical throughput of the hardware running at peak FLOPs. It is deliberately comparable across hardware and implementations, and is exactly the N used here. <a href=\"https://arxiv.org/abs/2204.02311\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2204.02311</a>","<b>推理侧算力 / 带宽 / 利用率的解析模型</b><br> Pope, R. et al. <i>Efficiently Scaling Transformer Inference.</i> arXiv:2211.05102, 2022（MLSys 2023）— 给出推理效率的解析建模方法，并区分 Prefill 与 Decode 两阶段的成本结构。 <a href=\"https://arxiv.org/abs/2211.05102\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2211.05102</a>": "<b>Analytical model of inference compute, bandwidth and utilization</b><br/> Pope, R. et al. <i>Efficiently Scaling Transformer Inference.</i> arXiv:2211.05102, 2022 (MLSys 2023) — presents an analytical method for modelling inference efficiency and separates the cost structures of the prefill and decode phases. <a href=\"https://arxiv.org/abs/2211.05102\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2211.05102</a>","<b>MoE 按激活参数量计算</b>（对应参数 <b>P<sub>act</sub></b>）<br> Fedus, W., Zoph, B., Shazeer, N. <i>Switch Transformers.</i> arXiv:2101.03961, 2021 — 稀疏 MoE 每 Token 只路由激活少量专家，计算量由激活参数量决定，与总参数量解耦。 <a href=\"https://arxiv.org/abs/2101.03961\" target=\"_blank\" rel=\"noopener\">arxiv.org/abs/2101.03961</a>": "<b>MoE sized on activated parameters</b> (parameter <b>P<sub>act</sub></b>)<br/> Fedus, W., Zoph, B., Shazeer, N. <i>Switch Transformers.</i> arXiv:2101.03961, 2021 — a sparse MoE routes each token to only a few experts, so compute is set by the activated parameter count and is decoupled from the total. <a href=\"https://arxiv.org/abs/2101.03961\" rel=\"noopener\" target=\"_blank\">arxiv.org/abs/2101.03961</a>","<b>二、业界采用同一口径的公开案例</b>": "<b>2 · Industry precedents using the same method</b>","<b>Epoch AI</b>（AI 算力研究机构）<br> Denain, JS., Ho, A., Sevilla, J. <i>How many digital workers could OpenAI deploy?</i> 2025-10-03 — 测算 OpenAI 服务能力时明确采用：「GPT-5 激活参数量约 500 亿–3000 亿， <b>按每激活参数 2 FLOP</b> 计，每 Token 约 1000 亿–6000 亿 FLOP」， 并叠加「<b>推理利用率约 5%–30%</b>」，据此反推日均可处理 Token 量。 与本工具「F × P<sub>act</sub> ÷ N」的结构完全一致。 <a href=\"https://epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy\" target=\"_blank\" rel=\"noopener\">epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy</a>": "<b>Epoch AI</b> (AI compute research institute)<br/> Denain, JS., Ho, A., Sevilla, J. <i>How many digital workers could OpenAI deploy?</i> 2025-10-03 — in sizing OpenAI’s serving capacity the authors state: “We estimate that GPT-5 has between 50 billion and 300 billion active parameters, so <b>at 2 FLOP per active parameter</b>, we get 100 billion to 600 billion FLOP per token,” then apply an <b>inference utilization of around 5% to 30%</b> to infer daily token volume. Structurally identical to the <i>F × P<sub>act</sub> ÷ N</i> used here. <a href=\"https://epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy\" rel=\"noopener\" target=\"_blank\">epoch.ai/gradient-updates/how-many-digital-workers-could-openai-deploy</a>","<b>VMware（Broadcom）× NVIDIA</b> 企业级选型指南<br> Fu, Y. <i>LLM Inference Sizing and Performance Guidance.</i> VMware Cloud Foundation Blog, 2024 — 面向 VMware Private AI Foundation with NVIDIA 的容量规划文档， Prefill 阶段直接按 <i>(8B 参数 × 2) FLOP ÷ 加速卡算力 TFLOP/s</i> 估算， 即同一「每 Token 算力 ≈ 2 × 参数量」口径。 <a href=\"https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/\" target=\"_blank\" rel=\"noopener\">blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance</a>": "<b>VMware (Broadcom) × NVIDIA</b> enterprise sizing guide<br/> Fu, Y. <i>LLM Inference Sizing and Performance Guidance.</i> VMware Cloud Foundation Blog, 2024 — a capacity-planning document for VMware Private AI Foundation with NVIDIA. Prefill time is estimated directly as <i>(8B params × 2) FLOP ÷ accelerator TFLOP/s</i> — the same “compute per token ≈ 2 × parameters” convention. <a href=\"https://blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance/\" rel=\"noopener\" target=\"_blank\">blogs.vmware.com/cloud-foundation/2024/09/25/llm-inference-sizing-and-performance-guidance</a>","「每 Token 算力 ≈ F × 激活参数量、以 <b>MFU</b> 表征有效利用率」是学术论文与业界容量测算的<b>通行口径</b>， 本工具的公式二即建立在该口径之上。": "Expressing compute per token as <i>F × activated parameters</i> and capturing real-world efficiency through <b>MFU</b> is the <b>standard convention</b> in both the literature and industry capacity sizing. Formula 2 is built directly on it.","本工具用于规划阶段的算力卡数一级匡算；未来测算默认模型规模、峰值倍数、利用率与卡型不变。 工程落地还需结合并发与时延 SLO、精度与稀疏性、KV Cache 命中率、PD 分离部署形态与产品实测数据进一步核实。 <span class=\"signature\">@数据中心产品组合</span>": "A first-order card-count estimate for the planning stage. Forward projections assume model size, peak-to-average ratio, utilization and card type stay unchanged. Before committing to a build, validate against concurrency and latency SLOs, precision and sparsity, KV cache hit rates, prefill/decode disaggregation and measured product benchmarks. <span class=\"signature\">@Data Center Product Portfolio</span>","token": "tokens"};
-      const I18N_JS = {"scen_office": {"zh": "办公助手","en": "Office Assistant"},"scen_custom": {"zh": "自定义","en": "Custom"},"model_other": {"zh": "其他型号","en": "Other model"},"lbl_inTokens": {"zh": "单用户日均输入 Token","en": "Input tokens per user per day"},"lbl_outTokens": {"zh": "单用户日均输出 Token","en": "Output tokens per user per day"},"lbl_cacheHitRate": {"zh": "缓存命中率","en": "Cache hit rate"},"lbl_dau": {"zh": "日活用户数","en": "Daily active users"},"lbl_currentPenetration": {"zh": "当前用户渗透率","en": "Current adoption rate"},"lbl_futurePenetration": {"zh": "未来目标渗透率","en": "Target adoption rate"},"lbl_activeParams": {"zh": "大模型激活参数量","en": "Activated parameters"},"lbl_totalParams": {"zh": "大模型总参数量","en": "Total parameters"},"lbl_flopsMultiplier": {"zh": "浮点运算量倍数","en": "FLOPs multiplier"},"lbl_peakMultiplier": {"zh": "峰值倍数","en": "Peak-to-average ratio"},"lbl_utilization": {"zh": "算力综合利用率","en": "Effective utilization"},"lbl_computeMargin": {"zh": "算力规划冗余","en": "Compute headroom"},"lbl_years": {"zh": "规划年限","en": "Planning horizon"},"lbl_frequencyFactor": {"zh": "使用频率提升","en": "Usage frequency growth"},"lbl_agentFactor": {"zh": "Agent 放大系数","en": "Agentic amplification"},"lbl_cardTflops": {"zh": "产品单卡算力","en": "Compute per card"},"lbl_cardsPerDevice": {"zh": "单设备卡数","en": "Cards per server"},"lbl_cardVram": {"zh": "单卡显存容量","en": "Memory per card"},"lbl_vramUsable": {"zh": "权重可用显存占比","en": "Memory available for weights"},"err_gt0": {"zh": "必须大于 0","en": " must be greater than 0"},"err_in_neg": {"zh": "单用户日均输入 Token 不能为负","en": "Input tokens per user cannot be negative"},"err_out_neg": {"zh": "单用户日均输出 Token 不能为负","en": "Output tokens per user cannot be negative"},"err_both_zero": {"zh": "单用户输入与输出 Token 不能同时为 0","en": "Input and output tokens cannot both be zero"},"err_cache": {"zh": "缓存命中率须在 0–100% 之间（不含 100%）","en": "Cache hit rate must be between 0% and 100% (100% excluded)"},"err_years": {"zh": "规划年限须为 1–20 年的整数","en": "Planning horizon must be a whole number of years between 1 and 20"},"err_dau_int": {"zh": "日活用户数须为整数","en": "Daily active users must be a whole number"},"err_cards_int": {"zh": "单设备卡数须为整数","en": "Cards per server must be a whole number"},"err_util": {"zh": "算力综合利用率须在 0–100% 之间","en": "Effective utilization must be between 0% and 100%"},"err_pen0": {"zh": "当前用户渗透率须在 0–100% 之间","en": "Current adoption rate must be between 0% and 100%"},"err_penN": {"zh": "未来目标渗透率须在 0–100% 之间","en": "Target adoption rate must be between 0% and 100%"},"err_vram": {"zh": "权重可用显存占比须在 0–100% 之间","en": "Memory available for weights must be between 0% and 100%"},"warn_total_lt_act": {"zh": "总参数量小于激活参数量，请核对模型口径（MoE 总参数应大于每 Token 激活参数）。","en": "Total parameters are smaller than activated parameters — please check the model figures (for MoE, the total should exceed the per-token activated count)."},"warn_pen_down": {"zh": "目标渗透率低于当前渗透率，未来结果将体现用户覆盖下降。","en": "The target adoption rate is below the current rate, so the projection will show shrinking coverage."},"warn_margin": {"zh": "算力规划冗余系数小于 1，可能低估规划容量。","en": "Compute headroom below 1 may understate the capacity actually required."},"warn_util_high": {"zh": "算力综合利用率高于 60%，一级规划通常偏乐观，建议复核。","en": "Effective utilization above 60% is optimistic for first-order planning — worth double-checking."},"yr_current_suffix": {"zh": "（当前）","en": " (current)"},"yr_now": {"zh": "当前","en": "Now"},"unit_per_user": {"zh": "token/人·日","en": "tokens/user/day"},"derive_src": {"zh": "由 {u} AI 渗透用户 × {t} token 推算，共 {a} token/日","en": "{u} AI-adopting users × {t} tokens = {a} tokens/day"},"pen_role": {"zh": "当前渗透率同时决定<b>渗透用户数</b>与未来增长基数；目标渗透率决定未来放大倍数。","en": "The current adoption rate sets both the <b>adopting user base</b> and the growth baseline; the target rate sets the future multiple."},"min_hint": {"zh": "权重约 <b>{g}</b> GiB ÷ (<b>{v}</b> GB × <b>{p}</b>%)","en": "Weights approx. <b>{g}</b> GiB ÷ (<b>{v}</b> GB × <b>{p}</b>%)"},"subtitle": {"zh": "{tok} 亿 Token/日 · {model} · {tf} TFLOPS/卡{prec}","en": "{tok}B tokens/day · {model} · {tf} TFLOPS/card{prec}"},"hero_pflops": {"zh": "≈ {p} PFLOPS 规划算力","en": "≈ {p} PFLOPS planned compute"},"bound_memory": {"zh": "受显存下限约束 · 算力需求仅 {n} 卡","en": "Memory-bound · compute needs only {n} cards"},"bound_compute": {"zh": "受算力需求约束 · 显存下限 {n} 卡","en": "Compute-bound · memory floor {n} cards"},"unit_yi_day": {"zh": "亿/日","en": "B/day"},"unit_card": {"zh": "卡","en": "cards"},"unit_server": {"zh": "台","en": "svr"},"row_future": {"zh": "未来 {y} 年卡数","en": "Cards in year {y}"},"kpi_future": {"zh": "未来 {y} 年算力需求","en": "Compute demand in year {y}"},"trend_title": {"zh": "未来 {y} 年算力卡数增长路径","en": "{y}-Year Card Growth Path"},"chart_end": {"zh": "第 {y} 年终值","en": "Year-{y} end state"},"chart_tip": {"zh": "{label}：{n} 卡","en": "{label}: {n} cards"},"chart_val": {"zh": "{n}卡","en": "{n}"},"chart_floor": {"zh": "显存下限 {n} 卡","en": "Memory floor {n} cards"},"chart_axis": {"zh": "卡数","en": "Cards"},"formula_mem": {"zh": "n<sub>card</sub> = max({c}, ⌈{tp}B × {bw}B/参数 ÷ {v}GB×{p}%⌉) = {f}","en": "n<sub>card</sub> = max({c}, ⌈{tp}B × {bw}B/param ÷ {v}GB×{p}%⌉) = {f}"},"page_title": {"zh": "AI 数据中心算力评估规划 · Token → Card","en": "AI Data Center Compute Planning · Token → Card"},"toggle": {"zh": "EN","en": "中文"},"toggle_aria": {"zh": "切换到英文","en": "Switch to Chinese"}};
+      const I18N_JS = {"scen_office": {"zh": "办公助手","en": "Office Assistant"},"scen_custom": {"zh": "自定义","en": "Custom"},"model_other": {"zh": "其他型号","en": "Other model"},"lbl_inTokens": {"zh": "单用户日均输入 Token","en": "Input tokens per user per day"},"lbl_outTokens": {"zh": "单用户日均输出 Token","en": "Output tokens per user per day"},"lbl_cacheHitRate": {"zh": "缓存命中率","en": "Cache hit rate"},"lbl_dau": {"zh": "日活用户数","en": "Daily active users"},"lbl_currentPenetration": {"zh": "当前用户渗透率","en": "Current adoption rate"},"lbl_futurePenetration": {"zh": "未来目标渗透率","en": "Target adoption rate"},"lbl_activeParams": {"zh": "大模型激活参数量","en": "Activated parameters"},"lbl_totalParams": {"zh": "大模型总参数量","en": "Total parameters"},"lbl_flopsMultiplier": {"zh": "浮点运算量倍数","en": "FLOPs multiplier"},"lbl_peakMultiplier": {"zh": "峰值倍数","en": "Peak-to-average ratio"},"lbl_utilization": {"zh": "算力综合利用率","en": "Effective utilization"},"lbl_computeMargin": {"zh": "算力规划冗余","en": "Compute headroom"},"lbl_years": {"zh": "规划年限","en": "Planning horizon"},"lbl_frequencyFactor": {"zh": "使用频率提升","en": "Usage frequency growth"},"lbl_agentFactor": {"zh": "Agent 放大系数","en": "Agentic amplification"},"lbl_cardTflops": {"zh": "产品单卡算力","en": "Compute per card"},"lbl_cardsPerDevice": {"zh": "单设备卡数","en": "Cards per server"},"lbl_cardVram": {"zh": "单卡显存容量","en": "Memory per card"},"lbl_vramUsable": {"zh": "权重可用显存占比","en": "Memory available for weights"},"err_gt0": {"zh": "必须大于 0","en": " must be greater than 0"},"err_in_neg": {"zh": "单用户日均输入 Token 不能为负","en": "Input tokens per user cannot be negative"},"err_out_neg": {"zh": "单用户日均输出 Token 不能为负","en": "Output tokens per user cannot be negative"},"err_both_zero": {"zh": "单用户输入与输出 Token 不能同时为 0","en": "Input and output tokens cannot both be zero"},"err_cache": {"zh": "缓存命中率须在 0–100% 之间（不含 100%）","en": "Cache hit rate must be between 0% and 100% (100% excluded)"},"err_years": {"zh": "规划年限须为 1–20 年的整数","en": "Planning horizon must be a whole number of years between 1 and 20"},"err_dau_int": {"zh": "日活用户数须为整数","en": "Daily active users must be a whole number"},"err_cards_int": {"zh": "单设备卡数须为整数","en": "Cards per server must be a whole number"},"err_util": {"zh": "算力综合利用率须在 0–100% 之间","en": "Effective utilization must be between 0% and 100%"},"err_pen0": {"zh": "当前用户渗透率须在 0–100% 之间","en": "Current adoption rate must be between 0% and 100%"},"err_penN": {"zh": "未来目标渗透率须在 0–100% 之间","en": "Target adoption rate must be between 0% and 100%"},"err_vram": {"zh": "权重可用显存占比须在 0–100% 之间","en": "Memory available for weights must be between 0% and 100%"},"warn_total_lt_act": {"zh": "总参数量小于激活参数量，请核对模型口径（MoE 总参数应大于每 Token 激活参数）。","en": "Total parameters are smaller than activated parameters — please check the model figures (for MoE, the total should exceed the per-token activated count)."},"warn_pen_down": {"zh": "目标渗透率低于当前渗透率，未来结果将体现用户覆盖下降。","en": "The target adoption rate is below the current rate, so the projection will show shrinking coverage."},"warn_margin": {"zh": "算力规划冗余系数小于 1，可能低估规划容量。","en": "Compute headroom below 1 may understate the capacity actually required."},"warn_util_high": {"zh": "算力综合利用率高于 60%，一级规划通常偏乐观，建议复核。","en": "Effective utilization above 60% is optimistic for first-order planning — worth double-checking."},"yr_current_suffix": {"zh": "（当前）","en": " (current)"},"yr_now": {"zh": "当前","en": "Now"},"unit_per_user": {"zh": "token/人·日","en": "tokens/user/day"},"derive_src": {"zh": "由 {u} AI 渗透用户 × {t} token 推算，共 {a} token/日","en": "{u} AI-adopting users × {t} tokens = {a} tokens/day"},"pen_role": {"zh": "当前渗透率同时决定<b>渗透用户数</b>与未来增长基数；目标渗透率决定未来放大倍数。","en": "The current adoption rate sets both the <b>adopting user base</b> and the growth baseline; the target rate sets the future multiple."},"min_hint": {"zh": "权重约 <b>{g}</b> GiB ÷ (<b>{v}</b> GB × <b>{p}</b>%)","en": "Weights approx. <b>{g}</b> GiB ÷ (<b>{v}</b> GB × <b>{p}</b>%)"},"subtitle": {"zh": "{tok} 亿 Token/日 · {model} · {tf} TFLOPS/卡{prec}","en": "{tok}B tokens/day · {model} · {tf} TFLOPS/card{prec}"},"hero_pflops": {"zh": "≈ {p} PFLOPS 规划算力","en": "≈ {p} PFLOPS planned compute"},"bound_memory": {"zh": "受显存下限约束 · 算力需求仅 {n} 卡","en": "Memory-bound · compute needs only {n} cards"},"bound_compute": {"zh": "受算力需求约束 · 显存下限 {n} 卡","en": "Compute-bound · memory floor {n} cards"},"unit_yi_day": {"zh": "亿/日","en": "B/day"},"unit_card": {"zh": "卡","en": "cards"},"unit_server": {"zh": "台","en": "svr"},"row_future": {"zh": "未来 {y} 年卡数","en": "Cards in year {y}"},"kpi_future": {"zh": "未来 {y} 年算力需求","en": "Compute demand in year {y}"},"trend_title": {"zh": "未来 {y} 年算力卡数增长路径","en": "{y}-Year Card Growth Path"},"chart_end": {"zh": "第 {y} 年终值","en": "Year-{y} end state"},"chart_tip": {"zh": "{label}：{n} 卡","en": "{label}: {n} cards"},"chart_val": {"zh": "{n}卡","en": "{n}"},"chart_floor": {"zh": "显存下限 {n} 卡","en": "Memory floor {n} cards"},"chart_axis": {"zh": "卡数","en": "Cards"},"formula_mem": {"zh": "n<sub>card</sub> = max({c}, ⌈{tp}B × {bw}B/参数 ÷ {v}GB×{p}%⌉) = {f}","en": "n<sub>card</sub> = max({c}, ⌈{tp}B × {bw}B/param ÷ {v}GB×{p}%⌉) = {f}"},"page_title": {"zh": "AI 数据中心算力评估规划 · Token → Card","en": "AI Data Center Compute Planning · Token → Card"},"toggle": {"zh": "EN","en": "中文"},"toggle_aria": {"zh": "切换到英文","en": "Switch to Chinese"},"xlsx_download": {"zh": "下载 Excel","en": "Download Excel"},"xlsx_unlock": {"zh": "显示导出","en": "Show export"},"xlsx_card_title": {"zh": "Excel 导出","en": "Excel export"},"xlsx_card_note": {"zh": "默认锁定；开启后可下载当前测算数值与公式","en": "Locked by default. Turn on to download current values and formulas."},"xlsx_hint": {"zh": "导出当前数值与公式，可在 Excel 中改黄色输入格后自动重算","en": "Exports current values and formulas. Edit yellow input cells in Excel to recalculate."},"xlsx_need_unlock": {"zh": "请先解锁后再导出","en": "Unlock export first"},"xlsx_fail": {"zh": "Excel 导出失败，请重试。","en": "Excel export failed. Please try again."},"xlsx_pwd_title": {"zh": "输入访问密码","en": "Enter access password"},"xlsx_pwd_hint": {"zh": "解锁导出需验证身份（不区分大小写）。","en": "Unlocking export requires verification (case-insensitive)."},"xlsx_password": {"zh": "密码","en": "Password"},"xlsx_pwd_wrong": {"zh": "密码错误，请重试。","en": "Incorrect password. Please try again."},"xlsx_pwd_unavailable": {"zh": "认证服务不可用，请稍后重试。","en": "Authentication service is unavailable. Please try again later."},"xlsx_cancel": {"zh": "取消","en": "Cancel"},"xlsx_confirm": {"zh": "确认","en": "Confirm"},"xlsx_sheet_inputs": {"zh": "输入","en": "Inputs"},"xlsx_sheet_model": {"zh": "计算","en": "Model"},"xlsx_sheet_years": {"zh": "逐年","en": "Years"},"xlsx_title_inputs": {"zh": "输入（与页面字段对应）","en": "Inputs (same fields as the page)"},"xlsx_title_model": {"zh": "计算（Excel 公式与页面一致）","en": "Model (Excel formulas match the page)"},"xlsx_title_years": {"zh": "逐年算力卡数规划明细","en": "Year-by-year capacity plan"},"xlsx_hint_inputs": {"zh": "黄色单元格为输入（可改）；蓝色单元格为公式（与页面一致）","en": "Yellow cells are inputs (editable); blue cells are formulas matching the page."},"xlsx_hint_model": {"zh": "蓝色单元格为公式，改「输入」表黄色格后自动重算","en": "Blue cells are formulas. Change yellow cells on the Inputs sheet to recalculate."},"xlsx_hint_years": {"zh": "频率与 Agent 输入是第 N 年终值；表内为累计系数","en": "Frequency and agentic inputs are year-N end states; the table shows cumulative factors"},"xlsx_col_name": {"zh": "名称","en": "Name"},"xlsx_col_value": {"zh": "数值","en": "Value"},"xlsx_col_unit": {"zh": "单位","en": "Unit"},"xlsx_col_note": {"zh": "说明","en": "Notes"},"xlsx_col_metric": {"zh": "指标","en": "Metric"},"xlsx_col_year": {"zh": "规划年度","en": "Year"},"xlsx_col_penetration": {"zh": "渗透率","en": "Adoption"},"xlsx_col_freq": {"zh": "频率系数","en": "Frequency"},"xlsx_col_agent": {"zh": "Agent 系数","en": "Agentic"},"xlsx_col_total": {"zh": "总增长倍数","en": "Total growth"},"xlsx_col_pflops": {"zh": "规划算力 PFLOPS","en": "Planned PFLOPS"},"xlsx_col_cards": {"zh": "规划卡数","en": "Planned cards"},"xlsx_col_servers": {"zh": "整机台数","en": "Servers"},"xlsx_unit_token": {"zh": "token","en": "tokens"},"xlsx_unit_pct": {"zh": "%","en": "%"},"xlsx_unit_people": {"zh": "人","en": "users"},"xlsx_unit_bparams": {"zh": "B","en": "B"},"xlsx_unit_times": {"zh": "倍","en": "×"},"xlsx_unit_year": {"zh": "年","en": "yrs"},"xlsx_unit_tflops": {"zh": "TFLOPS","en": "TFLOPS"},"xlsx_unit_cards_dev": {"zh": "卡/台","en": "cards/svr"},"xlsx_unit_gb": {"zh": "GB","en": "GB"},"xlsx_unit_bparam": {"zh": "B/参数","en": "B/param"},"xlsx_unit_pflops": {"zh": "PFLOPS","en": "PFLOPS"},"xlsx_unit_tps": {"zh": "token/s","en": "tok/s"},"xlsx_lbl_precision": {"zh": "权重存储精度","en": "Weight precision"},"xlsx_note_inTokens": {"zh": "单用户日均输入 Token","en": "Input tokens / user / day"},"xlsx_note_outTokens": {"zh": "单用户日均输出 Token","en": "Output tokens / user / day"},"xlsx_note_cache": {"zh": "仅折减输入侧 Token","en": "Discounts input tokens only"},"xlsx_note_dau": {"zh": "当前 AI 日活用户数","en": "Current AI DAU"},"xlsx_note_pen0": {"zh": "当前渗透率同时决定渗透用户数与未来增长基数","en": "Sets the adopting user base and growth baseline"},"xlsx_note_penN": {"zh": "目标渗透率决定未来放大倍数","en": "Sets the future adoption multiple"},"xlsx_note_pact": {"zh": "决定算力需求；MoE 按每 Token 实际激活参数量填写","en": "Drives compute demand. For MoE, enter activated parameters per token."},"xlsx_note_ptotal": {"zh": "决定权重显存，用于卡数下限校验","en": "Drives weight memory — used for the minimum card count"},"xlsx_note_flops": {"zh": "每 Token 每参数的 FLOP 数，缺省 2","en": "FLOPs per parameter per token. Default 2."},"xlsx_note_peak": {"zh": "峰值倍数","en": "Peak-to-average ratio"},"xlsx_note_util": {"zh": "算力综合利用率，对应 MFU","en": "Effective utilization (MFU)"},"xlsx_note_margin": {"zh": "算力规划冗余","en": "Compute headroom"},"xlsx_note_years": {"zh": "规划年限","en": "Planning horizon"},"xlsx_note_freq": {"zh": "第 N 年终值，不是每年复利倍数","en": "End-state value in year N — not a CAGR"},"xlsx_note_agent": {"zh": "多轮推理、工具调用与任务分解的综合放大","en": "Uplift from multi-turn reasoning, tool calls and decomposition"},"xlsx_note_card": {"zh": "产品单卡算力","en": "Compute per card"},"xlsx_note_qunit": {"zh": "仅用于把卡数折算为整机台数","en": "Only used to convert cards into a server count"},"xlsx_note_vram": {"zh": "单卡显存容量","en": "Memory per card"},"xlsx_note_bw": {"zh": "FP16=2 / FP8=1 / FP4=0.5","en": "FP16=2 / FP8=1 / FP4=0.5"},"xlsx_note_eta": {"zh": "其余留给 KV Cache、激活与框架开销","en": "Remainder reserved for KV cache, activations and overhead"},"xlsx_metric_activeUsers": {"zh": "当前 AI 渗透用户数","en": "AI-adopting users"},"xlsx_metric_perUser": {"zh": "单用户有效日均 Token","en": "Effective tokens / user / day"},"xlsx_metric_daily": {"zh": "折算全网日均 Token","en": "Total daily tokens"},"xlsx_metric_tps": {"zh": "秒级 Token 吞吐","en": "Token throughput"},"xlsx_metric_basePflops": {"zh": "当前理论算力需求","en": "Theoretical compute demand"},"xlsx_metric_plannedPflops": {"zh": "考虑冗余的规划算力","en": "Planned compute with headroom"},"xlsx_metric_baseCards": {"zh": "理论需求卡数","en": "Raw demand cards"},"xlsx_metric_computeCards": {"zh": "算力需求卡数（含冗余）","en": "Compute-driven cards (with headroom)"},"xlsx_metric_minCards": {"zh": "显存部署卡数下限","en": "Memory floor"},"xlsx_metric_currentCards": {"zh": "规划卡数","en": "Planned cards"},"xlsx_metric_devices": {"zh": "整机台数参考","en": "Servers (reference)"},"xlsx_metric_penFactor": {"zh": "用户渗透率倍数","en": "Adoption multiple"},"xlsx_metric_growth": {"zh": "未来总增长倍数","en": "Total growth multiple"},"xlsx_metric_futurePflops": {"zh": "未来规划算力","en": "Future planned compute"},"xlsx_metric_futureCards": {"zh": "未来规划卡数","en": "Future planned cards"},"xlsx_metric_futureUsers": {"zh": "未来 AI 渗透用户","en": "Future AI-adopting users"},"xlsx_note_activeUsers": {"zh": "DAU × 当前渗透率","en": "DAU × current adoption"},"xlsx_note_perUser": {"zh": "输出 + 输入 × (1 − 命中率)","en": "Output + input × (1 − hit rate)"},"xlsx_note_daily": {"zh": "渗透用户 × 单用户有效 Token","en": "Adopting users × effective tokens / user"},"xlsx_note_tps": {"zh": "日均 Token ÷ 86400","en": "Daily tokens ÷ 86400"},"xlsx_note_basePflops": {"zh": "T_s × F × P_act × M ÷ N","en": "T_s × F × P_act × M ÷ N"},"xlsx_note_plannedPflops": {"zh": "理论算力 × 规划冗余","en": "Theoretical compute × headroom"},"xlsx_note_baseCards": {"zh": "理论算力 ÷ 单卡算力，向上取整","en": "Theoretical compute ÷ compute per card, rounded up"},"xlsx_note_computeCards": {"zh": "规划算力 ÷ 单卡算力，向上取整","en": "Planned compute ÷ compute per card, rounded up"},"xlsx_note_minCards": {"zh": "权重显存 ÷ 单卡可用显存，向上取整","en": "Weight memory ÷ usable memory per card, rounded up"},"xlsx_note_currentCards": {"zh": "算力卡数与显存下限取大值","en": "Greater of compute-driven cards and memory floor"},"xlsx_note_devices": {"zh": "规划卡数 ÷ 单设备卡数，向上取整","en": "Planned cards ÷ cards per server, rounded up"},"xlsx_note_penFactor": {"zh": "目标渗透率 ÷ 当前渗透率","en": "Target adoption ÷ current adoption"},"xlsx_note_growth": {"zh": "渗透倍数 × 频率 × Agent","en": "Adoption × frequency × agentic"},"xlsx_note_futurePflops": {"zh": "规划算力 × 总增长倍数","en": "Planned compute × total growth"},"xlsx_note_futureCards": {"zh": "未来算力卡数与显存下限取大值","en": "Greater of future compute cards and memory floor"},"xlsx_note_futureUsers": {"zh": "DAU × 目标渗透率","en": "DAU × target adoption"}};
 
       /* ── 中英文切换 ──────────────────────────────────────
          静态文案：加载时按「最深且含中文的元素」建立索引，切换时整段替换 innerHTML，
@@ -1210,6 +1305,7 @@
           const tag = el.tagName;
           if (tag === "SCRIPT" || tag === "STYLE" || tag === "svg") return;
           if (el.closest("svg")) return;
+          if (el.closest("#pwdOverlay, #exportCard")) return;
           const text = el.textContent || "";
           if (!CJK_RE.test(text)) return;
           const kids = Array.from(el.children);
@@ -1272,6 +1368,7 @@
         if (other) other.textContent = LANG === "en" ? I18N_STATIC["其他模型 · 支持自定义输入参数"] : "其他模型 · 支持自定义输入参数";
         applyStatic();
         applyAriaI18n();
+        applyExportI18n();
         calculate();
       }
 
@@ -1801,6 +1898,118 @@
         });
       }
 
+      let exportUnlocked = false;
+
+      function applyExportI18n() {
+        const setText = (id, key) => { const el = $(id); if (el) el.textContent = t(key); };
+        setText("downloadXlsxBtn", "xlsx_download");
+        setText("exportUnlockLabel", "xlsx_unlock");
+        setText("exportCardTitle", "xlsx_card_title");
+        setText("exportCardNote", "xlsx_card_note");
+        setText("pwdTitle", "xlsx_pwd_title");
+        setText("pwdHint", "xlsx_pwd_hint");
+        setText("pwdLabel", "xlsx_password");
+        setText("pwdCancel", "xlsx_cancel");
+        setText("pwdOk", "xlsx_confirm");
+        const input = $("pwdInput");
+        if (input) input.setAttribute("placeholder", t("xlsx_password"));
+        const hint = $("xlsxExportHint");
+        if (hint && exportUnlocked) hint.textContent = t("xlsx_hint");
+      }
+
+      function showPwdOverlay() {
+        const overlay = $("pwdOverlay");
+        overlay.hidden = false;
+        overlay.classList.add("is-open");
+        $("pwdInput").value = "";
+        $("pwdError").hidden = true;
+        $("pwdError").textContent = t("xlsx_pwd_wrong");
+        $("pwdInput").focus();
+      }
+
+      function hidePwdOverlay() {
+        const overlay = $("pwdOverlay");
+        overlay.classList.remove("is-open");
+        overlay.hidden = true;
+      }
+
+      function setExportUnlocked(visible) {
+        exportUnlocked = visible;
+        const btn = $("downloadXlsxBtn");
+        if (btn) btn.hidden = !visible;
+        $("exportUnlockToggle").checked = visible;
+        const hint = $("xlsxExportHint");
+        if (hint) hint.textContent = visible ? t("xlsx_hint") : "";
+      }
+
+      function verifyAdminCredential(input) {
+        const token = String(input || "").trim();
+        if (!token) return Promise.resolve({ ok: false, unavailable: false });
+        if (!globalThis.AidcConfig?.verifyAdmin) return Promise.resolve({ ok: false, unavailable: true });
+        return AidcConfig.verifyAdmin(token)
+          .then(() => ({ ok: true, unavailable: false }))
+          .catch((error) => ({ ok: false, unavailable: error?.status !== 401 }));
+      }
+
+      function downloadXlsx() {
+        const hint = $("xlsxExportHint");
+        if (!exportUnlocked) {
+          if (hint) hint.textContent = t("xlsx_need_unlock");
+          return;
+        }
+        try {
+          if (!globalThis.AidcComputeEstXlsx?.download) throw new Error("xlsx");
+          AidcComputeEstXlsx.download({
+            locale: LANG === "en" ? "en" : "zh",
+            t,
+            inputs: readValues(),
+            computed: lastResult,
+            calendarYear: new Date().getFullYear(),
+            scenario: activeScenario,
+          });
+          if (hint) hint.textContent = t("xlsx_hint");
+        } catch (err) {
+          if (hint) hint.textContent = t("xlsx_fail");
+        }
+      }
+
+      function setupExport() {
+        $("exportUnlockToggle")?.addEventListener("change", () => {
+          if ($("exportUnlockToggle").checked) {
+            if (exportUnlocked) setExportUnlocked(true);
+            else {
+              $("exportUnlockToggle").checked = false;
+              showPwdOverlay();
+            }
+          } else {
+            setExportUnlocked(false);
+          }
+        });
+        $("pwdCancel")?.addEventListener("click", () => {
+          hidePwdOverlay();
+          $("exportUnlockToggle").checked = false;
+        });
+        $("pwdOk")?.addEventListener("click", async () => {
+          $("pwdOk").disabled = true;
+          $("pwdCancel").disabled = true;
+          $("pwdInput").disabled = true;
+          $("pwdError").hidden = true;
+          const result = await verifyAdminCredential($("pwdInput").value);
+          $("pwdOk").disabled = false;
+          $("pwdCancel").disabled = false;
+          $("pwdInput").disabled = false;
+          if (result.ok) {
+            hidePwdOverlay();
+            setExportUnlocked(true);
+          } else {
+            $("pwdError").textContent = result.unavailable ? t("xlsx_pwd_unavailable") : t("xlsx_pwd_wrong");
+            $("pwdError").hidden = false;
+          }
+        });
+        $("pwdInput")?.addEventListener("keydown", (e) => { if (e.key === "Enter") $("pwdOk").click(); });
+        $("downloadXlsxBtn")?.addEventListener("click", downloadXlsx);
+      }
+
       function setupResponsiveChart() {
         let timer = null;
         window.addEventListener("resize", () => {
@@ -1834,6 +2043,8 @@
       setupModelPreset();
       setupQuickButtons();
       setupResponsiveChart();
+      setupExport();
+      applyExportI18n();
       writeValues(defaults);
       setActiveScenario(DEFAULT_SCENARIO);
       if (LANG === "en") setLang("en");

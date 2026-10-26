@@ -18,8 +18,8 @@ dau=12700, pen=100, tin=9_900_000, tout=100_000, hit=0, M=3, N=45, K=1.2, C_card
 → daily tokens 127_000_000_000, cards 1024
 
 Schedule-budget golden (js/ai-dc-schedule-budget.js SCENARIO_DEFAULTS, 1024 cards, $8/W, $0.132/kWh, 5y):
-air 3kW/card PUE1.5 $85000 2.5% O&M; liquid 2kW/card PUE1.2 $110000 3% O&M
-年 OPEX = 年电费 + CAPEX×运维费率
+air 3kW/card PUE1.5 2.5% O&M; liquid 2kW/card PUE1.2 3% O&M
+CAPEX = L0+L1 only; 年 OPEX = 年电费 + CAPEX×运维费率
 """
 
 from __future__ import annotations
@@ -240,18 +240,17 @@ def schedule_scenario(
     cards: float,
     card_power_kw: float,
     pue: float,
-    unit_cost: float,
     infra_per_w: float,
     electricity: float,
     years: float,
     maintenance_rate: float = 0.0,
 ) -> dict[str, float] | None:
-    """机房工期和造价。非法输入返回 None，不传播 NaN。
+    """机房工期和造价。非法输入返回 None，不传播 NaN。报价仅含 L0+L1。
 
-    ICT MW = cards × kW/card / 1000
-    机房 MW = ICT MW × PUE
+    IT MW = cards × kW/card / 1000
+    机房 MW = IT MW × PUE
     L0+L1 = 机房 MW × 10⁶ × $/W
-    ICT = cards × $/card
+    CAPEX = L0+L1
     年电费 = 机房 MW × 1000 × 8760 × $/kWh
     年运维 = CAPEX × 运维费率(%) / 100
     年 OPEX = 年电费 + 年运维
@@ -260,7 +259,6 @@ def schedule_scenario(
         cards,
         card_power_kw,
         pue,
-        unit_cost,
         infra_per_w,
         electricity,
         years,
@@ -270,15 +268,14 @@ def schedule_scenario(
         return None
     if cards < 1 or pue < 1 or years < 1:
         return None
-    if card_power_kw < 0 or unit_cost < 0 or infra_per_w < 0 or electricity < 0:
+    if card_power_kw < 0 or infra_per_w < 0 or electricity < 0:
         return None
     if maintenance_rate < 0 or maintenance_rate > 100:
         return None
     ict_mw = cards * card_power_kw / 1000
     facility_mw = ict_mw * pue
-    ict_cost = cards * unit_cost
     infra_cost = facility_mw * 1e6 * infra_per_w
-    capex = ict_cost + infra_cost
+    capex = infra_cost
     annual_electricity = facility_mw * 1000 * 8760 * electricity
     annual_maintenance = capex * maintenance_rate / 100
     annual_opex = annual_electricity + annual_maintenance
@@ -286,7 +283,6 @@ def schedule_scenario(
     return {
         "ict_mw": ict_mw,
         "facility_mw": facility_mw,
-        "ict_cost": ict_cost,
         "infra_cost": infra_cost,
         "capex": capex,
         "annual_electricity": annual_electricity,

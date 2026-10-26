@@ -93,7 +93,7 @@ html[data-theme="dark"] .cost-error {
 .input-row > strong { grid-column: 1 / -1; color: var(--scenario); font-size: 10px; line-height: 1.4; }
 .input-row label { min-width: 0; }
 .input-row label span { min-height: 22px; line-height: 1.3; }
-.cooling-head .ict-scope-note { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; font-weight: 600; line-height: 1.35; }
+.input-row:has(> label:only-of-type) { grid-template-columns: minmax(0, 1fr); }
 .input-row input { padding: 8px 5px; font-size: 11px; }
 .input-row em { font-size: 6px; }
 html[data-theme="dark"] .input-row + .input-row { border-color: #29445f; }

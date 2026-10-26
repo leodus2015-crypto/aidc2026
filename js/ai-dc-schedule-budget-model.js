@@ -2,11 +2,10 @@
  * 机房工期和造价公式（无 DOM）。
  *
  * 口径：
- * - ICT 功耗 MW = 卡数 × 单卡功耗(kW) / 1000
- * - 机房功耗 MW = ICT MW × PUE
+ * - IT 功耗 MW = 卡数 × 单卡功耗(kW) / 1000
+ * - 机房功耗 MW = IT MW × PUE
  * - L0+L1 = 机房 MW × 10⁶ × $/W
- * - ICT 造价 = 卡数 × $/card
- * - CAPEX = ICT + L0+L1
+ * - CAPEX = L0+L1（不含 L2 ICT 设备）
  * - 年电费 = 机房 MW × 1000 × 8760 × 电价($/kWh)
  * - 年运维费 = CAPEX × 运维费率(%) / 100
  * - 年 OPEX = 年电费 + 年运维费
@@ -41,14 +40,12 @@
     const source = parameters || {};
     const cardPower = parseFinite(source.cardPower);
     const pue = parseFinite(source.pue);
-    const unitCost = parseFinite(source.unitCost);
     const maintenanceRate = parseFinite(source.maintenanceRate);
     const errors = [];
     if (cardPower == null || cardPower < 0) errors.push('cardPower');
     if (pue == null || pue < 1) errors.push('pue');
-    if (unitCost == null || unitCost < 0) errors.push('unitCost');
     if (maintenanceRate == null || maintenanceRate < 0 || maintenanceRate > 100) errors.push('maintenanceRate');
-    return { ok: errors.length === 0, errors, values: { cardPower, pue, unitCost, maintenanceRate } };
+    return { ok: errors.length === 0, errors, values: { cardPower, pue, maintenanceRate } };
   }
 
   function calculateScenario(shared, parameters) {
@@ -58,12 +55,11 @@
       return { ok: false, errors: sharedCheck.errors.concat(paramCheck.errors) };
     }
     const { cards, infraPerW, electricity, years } = sharedCheck.values;
-    const { cardPower, pue, unitCost, maintenanceRate } = paramCheck.values;
+    const { cardPower, pue, maintenanceRate } = paramCheck.values;
     const ictMW = cards * cardPower / 1000;
     const facilityMW = ictMW * pue;
-    const ictCost = cards * unitCost;
     const infraCost = facilityMW * 1e6 * infraPerW;
-    const capex = ictCost + infraCost;
+    const capex = infraCost;
     const annualElectricity = facilityMW * 1000 * 8760 * electricity;
     const annualMaintenance = capex * maintenanceRate / 100;
     const annualOpex = annualElectricity + annualMaintenance;
@@ -73,7 +69,6 @@
       errors: [],
       ictMW,
       facilityMW,
-      ictCost,
       infraCost,
       capex,
       annualElectricity,

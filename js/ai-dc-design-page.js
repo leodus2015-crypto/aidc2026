@@ -11,12 +11,12 @@
     roomLayout: 'ai-dc-room-layout.html?embed=1',
     roomLayout3d: 'ai-dc-room-layout-3d.html?embed=1&rev=campus-row-3',
     tcp: 'ai-dc-tcp.html?embed=1',
-    computeEst: 'ai-dc-computeEst.html?embed=1',
+    computeEst: 'ai-dc-computeEst.html?embed=1&rev=xlsx-2',
     caseA: 'datacenter-3d-case-b.html?embed=1',
     caseB: 'datacenter-3d-v3-2.html?embed=1',
     plan: 'aidc-layout-Card2Power.html?embed=1',
     synergy: 'ai-dc-deployment-perf.html?embed=1',
-    roi: 'aidc-investment-roi.html?embed=1&rev=xlsx-1',
+    roi: 'aidc-investment-roi.html?embed=1&rev=cloud-20261027',
   };
 
   const STANDALONE_BY_TAB = {

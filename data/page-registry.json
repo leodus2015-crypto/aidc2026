@@ -275,10 +275,13 @@
       ],
       "embeds": [],
       "assets": [
+        "js/aidc-compute-est-xlsx.js",
         "i18n/ai-dc-computeEst.zh.json",
         "i18n/ai-dc-computeEst.en.json"
       ],
-      "dataSources": []
+      "dataSources": [
+        "/api/admin/verify"
+      ]
     },
     {
       "path": "aidc-layout-Card2Power.html",

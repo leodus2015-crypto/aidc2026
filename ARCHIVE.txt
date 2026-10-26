@@ -1,6 +1,17 @@
 aidc 静态站点归档
 版本：见 data/site-release.json（本机最新；部署到腾讯云时 bump）
-日期：2026-09-05
+日期：2026-10-27
+
+本版要点（v2026.10.27）
+──────────────
+  · ROI：单卡默认 70 万元；公有云公开价按官网高峰/忙时档刷新（2026-10-27）
+    DeepSeek-V4.1-Flash 多为 2 / 0.04 / 8（阿里云百炼缓存命中 0.2）；GLM-5.2 均为 8 / 2 / 28
+  · ROI Excel：按页面中/英导出对应文案；修复 OOXML 损坏
+  · 算力估算：页底独立口令解锁 + 中英 Excel 导出（不与 ROI 共用按钮）
+  · 机房工期和造价：只计 L0+L1，不再含 L2 ICT 设备单价
+  · 本地 8011：API 不可达时回退 data/local-dev-admin.json（gitignore / rsync 排除）
+  · SuperPOD 讲解册草稿仅留本机，不进 GitHub / 腾讯云
+  · 云端只覆盖 roi.defaults / roi.cloud_compare（及 .en），不 seed dc3d.*
 
 本版要点（v2026.09.05）
 ──────────────

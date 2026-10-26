@@ -37,6 +37,8 @@ RSYNC_EXCLUDES=(
   --exclude '*.pyc'
   --exclude 'data/analytics/geo-cache.json'
   --exclude 'data/analytics/summary.json'
+  --exclude 'data/local-dev-admin.json'
+  --exclude 'topic/SuperPOD/'
   --exclude '.pytest_cache/'
   --exclude '.venv/'
 )

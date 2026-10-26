@@ -2,24 +2,24 @@
   "schemaVersion": 1,
   "ds-v4": {
     "title": "DeepSeek V4 档",
-    "updatedAt": "2026-09-16",
-    "pricingNote": "DeepSeek-V4.1-Flash（deepseek-flash）高峰时段公开价，2026-09-10 起生效（api-docs.deepseek.com/zh-cn）；各云按官网现价整理，未跟降者仍列旧高峰价，单位元/百万 Token",
+    "updatedAt": "2026-10-27",
+    "pricingNote": "DeepSeek-V4.1-Flash（deepseek-flash）高峰/忙时公开价，单位元/百万 Token。官方 2026-09-10 起峰谷价见 api-docs.deepseek.com；各云按官网忙时档整理（阿里云百炼缓存命中 0.2，其余多为 0.04）。",
     "refInputMiss": 2.0,
     "refInputHit": 0.04,
     "refOutput": 8.0,
     "clouds": [
       { "name": "DeepSeek 官方", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
-      { "name": "硅基流动", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
-      { "name": "阿里云百炼", "inputMiss": 3.0, "inputHit": 0.3, "output": 9.0 },
-      { "name": "火山引擎", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
-      { "name": "腾讯云", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
-      { "name": "天翼云", "inputMiss": 3.6, "inputHit": 0.12, "output": 10.8 }
+      { "name": "硅基流动", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
+      { "name": "阿里云百炼", "inputMiss": 2.0, "inputHit": 0.2, "output": 8.0 },
+      { "name": "火山引擎", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
+      { "name": "腾讯云", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
+      { "name": "天翼云", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 }
     ]
   },
   "glm-52": {
     "title": "GLM-5.2 档",
-    "updatedAt": "2026-08-06",
-    "pricingNote": "GLM-5.2 公开价；智谱 AI 开放平台 open.bigmodel.cn 价目，单位元/百万 Token",
+    "updatedAt": "2026-10-27",
+    "pricingNote": "GLM-5.2 公开价，单位元/百万 Token。智谱 docs.bigmodel.cn 与硅基流动、阿里云百炼、火山方舟、腾讯云 TokenHub、京东云 JoyMaaS 刊例均为输入 8 / 缓存命中 2 / 输出 28。",
     "refInputMiss": 8,
     "refInputHit": 2,
     "refOutput": 28,
@@ -27,9 +27,9 @@
       { "name": "智谱 AI 官方", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
       { "name": "硅基流动", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
       { "name": "阿里云百炼", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
-      { "name": "火山引擎", "inputMiss": 8.5, "inputHit": 2.1, "output": 29.0 },
+      { "name": "火山引擎", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
       { "name": "腾讯云", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
-      { "name": "京东云", "inputMiss": 8.2, "inputHit": 2.0, "output": 28.5 }
+      { "name": "京东云", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 }
     ]
   }
 }

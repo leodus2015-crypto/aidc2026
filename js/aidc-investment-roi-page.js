@@ -77,7 +77,7 @@
 
   const SPEC = {
     pPerCard: 1,
-    defaultUnitPriceWan: LOCAL_ROI_DEFAULTS.npuUnitPrice ?? 60,
+    defaultUnitPriceWan: LOCAL_ROI_DEFAULTS.npuUnitPrice ?? 70,
     presets: {
       'ds-v4': { tpsInputMiss: 600, tpsInputHit: 12000, tpsOutput: 100 },
       'glm-52': { tpsInputMiss: 400, tpsInputHit: 1600, tpsOutput: 12 },

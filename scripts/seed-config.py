@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -16,7 +17,22 @@ from settings import database_configured  # noqa: E402
 SEED_DIR = ROOT / "data" / "config-seeds"
 
 
+def parse_only(raw: str | None) -> set[str] | None:
+    if not raw:
+        return None
+    keys = {item.strip() for item in raw.split(",") if item.strip()}
+    return keys or None
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description="导入 config-seeds 到 app_config")
+    parser.add_argument(
+        "--only",
+        help="只导入指定键，逗号分隔，例如 roi.defaults,roi.cloud_compare",
+    )
+    args = parser.parse_args()
+    only = parse_only(args.only)
+
     if not database_configured():
         print("错误：请在 .env 中配置 DATABASE_HOST / DATABASE_USER / DATABASE_NAME", file=sys.stderr)
         return 1
@@ -25,6 +41,12 @@ def main() -> int:
         return 1
 
     files = sorted(SEED_DIR.glob("*.json"))
+    if only is not None:
+        files = [path for path in files if path.stem in only]
+        missing = only - {path.stem for path in files}
+        if missing:
+            print(f"错误：未找到种子文件：{', '.join(sorted(missing))}", file=sys.stderr)
+            return 1
     if not files:
         print(f"未找到种子文件：{SEED_DIR}")
         return 1

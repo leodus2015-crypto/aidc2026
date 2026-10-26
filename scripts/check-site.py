@@ -17,6 +17,9 @@ REDIRECT_HTML: set[str] = set()
 
 # Full-viewport presentation decks keep their own chrome; language is file-split.
 # Official entry is the site wrapper that embeds them.
+# Local SuperPOD drafts stay unpublished until they have site chrome + registry rows.
+SKIP_HTML_PREFIXES = ("topic/SuperPOD/",)
+
 CHROMELESS_HTML: set[str] = {
     "topic/sovereign-ai/sovereign-ai.html",
     "topic/sovereign-ai/sovereign-ai-zh.html",
@@ -58,6 +61,12 @@ ASSET_V_PARAM_RE = re.compile(r"(?:^|[?&])v=(\d+)(?:&|$)")
 I18N_PAGE_RE = re.compile(r'data-i18n-page="([^"]+)"')
 EXCLUDE_RE = re.compile(r"""--exclude\s+['"]([^'"]+)['"]""")
 MIGRATION_RE = re.compile(r"^(\d{4})_[a-z0-9_]+\.sql$")
+
+
+def should_skip_html(rel: str) -> bool:
+    if "/." in f"/{rel}" or rel.startswith("."):
+        return True
+    return any(rel.startswith(prefix) for prefix in SKIP_HTML_PREFIXES)
 
 
 def fail(errors: list[str]) -> int:
@@ -190,7 +199,7 @@ def check_html_refs(errors: list[str], loaded: dict[Path, Any] | None = None, ro
     root_resolved = root.resolve()
     for html_path in sorted(root.rglob("*.html")):
         rel = html_path.relative_to(root).as_posix()
-        if "/." in f"/{rel}" or rel.startswith("."):
+        if should_skip_html(rel):
             continue
         text = html_path.read_text(encoding="utf-8")
         for raw in ATTR_RE.findall(text):
@@ -243,6 +252,7 @@ def check_page_registry(errors: list[str], loaded: dict[Path, Any], root: Path =
         path.relative_to(root).as_posix()
         for path in root.rglob("*.html")
         if not any(part.startswith(".") for part in path.relative_to(root).parts)
+        and not should_skip_html(path.relative_to(root).as_posix())
     }
     by_path: dict[str, dict[str, Any]] = {}
     ids: set[str] = set()
@@ -341,10 +351,12 @@ def check_page_registry(errors: list[str], loaded: dict[Path, Any], root: Path =
 def check_frontend_secret_refs(errors: list[str], root: Path = ROOT) -> None:
     for pattern in ("**/*.html", "js/**/*.js"):
         for path in root.glob(pattern):
+            rel = path.relative_to(root).as_posix()
+            if should_skip_html(rel):
+                continue
             text = path.read_text(encoding="utf-8")
             for secret_key in FORBIDDEN_FRONTEND_SECRET_KEYS:
                 if secret_key in text:
-                    rel = path.relative_to(root).as_posix()
                     errors.append(f"前端禁止引用敏感配置键 {secret_key}: {rel}")
 
 
@@ -352,10 +364,12 @@ def check_frontend_api_access(errors: list[str], root: Path = ROOT) -> None:
     api_client = (root / "js" / "aidc-api-client.js").resolve()
     for pattern in ("**/*.html", "js/**/*.js"):
         for path in root.glob(pattern):
+            rel = path.relative_to(root).as_posix()
+            if should_skip_html(rel):
+                continue
             if path.resolve() == api_client:
                 continue
             if "/api/" in path.read_text(encoding="utf-8"):
-                rel = path.relative_to(root).as_posix()
                 errors.append(f"前端 API 请求必须通过 js/aidc-api-client.js: {rel}")
 
 

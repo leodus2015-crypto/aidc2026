@@ -9,15 +9,15 @@
   <meta name="theme-color" content="#eaf2fb" />
   <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-schedule-budget.html" />
   <title>机房工期和造价 · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=100"></script>
-  <script src="js/embed-mode.js?v=100"></script>
-  <script src="js/theme-switch.js?v=100"></script>
+  <script src="js/aidc-theme.js?v=101"></script>
+  <script src="js/embed-mode.js?v=101"></script>
+  <script src="js/theme-switch.js?v=101"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="js/aidc-asset-version.js?v=100"></script>
-  <script src="js/aidc-locale-bridge.js?v=100"></script>
-  <link rel="stylesheet" href="css/theme.css?v=100" />
-  <link rel="stylesheet" href="css/embed.css?v=100" />
-  <link rel="stylesheet" href="css/ai-dc-schedule-budget.css?v=100&rev=cost-share-1" />
+  <script src="js/aidc-asset-version.js?v=101"></script>
+  <script src="js/aidc-locale-bridge.js?v=101"></script>
+  <link rel="stylesheet" href="css/theme.css?v=101" />
+  <link rel="stylesheet" href="css/embed.css?v=101" />
+  <link rel="stylesheet" href="css/ai-dc-schedule-budget.css?v=101&rev=l0l1-1" />
 </head>
 <body data-i18n-page="ai-dc-schedule-budget">
   <noscript>
@@ -164,7 +164,7 @@
           <small data-i18n="copy.costKicker">COST ESTIMATE</small>
           <h2 id="cost-module-title" data-i18n="copy.costTitle">造价评估</h2>
         </div>
-        <p data-i18n="copy.costIntro">按相同卡数比较风冷与液冷的基础设施、ICT 投资、电费和运维维护费。</p>
+        <p data-i18n="copy.costIntro">按相同卡数比较风冷与液冷的 L0+L1 造价、电费和运维维护费。</p>
       </div>
 
       <div class="cost-board">
@@ -177,7 +177,6 @@
               <div>
                 <small data-i18n="copy.scenarioA">SCENARIO A</small>
                 <h3 data-i18n="copy.airCooling">风冷</h3>
-                <span class="ict-scope-note" data-i18n="copy.ictScope">L2 ICT 单卡口径含算、网、存</span>
               </div>
             </div>
             <div class="scenario-inputs">
@@ -189,7 +188,6 @@
               <div class="input-row">
                 <strong data-i18n="copy.amount">成本单价</strong>
                 <label><span data-i18n="copy.infraUnit">L0 土建 + L1 机电</span><input id="cost-infra" data-shared-input="infra" type="number" min="0" step="0.1" value="8" /><em>$/W</em></label>
-                <label><span data-i18n="copy.ictUnitCost">L2 ICT 单卡均价</span><input id="air-unit-cost" type="number" min="0" step="1000" value="85000" /><em>$/card</em></label>
               </div>
               <div class="input-row">
                 <strong data-i18n="copy.operatingCosts">运营成本</strong>
@@ -198,19 +196,16 @@
               </div>
               <div class="input-row">
                 <strong data-i18n="copy.energyEfficiency">功耗与能效</strong>
-                <label><span data-i18n="copy.cardPower">L2 ICT 单卡平均功耗</span><input id="air-card-power" type="number" min="0" step="0.1" value="3" /><em>kW/card</em></label>
+                <label><span data-i18n="copy.cardPower">单卡平均功耗</span><input id="air-card-power" type="number" min="0" step="0.1" value="3" /><em>kW/card</em></label>
                 <label><span data-i18n="copy.pue">PUE</span><input id="air-pue" type="number" min="1" step="0.01" value="1.5" /><em>ratio</em></label>
               </div>
             </div>
             <div class="power-results">
-              <div><small data-i18n="copy.ictPower">ICT 设备总功耗</small><strong id="air-ict-mw">—</strong></div>
+              <div><small data-i18n="copy.ictPower">IT 设备总功耗</small><strong id="air-ict-mw">—</strong></div>
               <div><small data-i18n="copy.facilityPower">机房总功耗</small><strong id="air-facility-mw">—</strong></div>
             </div>
-            <div class="cost-stack" aria-hidden="true"><i id="air-infra-bar"></i><b id="air-ict-bar"></b></div>
             <dl class="cost-list">
-              <div><dt data-i18n="copy.infraCost">L0 + L1 总造价</dt><dd><span id="air-infra-cost">—</span><small class="cost-share" id="air-infra-share">—</small></dd></div>
-              <div><dt data-i18n="copy.ictCost">L2 ICT 设备总价</dt><dd><span id="air-ict-cost">—</span><small class="cost-share" id="air-ict-share">—</small></dd></div>
-              <div class="capex-row"><dt data-i18n="copy.capex">整体造价 CAPEX</dt><dd><span id="air-capex">—</span><small class="cost-share" id="air-capex-share">—</small></dd></div>
+              <div class="capex-row"><dt data-i18n="copy.capex">L0+L1 总造价（CAPEX）</dt><dd><span id="air-capex">—</span></dd></div>
               <div><dt data-i18n="copy.annualElectricity">年电费</dt><dd><span id="air-annual-electricity">—</span><small class="cost-share" id="air-electricity-share">—</small></dd></div>
               <div><dt data-i18n="copy.annualMaintenance">年运维维护费</dt><dd><span id="air-annual-maintenance">—</span><small class="cost-share" id="air-maintenance-share">—</small></dd></div>
               <div class="opex-row"><dt id="air-opex-label">5年 OPEX</dt><dd><span id="air-opex">—</span><small class="cost-share" id="air-opex-share">—</small></dd></div>
@@ -224,7 +219,6 @@
               <div>
                 <small data-i18n="copy.scenarioB">SCENARIO B</small>
                 <h3 data-i18n="copy.liquidCooling">液冷</h3>
-                <span class="ict-scope-note" data-i18n="copy.ictScope">L2 ICT 单卡口径含算、网、存</span>
               </div>
             </div>
             <div class="scenario-inputs">
@@ -236,7 +230,6 @@
               <div class="input-row">
                 <strong data-i18n="copy.amount">成本单价</strong>
                 <label><span data-i18n="copy.infraUnit">L0 土建 + L1 机电</span><input id="liquid-cost-infra" data-shared-input="infra" type="number" min="0" step="0.1" value="8" /><em>$/W</em></label>
-                <label><span data-i18n="copy.ictUnitCost">L2 ICT 单卡均价</span><input id="liquid-unit-cost" type="number" min="0" step="1000" value="110000" /><em>$/card</em></label>
               </div>
               <div class="input-row">
                 <strong data-i18n="copy.operatingCosts">运营成本</strong>
@@ -245,19 +238,16 @@
               </div>
               <div class="input-row">
                 <strong data-i18n="copy.energyEfficiency">功耗与能效</strong>
-                <label><span data-i18n="copy.cardPower">L2 ICT 单卡平均功耗</span><input id="liquid-card-power" type="number" min="0" step="0.1" value="2" /><em>kW/card</em></label>
+                <label><span data-i18n="copy.cardPower">单卡平均功耗</span><input id="liquid-card-power" type="number" min="0" step="0.1" value="2" /><em>kW/card</em></label>
                 <label><span data-i18n="copy.pue">PUE</span><input id="liquid-pue" type="number" min="1" step="0.01" value="1.2" /><em>ratio</em></label>
               </div>
             </div>
             <div class="power-results">
-              <div><small data-i18n="copy.ictPower">ICT 设备总功耗</small><strong id="liquid-ict-mw">—</strong></div>
+              <div><small data-i18n="copy.ictPower">IT 设备总功耗</small><strong id="liquid-ict-mw">—</strong></div>
               <div><small data-i18n="copy.facilityPower">机房总功耗</small><strong id="liquid-facility-mw">—</strong></div>
             </div>
-            <div class="cost-stack" aria-hidden="true"><i id="liquid-infra-bar"></i><b id="liquid-ict-bar"></b></div>
             <dl class="cost-list">
-              <div><dt data-i18n="copy.infraCost">L0 + L1 总造价</dt><dd><span id="liquid-infra-cost">—</span><small class="cost-share" id="liquid-infra-share">—</small></dd></div>
-              <div><dt data-i18n="copy.ictCost">L2 ICT 设备总价</dt><dd><span id="liquid-ict-cost">—</span><small class="cost-share" id="liquid-ict-share">—</small></dd></div>
-              <div class="capex-row"><dt data-i18n="copy.capex">整体造价 CAPEX</dt><dd><span id="liquid-capex">—</span><small class="cost-share" id="liquid-capex-share">—</small></dd></div>
+              <div class="capex-row"><dt data-i18n="copy.capex">L0+L1 总造价（CAPEX）</dt><dd><span id="liquid-capex">—</span></dd></div>
               <div><dt data-i18n="copy.annualElectricity">年电费</dt><dd><span id="liquid-annual-electricity">—</span><small class="cost-share" id="liquid-electricity-share">—</small></dd></div>
               <div><dt data-i18n="copy.annualMaintenance">年运维维护费</dt><dd><span id="liquid-annual-maintenance">—</span><small class="cost-share" id="liquid-maintenance-share">—</small></dd></div>
               <div class="opex-row"><dt id="liquid-opex-label">5年 OPEX</dt><dd><span id="liquid-opex">—</span><small class="cost-share" id="liquid-opex-share">—</small></dd></div>
@@ -296,7 +286,7 @@
 
         <div class="formula-note">
           <b data-i18n="copy.formulaTitle">计算口径</b>
-          <span data-i18n="copy.formulaText">CAPEX = L0+L1+L2；年运维维护费 = CAPEX × 费率；OPEX =（年电费 + 年运维维护费）× 年限。占比分别以 CAPEX、OPEX 为 100%；运维费不含电费及设备更新。</span>
+          <span data-i18n="copy.formulaText">CAPEX = L0+L1（不含 L2）；年运维维护费 = CAPEX × 费率；OPEX =（年电费 + 年运维维护费）× 年限。OPEX 占比以年 OPEX 为 100%；运维费不含电费及设备更新。</span>
         </div>
 
         <section class="country-examples" aria-labelledby="country-examples-title">
@@ -305,7 +295,7 @@
               <small data-i18n="copy.countryKicker">COUNTRY BENCHMARKS</small>
               <h3 id="country-examples-title" data-i18n="copy.countryTitle">典型国家案例</h3>
             </div>
-            <p data-i18n="copy.countryIntro">统一采用 1024 卡、5 年周期；风冷与液冷的功耗、PUE、ICT 单价和年运维维护费率均取默认值。</p>
+            <p data-i18n="copy.countryIntro">统一采用 1024 卡、5 年周期；风冷与液冷的功耗、PUE 和年运维维护费率均取默认值。报价仅含 L0+L1。</p>
           </div>
           <div class="country-grid" id="country-grid"></div>
         </section>
@@ -318,11 +308,11 @@
     </footer>
   </main>
 
-  <script src="js/i18n.js?v=100"></script>
-  <script src="js/lang-switch.js?v=100"></script>
-  <script src="js/aidc-mega-nav.js?v=100"></script>
-  <script src="js/i18n-bootstrap.js?v=100"></script>
-  <script src="js/ai-dc-schedule-budget-model.js?v=100"></script>
-  <script src="js/ai-dc-schedule-budget.js?v=100&rev=air-pue-15"></script>
+  <script src="js/i18n.js?v=101"></script>
+  <script src="js/lang-switch.js?v=101"></script>
+  <script src="js/aidc-mega-nav.js?v=101"></script>
+  <script src="js/i18n-bootstrap.js?v=101"></script>
+  <script src="js/ai-dc-schedule-budget-model.js?v=101&rev=l0l1-1"></script>
+  <script src="js/ai-dc-schedule-budget.js?v=101&rev=l0l1-1"></script>
 </body>
 </html>

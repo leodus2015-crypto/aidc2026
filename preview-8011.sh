@@ -5,7 +5,8 @@ set -euo pipefail
 PORT="${PREVIEW_PORT:-8011}"
 BIND="${PREVIEW_BIND:-127.0.0.1}"
 
-ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+AIDC_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "${AIDC_DIR}/.." && pwd)"
 
 usage() {
   echo "用法:" >&2
@@ -53,6 +54,10 @@ echo "  root : ${ROOT_DIR}" >&2
 echo "  bind : ${BIND}" >&2
 echo "  port : ${PORT}" >&2
 echo "  url  : http://${BIND}:${PORT}/aidc/ai-dc-design.html" >&2
+
+if [[ -f "${AIDC_DIR}/scripts/write-local-dev-admin.py" ]]; then
+  python3 "${AIDC_DIR}/scripts/write-local-dev-admin.py" || true
+fi
 
 cd "${ROOT_DIR}"
 exec python3 -m http.server "${PORT}" --bind "${BIND}"

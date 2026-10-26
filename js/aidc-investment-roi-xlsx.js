@@ -187,13 +187,13 @@
       const data = file.data instanceof Uint8Array ? file.data : utf8(file.data);
       const crc = crc32(data);
       const local = concat([
-        u32(0x04034b50), u16(20), u16(0x0800), u16(0),
+        u32(0x04034b50), u16(20), u16(0), u16(0),
         u16(stamp.time), u16(stamp.date), u32(crc),
         u32(data.length), u32(data.length), u16(name.length), u16(0),
         name, data,
       ]);
       const central = concat([
-        u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0),
+        u32(0x02014b50), u16(20), u16(20), u16(0), u16(0),
         u16(stamp.time), u16(stamp.date), u32(crc),
         u32(data.length), u32(data.length), u16(name.length),
         u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset),
@@ -215,10 +215,19 @@
 
   function xml(text) {
     return String(text)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function xmlFormula(text) {
+    return String(text)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
   function colLetter(index) {
@@ -247,15 +256,19 @@
 
   function cellFormula(address, formula, cached, style) {
     const value = Number.isFinite(cached) ? `<v>${cached}</v>` : '';
-    return `<c r="${address}"${style != null ? ` s="${style}"` : ''}><f>${xml(formula)}</f>${value}</c>`;
+    return `<c r="${address}"${style != null ? ` s="${style}"` : ''}><f>${xmlFormula(formula)}</f>${value}</c>`;
   }
 
-  function rowXml(rowIndex, cells) {
-    return `<row r="${rowIndex}">${cells.join('')}</row>`;
+  function rowXml(rowIndex, cells, hidden) {
+    return `<row r="${rowIndex}"${hidden ? ' hidden="1"' : ''}>${cells.join('')}</row>`;
   }
 
   function sheetXml(rows, colWidths, freezeRow) {
-    const lastRow = rows.length;
+    const lastRow = rows.reduce((max, xml) => {
+      const match = /<row r="(\d+)"/.exec(xml);
+      const n = match ? Number(match[1]) : 0;
+      return n > max ? n : max;
+    }, rows.length);
     const lastCol = colWidths.length;
     const cols = colWidths.map((width, i) =>
       `<col min="${i + 1}" max="${i + 1}" width="${width}" customWidth="1"/>`).join('');
@@ -266,10 +279,10 @@
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       + '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"'
       + ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+      + `<dimension ref="A1:${ref(lastCol, lastRow)}"/>`
       + pane
       + `<cols>${cols}</cols>`
       + `<sheetData>${rows.join('')}</sheetData>`
-      + `<dimension ref="A1:${ref(lastCol, lastRow)}"/>`
       + '</worksheet>'
     );
   }
@@ -321,8 +334,50 @@
   const S = { base: 0, title: 1, header: 2, input: 3, formula: 4, note: 5, inputText: 6, wan: 7 };
 
   function t(payload, key) {
+    if (key == null || key === '') return '';
     if (typeof payload.t === 'function') return payload.t(key);
     return key;
+  }
+
+  function isEn(payload) {
+    return !!(payload && payload.locale === 'en');
+  }
+
+  function translateOr(payload, key, fallback) {
+    const value = t(payload, key);
+    return value === key ? fallback : value;
+  }
+
+  function sheetNames(payload) {
+    if (isEn(payload)) {
+      return {
+        inputs: translateOr(payload, '输入', 'Inputs'),
+        model: translateOr(payload, '计算', 'Model'),
+        cloud: translateOr(payload, '云公开价', 'Cloud list prices'),
+      };
+    }
+    return { inputs: '输入', model: '计算', cloud: '云公开价' };
+  }
+
+  function quoteSheet(name) {
+    const text = String(name || '');
+    if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(text)) return text;
+    return `'${text.replace(/'/g, "''")}'`;
+  }
+
+  function sheetCell(sheetName, col, row) {
+    return `${quoteSheet(sheetName)}!$${colLetter(col)}$${row}`;
+  }
+
+  function serviceModelLabel(payload, value) {
+    const map = {
+      'ds-v4': 'DeepSeek V4-Flash 级',
+      'glm-52': 'GLM-5.2 级',
+      'glm-51': 'GLM-5.2 级',
+      custom: '自定义吞吐',
+    };
+    const key = map[value] || value;
+    return t(payload, key);
   }
 
   function finiteOrBlank(value) {
@@ -394,44 +449,44 @@
     return Number(map[id]);
   }
 
-  function buildInputsSheet(payload, nameMap) {
+  function buildInputsSheet(payload, nameMap, sheets) {
     const inputs = payload.inputs || {};
     const computed = payload.computed || {};
     const rows = [
       rowXml(1, [cellStr('A1', t(payload, '输入（与页面字段对应）'), S.title)]),
       rowXml(2, [cellStr('A2', t(payload, '黄色单元格为输入（可改）；蓝色单元格为公式（与页面一致）'), S.note)]),
       rowXml(3, [
-        cellStr('A3', t(payload, '字段 ID'), S.header),
-        cellStr('B3', t(payload, '名称'), S.header),
-        cellStr('C3', t(payload, '数值'), S.header),
-        cellStr('D3', t(payload, '单位'), S.header),
-        cellStr('E3', t(payload, '说明'), S.header),
+        cellStr('A3', t(payload, '名称'), S.header),
+        cellStr('B3', t(payload, '数值'), S.header),
+        cellStr('C3', t(payload, '单位'), S.header),
+        cellStr('D3', t(payload, '说明'), S.header),
       ]),
     ];
     INPUT_FIELDS.forEach((field, index) => {
       const row = 4 + index;
-      nameMap[field.id] = `Inputs!$C$${row}`;
+      nameMap[field.id] = sheetCell(sheets.inputs, 2, row);
       let valueCell;
       if (field.id.startsWith('ref')) {
         const key = field.id;
-        valueCell = cellNum(ref(3, row), finiteOrBlank(computed[key] ?? inputs[key]), S.input);
+        valueCell = cellNum(ref(2, row), finiteOrBlank(computed[key] ?? inputs[key]), S.input);
       } else if (field.type === 's') {
-        valueCell = cellStr(ref(3, row), inputs[field.id] == null ? '' : String(inputs[field.id]), S.inputText);
+        const raw = inputs[field.id] == null ? '' : String(inputs[field.id]);
+        const display = field.id === 'serviceModel' ? serviceModelLabel(payload, raw) : t(payload, raw);
+        valueCell = cellStr(ref(2, row), display, S.inputText);
       } else {
-        valueCell = cellNum(ref(3, row), finiteOrBlank(inputs[field.id]), S.input);
+        valueCell = cellNum(ref(2, row), finiteOrBlank(inputs[field.id]), S.input);
       }
       rows.push(rowXml(row, [
-        cellStr(ref(1, row), field.id),
-        cellStr(ref(2, row), t(payload, field.label)),
+        cellStr(ref(1, row), t(payload, field.label)),
         valueCell,
-        cellStr(ref(4, row), field.unit),
-        cellStr(ref(5, row), t(payload, field.note), S.note),
+        cellStr(ref(3, row), t(payload, field.unit)),
+        cellStr(ref(4, row), t(payload, field.note), S.note),
       ]));
     });
-    return sheetXml(rows, [22, 28, 16, 14, 48], 3);
+    return sheetXml(rows, [28, 16, 14, 48], 3);
   }
 
-  function buildModelSheet(payload, nameMap) {
+  function buildModelSheet(payload, nameMap, sheets) {
     const inputs = payload.inputs || {};
     const computed = payload.computed || {};
     const extraIds = Object.keys(MODEL_FORMULAS).filter((id) => !MODEL_ROWS.some((row) => row.id === id));
@@ -447,36 +502,32 @@
       rowXml(1, [cellStr('A1', t(payload, '计算（Excel 公式与页面一致）'), S.title)]),
       rowXml(2, [cellStr('A2', t(payload, '蓝色单元格为公式，改「输入」表黄色格后自动重算'), S.note)]),
       rowXml(3, [
-        cellStr('A3', t(payload, '字段 ID'), S.header),
-        cellStr('B3', t(payload, '指标'), S.header),
-        cellStr('C3', t(payload, '数值'), S.header),
-        cellStr('D3', t(payload, '单位'), S.header),
-        cellStr('E3', t(payload, '万元'), S.header),
-        cellStr('F3', t(payload, '公式'), S.header),
-        cellStr('G3', t(payload, '说明'), S.header),
+        cellStr('A3', t(payload, '指标'), S.header),
+        cellStr('B3', t(payload, '数值'), S.header),
+        cellStr('C3', t(payload, '单位'), S.header),
+        cellStr('D3', t(payload, '万元'), S.header),
+        cellStr('E3', t(payload, '说明'), S.header),
       ]),
     ];
     rowsSpec.forEach((item, index) => {
       const row = 4 + index;
       const formula = MODEL_FORMULAS[item.id];
-      nameMap[item.id] = `Model!$C$${row}`;
+      nameMap[item.id] = sheetCell(sheets.model, 2, row);
       const cached = cachedModel(item.id, computed, inputs);
       const cells = [
-        cellStr(ref(1, row), item.id),
-        cellStr(ref(2, row), t(payload, item.label)),
-        cellFormula(ref(3, row), formula, cached, S.formula),
-        cellStr(ref(4, row), item.unit),
+        cellStr(ref(1, row), item.hiddenHelper ? '' : t(payload, item.label)),
+        cellFormula(ref(2, row), formula, cached, S.formula),
+        cellStr(ref(3, row), t(payload, item.unit)),
       ];
       if (item.wan) {
-        cells.push(cellFormula(ref(5, row), `${ref(3, row)}/10000`, Number.isFinite(cached) ? cached / 10000 : NaN, S.wan));
+        cells.push(cellFormula(ref(4, row), `${ref(2, row)}/10000`, Number.isFinite(cached) ? cached / 10000 : NaN, S.wan));
       } else {
-        cells.push(cellStr(ref(5, row), ''));
+        cells.push(cellStr(ref(4, row), ''));
       }
-      cells.push(cellStr(ref(6, row), formula, S.note));
-      cells.push(cellStr(ref(7, row), t(payload, item.note), S.note));
-      rows.push(rowXml(row, cells));
+      cells.push(cellStr(ref(5, row), item.hiddenHelper ? '' : t(payload, item.note), S.note));
+      rows.push(rowXml(row, cells, item.hiddenHelper));
     });
-    return sheetXml(rows, [22, 28, 18, 12, 12, 56, 40], 3);
+    return sheetXml(rows, [28, 18, 12, 12, 56], 3);
   }
 
   function scenarioKeys(cloudCompare) {
@@ -536,19 +587,21 @@
     return `<definedNames>${names}</definedNames>`;
   }
 
-  function workbookXml(nameMap) {
+  function workbookXml(nameMap, sheets) {
+    const names = sheets || { inputs: '输入', model: '计算', cloud: '云公开价' };
     return (
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       + '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"'
       + ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
       + '<workbookPr/>'
-      + '<calcPr calcId="191028" fullCalcOnLoad="1"/>'
+      + '<bookViews><workbookView/></bookViews>'
       + '<sheets>'
-      + '<sheet name="Inputs" sheetId="1" r:id="rId1"/>'
-      + '<sheet name="Model" sheetId="2" r:id="rId2"/>'
-      + '<sheet name="Cloud" sheetId="3" r:id="rId3"/>'
+      + `<sheet name="${xml(names.inputs)}" sheetId="1" r:id="rId1"/>`
+      + `<sheet name="${xml(names.model)}" sheetId="2" r:id="rId2"/>`
+      + `<sheet name="${xml(names.cloud)}" sheetId="3" r:id="rId3"/>`
       + '</sheets>'
       + definedNamesXml(nameMap)
+      + '<calcPr calcId="191028" fullCalcOnLoad="1"/>'
       + '</workbook>'
     );
   }
@@ -593,8 +646,9 @@
     );
   }
 
-  function coreXml() {
+  function coreXml(payload) {
     const now = new Date().toISOString();
+    const title = isEn(payload) ? translateOr(payload, 'AIDC Token 收益', 'AIDC Token ROI') : 'AIDC Token 收益';
     return (
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       + '<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"'
@@ -602,7 +656,7 @@
       + ' xmlns:dcterms="http://purl.org/dc/terms/"'
       + ' xmlns:dcmitype="http://purl.org/dc/dcmitype/"'
       + ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-      + '<dc:title>AIDC Token ROI</dc:title>'
+      + `<dc:title>${xml(title)}</dc:title>`
       + '<dc:creator>AIDC 2026</dc:creator>'
       + `<dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created>`
       + `<dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified>`
@@ -610,32 +664,35 @@
     );
   }
 
-  function appXml() {
+  function appXml(payload, sheets) {
+    const heading = isEn(payload) ? translateOr(payload, '工作表', 'Worksheets') : '工作表';
     return (
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       + '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">'
       + '<Application>AIDC 2026</Application>'
       + '<HeadingPairs><vt:vector xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes" size="2" baseType="variant">'
-      + '<vt:variant><vt:lpstr>Worksheets</vt:lpstr></vt:variant><vt:variant><vt:i4>3</vt:i4></vt:variant>'
+      + `<vt:variant><vt:lpstr>${xml(heading)}</vt:lpstr></vt:variant><vt:variant><vt:i4>3</vt:i4></vt:variant>`
       + '</vt:vector></HeadingPairs>'
       + '<TitlesOfParts><vt:vector xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes" size="3" baseType="lpstr">'
-      + '<vt:lpstr>Inputs</vt:lpstr><vt:lpstr>Model</vt:lpstr><vt:lpstr>Cloud</vt:lpstr>'
+      + `<vt:lpstr>${xml(sheets.inputs)}</vt:lpstr><vt:lpstr>${xml(sheets.model)}</vt:lpstr><vt:lpstr>${xml(sheets.cloud)}</vt:lpstr>`
       + '</vt:vector></TitlesOfParts>'
       + '</Properties>'
     );
   }
 
   function buildFiles(payload) {
+    const data = payload || {};
+    const sheets = sheetNames(data);
     const nameMap = {};
-    const inputsXml = buildInputsSheet(payload, nameMap);
-    const modelXml = buildModelSheet(payload, nameMap);
-    const cloudXml = buildCloudSheet(payload);
+    const inputsXml = buildInputsSheet(data, nameMap, sheets);
+    const modelXml = buildModelSheet(data, nameMap, sheets);
+    const cloudXml = buildCloudSheet(data);
     return [
       { name: '[Content_Types].xml', data: contentTypesXml() },
       { name: '_rels/.rels', data: relsXml() },
-      { name: 'docProps/core.xml', data: coreXml() },
-      { name: 'docProps/app.xml', data: appXml() },
-      { name: 'xl/workbook.xml', data: workbookXml(nameMap) },
+      { name: 'docProps/core.xml', data: coreXml(data) },
+      { name: 'docProps/app.xml', data: appXml(data, sheets) },
+      { name: 'xl/workbook.xml', data: workbookXml(nameMap, sheets) },
       { name: 'xl/_rels/workbook.xml.rels', data: workbookRelsXml() },
       { name: 'xl/styles.xml', data: STYLES_XML },
       { name: 'xl/worksheets/sheet1.xml', data: inputsXml },
@@ -651,7 +708,7 @@
   function download(payload) {
     const bytes = buildWorkbook(payload);
     const locale = payload && payload.locale === 'en' ? 'en' : 'zh';
-    const name = locale === 'en' ? 'AIDC-Token-ROI.xlsx' : 'AIDC-Token-ROI.xlsx';
+    const name = locale === 'en' ? 'AIDC-Token-ROI.xlsx' : 'AIDC-Token收益.xlsx';
     const blob = new Blob([bytes], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });

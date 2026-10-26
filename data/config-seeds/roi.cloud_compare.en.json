@@ -2,24 +2,24 @@
   "schemaVersion": 1,
   "ds-v4": {
     "title": "DeepSeek V4 tier",
-    "updatedAt": "2026-09-16",
-    "pricingNote": "DeepSeek-V4.1-Flash (deepseek-flash) peak-hour list prices effective 2026-09-10 per api-docs.deepseek.com; other clouds keep published CNY/M; providers that have not followed remain at prior peak rates.",
+    "updatedAt": "2026-10-27",
+    "pricingNote": "DeepSeek-V4.1-Flash (deepseek-flash) peak/busy-hour list prices, CNY per million tokens. Official peak/off-peak from 2026-09-10 (api-docs.deepseek.com); clouds use published busy-hour rates (Alibaba Cloud Bailian cache-hit 0.2, others mostly 0.04).",
     "refInputMiss": 2.0,
     "refInputHit": 0.04,
     "refOutput": 8.0,
     "clouds": [
       { "name": "DeepSeek Official", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
-      { "name": "SiliconFlow", "inputMiss": 1.0, "inputHit": 0.02, "output": 2.0 },
-      { "name": "Alibaba Cloud Bailian", "inputMiss": 3.0, "inputHit": 0.3, "output": 9.0 },
-      { "name": "Volcengine", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
-      { "name": "Tencent Cloud", "inputMiss": 3.0, "inputHit": 0.1, "output": 9.0 },
-      { "name": "China Telecom Cloud", "inputMiss": 3.6, "inputHit": 0.12, "output": 10.8 }
+      { "name": "SiliconFlow", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
+      { "name": "Alibaba Cloud Bailian", "inputMiss": 2.0, "inputHit": 0.2, "output": 8.0 },
+      { "name": "Volcengine", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
+      { "name": "Tencent Cloud", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 },
+      { "name": "China Telecom Cloud", "inputMiss": 2.0, "inputHit": 0.04, "output": 8.0 }
     ]
   },
   "glm-52": {
     "title": "GLM-5.2 tier",
-    "updatedAt": "2026-08-06",
-    "pricingNote": "GLM-5.2 list prices from Zhipu open platform (open.bigmodel.cn); CNY/M tokens.",
+    "updatedAt": "2026-10-27",
+    "pricingNote": "GLM-5.2 list prices, CNY per million tokens. Zhipu docs.bigmodel.cn, SiliconFlow, Alibaba Cloud Bailian, Volcengine Ark, Tencent Cloud TokenHub and JD Cloud JoyMaaS all publish input 8 / cache-hit 2 / output 28.",
     "refInputMiss": 8.0,
     "refInputHit": 2.0,
     "refOutput": 28.0,
@@ -27,9 +27,9 @@
       { "name": "Zhipu AI Official", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
       { "name": "SiliconFlow", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
       { "name": "Alibaba Cloud Bailian", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
-      { "name": "Volcengine", "inputMiss": 8.5, "inputHit": 2.1, "output": 29.0 },
+      { "name": "Volcengine", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
       { "name": "Tencent Cloud", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 },
-      { "name": "JD Cloud", "inputMiss": 8.2, "inputHit": 2.0, "output": 28.5 }
+      { "name": "JD Cloud", "inputMiss": 8.0, "inputHit": 2.0, "output": 28.0 }
     ]
   }
 }

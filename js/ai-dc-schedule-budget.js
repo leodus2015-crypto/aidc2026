@@ -59,17 +59,15 @@
     { id: 'liquid-cost-years', error: 'years' },
     { id: 'air-card-power', error: 'cardPower' },
     { id: 'air-pue', error: 'pue' },
-    { id: 'air-unit-cost', error: 'unitCost' },
     { id: 'air-maintenance-rate', error: 'maintenanceRate' },
     { id: 'liquid-card-power', error: 'cardPower' },
     { id: 'liquid-pue', error: 'pue' },
-    { id: 'liquid-unit-cost', error: 'unitCost' },
     { id: 'liquid-maintenance-rate', error: 'maintenanceRate' },
   ];
 
   const SCENARIO_DEFAULTS = {
-    air: { cardPower: 3, pue: 1.5, unitCost: 85000, maintenanceRate: 2.5 },
-    liquid: { cardPower: 2, pue: 1.2, unitCost: 110000, maintenanceRate: 3 },
+    air: { cardPower: 3, pue: 1.5, maintenanceRate: 2.5 },
+    liquid: { cardPower: 2, pue: 1.2, maintenanceRate: 3 },
   };
 
   const COUNTRIES = [
@@ -347,38 +345,26 @@
   }
 
   function blankScenario(prefix) {
-    ['ict-mw', 'facility-mw', 'infra-cost', 'ict-cost', 'capex', 'annual-electricity', 'annual-maintenance', 'opex', 'total'].forEach((suffix) => {
+    ['ict-mw', 'facility-mw', 'capex', 'annual-electricity', 'annual-maintenance', 'opex', 'total'].forEach((suffix) => {
       setText(`${prefix}-${suffix}`, '—');
     });
-    ['infra-share', 'ict-share', 'capex-share', 'electricity-share', 'maintenance-share', 'opex-share'].forEach((suffix) => {
+    ['electricity-share', 'maintenance-share', 'opex-share'].forEach((suffix) => {
       setText(`${prefix}-${suffix}`, '—');
     });
-    const infraBar = document.getElementById(`${prefix}-infra-bar`);
-    const ictBar = document.getElementById(`${prefix}-ict-bar`);
-    if (infraBar) infraBar.style.width = '0%';
-    if (ictBar) ictBar.style.width = '0%';
   }
 
   function renderScenario(prefix, result) {
     setText(`${prefix}-ict-mw`, `${result.ictMW.toFixed(1)} MW`);
     setText(`${prefix}-facility-mw`, `${result.facilityMW.toFixed(1)} MW`);
-    setText(`${prefix}-infra-cost`, formatMoney(result.infraCost));
-    setText(`${prefix}-ict-cost`, formatMoney(result.ictCost));
     setText(`${prefix}-capex`, formatMoney(result.capex));
     setText(`${prefix}-annual-electricity`, formatMoney(result.annualElectricity));
     setText(`${prefix}-annual-maintenance`, formatMoney(result.annualMaintenance));
     setText(`${prefix}-opex`, formatMoney(result.opex));
     setText(`${prefix}-total`, formatMoney(result.total));
     const pct = percentFormat();
-    setText(`${prefix}-infra-share`, result.capex > 0 ? pct.format(result.infraCost / result.capex) : '—');
-    setText(`${prefix}-ict-share`, result.capex > 0 ? pct.format(result.ictCost / result.capex) : '—');
-    setText(`${prefix}-capex-share`, result.capex > 0 ? pct.format(1) : '—');
     setText(`${prefix}-electricity-share`, result.annualOpex > 0 ? pct.format(result.annualElectricity / result.annualOpex) : '—');
     setText(`${prefix}-maintenance-share`, result.annualOpex > 0 ? pct.format(result.annualMaintenance / result.annualOpex) : '—');
     setText(`${prefix}-opex-share`, result.annualOpex > 0 ? pct.format(1) : '—');
-    const infraShare = result.capex > 0 ? result.infraCost / result.capex * 100 : 0;
-    document.getElementById(`${prefix}-infra-bar`).style.width = `${infraShare}%`;
-    document.getElementById(`${prefix}-ict-bar`).style.width = `${100 - infraShare}%`;
   }
 
   function renderCountryExamples() {
@@ -403,11 +389,9 @@
           'liquid-cost-years': 5,
           'air-card-power': SCENARIO_DEFAULTS.air.cardPower,
           'air-pue': SCENARIO_DEFAULTS.air.pue,
-          'air-unit-cost': SCENARIO_DEFAULTS.air.unitCost,
           'air-maintenance-rate': SCENARIO_DEFAULTS.air.maintenanceRate,
           'liquid-card-power': SCENARIO_DEFAULTS.liquid.cardPower,
           'liquid-pue': SCENARIO_DEFAULTS.liquid.pue,
-          'liquid-unit-cost': SCENARIO_DEFAULTS.liquid.unitCost,
           'liquid-maintenance-rate': SCENARIO_DEFAULTS.liquid.maintenanceRate,
         };
         Object.entries(preset).forEach(([id, value]) => {
@@ -469,13 +453,11 @@
     const airParams = {
       cardPower: inputValue('air-card-power'),
       pue: inputValue('air-pue'),
-      unitCost: inputValue('air-unit-cost'),
       maintenanceRate: inputValue('air-maintenance-rate'),
     };
     const liquidParams = {
       cardPower: inputValue('liquid-card-power'),
       pue: inputValue('liquid-pue'),
-      unitCost: inputValue('liquid-unit-cost'),
       maintenanceRate: inputValue('liquid-maintenance-rate'),
     };
     const air = model.calculateScenario(shared, airParams);
@@ -492,11 +474,9 @@
     markValidity('liquid-cost-years', errors.includes('years'));
     markValidity('air-card-power', !air.ok && (air.errors || []).includes('cardPower'));
     markValidity('air-pue', !air.ok && (air.errors || []).includes('pue'));
-    markValidity('air-unit-cost', !air.ok && (air.errors || []).includes('unitCost'));
     markValidity('air-maintenance-rate', !air.ok && (air.errors || []).includes('maintenanceRate'));
     markValidity('liquid-card-power', !liquid.ok && (liquid.errors || []).includes('cardPower'));
     markValidity('liquid-pue', !liquid.ok && (liquid.errors || []).includes('pue'));
-    markValidity('liquid-unit-cost', !liquid.ok && (liquid.errors || []).includes('unitCost'));
     markValidity('liquid-maintenance-rate', !liquid.ok && (liquid.errors || []).includes('maintenanceRate'));
 
     const errorBox = document.getElementById('cost-error');

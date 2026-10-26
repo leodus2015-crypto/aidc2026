@@ -153,32 +153,31 @@ def test_hbm_floor_can_bind_planned_cards():
 
 
 def test_schedule_budget_default_air_and_liquid():
-    air = schedule_scenario(1024, 3, 1.5, 85000, 8, 0.132, 5, 2.5)
-    liquid = schedule_scenario(1024, 2, 1.2, 110000, 8, 0.132, 5, 3)
+    air = schedule_scenario(1024, 3, 1.5, 8, 0.132, 5, 2.5)
+    liquid = schedule_scenario(1024, 2, 1.2, 8, 0.132, 5, 3)
     assert air is not None and liquid is not None
     assert air["ict_mw"] == pytest.approx(3.072)
     assert air["facility_mw"] == pytest.approx(4.608)
-    assert air["ict_cost"] == 87_040_000
     assert air["infra_cost"] == pytest.approx(36_864_000)
-    assert air["capex"] == pytest.approx(123_904_000)
+    assert air["capex"] == pytest.approx(36_864_000)
     assert air["annual_electricity"] == pytest.approx(5_328_322.56)
-    assert air["annual_maintenance"] == pytest.approx(3_097_600)
-    assert air["annual_opex"] == pytest.approx(8_425_922.56)
+    assert air["annual_maintenance"] == pytest.approx(921_600)
+    assert air["annual_opex"] == pytest.approx(6_249_922.56)
     assert liquid["ict_mw"] == pytest.approx(2.048)
     assert liquid["facility_mw"] == pytest.approx(2.4576)
-    assert liquid["capex"] == pytest.approx(132_300_800)
-    assert liquid["annual_maintenance"] == pytest.approx(3_969_024)
+    assert liquid["capex"] == pytest.approx(19_660_800)
+    assert liquid["annual_maintenance"] == pytest.approx(589_824)
     compared = schedule_compare(air, liquid)
-    assert compared["capex_premium"] == 8_396_800
-    assert compared["annual_saving"] == pytest.approx(1_615_126.528)
-    assert compared["payback"] == pytest.approx(8_396_800 / 1_615_126.528)
+    assert compared["capex_premium"] == pytest.approx(-17_203_200)
+    assert compared["annual_saving"] == pytest.approx(2_818_326.528)
+    assert compared["payback"] is None
 
 
 def test_schedule_budget_country_china_case():
-    air = schedule_scenario(1024, 3, 1.5, 85000, 3, 0.098, 5, 2.5)
+    air = schedule_scenario(1024, 3, 1.5, 3, 0.098, 5, 2.5)
     assert air is not None
     assert air["infra_cost"] == pytest.approx(13_824_000)
-    assert air["capex"] == pytest.approx(100_864_000)
+    assert air["capex"] == pytest.approx(13_824_000)
 
 
 def test_roi_state_default_shares_and_opex():
@@ -189,7 +188,7 @@ def test_roi_state_default_shares_and_opex():
             "pctItDevice": 70,
             "pctPowerCool": 10,
             "pctLandBuild": 20,
-            "npuUnitPrice": 60,
+            "npuUnitPrice": 70,
             "ascendInItPct": 85,
             "deprecYears": 4,
             "pue": 1.5,
@@ -207,7 +206,7 @@ def test_roi_state_default_shares_and_opex():
         {"refInputMiss": 2.0, "refInputHit": 0.04, "refOutput": 8.0},
     )
     assert state["npuCount"] == 768
-    assert state["ascendCost"] == 768 * 60 * 10000
+    assert state["ascendCost"] == 768 * 70 * 10000
     assert state["itEquipment"] == pytest.approx(state["ascendCost"] / 0.85)
     assert state["totalCapex"] == pytest.approx(state["itEquipment"] / 0.70)
     assert state["powerCapex"] == pytest.approx(state["totalCapex"] * 0.10)
@@ -218,9 +217,9 @@ def test_roi_state_default_shares_and_opex():
 
 
 def test_schedule_budget_rejects_invalid_inputs():
-    assert schedule_scenario(0, 3, 1.6, 85000, 8, 0.132, 5, 2.5) is None
-    assert schedule_scenario(1024, 3, 0.9, 85000, 8, 0.132, 5, 2.5) is None
-    assert schedule_scenario(1024, 3, 1.6, 85000, 8, -0.1, 5, 2.5) is None
-    assert schedule_scenario(1024, 3, 1.6, 85000, 8, 0.132, 0, 2.5) is None
-    assert schedule_scenario(1024, 3, 1.6, 85000, 8, 0.132, 5, 101) is None
-    assert schedule_scenario(float("nan"), 3, 1.6, 85000, 8, 0.132, 5, 2.5) is None
+    assert schedule_scenario(0, 3, 1.6, 8, 0.132, 5, 2.5) is None
+    assert schedule_scenario(1024, 3, 0.9, 8, 0.132, 5, 2.5) is None
+    assert schedule_scenario(1024, 3, 1.6, 8, -0.1, 5, 2.5) is None
+    assert schedule_scenario(1024, 3, 1.6, 8, 0.132, 0, 2.5) is None
+    assert schedule_scenario(1024, 3, 1.6, 8, 0.132, 5, 101) is None
+    assert schedule_scenario(float("nan"), 3, 1.6, 8, 0.132, 5, 2.5) is None

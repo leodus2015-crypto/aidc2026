@@ -3,6 +3,8 @@ assets/*.pdf
 data/ai-usage.json.lock
 data/analytics/sample-access.log
 data/analytics/geo-cache.json
+data/local-dev-admin.json
+topic/SuperPOD/
 .env
 deploy.env
 deploy.env.huawei
