@@ -30,7 +30,13 @@ if (referenceImage) {
 }
 const overlayPanels = [...document.querySelectorAll('.hud-collapsible')];
 
-const state = { view: 'campus', floor: '1F', initialized: false };
+const urlView = new URLSearchParams(window.location.search).get('view');
+const urlFloor = new URLSearchParams(window.location.search).get('floor');
+const state = {
+  view: urlView === 'floor' || urlView === 'building' ? urlView : 'campus',
+  floor: urlFloor || 'IT',
+  initialized: false,
+};
 const interactive = [];
 const pulseMaterials = [];
 const rackLightMaterials = [];
@@ -165,10 +171,15 @@ function makePickable(mesh, tooltip, action) {
   return mesh;
 }
 
+let moduleEnclosureCache = null;
+let dataHallFacadeTex = null;
+
 function clearModel() {
   interactive.length = 0;
   pulseMaterials.length = 0;
   rackLightMaterials.length = 0;
+  moduleEnclosureCache = null;
+  dataHallFacadeTex = null;
   hovered = null;
   tooltipEl.hidden = true;
   document.body.style.cursor = '';
@@ -214,6 +225,138 @@ function addGround() {
   });
 }
 
+function getDataHallFacadeTexture() {
+  if (dataHallFacadeTex) return dataHallFacadeTex;
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#4a5259';
+  ctx.fillRect(0, 0, 256, 512);
+  for (let y = 0; y < 512; y += 10) {
+    ctx.fillStyle = '#5a626a';
+    ctx.fillRect(0, y, 256, 8);
+    ctx.fillStyle = '#3d444b';
+    ctx.fillRect(0, y + 8, 256, 2);
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(3, 8);
+  tex.anisotropy = 8;
+  dataHallFacadeTex = tex;
+  return tex;
+}
+
+function addFacadeStrips(group, config) {
+  const glass = config.strips === 'glass';
+  const stripMat = glass
+    ? material(0x0f5a96, { metalness: 0.12, roughness: 0.32, emissive: 0x0a3f78, emissiveIntensity: 0.28 })
+    : material(0xc6d0d8, { metalness: 0.18, roughness: 0.42 });
+  const mullionMat = material(0xe8eef2, { metalness: 0.55, roughness: 0.3 });
+  const { w, h, d } = config;
+  const count = Math.max(glass ? 6 : 10, Math.floor(w / (glass ? 0.78 : 0.64)));
+  const stripW = glass ? 0.34 : 0.26;
+  const stripH = h * 0.86;
+  const start = -w / 2 + 0.42;
+  const pitch = (w - 0.84) / Math.max(1, count - 1);
+  const geom = new THREE.BoxGeometry(stripW, stripH, 0.05);
+  const mullionGeom = new THREE.BoxGeometry(0.05, stripH + 0.04, 0.07);
+  for (let i = 0; i < count; i += 1) {
+    const x = start + i * pitch;
+    [d / 2 + 0.035, -d / 2 - 0.035].forEach((z) => {
+      const mesh = new THREE.Mesh(geom, stripMat.clone());
+      mesh.position.set(x, h * 0.48, z);
+      mesh.castShadow = false;
+      mesh.receiveShadow = false;
+      group.add(mesh);
+      if (glass) {
+        [-stripW / 2, stripW / 2].forEach((dx) => {
+          const mullion = new THREE.Mesh(mullionGeom, mullionMat.clone());
+          mullion.position.set(x + dx, h * 0.48, z + Math.sign(z) * 0.02);
+          mullion.castShadow = false;
+          mullion.receiveShadow = false;
+          group.add(mullion);
+        });
+      }
+    });
+  }
+}
+
+function addEndWindows(group, config) {
+  const glassMat = material(0x243844, { metalness: 0.7, roughness: 0.14, emissive: 0x0a1e2a, emissiveIntensity: 0.12 });
+  const { w, h, d } = config;
+  const cols = Math.max(3, Math.min(5, Math.floor(d / 0.9)));
+  const start = -d / 2 + 0.7;
+  const pitch = (d - 1.4) / Math.max(1, cols - 1);
+  const winH = h * 0.32;
+  [0.3, 0.68].forEach((ratio) => {
+    for (let i = 0; i < cols; i += 1) {
+      const z = start + i * pitch;
+      box([0.05, winH, 0.42], [w / 2 + 0.035, h * ratio, z], glassMat.clone(), group);
+      box([0.05, winH, 0.42], [-w / 2 - 0.035, h * ratio, z], glassMat.clone(), group);
+    }
+  });
+}
+
+function createDataCenterBuilding(config) {
+  const group = new THREE.Group();
+  group.position.set(config.x, 0, config.z);
+  modelRoot.add(group);
+  const { w, h, d } = config;
+  const wallMat = material(0xffffff, { metalness: 0.48, roughness: 0.4 });
+  wallMat.map = getDataHallFacadeTexture();
+  const capMat = material(0xd8dee3, { metalness: 0.42, roughness: 0.4 });
+  const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), [
+    wallMat, wallMat, capMat, capMat, wallMat, wallMat,
+  ]);
+  body.position.set(0, h / 2, 0);
+  body.castShadow = true;
+  body.receiveShadow = true;
+  group.add(body);
+
+  const roof = box([w + 0.14, 0.14, d + 0.14], [0, h + 0.07, 0], capMat, group);
+  const redMat = material(0xb4232c, { metalness: 0.4, roughness: 0.36 });
+  box([w + 0.06, 0.12, 0.1], [0, h - 0.05, d / 2 + 0.05], redMat.clone(), group);
+  box([w + 0.06, 0.12, 0.1], [0, h - 0.05, -d / 2 - 0.05], redMat.clone(), group);
+  box([0.1, 0.12, d + 0.06], [w / 2 + 0.05, h - 0.05, 0], material(0x6a727a, { metalness: 0.45, roughness: 0.38 }), group);
+  box([0.1, 0.12, d + 0.06], [-w / 2 - 0.05, h - 0.05, 0], material(0x6a727a, { metalness: 0.45, roughness: 0.38 }), group);
+
+  addFacadeStrips(group, config);
+  addEndWindows(group, config);
+
+  const glassMat = material(0x2a3f4d, { metalness: 0.68, roughness: 0.16, emissive: 0x0c2433, emissiveIntensity: 0.1 });
+  box([1.7, 0.58, 0.22], [0, 0.52, d / 2 + 0.12], material(0x5a626a, { metalness: 0.5, roughness: 0.34 }), group);
+  box([1.38, 0.4, 0.04], [0, 0.5, d / 2 + 0.24], glassMat.clone(), group);
+
+  const greenMat = material(0x5f8f6a, { roughness: 0.86, metalness: 0.08 });
+  [[-0.28, -0.18, 0.42, 0.38], [0.22, 0.16, 0.36, 0.32], [-0.18, 0.22, 0.3, 0.28]].forEach(([ox, oz, rw, rd]) => {
+    box([w * rw, 0.06, d * rd], [ox * w, h + 0.18, oz * d], greenMat.clone(), group);
+  });
+  box([w * 0.22, 0.05, d * 0.2], [w * 0.28, h + 0.16, -d * 0.22], capMat.clone(), group);
+
+  if (config.penthouse) {
+    box([w * 0.32, 0.72, d * 0.34], [w * 0.22, h + 0.5, -d * 0.08], capMat.clone(), group);
+    box([w * 0.26, 0.05, d * 0.26], [w * 0.22, h + 0.88, -d * 0.08], greenMat.clone(), group);
+  }
+
+  const tooltip = t(config.labelKey);
+  makePickable(body, tooltip, config.action);
+  makePickable(roof, tooltip, config.action);
+  addLabel(tooltip, [config.x, config.h + 1.15, config.z], { hot: config.hot });
+
+  if (config.hot) {
+    const ringMat = new THREE.MeshBasicMaterial({ color: COLORS.cyan, transparent: true, opacity: 0.28, side: THREE.DoubleSide });
+    const ring = new THREE.Mesh(new THREE.RingGeometry(Math.max(w, d) * 0.52, Math.max(w, d) * 0.58, 64), ringMat);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.set(config.x, 0.05, config.z);
+    ring.userData.pulse = true;
+    modelRoot.add(ring);
+    pulseMaterials.push(ringMat);
+  }
+}
+
 function createCampusBuilding(config) {
   const group = new THREE.Group();
   group.position.set(config.x, 0, config.z);
@@ -222,18 +365,16 @@ function createCampusBuilding(config) {
   const bodyMat = material(config.color || themeColor(0x718797, COLORS.structure), {
     metalness: 0.2,
     roughness: 0.55,
-    emissive: config.hot ? 0x075985 : 0x000000,
-    emissiveIntensity: config.hot ? 0.22 : 0,
   });
   const body = box([config.w, config.h, config.d], [0, config.h / 2, 0], bodyMat, group);
   const roof = box([config.w + 0.18, 0.22, config.d + 0.18], [0, config.h + 0.11, 0], material(themeColor(0xb4c4cd, 0x7b94a6), { metalness: 0.35 }), group);
-  addEdges(body, config.hot ? COLORS.cyan : 0x8aa6b8, config.hot ? 0.85 : 0.28);
+  addEdges(body, 0x8aa6b8, 0.28);
 
-  const stripeMat = material(config.hot ? COLORS.cyan : themeColor(0x3181a0, COLORS.glass), {
+  const stripeMat = material(themeColor(0x3181a0, COLORS.glass), {
     metalness: 0.35,
     roughness: 0.3,
-    emissive: config.hot ? COLORS.cyan : 0x0a4963,
-    emissiveIntensity: config.hot ? 0.55 : 0.14,
+    emissive: 0x0a4963,
+    emissiveIntensity: 0.14,
   });
   const stripeCount = Math.max(4, Math.floor(config.w / 1.4));
   for (let i = 0; i < stripeCount; i += 1) {
@@ -249,16 +390,6 @@ function createCampusBuilding(config) {
   makePickable(body, tooltip, config.action);
   makePickable(roof, tooltip, config.action);
   addLabel(tooltip, [config.x, config.h + 1.15, config.z], { hot: config.hot });
-
-  if (config.hot) {
-    const ringMat = new THREE.MeshBasicMaterial({ color: COLORS.cyan, transparent: true, opacity: 0.32, side: THREE.DoubleSide });
-    const ring = new THREE.Mesh(new THREE.RingGeometry(Math.max(config.w, config.d) * 0.52, Math.max(config.w, config.d) * 0.58, 64), ringMat);
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.set(config.x, 0.05, config.z);
-    ring.userData.pulse = true;
-    modelRoot.add(ring);
-    pulseMaterials.push(ringMat);
-  }
 }
 
 function addSubstationYard() {
@@ -329,9 +460,9 @@ function addGeneratorPlant() {
 
 function buildCampus() {
   addGround();
-  createCampusBuilding({ labelKey: 'objects.a02', x: -1.8, z: -0.4, w: 8.4, d: 6.6, h: 4.8, hot: true, action: { type: 'building' } });
-  createCampusBuilding({ labelKey: 'objects.a01', x: 8.0, z: -0.4, w: 8.4, d: 6.6, h: 4.8 });
-  createCampusBuilding({ labelKey: 'objects.office', x: -10.6, z: 5.1, w: 6.2, d: 4.3, h: 3.2, color: themeColor(0x91a4b2, 0x516678) });
+  createDataCenterBuilding({ labelKey: 'objects.a02', x: -1.8, z: -0.4, w: 8.6, d: 6.8, h: 5.2, hot: true, action: { type: 'building' } });
+  createDataCenterBuilding({ labelKey: 'objects.a01', x: 8.15, z: -0.4, w: 8.6, d: 6.8, h: 5.2, penthouse: true });
+  createDataCenterBuilding({ labelKey: 'objects.office', x: -10.6, z: 5.1, w: 6.2, d: 4.3, h: 3.2, strips: 'glass' });
   createCampusBuilding({ labelKey: 'objects.substation', x: -11.35, z: -5.15, w: 2.4, d: 2.35, h: 1.65, color: themeColor(0x8198a7, 0x3d5363) });
   addSubstationYard();
   addGeneratorPlant();
@@ -771,50 +902,249 @@ function addInspectionRoutes() {
 }
 
 function addRackArray(x, z, w, d) {
-  const rackMat = material(0x1d2935, { metalness: 0.55, roughness: 0.38 });
-  const lightMat = material(COLORS.cyan, { emissive: COLORS.cyan, emissiveIntensity: 0.72, roughness: 0.25 });
-  const columns = Math.max(5, Math.floor(w / 1.15));
-  const rows = 2;
-  for (let row = 0; row < rows; row += 1) {
+  const rackW = 0.62;
+  const rackH = 1.72;
+  const rackD = 0.9;
+  const coolingW = 0.42;
+  const innerW = w - coolingW * 2 - 0.08;
+  const columns = Math.max(5, Math.floor(innerW / 0.7));
+  const span = Math.max(rackW, innerW - rackW);
+  const rackMat = material(0x151d28, { metalness: 0.58, roughness: 0.36 });
+  const bladeMat = material(0x1c2a38, { metalness: 0.62, roughness: 0.4 });
+  const darkMat = material(0x0f1722, { metalness: 0.5, roughness: 0.38 });
+  const liquidMat = material(0x1d8cff, { emissive: 0x063a7a, emissiveIntensity: 0.42, metalness: 0.45, roughness: 0.28 });
+  const frameMat = material(0x9aafbe, { metalness: 0.7, roughness: 0.34 });
+  const coolingMat = material(themeColor(0xe8eef4, 0xc5d3da), { metalness: 0.38, roughness: 0.46 });
+  const grilleMat = material(themeColor(0x4b6270, 0x243746), { metalness: 0.55, roughness: 0.36 });
+  const portMat = material(COLORS.cyan, { emissive: COLORS.cyan, emissiveIntensity: 0.88, roughness: 0.22 });
+
+  function addLiquidRiser(px, py, pz, height) {
+    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, height, 8), liquidMat.clone());
+    pipe.position.set(px, py, pz);
+    pipe.castShadow = true;
+    modelRoot.add(pipe);
+  }
+
+  for (let row = 0; row < 2; row += 1) {
+    const facing = row === 0 ? 1 : -1;
+    const pz = z - d / 2 + rackD / 2 + 0.16 + row * (d - rackD - 0.32);
     for (let col = 0; col < columns; col += 1) {
-      const px = x - w / 2 + 0.65 + col * ((w - 1.3) / Math.max(1, columns - 1));
-      const pz = z - d / 2 + 0.55 + row * (d - 1.1);
-      const rack = box([0.58, 1.72, 0.42], [px, 1.14, pz], rackMat.clone());
-      addEdges(rack, themeColor(0x718897, 0x486272), 0.3);
+      const px = x - innerW / 2 + rackW / 2 + col * (span / Math.max(1, columns - 1));
+      const py = 1.14;
+      const rack = box([rackW, rackH, rackD], [px, py, pz], rackMat.clone());
+      addEdges(rack, themeColor(0x718897, 0x486272), 0.28);
       makePickable(rack, t('floor.rackRows'));
-      const rackLight = lightMat.clone();
-      box([0.36, 0.045, 0.025], [px, 1.46, pz + 0.225], rackLight);
+
+      const aisleZ = pz + facing * (rackD / 2 + 0.018);
+      const rearZ = pz - facing * (rackD / 2 + 0.018);
+      const topY = py + rackH / 2 - 0.1;
+      const botY = py - rackH / 2 + 0.12;
+
+      [aisleZ, rearZ].forEach((faceZ, index) => {
+        const out = index === 0 ? facing : -facing;
+        box([rackW * 0.9, 0.14, 0.04], [px, topY, faceZ], darkMat.clone());
+        box([rackW * 0.9, 0.16, 0.05], [px, botY, faceZ], darkMat.clone());
+        box([rackW * 0.52, 0.07, 0.02], [px - 0.06, botY, faceZ + out * 0.025], liquidMat.clone());
+      });
+
+      for (let i = 0; i < 5; i += 1) {
+        const y = botY + 0.24 + i * 0.2;
+        box([rackW * 0.86, 0.075, 0.03], [px, y, aisleZ], bladeMat.clone());
+      }
+      const rackLight = material(COLORS.cyan, { emissive: COLORS.cyan, emissiveIntensity: 0.72, roughness: 0.25 });
+      box([0.12, 0.03, 0.018], [px - rackW * 0.28, py + 0.32, aisleZ + facing * 0.015], rackLight);
       rackLightMaterials.push({ material: rackLight, phase: row * 0.7 + col * 0.29 });
+
+      for (let colPort = 0; colPort < 4; colPort += 1) {
+        const ox = px - rackW * 0.3 + colPort * (rackW * 0.2);
+        box([0.055, rackH * 0.52, 0.018], [ox, py + 0.02, rearZ], darkMat.clone());
+        box([0.035, 0.035, 0.014], [ox, py + 0.16, rearZ - facing * 0.016], portMat.clone());
+        box([0.035, 0.035, 0.014], [ox, py - 0.1, rearZ - facing * 0.016], portMat.clone());
+      }
+
+      [-1, 1].forEach((sx) => {
+        const sideX = px + sx * (rackW / 2 + 0.012);
+        box([0.02, rackH * 0.96, 0.04], [sideX, py, pz + facing * (rackD / 2 - 0.04)], frameMat.clone());
+        for (let i = 0; i < 5; i += 1) {
+          const y = botY + 0.24 + i * 0.2;
+          box([0.028, 0.065, rackD * 0.7], [sideX, y, pz], bladeMat.clone());
+        }
+        addLiquidRiser(sideX + sx * 0.016, py - 0.04, pz - 0.16, rackH * 0.78);
+        addLiquidRiser(sideX + sx * 0.016, py - 0.04, pz + 0.16, rackH * 0.78);
+      });
     }
+
+    [-1, 1].forEach((side) => {
+      const cx = x + side * (w / 2 - coolingW / 2);
+      const cooling = box([coolingW, rackH, rackD], [cx, 1.14, pz], coolingMat.clone());
+      addEdges(cooling, 0x38bdf8, 0.22);
+      makePickable(cooling, t('objects.inRowCooling'));
+      for (let y = 0.45; y < 1.85; y += 0.16) {
+        box([coolingW * 0.72, 0.05, 0.03], [cx, y, pz + facing * (rackD / 2 + 0.02)], grilleMat.clone());
+      }
+      addLiquidRiser(cx + side * (coolingW / 2 + 0.02), 1.08, pz - 0.16, 1.35);
+      addLiquidRiser(cx + side * (coolingW / 2 + 0.02), 1.08, pz + 0.16, 1.35);
+      box([0.08, 0.18, rackD * 0.72], [cx + side * (coolingW / 2 + 0.02), 0.42, pz], liquidMat.clone());
+    });
   }
 }
 
-function addColdAisleContainment(x, z, w) {
-  const glassMat = material(themeColor(0x67e8f9, 0x22d3ee), {
-    transparent: true,
-    opacity: isDarkTheme() ? 0.13 : 0.16,
-    metalness: 0.05,
-    roughness: 0.12,
-    side: THREE.DoubleSide,
-    depthWrite: false,
-  });
-  box([w, 0.055, 0.96], [x, 2.18, z], glassMat.clone());
-  [-0.5, 0.5].forEach((offset) => box([w, 1.46, 0.035], [x, 1.45, z + offset], glassMat.clone()));
-  [-w / 2, w / 2].forEach((offset) => box([0.035, 1.46, 1], [x + offset, 1.45, z], glassMat.clone()));
+function makePerforatedDoorTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#3a4550';
+  ctx.fillRect(0, 0, 64, 256);
+  ctx.fillStyle = '#252d35';
+  ctx.fillRect(0, 0, 64, 12);
+  ctx.fillRect(0, 244, 64, 12);
+  ctx.fillRect(0, 0, 5, 256);
+  ctx.fillRect(59, 0, 5, 256);
+  ctx.fillStyle = '#12181e';
+  for (let y = 16; y < 240; y += 4) {
+    for (let colX = 8; colX < 56; colX += 4) {
+      ctx.fillRect(colX, y, 2.1, 2.1);
+    }
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  tex.wrapS = THREE.ClampToEdgeWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  return tex;
 }
 
-function addRackPowerUnits(x, z, w) {
-  const cabinetMat = material(0xf59e0b, {
-    emissive: 0xf59e0b,
-    emissiveIntensity: isDarkTheme() ? 0.18 : 0.08,
-    metalness: 0.38,
-    roughness: 0.46,
+function getModuleEnclosureCache() {
+  if (moduleEnclosureCache) return moduleEnclosureCache;
+  const doorMap = makePerforatedDoorTexture();
+  const doorMat = material(0xffffff, { metalness: 0.52, roughness: 0.4 });
+  doorMat.map = doorMap;
+  moduleEnclosureCache = {
+    shell: material(0x3b4752, { metalness: 0.64, roughness: 0.3 }),
+    dark: material(0x2a333c, { metalness: 0.58, roughness: 0.34 }),
+    door: doorMat,
+    glass: material(0x9ec4d6, {
+      transparent: true,
+      opacity: isDarkTheme() ? 0.22 : 0.32,
+      metalness: 0.22,
+      roughness: 0.06,
+      side: THREE.DoubleSide,
+    }),
+    led: material(0x22d3ee, { emissive: 0x22d3ee, emissiveIntensity: 1.05, roughness: 0.2 }),
+    screen: material(0x0a3a62, { emissive: 0x1569a8, emissiveIntensity: 0.82, roughness: 0.22 }),
+    widget: material(0x38bdf8, { emissive: 0x38bdf8, emissiveIntensity: 0.7, roughness: 0.24 }),
+    handle: material(0x1a2229, { metalness: 0.72, roughness: 0.28 }),
+    status: material(0xef4444, { emissive: 0xef4444, emissiveIntensity: 0.85, roughness: 0.28 }),
+  };
+  moduleEnclosureCache.glass.depthWrite = false;
+  return moduleEnclosureCache;
+}
+
+function addLedStrip(px, py, pz, height, facingX) {
+  const mats = getModuleEnclosureCache();
+  const count = 9;
+  const span = height - 0.18;
+  for (let i = 0; i < count; i += 1) {
+    const y = py - span / 2 + i * (span / (count - 1));
+    box([0.028, 0.046, 0.028], [px + facingX * 0.01, y, pz], mats.led);
+  }
+}
+
+function addModuleMonitor(px, py, pz, facingX) {
+  const mats = getModuleEnclosureCache();
+  const faceX = px + facingX * 0.055;
+  box([0.06, 0.82, 1.02], [px, py, pz], mats.dark);
+  const screen = box([0.024, 0.66, 0.88], [faceX, py, pz], mats.screen);
+  makePickable(screen, t('objects.moduleScreen'));
+  [
+    [-0.22, 0.12, 0.16, 0.18],
+    [0.02, 0.16, 0.2, 0.14],
+    [0.26, 0.08, 0.14, 0.2],
+    [-0.18, -0.16, 0.28, 0.1],
+    [0.16, -0.14, 0.22, 0.12],
+  ].forEach(([oz, oy, zw, yh]) => {
+    box([0.016, yh, zw], [faceX + facingX * 0.012, py + oy, pz + oz], mats.widget);
   });
+}
+
+function addSmartModuleEnclosure(x, z, w, d) {
+  const mats = getModuleEnclosureCache();
+  const shellH = 2.16;
+  const shellY = 1.26;
+  const roofY = 2.3;
+  const doorH = 1.94;
+  const doorY = 1.2;
+  const shellD = Math.min(d, 2.28);
+  const rackLayoutW = 10.9;
+  const { rackW, coolingW, innerW, columns, span } = (() => {
+    const coolingW = 0.42;
+    const rackW = 0.62;
+    const innerW = rackLayoutW - coolingW * 2 - 0.08;
+    const columns = Math.max(5, Math.floor(innerW / 0.7));
+    const span = Math.max(rackW, innerW - rackW);
+    return { rackW, coolingW, innerW, columns, span };
+  })();
+
+  const roof = box([w + 0.08, 0.1, shellD + 0.1], [x, roofY, z], mats.shell);
+  addEdges(roof, 0x5b6d78, 0.22);
+  box([w, 0.06, shellD], [x, 0.3, z], mats.dark);
+
   [-1, 1].forEach((side) => {
-    const px = x + side * (w / 2 + 0.22);
-    const cabinet = box([0.36, 1.55, 0.62], [px, 1.05, z], cabinetMat.clone());
-    addEdges(cabinet, 0xfbbf24, 0.46);
-    makePickable(cabinet, t('objects.rackPowerUnit'));
+    const doorZ = z + side * (shellD / 2 + 0.03);
+    box([w - 0.16, 0.16, 0.08], [x, roofY - 0.07, doorZ], mats.shell);
+    box([w - 0.16, 0.1, 0.08], [x, 0.36, doorZ], mats.dark);
+    for (let col = 0; col < columns; col += 1) {
+      const px = x - innerW / 2 + rackW / 2 + col * (span / Math.max(1, columns - 1));
+      const door = box([rackW * 0.94, doorH, 0.05], [px, doorY, doorZ], mats.door);
+      makePickable(door, t('objects.moduleDoor'));
+      box([0.028, 0.42, 0.03], [px, doorY - 0.04, doorZ + side * 0.035], mats.handle);
+      if (col % 3 === 0) {
+        box([0.04, 0.035, 0.02], [px - rackW * 0.28, doorY + doorH / 2 - 0.1, doorZ + side * 0.03], mats.status);
+      }
+    }
+    [-1, 1].forEach((end) => {
+      const cx = x + end * (rackLayoutW / 2 - coolingW / 2);
+      const panel = box([coolingW * 0.96, doorH, 0.05], [cx, doorY, doorZ], mats.door);
+      makePickable(panel, t('objects.moduleDoor'));
+    });
+  });
+
+  [-1, 1].forEach((end) => {
+    const facingX = end;
+    const wallX = x + end * (w / 2 + 0.04);
+    const aisleHalf = 0.42;
+    const wingW = shellD / 2 - aisleHalf - 0.02;
+    const displaySide = 1;
+    const blankSide = -1;
+
+    const blank = box([0.22, shellH, wingW], [wallX, shellY, z + blankSide * (aisleHalf + wingW / 2 + 0.02)], mats.shell);
+    makePickable(blank, t('objects.moduleDoor'));
+    const cabinetD = wingW + 0.1;
+    const cabinetZ = z + displaySide * (aisleHalf + cabinetD / 2 + 0.02);
+    const cabinet = box([0.32, shellH + 0.08, cabinetD], [wallX + facingX * 0.1, shellY + 0.04, cabinetZ], mats.shell);
+    makePickable(cabinet, t('objects.moduleDoor'));
+
+    box([0.16, 0.18, shellD + 0.08], [wallX, roofY - 0.02, z], mats.shell);
+    box([0.14, 0.1, aisleHalf * 2 + 0.12], [wallX, 0.34, z], mats.dark);
+    box([0.08, doorH + 0.06, 0.06], [wallX, doorY, z], mats.dark);
+
+    for (const leaf of [-1, 1]) {
+      const glassZ = z + leaf * (aisleHalf / 2);
+      const glass = box([0.04, doorH - 0.12, aisleHalf - 0.08], [wallX - facingX * 0.02, doorY, glassZ], mats.glass);
+      makePickable(glass, t('objects.moduleDoor'));
+      box([0.06, doorH - 0.04, 0.045], [wallX, doorY, glassZ + leaf * (aisleHalf / 2 - 0.03)], mats.dark);
+      box([0.05, 0.42, 0.03], [wallX - facingX * 0.05, doorY - 0.02, glassZ + leaf * 0.08], mats.handle);
+    }
+
+    const showMonitor = (x < 0 && end === 1) || (x > 0 && end === -1);
+    if (showMonitor) {
+      addModuleMonitor(wallX + facingX * 0.22, 1.42, cabinetZ, facingX);
+    }
+    addLedStrip(wallX + facingX * 0.23, shellY, cabinetZ - cabinetD / 2 + 0.04, shellH - 0.12, facingX);
+    addLedStrip(wallX + facingX * 0.23, shellY, cabinetZ + cabinetD / 2 - 0.04, shellH - 0.12, facingX);
+    addLedStrip(x + end * (w / 2 - 0.06), doorY, z - shellD / 2 - 0.05, doorH - 0.2, 0);
+    addLedStrip(x + end * (w / 2 - 0.06), doorY, z + shellD / 2 + 0.05, doorH - 0.2, 0);
   });
 }
 
@@ -904,14 +1234,12 @@ function buildFloorDetail() {
     addRoom({ x, z: -4.2, w: 12, d: 2.9, color: COLORS.hall, labelKey: 'objects.smartModule', labelY: 2.98 });
     addRackArray(x, -4.2, 10.9, 2.35);
     addAisleDetails(x, -4.2, 10.9, 2.35, x < 0 ? 1 : -1);
-    addColdAisleContainment(x, -4.2, 10.9);
-    addRackPowerUnits(x, -4.2, 10.9);
+    addSmartModuleEnclosure(x, -4.2, 12, 2.9);
     addOverheadServices(x, -4.2, 10.9);
     addRoom({ x, z: 4.2, w: 12, d: 2.9, color: COLORS.hall, labelKey: 'objects.smartModule', labelY: 2.98 });
     addRackArray(x, 4.2, 10.9, 2.35);
     addAisleDetails(x, 4.2, 10.9, 2.35, x < 0 ? -1 : 1);
-    addColdAisleContainment(x, 4.2, 10.9);
-    addRackPowerUnits(x, 4.2, 10.9);
+    addSmartModuleEnclosure(x, 4.2, 12, 2.9);
     addOverheadServices(x, 4.2, 10.9);
     addRoom({ x, z: 7.2, w: 12, d: 2.45, color: COLORS.ehu, labelKey: 'objects.ehu', labelY: 2.98 });
     addEhuEquipment(x, 7.2, 12);
@@ -1290,6 +1618,7 @@ document.getElementById('breadcrumbs').addEventListener('click', (event) => {
 window.AidcI18nBootstrap.bootstrap('ai-dc-room-layout-3d', {
   onReady: init,
   onLocaleChange: refreshLocale,
+  bundleRev: 'facade-10',
 });
 
 window.addEventListener('aidc-theme-change', () => applySceneTheme(true));

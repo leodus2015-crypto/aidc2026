@@ -39,6 +39,11 @@ RSYNC_EXCLUDES=(
   --exclude 'data/analytics/summary.json'
   --exclude 'data/local-dev-admin.json'
   --exclude 'topic/SuperPOD/'
+  --exclude 'huawei-3d-datacenter.html'
+  --exclude 'js/huawei-3d-datacenter.js'
+  --exclude 'css/huawei-3d-datacenter.css'
+  --exclude 'i18n/huawei-3d-datacenter.zh.json'
+  --exclude 'i18n/huawei-3d-datacenter.en.json'
   --exclude '.pytest_cache/'
   --exclude '.venv/'
 )

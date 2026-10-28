@@ -9,7 +9,7 @@
 
   const IFRAME_BASE = {
     roomLayout: 'ai-dc-room-layout.html?embed=1',
-    roomLayout3d: 'ai-dc-room-layout-3d.html?embed=1&rev=campus-row-3',
+    roomLayout3d: 'ai-dc-room-layout-3d.html?embed=1&rev=facade-10',
     tcp: 'ai-dc-tcp.html?embed=1',
     computeEst: 'ai-dc-computeEst.html?embed=1&rev=xlsx-2',
     caseA: 'datacenter-3d-case-b.html?embed=1',

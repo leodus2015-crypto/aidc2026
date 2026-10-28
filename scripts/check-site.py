@@ -18,7 +18,7 @@ REDIRECT_HTML: set[str] = set()
 # Full-viewport presentation decks keep their own chrome; language is file-split.
 # Official entry is the site wrapper that embeds them.
 # Local SuperPOD drafts stay unpublished until they have site chrome + registry rows.
-SKIP_HTML_PREFIXES = ("topic/SuperPOD/",)
+SKIP_HTML_PREFIXES = ("topic/SuperPOD/", "huawei-3d-datacenter.html")
 
 CHROMELESS_HTML: set[str] = {
     "topic/sovereign-ai/sovereign-ai.html",

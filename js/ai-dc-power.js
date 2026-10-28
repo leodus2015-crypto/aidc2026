@@ -79,6 +79,17 @@ const materials = {
   orange: new THREE.MeshStandardMaterial({ color: COLOR.orange, emissive: 0x663600, emissiveIntensity: 0.56 }),
   floor: new THREE.MeshStandardMaterial({ color: 0xdce5ed, roughness: 0.92 }),
   glass: new THREE.MeshPhysicalMaterial({ color: 0xbdd6ed, transparent: true, opacity: 0.1, roughness: 0.2, side: THREE.DoubleSide }),
+  blade: new THREE.MeshStandardMaterial({ color: 0x1c2a38, roughness: 0.4, metalness: 0.62 }),
+  bladeCpu: new THREE.MeshStandardMaterial({ color: 0x24384c, roughness: 0.42, metalness: 0.55 }),
+  frame: new THREE.MeshStandardMaterial({ color: 0x9aafbe, roughness: 0.35, metalness: 0.72 }),
+  liquid: new THREE.MeshStandardMaterial({ color: 0x1d8cff, roughness: 0.28, metalness: 0.45, emissive: 0x063a7a, emissiveIntensity: 0.45 }),
+  port: new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
+  shell: new THREE.MeshStandardMaterial({ color: 0x3b4752, roughness: 0.3, metalness: 0.64 }),
+  handle: new THREE.MeshStandardMaterial({ color: 0x1a2229, roughness: 0.28, metalness: 0.72 }),
+  status: new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.85, roughness: 0.28 }),
+  screen: new THREE.MeshStandardMaterial({ color: 0x0a3a62, emissive: 0x1569a8, emissiveIntensity: 0.82, roughness: 0.22 }),
+  widget: new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 0.7, roughness: 0.24 }),
+  led: new THREE.MeshStandardMaterial({ color: 0x22d3ee, emissive: 0x22d3ee, emissiveIntensity: 1.05, roughness: 0.2 }),
 };
 const edgeMat = new THREE.LineBasicMaterial({ color: 0x8aa1b8, transparent: true, opacity: 0.32 });
 
@@ -91,6 +102,12 @@ function box(w, h, d, mat = materials.white) {
     edges.renderOrder = 2;
     m.add(edges);
   }
+  return m;
+}
+
+function slab(w, h, d, mat) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.castShadow = m.receiveShadow = true;
   return m;
 }
 
@@ -251,20 +268,313 @@ function decorateMediumVoltageAts(g) {
   baseHalo(g, COLOR.blue);
 }
 
+function addLiquidPipe(parent, x, y, z, height) {
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, height, 10), materials.liquid);
+  pipe.position.set(x, y, z);
+  parent.add(pipe);
+  return pipe;
+}
+
+function decorateComputeRack(rack, facing) {
+  const hx = 1.275;
+  const hz = 1.25;
+  const aisleZ = facing * (hz + 0.045);
+  const rearZ = -facing * (hz + 0.045);
+
+  function addPowerAndCooling(faceZ, out) {
+    const psu = box(2.32, 0.44, 0.12, materials.black);
+    psu.position.set(0, 2.02, faceZ);
+    rack.add(psu);
+    for (let i = -1; i <= 1; i += 1) {
+      const vent = slab(0.58, 0.14, 0.04, materials.dark);
+      vent.position.set(i * 0.72, 2.02, faceZ + out * 0.08);
+      rack.add(vent);
+    }
+    const cdu = box(2.3, 0.58, 0.16, materials.dark);
+    cdu.position.set(0, -2.0, faceZ + out * 0.02);
+    rack.add(cdu);
+    const cduWindow = slab(1.2, 0.24, 0.04, materials.liquid);
+    cduWindow.position.set(-0.32, -2.0, faceZ + out * 0.12);
+    rack.add(cduWindow);
+    const coupling = slab(0.2, 0.2, 0.16, materials.liquid);
+    coupling.position.set(0.86, -2.0, faceZ + out * 0.14);
+    rack.add(coupling);
+  }
+
+  addPowerAndCooling(aisleZ, facing);
+  addPowerAndCooling(rearZ, -facing);
+
+  for (let i = 0; i < 4; i += 1) {
+    const y = 1.18 + i * 0.18;
+    const cpu = box(2.28, 0.14, 0.1, materials.bladeCpu);
+    cpu.position.set(0, y, aisleZ);
+    rack.add(cpu);
+    const handle = slab(0.42, 0.035, 0.035, materials.frame);
+    handle.position.set(0.72, y, aisleZ + facing * 0.07);
+    rack.add(handle);
+  }
+
+  for (let i = 0; i < 8; i += 1) {
+    const y = -1.38 + i * 0.3;
+    const npu = box(2.28, 0.24, 0.11, materials.blade);
+    npu.position.set(0, y, aisleZ);
+    rack.add(npu);
+    const handle = slab(0.62, 0.045, 0.04, materials.frame);
+    handle.position.set(0.68, y, aisleZ + facing * 0.08);
+    rack.add(handle);
+    const led = slab(0.09, 0.035, 0.02, i % 2 === 0 ? materials.cyan : materials.green);
+    led.position.set(-0.98, y, aisleZ + facing * 0.08);
+    rack.add(led);
+  }
+
+  const rearPlate = box(2.22, 3.05, 0.06, materials.black);
+  rearPlate.position.set(0, 0.12, rearZ);
+  rack.add(rearPlate);
+  for (let col = 0; col < 8; col += 1) {
+    const x = -0.98 + col * 0.28;
+    const cage = slab(0.14, 2.55, 0.04, materials.dark);
+    cage.position.set(x, 0.12, rearZ - facing * 0.04);
+    rack.add(cage);
+    for (let row = 0; row < 4; row += 1) {
+      const port = slab(0.09, 0.08, 0.025, materials.port);
+      port.position.set(x, -0.92 + row * 0.62, rearZ - facing * 0.07);
+      rack.add(port);
+    }
+  }
+
+  for (const sx of [-1, 1]) {
+    const sideX = sx * (hx + 0.03);
+    const skin = slab(0.05, 4.42, 2.32, materials.black);
+    skin.position.set(sideX, 0, 0);
+    rack.add(skin);
+    const rail = slab(0.045, 4.55, 0.09, materials.frame);
+    rail.position.set(sideX + sx * 0.03, 0, facing * 1.16);
+    rack.add(rail);
+    const rearRail = slab(0.045, 4.55, 0.09, materials.frame);
+    rearRail.position.set(sideX + sx * 0.03, 0, -facing * 1.16);
+    rack.add(rearRail);
+    for (let i = 0; i < 8; i += 1) {
+      const y = -1.38 + i * 0.3;
+      const slot = slab(0.07, 0.2, 1.88, materials.blade);
+      slot.position.set(sideX + sx * 0.045, y, 0.06 * facing);
+      rack.add(slot);
+    }
+    addLiquidPipe(rack, sideX + sx * 0.08, -0.12, -0.52, 3.6);
+    addLiquidPipe(rack, sideX + sx * 0.08, -0.12, 0.52, 3.6);
+    const psuSide = slab(0.07, 0.4, 2.08, materials.dark);
+    psuSide.position.set(sideX + sx * 0.045, 2.02, 0);
+    rack.add(psuSide);
+    const cduSide = slab(0.09, 0.52, 2.1, materials.dark);
+    cduSide.position.set(sideX + sx * 0.055, -2.0, 0);
+    rack.add(cduSide);
+    const hose = slab(0.13, 0.13, 0.24, materials.liquid);
+    hose.position.set(sideX + sx * 0.11, -2.0, -facing * 0.82);
+    rack.add(hose);
+  }
+}
+
+function makePerforatedDoorTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#3a4550';
+  ctx.fillRect(0, 0, 64, 256);
+  ctx.fillStyle = '#252d35';
+  ctx.fillRect(0, 0, 64, 12);
+  ctx.fillRect(0, 244, 64, 12);
+  ctx.fillRect(0, 0, 5, 256);
+  ctx.fillRect(59, 0, 5, 256);
+  ctx.fillStyle = '#12181e';
+  for (let y = 16; y < 240; y += 4) {
+    for (let colX = 8; colX < 56; colX += 4) {
+      ctx.fillRect(colX, y, 2.1, 2.1);
+    }
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}
+
+function addModuleLedStrip(parent, x, y, z, height) {
+  const count = 11;
+  const span = height - 0.28;
+  for (let i = 0; i < count; i += 1) {
+    const led = slab(0.07, 0.11, 0.07, materials.led);
+    led.position.set(x, y - span / 2 + i * (span / (count - 1)), z);
+    parent.add(led);
+  }
+}
+
+function addModuleMonitor(parent, x, y, z, facingX) {
+  const bezel = slab(0.08, 1.62, 1.92, materials.black);
+  bezel.position.set(x, y, z);
+  parent.add(bezel);
+  const screen = slab(0.045, 1.32, 1.62, materials.screen);
+  screen.position.set(x + facingX * 0.055, y, z);
+  parent.add(screen);
+  [
+    [-0.42, 0.28, 0.32, 0.38],
+    [0.02, 0.34, 0.38, 0.28],
+    [0.48, 0.18, 0.28, 0.42],
+    [-0.32, -0.32, 0.52, 0.2],
+    [0.28, -0.28, 0.42, 0.24],
+  ].forEach(([oz, oy, zw, yh]) => {
+    const widget = slab(0.03, yh, zw, materials.widget);
+    widget.position.set(x + facingX * 0.08, y + oy, z + oz);
+    parent.add(widget);
+  });
+}
+
+function decorateModuleEnclosure(module) {
+  const doorMap = makePerforatedDoorTexture();
+  const doorMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    map: doorMap,
+    metalness: 0.52,
+    roughness: 0.4,
+  });
+  const glassMat = new THREE.MeshStandardMaterial({
+    color: 0x9ec4d6,
+    transparent: true,
+    opacity: 0.32,
+    metalness: 0.22,
+    roughness: 0.06,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+  const x = 21;
+  const z = 0;
+  const w = 23.2;
+  const shellH = 5.06;
+  const shellY = 2.63;
+  const roofY = 5.22;
+  const doorH = 4.68;
+  const doorY = 2.5;
+  const shellD = 7.02;
+  const rackLayoutW = 21.4;
+  const coolingW = 1.12;
+  const innerW = rackLayoutW - coolingW * 2 - 0.16;
+  const columns = Math.max(8, Math.floor(innerW / 0.78));
+  const pitch = innerW / columns;
+  const doorW = pitch - 0.03;
+
+  const roof = slab(w + 0.16, 0.14, shellD + 0.16, materials.shell);
+  roof.position.set(x, roofY, z);
+  module.add(roof);
+  const plinth = slab(w, 0.1, shellD, materials.dark);
+  plinth.position.set(x, 0.22, z);
+  module.add(plinth);
+
+  [-1, 1].forEach((side) => {
+    const doorZ = z + side * (shellD / 2 + 0.05);
+    const fascia = slab(w - 0.3, 0.22, 0.12, materials.shell);
+    fascia.position.set(x, roofY - 0.1, doorZ);
+    module.add(fascia);
+    const kick = slab(w - 0.3, 0.14, 0.12, materials.dark);
+    kick.position.set(x, 0.3, doorZ);
+    module.add(kick);
+    for (let col = 0; col < columns; col += 1) {
+      const px = x - innerW / 2 + pitch / 2 + col * pitch;
+      const door = slab(doorW, doorH, 0.08, doorMat);
+      door.position.set(px, doorY, doorZ);
+      module.add(door);
+      const handle = slab(0.06, 0.85, 0.05, materials.handle);
+      handle.position.set(px, doorY - 0.08, doorZ + side * 0.06);
+      module.add(handle);
+      if (col % 3 === 0) {
+        const status = slab(0.08, 0.06, 0.04, materials.status);
+        status.position.set(px - doorW * 0.28, doorY + doorH / 2 - 0.18, doorZ + side * 0.05);
+        module.add(status);
+      }
+    }
+    [-1, 1].forEach((end) => {
+      const cx = x + end * (rackLayoutW / 2 - coolingW / 2);
+      const panel = slab(coolingW * 0.96, doorH, 0.08, doorMat);
+      panel.position.set(cx, doorY, doorZ);
+      module.add(panel);
+    });
+  });
+
+  [-1, 1].forEach((end) => {
+    const facingX = end;
+    const wallX = x + end * (w / 2 + 0.06);
+    const aisleHalf = 0.88;
+    const wingW = shellD / 2 - aisleHalf - 0.04;
+    const blank = slab(0.28, shellH, wingW, materials.shell);
+    blank.position.set(wallX, shellY, z - (aisleHalf + wingW / 2 + 0.03));
+    module.add(blank);
+    const cabinetD = wingW + 0.16;
+    const cabinetZ = z + (aisleHalf + cabinetD / 2 + 0.03);
+    const cabinet = slab(0.42, shellH + 0.1, cabinetD, materials.shell);
+    cabinet.position.set(wallX + facingX * 0.12, shellY + 0.05, cabinetZ);
+    module.add(cabinet);
+    const cap = slab(0.22, 0.22, shellD + 0.12, materials.shell);
+    cap.position.set(wallX, roofY - 0.04, z);
+    module.add(cap);
+    const threshold = slab(0.2, 0.12, aisleHalf * 2 + 0.16, materials.dark);
+    threshold.position.set(wallX, 0.28, z);
+    module.add(threshold);
+    const mullion = slab(0.1, doorH + 0.08, 0.08, materials.dark);
+    mullion.position.set(wallX, doorY, z);
+    module.add(mullion);
+    [-1, 1].forEach((leaf) => {
+      const glassZ = z + leaf * (aisleHalf / 2);
+      const glass = slab(0.06, doorH - 0.18, aisleHalf - 0.12, glassMat);
+      glass.position.set(wallX - facingX * 0.03, doorY, glassZ);
+      module.add(glass);
+      const stile = slab(0.08, doorH - 0.06, 0.06, materials.dark);
+      stile.position.set(wallX, doorY, glassZ + leaf * (aisleHalf / 2 - 0.04));
+      module.add(stile);
+      const handle = slab(0.07, 0.7, 0.05, materials.handle);
+      handle.position.set(wallX - facingX * 0.07, doorY - 0.04, glassZ + leaf * 0.12);
+      module.add(handle);
+    });
+    if (end === 1) {
+      addModuleMonitor(module, wallX + facingX * 0.34, 3.15, cabinetZ, facingX);
+    }
+    addModuleLedStrip(module, wallX + facingX * 0.34, shellY, cabinetZ - cabinetD / 2 + 0.08, shellH - 0.24);
+    addModuleLedStrip(module, wallX + facingX * 0.34, shellY, cabinetZ + cabinetD / 2 - 0.08, shellH - 0.24);
+    addModuleLedStrip(module, x + end * (w / 2 - 0.08), doorY, z - shellD / 2 - 0.08, doorH - 0.3);
+    addModuleLedStrip(module, x + end * (w / 2 - 0.08), doorY, z + shellD / 2 + 0.08, doorH - 0.3);
+  });
+}
+
+function decorateInRowCooling(cooling, facing) {
+  const hx = 0.575;
+  const hz = 1.25;
+  for (const side of [-1, 1]) {
+    for (let y = -1.85; y < 1.85; y += 0.22) {
+      const grille = slab(0.92, 0.09, 0.05, materials.dark);
+      grille.position.set(0, y, side * (hz + 0.04));
+      cooling.add(grille);
+    }
+  }
+  for (const sx of [-1, 1]) {
+    const sideX = sx * (hx + 0.04);
+    addLiquidPipe(cooling, sideX, -0.05, -0.45, 3.7);
+    addLiquidPipe(cooling, sideX, -0.05, 0.45, 3.7);
+    const manifold = slab(0.1, 0.55, 1.85, materials.liquid);
+    manifold.position.set(sideX, -1.95, 0);
+    cooling.add(manifold);
+  }
+  const header = slab(0.95, 0.28, 2.15, materials.dark);
+  header.position.set(0, 2.05, facing * 0.04);
+  cooling.add(header);
+}
+
 function buildSmartModule(rowZ, rackXs) {
   const module = new THREE.Group();
-  const moduleGlass = materials.glass.clone();
-  moduleGlass.color.set(0x93c5fd);
-  moduleGlass.opacity = 0.28;
-  const moduleLabel = addLabel(module, t('eq.nModule'), t('eq.moduleSub'), 8.2);
-  moduleLabel.position.set(21, 8.2, 3.4);
+  const moduleLabel = addLabel(module, t('eq.nModule'), t('eq.moduleSub'), 6.35);
+  moduleLabel.position.set(21, 6.35, 3.6);
   module.userData = {
     nameKey: 'eq.nModule', descKey: 'eq.dModule', name: t('eq.nModule'), desc: t('eq.dModule'),
     baseY: 0, subKey: 'eq.moduleSub', label: moduleLabel, labelEl: moduleLabel.element,
   };
   scene.add(module);
   selectable.push(module);
-  const deck = box(23, 0.12, 8.2, materials.white);
+  const deck = slab(23.2, 0.12, 7.15, materials.dark);
   deck.position.set(21, 0.12, 0);
   module.add(deck);
   const aisle = box(18.9, 0.035, 1.7, materials.cyan);
@@ -284,88 +594,27 @@ function buildSmartModule(rowZ, rackXs) {
       module.add(rack);
       selectable.push(rack);
       racks.push(rack);
-      // 两排机柜正面相对，封闭冷通道位于中间。
-      for (const side of [-1, 1]) {
-        const door = box(2.37, 4.38, 0.035, materials.dark);
-        door.position.z = side * 1.275;
-        rack.add(door);
-        for (let y = -1.88; y <= 1.88; y += 0.23) {
-          const meshLine = box(2.15, 0.022, 0.025, materials.black);
-          meshLine.position.set(0, y, side * 1.3);
-          rack.add(meshLine);
-        }
-      }
-      for (let u = -1.5; u <= 1.5; u += 0.55) {
-        const led = box(0.12, 0.045, 0.025, materials.cyan);
-        led.position.set(-0.8, u, facing * 1.33);
-        rack.add(led);
-      }
+      // 正面刀片抽屉、背面光模块、侧面液冷管，参照超节点计算柜分层。
+      decorateComputeRack(rack, facing);
     });
     for (const x of [10.6, 31.3]) {
       const cooling = box(1.15, 4.7, 2.5, materials.white);
       cooling.position.set(x, 2.55, z);
       module.add(cooling);
-      for (let y = -1.9; y < 1.9; y += 0.25) {
-        const grille = box(0.95, 0.06, 0.045, materials.dark);
-        grille.position.set(0, y, facing * 1.28);
-        cooling.add(grille);
-      }
+      decorateInRowCooling(cooling, facing);
       cooling.userData = { nameKey: 'eq.nCooling', descKey: 'eq.dCooling', name: t('eq.nCooling'), desc: t('eq.dCooling'), baseY: 2.55 };
       selectable.push(cooling);
     }
     const tray = box(22.6, 0.16, 0.45, materials.dark);
-    tray.position.set(21, 5.4, z);
+    tray.position.set(21, 4.92, z);
     module.add(tray);
   });
-  // 双排封闭通道：分段透明顶板、端部门框和滑门。
-  rackXs.forEach((x) => {
-    const roof = box(2.59, 0.08, 1.7, moduleGlass);
-    roof.position.set(x, 4.98, 0);
-    module.add(roof);
-    const frame = box(0.07, 0.12, 1.9, materials.white);
-    frame.position.set(x - 1.325, 4.98, 0);
-    module.add(frame);
-  });
   for (const z of [-0.88, 0.88]) {
-    const rail = box(18.9, 0.13, 0.13, materials.white);
-    rail.position.set(20.95, 4.98, z);
-    module.add(rail);
-    const light = box(18.8, 0.04, 0.06, materials.cyan);
-    light.position.set(20.95, 4.83, z);
+    const light = slab(18.8, 0.04, 0.06, materials.cyan);
+    light.position.set(20.95, 4.78, z);
     module.add(light);
   }
-  for (const x of [11.6, 30.3]) {
-    for (const z of [-0.91, 0.91]) {
-      const post = box(0.14, 4.85, 0.14, materials.white);
-      post.position.set(x, 2.62, z);
-      module.add(post);
-    }
-    const lintel = box(0.2, 0.22, 2.1, materials.white);
-    lintel.position.set(x, 4.97, 0);
-    module.add(lintel);
-    for (const z of [-0.43, 0.43]) {
-      const glassDoor = box(0.07, 4.42, 0.82, moduleGlass);
-      glassDoor.position.set(x, 2.52, z);
-      module.add(glassDoor);
-      const handle = box(0.12, 0.58, 0.045, materials.dark);
-      handle.position.set(x + 0.08, 2.52, z < 0 ? -0.09 : 0.09);
-      module.add(handle);
-    }
-  }
-  const screen = box(0.15, 1.35, 1.1, materials.black);
-  screen.position.set(32.0, 3.0, 0);
-  module.add(screen);
-  const screenStand = box(0.1, 2.4, 0.12, materials.dark);
-  screenStand.position.set(31.95, 1.45, 0);
-  module.add(screenStand);
-  const screenFace = box(0.035, 1.15, 0.92, materials.dark);
-  screenFace.position.set(32.1, 3.0, 0);
-  module.add(screenFace);
-  for (let index = 0; index < 4; index += 1) {
-    const chart = box(0.045, 0.18 + index * 0.15, 0.1, materials.cyan);
-    chart.position.set(32.13, 2.66 + (0.18 + index * 0.15) / 2, -0.3 + index * 0.2);
-    module.add(chart);
-  }
+  decorateModuleEnclosure(module);
 }
 
 function decorateSubstation(g, color = COLOR.blue) {
@@ -989,7 +1238,7 @@ function bindControls() {
   document.getElementById('normal').addEventListener('click', restoreUtility);
   document.getElementById('outage').addEventListener('click', simulateOutage);
   document.getElementById('energyView').addEventListener('click', () => flyTo(new THREE.Vector3(2, 21, 31), new THREE.Vector3(-11, 1, 0)));
-  document.getElementById('hallView').addEventListener('click', () => flyTo(new THREE.Vector3(43, 17, 19), new THREE.Vector3(21, 2, 0)));
+  document.getElementById('hallView').addEventListener('click', () => flyTo(new THREE.Vector3(39, 10, 15), new THREE.Vector3(26, 2.4, 0)));
   document.getElementById('reset').addEventListener('click', () => flyTo(new THREE.Vector3(42, 31, 49), new THREE.Vector3(-5, 1, -1)));
   document.getElementById('voltages').addEventListener('click', () => {
     const show = !voltageObjects[0].visible;
@@ -1021,6 +1270,7 @@ function init() {
 window.AidcI18nBootstrap.bootstrap('ai-dc-power', {
   onReady: init,
   onLocaleChange: refreshLocale,
+  bundleRev: 'enclosure-3',
 });
 
 window.addEventListener('aidc-theme-change', applySceneTheme);

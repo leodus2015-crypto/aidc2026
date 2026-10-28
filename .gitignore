@@ -5,6 +5,11 @@ data/analytics/sample-access.log
 data/analytics/geo-cache.json
 data/local-dev-admin.json
 topic/SuperPOD/
+huawei-3d-datacenter.html
+js/huawei-3d-datacenter.js
+css/huawei-3d-datacenter.css
+i18n/huawei-3d-datacenter.zh.json
+i18n/huawei-3d-datacenter.en.json
 .env
 deploy.env
 deploy.env.huawei
