@@ -8,11 +8,11 @@
   <meta name="theme-color" content="#f8fafc" />
   <link rel="canonical" href="https://www.aidc2026.cn/ai-dc-four-layer.html" />
   <title>四层数据中心示意图 · AI Data Center</title>
-  <script src="js/aidc-theme.js?v=102"></script>
-  <script src="js/theme-switch.js?v=102"></script>
-  <script src="js/aidc-asset-version.js?v=102"></script>
-<script src="js/embed-mode.js?v=102"></script>
-  <link rel="stylesheet" href="css/embed.css?v=102" />
+  <script src="js/aidc-theme.js?v=103"></script>
+  <script src="js/theme-switch.js?v=103"></script>
+  <script src="js/aidc-asset-version.js?v=103"></script>
+<script src="js/embed-mode.js?v=103"></script>
+  <link rel="stylesheet" href="css/embed.css?v=103" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     html, body { min-height: 100%; }
@@ -46,7 +46,7 @@
     html[data-theme="dark"] #buildingSvg [stroke="#cbd5e1"] { stroke: #3c506a; }
     html[data-theme="dark"] #buildingSvg [stroke="#64748b"] { stroke: #91a4bb; }
   </style>
-  <link rel="stylesheet" href="css/theme.css?v=102" />
+  <link rel="stylesheet" href="css/theme.css?v=103" />
 </head>
 <body class="flex min-h-screen flex-col bg-slate-50 text-slate-900" data-i18n-page="ai-dc-four-layer">
   <noscript>
@@ -284,28 +284,37 @@
 
     function fitViewBox() {
       const svg = document.getElementById('buildingSvg');
+      if (!svg) return;
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      let hasBounds = false;
       [floorGroups, dimLines].forEach((group) => {
         try {
           const b = group.getBBox();
+          if (!Number.isFinite(b.x) || !Number.isFinite(b.y) || !(b.width > 0) || !(b.height > 0)) return;
           minX = Math.min(minX, b.x);
           minY = Math.min(minY, b.y);
           maxX = Math.max(maxX, b.x + b.width);
           maxY = Math.max(maxY, b.y + b.height);
+          hasBounds = true;
         } catch (_) { /* empty group */ }
       });
+      if (!hasBounds) return;
       const pad = 90;
       const zoom = 1.32;
       minX -= pad; minY -= pad; maxX += pad; maxY += pad;
       const contentW = maxX - minX;
       const contentH = maxY - minY;
+      if (!(contentW > 0) || !(contentH > 0)) return;
       const cx = (minX + maxX) / 2;
       const cy = (minY + maxY) / 2;
-      const cw = svg.clientWidth || window.innerWidth;
-      const ch = svg.clientHeight || window.innerHeight;
+      const cw = svg.clientWidth || window.innerWidth || 1000;
+      const ch = svg.clientHeight || window.innerHeight || 820;
+      if (!(cw > 0) || !(ch > 0)) return;
       const scale = Math.min(cw / contentW, ch / contentH);
+      if (!(scale > 0) || !Number.isFinite(scale)) return;
       const vbW = cw / scale / zoom;
       const vbH = ch / scale / zoom;
+      if (!Number.isFinite(vbW) || !Number.isFinite(vbH) || !(vbW > 0) || !(vbH > 0)) return;
       svg.setAttribute('viewBox', `${cx - vbW / 2} ${cy - vbH / 2} ${vbW} ${vbH}`);
     }
 
@@ -357,12 +366,12 @@
 
   </script>
 
-  <script src="js/aidc-locale-bridge.js?v=102"></script>
-  <script src="js/i18n.js?v=102"></script>
-  <script src="js/lang-switch.js?v=102"></script>
-  <script src="js/aidc-refresh-flash.js?v=102"></script>
-<script src="js/aidc-mega-nav.js?v=102"></script>
-  <script src="js/i18n-bootstrap.js?v=102"></script>
+  <script src="js/aidc-locale-bridge.js?v=103"></script>
+  <script src="js/i18n.js?v=103"></script>
+  <script src="js/lang-switch.js?v=103"></script>
+  <script src="js/aidc-refresh-flash.js?v=103"></script>
+<script src="js/aidc-mega-nav.js?v=103"></script>
+  <script src="js/i18n-bootstrap.js?v=103"></script>
   <script>
     AidcI18nBootstrap.bootstrap('ai-dc-four-layer', {
       onReady: function () { if (typeof refreshFourLayerI18n === 'function') refreshFourLayerI18n(); },

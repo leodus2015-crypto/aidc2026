@@ -7,11 +7,11 @@
 <meta name="description" content="数据中心 3D 机柜布局设计器 · 案例A（风冷超节点）">
 <link rel="canonical" href="https://www.aidc2026.cn/datacenter-3d-case-b.html">
 <title>DataCenter 3D 设计器 · 案例A（风冷超节点）</title>
-<script src="js/aidc-theme.js?v=102"></script>
-<script src="js/embed-mode.js?v=102"></script>
-<script src="js/theme-switch.js?v=102"></script>
-<link rel="stylesheet" href="css/embed.css?v=102" />
-<link rel="stylesheet" href="css/theme.css?v=102" />
+<script src="js/aidc-theme.js?v=103"></script>
+<script src="js/embed-mode.js?v=103"></script>
+<script src="js/theme-switch.js?v=103"></script>
+<link rel="stylesheet" href="css/embed.css?v=103" />
+<link rel="stylesheet" href="css/theme.css?v=103" />
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -572,9 +572,9 @@
 </div>
 
 <!-- ===== Three.js ===== -->
-  <script src="js/aidc-asset-version.js?v=102"></script>
-<script src="js/aidc-api-client.js?v=102"></script>
-<script src="js/config-loader.js?v=102&rev=local-admin-1"></script>
+  <script src="js/aidc-asset-version.js?v=103"></script>
+<script src="js/aidc-api-client.js?v=103"></script>
+<script src="js/config-loader.js?v=103&rev=local-admin-1"></script>
 <script type="importmap">
 {
   "imports": {
@@ -1811,6 +1811,7 @@ function formatTotalDepthLabel(totalD) {
 }
 
 function createDepthDimensionLabel(text, x, y, z) {
+  if (!labelGroup) return null;
   const floatEl = document.createElement('div');
   floatEl.textContent = text;
   floatEl.style.color = '#2563eb';
@@ -1822,6 +1823,7 @@ function createDepthDimensionLabel(text, x, y, z) {
   const floatLb = new CSS2DObject(floatEl);
   floatLb.position.set(x, y, z);
   labelGroup.add(floatLb);
+  return floatLb;
 }
 
 function getRackPos(row, col) {
@@ -2005,6 +2007,7 @@ function clearLabelRendererDom() {
 // ======================================================================
 
 function mkCss2dLabel(text, x, y, z, style = '') {
+  if (!labelGroup) return null;
   const d = document.createElement('div');
   d.textContent = text;
   d.style.color = style === 'hl' ? '#2563eb' : style === 'val' ? '#3b82f6' : '#78716c';
@@ -2028,6 +2031,7 @@ function clearLabelGroup() {
 }
 
 function addAisleFloatLabel(text, zCenter, kind = 'cold') {
+  if (!labelGroup) return;
   const style = getAisleLabelStyle(kind);
   const floatEl = document.createElement('div');
   floatEl.textContent = text;
@@ -2076,6 +2080,7 @@ function buildAisleFloatLabels() {
 }
 
 function rebuildI18nLabels() {
+  if (!labelGroup) return;
   clearLabelGroup();
   buildMeasurementLabels();
   buildRowLabels();
@@ -2132,6 +2137,7 @@ function buildMeasurements() {
 }
 
 function buildRowLabels() {
+  if (!labelGroup) return;
   const halfW = C.totalW / 2;
   for (let r = 0; r < C.rows; r++) {
     const pos = getRackPos(r, 0);
@@ -2706,10 +2712,10 @@ console.log(L('• 悬停查看机柜信息'));
 console.log(L('• 配置自动保存到 localStorage'));
 </script>
 
-  <script src="js/aidc-locale-bridge.js?v=102"></script>
-  <script src="js/i18n.js?v=102"></script>
-  <script src="js/lang-switch.js?v=102"></script>
-  <script src="js/i18n-bootstrap.js?v=102"></script>
+  <script src="js/aidc-locale-bridge.js?v=103"></script>
+  <script src="js/i18n.js?v=103"></script>
+  <script src="js/lang-switch.js?v=103"></script>
+  <script src="js/i18n-bootstrap.js?v=103"></script>
   <script>
     AidcI18nBootstrap.bootstrap('datacenter-3d-case-b', {
       onReady: function () { globalThis.__aidcPageRefreshI18n?.(); },
